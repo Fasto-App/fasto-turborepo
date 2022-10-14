@@ -1,15 +1,30 @@
 {
-  "$schema": "https://turborepo.org/schema.json",
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
-    },
-    "lint": {
-      "outputs": []
-    },
-    "dev": {
-      "cache": false
-    }
-  }
+	"$schema": "https://turborepo.org/schema.json",
+	"pipeline": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**", ".next/**"]
+		},
+		"lint": {
+			"outputs": []
+		},
+		"dev": {
+			"cache": false
+		}
+	},
+	"globalDependencies": [".env"],
+	"globalEnv": [
+		"API_KEY",
+		"ENVIRONMENT",
+		"TOKEN_SECRET",
+		"DB_NAME",
+		"CLUSTER_PASSWORD",
+		"AWS_BUCKET_NAME",
+		"AWS_BUCKET_REGION",
+		"AWS_ACCESS_KEY_ID",
+		"AWS_SECRET_ACCESS_KEY",
+		"FRONTEND_PROD_URL",
+		"FRONTEND_DEV_URL",
+		"PORT"
+	]
 }

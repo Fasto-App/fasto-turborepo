@@ -1,0 +1,8 @@
+{
+	"compilerOptions": {
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	},
+	"extends": "tsconfig/base.json",
+	"exclude": ["node_modules"]
+}

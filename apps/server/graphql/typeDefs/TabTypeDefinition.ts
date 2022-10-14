@@ -1,0 +1,43 @@
+import { gql } from "apollo-server-express";
+
+export const TabTypeDefinition = gql`
+  extend type Query {
+    getTabByID(input: GetById!): Tab
+    getAllTabsByBusinessID: [Tab]
+    getAllOpenTabsByBusinessID: [Tab]
+  }
+
+  extend type Mutation {
+    createTab(input: CreateTabInput!): Tab!
+    updateTab(input: UpdateTabInput!): Tab!
+    deleteTab(input: GetById!): Tab
+  }
+
+  type Tab {
+  _id: ID!
+  table: ID!
+  admin: ID!
+  orders: [OrderDetail]!
+  status: TabStatus!
+  users: [ID!]!
+  created_date: String!
+  completed_at: String
+}
+
+  input CreateTabInput {
+    table: ID!
+    admin: ID
+    totalUsers: Int!
+  }
+
+  input UpdateTabInput {
+    _id: ID!
+    status: TabStatus!
+  }
+
+  enum TabStatus{
+    OPEN
+    CLOSED
+  }
+
+`
