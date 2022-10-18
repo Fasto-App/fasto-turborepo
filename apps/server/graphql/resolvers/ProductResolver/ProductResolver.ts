@@ -86,7 +86,10 @@ const getCategoryByProduct = async (parent: any, { productID }: { productID: str
     return category;
 }
 
-const getAllProductsByBusinessID = async (_parent: any, { id }: { id: string }, { db, business }: { db: Connection, business: string }) => {
+const getAllProductsByBusinessID = async (_parent: any, _: any, { db, business }: { db: Connection, business: string }) => {
+
+    console.log("Getting all products by business ID")
+    console.log("business", business)
 
 
 

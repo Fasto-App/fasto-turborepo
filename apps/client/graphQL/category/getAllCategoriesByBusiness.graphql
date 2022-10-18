@@ -1,0 +1,7 @@
+query getAllCategoriesByBusiness {
+	getAllCategoriesByBusiness {
+		_id
+		name
+		description
+	}
+}

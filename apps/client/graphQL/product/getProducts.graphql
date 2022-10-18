@@ -1,0 +1,13 @@
+query GetAllProductsByBusinessID {
+	getAllProductsByBusinessID {
+		_id
+		name
+		price
+		description
+		imageUrl
+		category {
+			name
+			_id
+		}
+	}
+}

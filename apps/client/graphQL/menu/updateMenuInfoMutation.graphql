@@ -1,0 +1,6 @@
+mutation UpdateMenuInfo($input: UpdateMenuInfoInput) {
+	updateMenuInfo(input: $input) {
+		_id
+		name
+	}
+}

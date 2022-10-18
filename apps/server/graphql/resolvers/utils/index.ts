@@ -12,7 +12,7 @@ export async function tokenSigning(id: string, email: string, business?: string)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('30d')
-  // .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
+    .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 
 export const getUserFromToken = async (token: string, tokenSecret: string) => {
@@ -22,14 +22,14 @@ export const getUserFromToken = async (token: string, tokenSecret: string) => {
   }
 
   try {
-    // const { payload } = await jose.jwtVerify(
-    //   token as string, new TextEncoder().encode(tokenSecret)
-    // )
+    const { payload } = await jose.jwtVerify(
+      token as string, new TextEncoder().encode(tokenSecret)
+    )
 
     return {
-      _id: "payload._id",
-      email: "payload.email",
-      business: "payload.business"
+      _id: payload._id,
+      email: payload.email,
+      business: payload.business
     };
 
   } catch (error) {

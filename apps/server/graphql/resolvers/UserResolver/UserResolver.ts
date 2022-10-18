@@ -165,6 +165,8 @@ export const createUser = async (_parent: any, { input }: { input: CreateUserInp
 // Enter credentials to get existing user
 export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: Connection }) => {
 
+  console.log("postUserLogin", input)
+
 
 
   const { email, password } = input
@@ -191,6 +193,8 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
     email: user.email,
     token,
   }
+
+  console.log("loginResponse", loginResponse)
 
   return loginResponse;
 }

@@ -1,0 +1,10 @@
+mutation CreateMenu($input: CreateMenuInput) {
+	createMenu(input: $input) {
+		_id
+		name
+		sections {
+			category
+			products
+		}
+	}
+}

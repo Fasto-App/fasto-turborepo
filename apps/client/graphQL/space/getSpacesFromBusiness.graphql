@@ -1,0 +1,21 @@
+query GetSpacesFromBusiness {
+	getSpacesFromBusiness {
+		_id
+		name
+		business
+		tables {
+			_id
+			status
+			tableNumber
+			tab {
+				_id
+				table
+				admin
+				orders {
+					_id
+					status
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,6 @@
+mutation CreateTable($input: CreateTableInput) {
+	createTable(input: $input) {
+		space
+		_id
+	}
+}

@@ -1,0 +1,10 @@
+query GetAllMenusByBusinessID {
+	getAllMenusByBusinessID {
+		_id
+		name
+		sections {
+			category
+			products
+		}
+	}
+}

@@ -1,0 +1,10 @@
+mutation UpdateMenu($input: UpdateMenuInput) {
+	updateMenu(input: $input) {
+		_id
+		name
+		sections {
+			category
+			products
+		}
+	}
+}

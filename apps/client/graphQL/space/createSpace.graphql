@@ -1,0 +1,7 @@
+mutation CreateSpace($input: CreateSpaceInput) {
+	createSpace(input: $input) {
+		_id
+		name
+		business
+	}
+}
