@@ -34,3 +34,4 @@ yarn-error.log*
 .expo/
 .env.*
 storybook-static/
+dist/
