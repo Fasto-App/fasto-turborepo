@@ -4857,14 +4857,7 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express-sslify@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.npmjs.org/@types/express-sslify/-/express-sslify-1.2.2.tgz#99edbb635a4c13f6d17da59aff8a286792641f14"
-  integrity sha512-vXHxf4CWvwhzjj05dpSaD20EH7pt+snU7en6I6cuQHNbulm7FD60EML6TLxYZb+Oe85AJN2BD1XVX/nHqVFMaQ==
-  dependencies:
-    "@types/express" "*"
-
-"@types/express@*", "@types/express@4.17.14", "@types/express@^4.17.14":
+"@types/express@*", "@types/express@4.17.14":
   version "4.17.14"
   resolved "https://registry.npmjs.org/@types/express/-/express-4.17.14.tgz#143ea0557249bc1b3b54f15db4c81c3d4eb3569c"
   integrity sha512-TEbt+vaPFQ+xpxFLFssxUDXj5cWCxZJjIcB7Yg0k0GMHGtgtQgpvx/MUQUeAkNbA9AAGrwkAsoeItdTgS7FMyg==
@@ -5067,11 +5060,6 @@
   version "16.11.65"
   resolved "https://registry.npmjs.org/@types/node/-/node-16.11.65.tgz#59500b86af757d6fcabd3dec32fecb6e357d7a45"
   integrity sha512-Vfz7wGMOr4jbQGiQHVJm8VjeQwM9Ya7mHe9LtQ264/Epf5n1KiZShOFqk++nBzw6a/ubgYdB9Od7P+MH/LjoWw==
-
-"@types/node@^17.0.33":
-  version "17.0.45"
-  resolved "https://registry.npmjs.org/@types/node/-/node-17.0.45.tgz#2c0fafd78705e7a18b7906b5201a522719dc5190"
-  integrity sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
