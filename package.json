@@ -18,7 +18,7 @@
 		"heroku-postbuild": "if [ $CLIENT_ENV ]; then yarn run prod-frontend; elif [ $SERVER_ENV ]; then yarn run prod-backend; else echo no environment detected, please set CLIENT_ENV or SERVER_ENV; fi",
 		"prod-frontend": "yarn run build:app",
 		"prod-backend": "yarn run build:api",
-		"deploy": "git add . && git commit -m Heroku && git push heroku master"
+		"deploy": "git add . && git commit -m Heroku && git push heroku main"
 	},
 	"devDependencies": {
 		"eslint-config-custom": "*",
