@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { Box } from "native-base";
+import React, { createContext, PropsWithChildren, useContext, useState } from "react";
+import { StyleSheet } from "react-native";
 import { useIsSsr } from "../hooks";
 import { colors } from "../theme/colors";
 
@@ -13,9 +14,9 @@ const AppContext = createContext({
   setState: () => undefined
 })
 
-const AppWrapper = ({ children }) => {
+const AppWrapper = ({ children }: PropsWithChildren<{}>) => {
   const isSSR = useIsSsr()
-  return isSSR ? null : <View style={styles.wrapper}>{children}</View>
+  return isSSR ? null : <Box style={styles.wrapper}>{children}</Box>
 }
 
 export const AppProvider = ({ children }) => {

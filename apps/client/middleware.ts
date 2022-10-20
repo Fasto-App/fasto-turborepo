@@ -7,7 +7,7 @@ import * as jose from 'jose'
 const secret = process.env.NEXTAUTH_SECRET
 
 // you just call next() method to contious middlerware chain or call nextjs default middleware. your blog website file.
-export async function middleware(request: NextRequest, event: NextFetchEvent) {
+export function middleware(request: NextRequest, event: NextFetchEvent) {
 
   // APP URL's
   const LOGIN_URL = getLoginURL();
@@ -55,9 +55,9 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       if (token && email) {
 
         // TODO: validate token
-        const { payload } = await jose.jwtVerify(token, new TextEncoder().encode(secret))
+        // const { payload } = await jose.jwtVerify(token, new TextEncoder().encode(secret))
 
-        console.log("PAYLOAD MIDDLEWARE", payload)
+        // console.log("PAYLOAD MIDDLEWARE", payload)
 
 
         const response = NextResponse.next()
@@ -79,9 +79,9 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   if (request.nextUrl.pathname.startsWith(BUSINESS_ADMIN)) {
     if (requestCookiesToken) {
 
-      const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))
+      // const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))
 
-      console.log("Payload", payload)
+      // console.log("Payload", payload)
 
       return NextResponse.next();
     }

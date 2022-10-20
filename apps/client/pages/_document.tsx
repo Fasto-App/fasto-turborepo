@@ -43,12 +43,10 @@ class MyDocument extends Document {
           {/* ADDED FROM GOOGLE PWA */}
           <meta
             name="theme-color"
-            media="(prefers-color-scheme: light)"
             content="black"
           />
           <meta
             name="theme-color"
-            media="(prefers-color-scheme: dark)"
             content="black"
           />
           {/* END */}

@@ -8,7 +8,6 @@ const useMenuMutationHook = () => {
     onCompleted: (data) => { },
     fetchPolicy: 'network-only', // Used for first execution
     nextFetchPolicy: 'cache-first', // Used for subsequent executions
-    displayName: "GET ALL MENUS"
   });
 
   const [createMenu,

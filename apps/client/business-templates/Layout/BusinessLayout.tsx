@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Box, useBreakpointValue } from 'native-base';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { BusinessScreenContainer } from '../../components/atoms/BusinessScreenContainer';
 import { colors } from '../../theme/colors';
 import { BusinessNavigationTab } from './BusinessNavigationTab';
@@ -47,12 +47,12 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<BusinessScreenContainer>
 			{display && isAdminRoute && !router.pathname.includes("add-to-order") ? <BusinessNavigationTab /> : null}
-			<View style={styles.rightContainer}>
+			<Box style={styles.rightContainer}>
 				{isAdminRoute && <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"}>
 					<AppBar />
 				</Box>}
 				{children}
-			</View>
+			</Box>
 		</BusinessScreenContainer>
 	);
 };
