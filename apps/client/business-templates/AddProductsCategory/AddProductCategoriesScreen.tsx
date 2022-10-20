@@ -29,6 +29,8 @@ export default function AddProductCategoriesScreen({
     return product
   })
 
+  console.log("BUG INTROUDUCED HERE")
+
   return (
     <>
       <Loading isLoading={loadingProduct || loadingCategory} />
