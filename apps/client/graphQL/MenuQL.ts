@@ -6,8 +6,6 @@ const useMenuMutationHook = () => {
 
   const { data: allMenusByBusiness } = useGetAllMenusByBusinessIdQuery({
     onCompleted: (data) => { },
-    fetchPolicy: 'network-only', // Used for first execution
-    nextFetchPolicy: 'cache-first', // Used for subsequent executions
   });
 
   const [createMenu,

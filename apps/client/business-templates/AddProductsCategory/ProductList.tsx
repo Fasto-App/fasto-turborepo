@@ -67,7 +67,7 @@ const ProductList = (
 	}, [category, setProductValue])
 
 	const renderProductCard = useCallback((item: Product, index: number) => {
-		if (index === 0) return <AddMoreButton onPress={addProduct} />
+		if (index === 0) return <AddMoreButton key={"AddMoreButton"} onPress={addProduct} />
 		return <ProductCard product={item} onEdit={() => setProductValues(item)} key={item._id} />
 	}, [addProduct, setProductValues])
 
@@ -101,7 +101,6 @@ const ProductList = (
 						numColumns={numColumns}
 						renderItem={renderProductTile}
 						keyExtractor={(item) => item._id}
-						// columnWrapperStyle={{ justifyContent: "center" }}
 						ListEmptyComponent={EmptyState}
 						ItemSeparatorComponent={() => <Box height={"4"} />}
 					/>

@@ -25,16 +25,21 @@ const isCategoryNameUnique = (categories: Ref<Category>[], uniqueNameToCompare: 
 
 const createCategory = async (_parent: any, { input }: { input: CreateCategoryInput }, { db, user, business }: GQLContext) => {
 
+    console.log('input', input)
+
     if (!user?._id) throw new ApolloExtendedError('User not found')
 
     const Category = CategoryModel(db);
-    const businessByID = await BusinessModel(db).findById(business)
+    const Business = BusinessModel(db)
+    const businessByID = await Business.findById(business)
+
+    console.log('businessByID', businessByID)
 
 
     if (!businessByID) throw new ApolloExtendedError('Business not found when creating a category')
     const categories = (await businessByID.populate('categories')).categories
 
-    // Throw a better error and try to catch on the front end
+    console.log('categories', categories)
 
     if (!isCategoryNameUnique(categories, input.name)) {
         throw new ApolloExtendedError('Category already exists! Please, Try a different one.', 400)
@@ -55,7 +60,7 @@ const createCategory = async (_parent: any, { input }: { input: CreateCategoryIn
 
     try {
 
-
+        console.log('subCategories', subCategories)
 
         const category = new Category({
             name: input.name,

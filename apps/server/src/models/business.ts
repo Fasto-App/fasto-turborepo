@@ -27,7 +27,12 @@ export class Business {
     @prop({ ref: () => Product, default: [] })
     public products!: Ref<Product>[];
 
-    @prop({ ref: () => Category, default: [] })
+    @prop({
+        ref: Category,
+        default: [],
+        foreignField: 'business',
+        localField: '_id',
+    })
     public categories!: Ref<Category>[];
 
     @prop({ ref: () => Menu })
