@@ -12,7 +12,8 @@ export const useCategoryMutationHook = () => {
   const setNetworkState = useAppStore(state => state.setNetworkState)
 
   const { data: allCategories,
-    loading: getCategoriesIsLoading
+    loading: getCategoriesIsLoading,
+    error: getCategoriesError,
   } = useGetAllCategoriesByBusinessQuery();
 
   const [createCategory, {
