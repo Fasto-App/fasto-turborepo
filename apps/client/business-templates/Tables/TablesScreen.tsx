@@ -373,7 +373,7 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: Table, se
     // await api.post("/spaces", data)
     console.log(data)
 
-    // router.push(businessRoute.add_to_order("123"))
+    router.push(businessRoute.add_to_order("123"))
     // make a call to the backend to create this TAB with this table ID
   }
 

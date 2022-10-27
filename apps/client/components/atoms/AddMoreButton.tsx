@@ -1,15 +1,23 @@
 import React from 'react';
-import { Box, Pressable, Text } from 'native-base';
+import { Box, Button, Pressable, Text } from 'native-base';
 import { AiOutlinePlus } from 'react-icons/ai';
 
-type AddMoreButtonProps = { onPress: () => void, empty?: boolean, horizontal?: boolean, widthProps?: number | string };
+type AddMoreButtonProps = {
+  onPress: () => void,
+  empty?: boolean,
+  horizontal?: boolean,
+  widthProps?: number | string
+  small?: boolean
+};
 
-const AddMoreButton = ({ onPress, empty = false, horizontal = false, widthProps }: AddMoreButtonProps) => {
+const AddMoreButton = ({ onPress, empty = false, horizontal = false, widthProps, small }: AddMoreButtonProps) => {
   const width = widthProps ? widthProps : horizontal ? "450px" : "280px"
   const height = horizontal ? "75px" : "300px"
 
   const innerWidth = horizontal ? "100%" : "120px"
   const innerHeight = horizontal ? "100%" : "120px"
+
+
 
   return (
     <Pressable onPress={onPress}>
@@ -37,5 +45,21 @@ const AddMoreButton = ({ onPress, empty = false, horizontal = false, widthProps 
     </Pressable>
   );
 };
+
+export const SmallAddMoreButton = ({ onPress }) => {
+
+  return (
+    <Button
+      maxH={"40px"}
+      borderWidth={1}
+      colorScheme="primary"
+      variant={"outline"}
+      onPress={onPress}>
+      <Box borderWidth={1} borderRadius={'full'} justifyContent="center" alignItems={"center"} >
+        <AiOutlinePlus size={"1em"} />
+      </Box>
+    </Button>
+  )
+}
 
 export { AddMoreButton };

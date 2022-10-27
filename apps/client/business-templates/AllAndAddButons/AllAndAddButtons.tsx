@@ -34,3 +34,34 @@ export const AllAndEditButtons = ({
     </HStack>
   )
 }
+
+export const SideBySideButtons = ({
+  leftAction,
+  rightAction,
+  leftText,
+  rightText,
+  leftDisabled,
+  rightDisabled,
+}) => {
+  return (
+    <HStack space={2}>
+      <Button
+        colorScheme={"primary"}
+        width={"100px"}
+        onPress={leftAction}
+        isDisabled={leftDisabled}
+      >
+        {leftText}
+      </Button>
+
+      <Button
+        width={"100px"}
+        colorScheme="tertiary"
+        onPress={rightAction}
+        isDisabled={rightDisabled}
+      >
+        {rightText}
+      </Button>
+    </HStack>
+  )
+};

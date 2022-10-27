@@ -10,7 +10,7 @@ import { BUSINESS, CLIENT } from '../routes';
 import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
-import { useTheme } from 'native-base';
+import { Box, useTheme } from 'native-base';
 
 
 const LandingWrapper = (props) => <Fragment><ClientNavBar />{props.children}</Fragment>
@@ -37,23 +37,26 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 			return ClientLayout
 		} else if (isBusinessExp) {
 			return BusinessLayout
-		} else {
-			return LandingWrapper
 		}
+
+		return LandingWrapper
+
 	}, [isClientExp, isBusinessExp])
 
 	return (
-		<ThemeProvider>
-			<AppApolloProvider>
-				<AppProvider>
-					<Wrapper>
-						<React.StrictMode>
-							<ProgressBar />
-							<Component {...pageProps} />
-						</React.StrictMode>
-					</Wrapper>
-				</AppProvider>
-			</AppApolloProvider>
+		<ThemeProvider >
+			<Box h={"100vh"}>
+				<AppApolloProvider>
+					<AppProvider>
+						<Wrapper>
+							<React.StrictMode>
+								<ProgressBar />
+								<Component {...pageProps} />
+							</React.StrictMode>
+						</Wrapper>
+					</AppProvider>
+				</AppApolloProvider>
+			</Box>
 		</ThemeProvider>
 	);
 }
