@@ -3,7 +3,8 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"outDir": "dist",
-		"rootDir": "src"
+		"rootDir": "src",
+		"target": "es6"
 	},
 	"extends": "tsconfig/base.json",
 	"exclude": ["node_modules"]

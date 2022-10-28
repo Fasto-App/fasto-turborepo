@@ -8,7 +8,6 @@ export const LeftSideBar = ({ children }: PropsWithChildren<{}>) => (
     w={"1/3"}
     minWidth={"240px"}
     maxWidth={"288px"}
-    // borderRightWidth={1}
     shadow={"8"}
   >
     {children}

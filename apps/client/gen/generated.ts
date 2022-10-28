@@ -613,7 +613,7 @@ export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
   email: Scalars['String'];
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   privileges?: Maybe<UserPrivileges>;
   token: Scalars['String'];
 };
