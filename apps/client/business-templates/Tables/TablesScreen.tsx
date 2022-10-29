@@ -102,7 +102,7 @@ export const TablesScreen = ({ allSpaces }) => {
   }
 
   return (
-    <>
+    <Box flex={1}>
       <ModalFeedback
         isWarning={false}
         isOpen={false}
@@ -114,6 +114,7 @@ export const TablesScreen = ({ allSpaces }) => {
         postNewTable={postNewTable} />
       <SpaceModal isModalOpen={isSpaceModalOpen} setIsModalOpen={setSpaceIsModalOpen} />
       <TableModal tableChoosen={tableChoosen} setTableChoosen={setTableChoosen} />
+      <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
       <VStack m={"4"} space={"4"} flex={1}>
         <VStack
           p={"4"}
@@ -181,7 +182,7 @@ export const TablesScreen = ({ allSpaces }) => {
 
         }
       </VStack>
-    </>
+    </Box>
   )
 }
 
