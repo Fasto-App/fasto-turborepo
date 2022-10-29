@@ -85,12 +85,14 @@ const ProductTile = ({ product, onEdit, isChecked, onCheckboxClick }: ProductPro
 
 	return <Box mr={"4"}
 		shadow="4"
-		w={"450px"}
+		w={'80'}
 		backgroundColor={"white"}
 		justifyContent={"center"}
 		p={"1"}
 		px={"4"}
-		borderRadius={"md"}>
+		borderRadius={"md"}
+		mb={4}
+	>
 
 		<HStack alignItems="center" space={3}>
 			<Avatar size="48px" source={{
@@ -117,12 +119,9 @@ const ProductTile = ({ product, onEdit, isChecked, onCheckboxClick }: ProductPro
 						Add to Menu
 					</Checkbox>
 					:
-					<>
-						<Button w={"100"}>{texts.addToMenu}</Button>
-						<Button w={"100"} colorScheme="tertiary"
-							onPress={onEdit}>{texts.editItem}
-						</Button>
-					</>
+					<Button w={"100"} colorScheme="tertiary"
+						onPress={onEdit}>{texts.editItem}
+					</Button>
 				}
 			</HStack>
 		</HStack>

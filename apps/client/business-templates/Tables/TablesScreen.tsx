@@ -307,13 +307,11 @@ const SpaceModal = ({ isModalOpen, setIsModalOpen }) => {
   const onSubmit = async (data) => {
     setIsModalOpen(false)
 
-    await createSpace(
-      {
-        variables: {
-          input: { name: data.space_name, }
-        }
+    await createSpace({
+      variables: {
+        input: { name: data.space_name, }
       }
-    )
+    })
     reset()
   }
 

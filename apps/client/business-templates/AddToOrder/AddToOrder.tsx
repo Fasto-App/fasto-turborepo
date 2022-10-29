@@ -19,6 +19,7 @@ import { SideBySideButtons } from "../AllAndAddButons";
 import { Tile } from "../../components/Tile";
 import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
+import { ProductTile } from "../../components/Product/Product";
 
 const texts = {
   back: "Back",
@@ -36,9 +37,21 @@ const orders = new Array(5).fill({
   quantity: 1,
 });
 
-const patrons = new Array(5).fill({
+const patrons = new Array(3).fill({
   id: 2,
   name: "Alexandre",
+})
+
+const categories = new Array(5).fill({
+  id: 2,
+  name: "Pizzas",
+})
+
+const products = new Array(10).fill({
+  _id: 23,
+  name: "Polenta",
+  price: 2300,
+  imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRfpZB0_3qGRT0vx7Jlw662goIgQc9en4esg&usqp=CAU",
 })
 
 export const AddToOrder = (props) => {
@@ -108,7 +121,13 @@ export const AddToOrder = (props) => {
 
             <HStack space={2}>
               <SmallAddMoreButton onPress={() => console.log("Hello")} />
-              {patrons.map((patron) => (<Tile children={patron.name} selected={false} onPress={undefined} />))}
+              <ScrollView horizontal={true} pb={2}>
+                <HStack space={2}>
+                  {patrons.map((patron) => (
+                    <Tile children={patron.name} selected={false} onPress={undefined} />
+                  ))}
+                </HStack>
+              </ScrollView>
             </HStack>
 
             <SideBySideButtons
@@ -123,7 +142,21 @@ export const AddToOrder = (props) => {
 
 
           <BottomSection>
-            <Heading>Menu</Heading>
+            <HStack space={2}>
+
+              <Heading pr={10}>Menu</Heading>
+              <ScrollView horizontal={true} pb={2}>
+                <HStack space={2}>
+                  {categories.map((patron) => (<Tile children={patron.name} selected={false} onPress={undefined} />))}
+                </HStack>
+              </ScrollView>
+            </HStack>
+
+            <ScrollView pt={2}>
+              <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
+                {products.map((product) => <ProductTile product={product} onEdit={() => console.log("Hello")} />)}
+              </VStack>
+            </ScrollView>
           </BottomSection>
         </VStack>
       </Box>
