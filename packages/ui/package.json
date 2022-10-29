@@ -28,5 +28,10 @@
     "tsconfig": "*",
     "typescript": "^4.5.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@storybook/addon-react-native-web": "^0.0.19",
+    "native-base": "^3.4.19",
+    "react-native-web": "^0.18.9",
+    "storybook-addon-next-router": "^4.0.1"
+  }
 }
