@@ -1,4 +1,4 @@
-import { Tables } from "../../../../business-templates/Tables";
+import { TablesScreen } from "../../../../business-templates/Tables";
 
-export default Tables
+export default TablesScreen
 

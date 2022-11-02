@@ -1,62 +1,38 @@
 import React from "react"
+import * as z from "zod"
 import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge } from "native-base"
 import { useState } from "react"
 import { AiOutlinePlus } from "react-icons/ai"
 import { typedKeys } from "../../authUtilities/utils"
-import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
+import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Pressable } from "react-native"
 import { add, format } from 'date-fns'
 import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { AllAndEditButtons } from "../AllAndAddButons"
-import { businessRoute } from "../../routes"
-import { useRouter } from "next/router"
 import { useTableMutationHook } from "../../graphQL/TableQL"
 import { Table, TableStatus } from "../../gen/generated"
 import { DevTool } from "@hookform/devtools";
-// import add from "date-fns/fp/add"
+import { useTabMutationHook } from "../../graphQL/TabQL"
+import { businessRoute } from "../../routes"
+import { useRouter } from "next/router"
 
 const texts = {
   space: "Space"
 }
 
-const occupied = {
-  status: "occupied" as TableStatus,
-  ocuppant: {
-    name: "John Doe",
-    phone: "9173303561"
-  }
-} as const
+type SelectedTable = Omit<Table, "__typename" | "space" | "tab">
 
-const available = {
-  status: "available" as TableStatus
-}
+export const TablesScreen = () => {
+  const {
+    allSpaces,
+  } = useSpacesMutationHook();
 
-const reserved = {
-  status: "reserved" as TableStatus,
-  reservation: {
-    id: "1",
-    name: "John Doe",
-    email: "",
-    phone: "1234567890",
-    start: add(new Date(), {
-      minutes: 60,
-    }),
-  }
-}
-
-const tablesOccupied = new Array<typeof occupied>(5).fill(occupied)
-const tablesAvailable = new Array<typeof available>(7).fill(available)
-const tablesReserved = new Array<typeof reserved>(3).fill(reserved)
-// const allTables = [...tablesOccupied, ...tablesAvailable, ...tablesReserved].sort(() => .5 - Math.random())
-
-export const TablesScreen = ({ allSpaces }) => {
   const [selectedSpaceId, setSelectedSpace] = useState<string>(allSpaces?.[0]?._id);
   const [isSpaceModalOpen, setSpaceIsModalOpen] = useState(false)
-  const [tableChoosen, setTableChoosen] = useState<Table>(null)
+  const [tableChoosen, setTableChoosen] = useState<SelectedTable>(null)
   const [isNewTableModalOpen, setIsNewTableModalOpen] = useState(false)
 
   const selectedSpace = allSpaces.find(space => space._id === selectedSpaceId)
@@ -91,12 +67,12 @@ export const TablesScreen = ({ allSpaces }) => {
   }
 
   const renderTables = () => {
-
     return allTables.map((item, index) =>
       <SquareTable key={index} index={index} status={item.status} onPress={() => {
         setTableChoosen({
-          _id: index,
-          ...item,
+          _id: item._id,
+          status: item.status,
+          tableNumber: item.tableNumber,
         })
       }} />)
   }
@@ -333,7 +309,7 @@ const SpaceModal = ({ isModalOpen, setIsModalOpen }) => {
           formState={formState}
           Config={{
             space_name: {
-              name: "Space Name",
+              name: "space_name",
               label: "Space Name",
               placeholder: "E.g. Patio",
             }
@@ -352,8 +328,17 @@ const SpaceModal = ({ isModalOpen, setIsModalOpen }) => {
   </Modal>
 }
 
-const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: Table, setTableChoosen: (table: Table) => void }) => {
+const tableSchema = z.object({
+  admin: z.string().optional(),
+  totalUsers: z.number({
+    required_error: "Please, enter the number of guests",
+  }),
+})
+
+const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedTable, setTableChoosen: (table: Table) => void }) => {
   const router = useRouter()
+  const { createTab } = useTabMutationHook();
+
   const {
     control,
     formState,
@@ -363,17 +348,30 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: Table, se
   } = useForm({
     defaultValues: {
       admin: "",
-      numberGuests: ""
+      totalUsers: ""
     },
+    resolver: zodResolver(tableSchema)
   })
 
-  const onSubmit = (data: any) => {
-    // setTableChoosen(null)
-    // await api.post("/spaces", data)
-    console.log(data)
+  const onSubmit = async (data: any) => {
+    try {
+      console.log({
+        table: tableChoosen._id,
+        admin: data.admin,
+        totalUsers: data.totalUsers
+      })
+      const result = await createTab({
+        variables: {
+          input: {
+            table: tableChoosen._id,
+            admin: data.admin,
+            totalUsers: data.totalUsers
+          }
+        }
+      })
 
-    router.push(businessRoute.add_to_order("123"))
-    // make a call to the backend to create this TAB with this table ID
+      router.push(businessRoute.add_to_order(result.data.createTab._id))
+    } catch { }
   }
 
   const onCancel = () => {
@@ -431,11 +429,19 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: Table, se
     </Modal.Content>
   </Modal >
 }
-const TabConfig = {
-  numberGuests: {
-    name: "numberGuests",
+
+const TabConfig: RegularInputConfig = {
+  totalUsers: {
+    name: "totalUsers",
     label: "Num Guests",
     placeholder: "Select number of guests",
+    errorMessage: "Please, enter a number of guests",
+    helperText: "Number of guests",
+    formatOnChange: (value: string, fieldOnchange: (number) => void) => {
+      if (Number.isInteger(Number(value))) {
+        return fieldOnchange(Number(value))
+      }
+    }
   },
   admin: {
     name: "admin",
@@ -444,10 +450,10 @@ const TabConfig = {
   },
 }
 
-const { numberGuests, admin } = TabConfig
+const { totalUsers, admin } = TabConfig
 
-const SideBySideTabConfig = {
-  info: [{ numberGuests }, { admin }]
+const SideBySideTabConfig: SideBySideInputConfig = {
+  info: [{ totalUsers }, { admin }]
 }
 
 const AddTableModal = ({ isModalOpen, setIsModalOpen, postNewTable }) => {

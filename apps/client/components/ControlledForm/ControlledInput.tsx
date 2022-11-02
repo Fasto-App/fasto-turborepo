@@ -1,9 +1,10 @@
 import { Box, CheckIcon, FormControl, HStack, IInputProps, Input, Select, TextArea, } from 'native-base'
 import React from 'react'
-import { Controller, UseControllerProps } from 'react-hook-form'
+import { Control, Controller, UseControllerProps } from 'react-hook-form'
 import { AiOutlineCloudDownload } from 'react-icons/ai';
 
 type CustomInputProps = {
+  name: string;
   label: string;
   errorMessage?: string;
   helperText?: string;
@@ -17,12 +18,10 @@ type CustomInputProps = {
 type InputType = "Input" | "TextArea" | "Select" | "File"
 
 export type InputProps = IInputProps & CustomInputProps
-export type ControlledFormInput = UseControllerProps & InputProps
+export type ControlledFormInput<T extends Record<string, string>> = Omit<UseControllerProps, "control"> & InputProps &
+{ control: Control<T> }
 
-type ConfigValues = InputProps & Pick<UseControllerProps, "name">
-export type ConfigType = Record<string, ConfigValues>
-
-export function ControlledInput({
+export const ControlledInput = <T extends Record<string, string>>({
   control,
   errorMessage,
   label,
@@ -36,13 +35,14 @@ export function ControlledInput({
   formatValue,
   formatOnChange,
   handleFileUpload,
-}: ControlledFormInput) {
+}: ControlledFormInput<T>) => {
   return (
     <>
       <FormControl isInvalid={!!errorMessage}>
         <FormControl.Label isRequired={isRequired}>{label}</FormControl.Label>
         <Controller
           control={control}
+          // @ts-ignore
           name={name}
           render={({ field }) => {
 
