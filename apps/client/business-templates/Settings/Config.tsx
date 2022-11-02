@@ -1,6 +1,6 @@
-import { ConfigType } from '../../components/ControlledForm/ControlledInput';
+import { RegularInputConfig } from "../../components/ControlledForm/ControlledForm";
 
-export const ManageBusinessConfig: ConfigType = {
+export const ManageBusinessConfig: RegularInputConfig = {
   businessName: {
     name: "business_name",
     label: "Business Name",
@@ -36,7 +36,7 @@ export const ManageBusinessConfig: ConfigType = {
   }
 };
 
-export const ManageAccountConfig: ConfigType = {
+export const ManageAccountConfig: RegularInputConfig = {
   name: {
     name: "name",
     label: "Name",

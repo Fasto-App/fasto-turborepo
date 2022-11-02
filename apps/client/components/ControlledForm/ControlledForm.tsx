@@ -1,28 +1,34 @@
 
 import React from "react";
-import { Box, HStack, ScrollView, VStack } from "native-base";
+import { Box, HStack, ScrollView } from "native-base";
 import { typedKeys } from "../../authUtilities/utils";
-import { ConfigType, ControlledFormInput, ControlledInput, InputProps } from "./ControlledInput";
-import { FormState, UseControllerProps } from "react-hook-form";
+import { ControlledInput, InputProps } from "./ControlledInput";
+import { FormState, Control } from "react-hook-form";
 
 
 type ControlledFormType<T extends Record<string, string>> = {
   formState: FormState<T>;
-  control: UseControllerProps<T>;
-  Config: ConfigType
+  control: Control<T>;
+  Config: SideBySideInputConfig
 }
 
-export function ControlledForm({
+function isConfigArray(config: InputProps | RegularInputConfig[]): config is RegularInputConfig[] {
+  return Array.isArray(config as RegularInputConfig[])
+}
+
+export const ControlledForm = <T extends Record<string, string>>({
   control,
   formState,
   Config
-}) {
+}: ControlledFormType<T>) => {
+
+  console.log(formState?.errors)
   return (<ScrollView>
     {
       typedKeys(Config).map((key) => {
         const config = Config[key];
 
-        if (Array.isArray(config)) {
+        if (isConfigArray(config)) {
 
           return (
             <HStack key={key as string}>
@@ -40,7 +46,7 @@ export function ControlledForm({
                       control={control}
                       name={keyName as string}
                       label={subKeyConfig[keyName].label}
-                      errorMessage={formState?.errors?.[keyName]?.message}
+                      errorMessage={formState?.errors?.[keyName]?.message as string}
                     />
                   </Box>
                 )
@@ -51,17 +57,24 @@ export function ControlledForm({
 
         return (
           <ControlledInput
-            {...Config[key]}
-            helperText={Config[key].helperText}
+            {...config}
+            helperText={config.helperText}
             key={key as string}
             name={key as string}
             control={control}
-            label={Config[key].label}
-            errorMessage={formState.errors?.[key]?.message}
-
+            label={config.label}
+            errorMessage={formState.errors?.[key]?.message as string}
           />
         )
       })
     }
   </ScrollView>)
+}
+
+type RegularInputConfig = Record<string, InputProps>;
+type SideBySideInputConfig = Record<string, InputProps | RegularInputConfig[]>;
+
+export type {
+  RegularInputConfig,
+  SideBySideInputConfig
 }

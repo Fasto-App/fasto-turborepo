@@ -3,17 +3,14 @@ import {
 	Button,
 	Modal
 } from 'native-base';
-import { Control, FormState } from 'react-hook-form';
 import { DeleteAlert } from '../../components/DeleteAlert';
 import { useCategoryMutationHook } from '../../graphQL/CategoryQL';
 import { useProductMutationHook } from '../../graphQL/ProductQL';
 import { useAppStore } from '../UseAppStore';
-import { ProductFields, useProductFormHook } from './useProductFormHook';
+import { ProductFields } from './useProductFormHook';
 import { DevTool } from "@hookform/devtools";
 import { useUploadFileMutation } from '../../gen/generated';
-import { ControlledForm } from '../../components/ControlledForm/ControlledForm';
-import { ConfigType } from '../../components/ControlledForm/ControlledInput';
-
+import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm/ControlledForm';
 
 const texts = {
 	addTitle: "Add New Product",
@@ -129,7 +126,7 @@ const ProductModal = ({
 		} catch { }
 	}
 
-	const ProductFormConfig: ConfigType = {
+	const ProductFormConfig: RegularInputConfig = {
 		name: {
 			isRequired: true,
 			name: 'name',
@@ -153,8 +150,6 @@ const ProductModal = ({
 				const text = value.replace(/[$,.]/g, '')
 				const convertedValue = Number(text)
 				if (Number.isInteger(convertedValue)) {
-
-					console.log(Number.isInteger(convertedValue))
 					return fieldOnchange(convertedValue)
 				}
 			}

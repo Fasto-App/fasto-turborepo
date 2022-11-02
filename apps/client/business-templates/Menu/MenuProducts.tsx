@@ -10,7 +10,6 @@ import { useRouter } from 'next/router'
 import { useAppStore } from '../UseAppStore'
 import { BsPencilSquare } from 'react-icons/bs';
 import { useMenuMutationHook } from '../../graphQL/MenuQL'
-// import { Bugsnag } from "@monorepo/server/bugsnag/bugsnag"
 
 const texts = {
   editMenu: "Edit Menu",
@@ -18,8 +17,6 @@ const texts = {
   save: "Save",
   delete: "Delete",
 }
-
-
 
 function MenuProducts({ menusData }) {
   const { allCategories } = useCategoryMutationHook()
@@ -37,7 +34,6 @@ function MenuProducts({ menusData }) {
   const resetEditingAndSectionMap = useAppStore(state => state.resetEditingAndSectionMap)
 
   const { updateMenu, deleteMenu } = useMenuMutationHook()
-
 
   const numColumns = useNumOfColumns(isEditingMenu)
 

@@ -2,15 +2,11 @@ import { Connection } from "mongoose";
 import { MenuModel, ProductModel, CategoryModel, Section } from "../../../models";
 import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
-import { UpdateMenuInput } from "./types";
+import { CreateMenuInput, UpdateMenuInput } from "./types";
 
 type UpdateMenuInfo = Pick<UpdateMenuInput, 'name' | '_id'>;
 
-const createMenu = async (_parent: any, { input }: {
-    input: {
-        name: string,
-    }
-}, { db, user, business }: Context) => {
+const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, business }: Context) => {
     if (!business) throw Error('Business not found');
     if (!user) throw Error('User not found');
 
@@ -21,7 +17,8 @@ const createMenu = async (_parent: any, { input }: {
 
     try {
         return await (Menu.create({
-            name: input.name
+            name: input.name,
+            business
         }))
 
     } catch {
@@ -39,6 +36,9 @@ const getMenuByID = async (_parent: any, { id }: { id: string }, { db }: { db: C
 
 const getAllMenusByBusinessID = async (_parent: any, { id }: { id: string }, { db, business }: Context) => {
     const Menu = MenuModel(db);
+
+    console.log("business", business)
+
     const allMenusByBusiness = await Menu.find({ business });
     return allMenusByBusiness;
 }

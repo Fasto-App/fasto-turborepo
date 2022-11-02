@@ -1,4 +1,4 @@
-import { Types, SchemaTypes, Schema, SchemaDefinition, Connection } from 'mongoose'
+import { Types, Connection } from 'mongoose'
 import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { Product } from './product';
 
@@ -18,7 +18,7 @@ export class Category {
   public parentCategory?: Ref<Category, string>;
 
   @prop({ ref: () => Category, default: [] })
-  public subCategories!: String[];
+  public subCategories?: String[];
 
   @prop({ ref: () => Product, default: [] })
   public products?: [String];

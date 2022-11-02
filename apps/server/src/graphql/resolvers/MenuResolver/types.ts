@@ -1,15 +1,8 @@
 import { z } from "zod";
 
-
-
-// interface UpdateMenuInput {
-//   _id: string;
-//   name: string;
-//   sections: {
-//       category: string;
-//       products?: string[];
-//   }[]
-// }
+const CreateMenu = z.object({
+  name: z.string(),
+});
 
 const UpdateMenu = z.object({
   _id: z.string(),
@@ -22,6 +15,7 @@ const UpdateMenu = z.object({
   ),
 });
 
+export type CreateMenuInput = { input: z.infer<typeof CreateMenu>; }
 export type UpdateMenuInput = z.infer<typeof UpdateMenu>;
 
 

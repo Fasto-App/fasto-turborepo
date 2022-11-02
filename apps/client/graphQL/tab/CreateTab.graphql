@@ -1,0 +1,7 @@
+mutation CreateTab($input: CreateTabInput!) {
+	createTab(input: $input) {
+		_id
+		table
+		status
+	}
+}

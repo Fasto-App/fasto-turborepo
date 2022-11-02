@@ -87,6 +87,7 @@ export const theme = extendTheme({
       '800': '#94680b',
       '900': '#795509'
     },
+    white: '#fff',
     // Redefining only one shade, rest of the color will remain same.
     amber: {
       400: '#d97706',

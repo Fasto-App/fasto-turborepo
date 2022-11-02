@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { optional, z } from "zod"
+import { z } from "zod"
 
 const categorySchema = z.object({
   _id: z.string().optional(),

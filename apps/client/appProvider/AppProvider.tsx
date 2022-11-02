@@ -1,4 +1,4 @@
-import { Box } from "native-base";
+import { Box, Container } from "native-base";
 import React, { createContext, PropsWithChildren, useContext, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useIsSsr } from "../hooks";
@@ -16,7 +16,7 @@ const AppContext = createContext({
 
 const AppWrapper = ({ children }: PropsWithChildren<{}>) => {
   const isSSR = useIsSsr()
-  return isSSR ? null : <Box style={styles.wrapper}>{children}</Box>
+  return isSSR ? null : <>{children}</ >
 }
 
 export const AppProvider = ({ children }) => {
@@ -25,11 +25,11 @@ export const AppProvider = ({ children }) => {
 
   return (
     // @ts-ignore
-    < AppContext.Provider value={{ state, setState }}>
+    <AppContext.Provider value={{ state, setState }}>
       <AppWrapper>
         {children}
       </AppWrapper>
-    </ AppContext.Provider >
+    </ AppContext.Provider>
   )
 }
 
@@ -42,14 +42,3 @@ export const useClientContext = () => {
 
   return context
 }
-
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    margin: 0,
-    padding: 0,
-    backgroundColor: colors.pureWhite,
-    height: "100vh",
-  },
-});
