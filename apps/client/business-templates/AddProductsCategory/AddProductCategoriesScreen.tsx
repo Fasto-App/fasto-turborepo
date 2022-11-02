@@ -7,6 +7,7 @@ import Loading from '../../components/Loading/Loading';
 import { useProductMutationHook } from '../../graphQL/ProductQL';
 import { useCategoryMutationHook } from "../../graphQL/CategoryQL";
 import { useAppStore } from '../UseAppStore';
+import { Box } from 'native-base';
 
 export default function AddProductCategoriesScreen({
   resetAll,
@@ -33,7 +34,10 @@ export default function AddProductCategoriesScreen({
 
   return (
     <>
+<Box flex={1}>
+      <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
       <Loading isLoading={loadingProduct || loadingCategory} />
+      
       <ModalFeedback
         isWarning={isError}
         isOpen={isSuccess || isError}
@@ -51,6 +55,7 @@ export default function AddProductCategoriesScreen({
           /> : null
         }
       </VStack>
+    </Box>
     </>
   )
 }

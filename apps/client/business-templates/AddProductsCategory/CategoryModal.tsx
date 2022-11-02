@@ -93,6 +93,7 @@ const CategoryModal = ({
 
 	return (
 		<>
+		
 			<Modal isOpen={showModal} onClose={closeModalAndClearQueryParams}>
 				<Modal.Content maxWidth="400px">
 					<Modal.CloseButton />
