@@ -1,6 +1,6 @@
 import React from "react"
 import * as z from "zod"
-import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge } from "native-base"
+import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge, Image, Input, CheckIcon, Select } from "native-base"
 import { useState } from "react"
 import { AiOutlinePlus } from "react-icons/ai"
 import { typedKeys } from "../../authUtilities/utils"
@@ -13,17 +13,24 @@ import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { AllAndEditButtons } from "../AllAndAddButons"
 import { useTableMutationHook } from "../../graphQL/TableQL"
-import { Table, TableStatus } from "../../gen/generated"
+import { OrderStatus, Table, TableStatus } from "../../gen/generated"
 import { DevTool } from "@hookform/devtools";
 import { useTabMutationHook } from "../../graphQL/TabQL"
 import { businessRoute } from "../../routes"
 import { useRouter } from "next/router"
+import { Tile } from "../../components/Tile"
+import { parseToCurrency } from "../../utils"
 
 const texts = {
   space: "Space"
 }
 
 type SelectedTable = Omit<Table, "__typename" | "space" | "tab">
+
+const patrons = new Array(3).fill({
+  id: 2,
+  name: "Alexandre",
+})
 
 export const TablesScreen = () => {
   const {
@@ -335,6 +342,16 @@ const tableSchema = z.object({
   }),
 })
 
+
+const orders = new Array(3).fill({
+  id: "1",
+  name: "Pizza de Catupiry com Borda",
+  mage: "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2022%2F05%2F09%2Fbacon-509429382.jpg&q=60",
+  price: 1000,
+  quantity: 2,
+  status: "DELIVERED",
+})
+
 const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedTable, setTableChoosen: (table: Table) => void }) => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
@@ -384,8 +401,59 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
     switch (tableChoosen?.status) {
       case "OCCUPIED":
         return <>
-          <Text>{"tableChoosen.ocuppant.name"}</Text>
-          <Text>{"tableChoosen.ocuppant.phone"}</Text>
+          <Box>
+            <HStack flex={1} justifyContent={"space-around"}>
+              <Heading size={"md"}>{"By Patron"}</Heading>
+              <Heading size={"md"}>{"By Table"}</Heading>
+            </HStack>
+            <Box p={8}>
+              <HStack space={2} pb={10}>
+                {patrons.map((patron) => (
+                  <Tile children={patron.name} selected={false} onPress={undefined} />
+                ))}
+              </HStack>
+
+              {<VStack space={6}>
+                {orders.map((order) => {
+                  return (
+                    <HStack borderRadius={"md"} p={1} backgroundColor={"white"} flex={1} justifyContent={"space-between"}>
+                      <HStack>
+                        <Center>
+                          <Image src={"https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2022%2F05%2F09%2Fbacon-509429382.jpg&q=60"}
+                            width={100} height={60}
+                          />
+                        </Center>
+                        <VStack pl={2} pt={3}>
+                          <Heading size={"sm"}>{`${order.name}`}</Heading>
+                          <Text>{`${parseToCurrency(order.price)}`}</Text>
+                        </VStack>
+                      </HStack>
+
+                      <Center>
+                        <Select selectedValue={"DELIVERED"} minWidth="200" accessibilityLabel="Choose Service" placeholder="Order Status" mt={1} onValueChange={itemValue => console.log(itemValue)}>
+                          {Object.keys(OrderStatus).map((status) => (
+                            <Select.Item label={status} value={status.toUpperCase()} />)
+                          )
+                          }
+                        </Select>
+                      </Center>
+                      <Center>
+                        <Text>{`${parseToCurrency(order.price * order.quantity)}`}</Text>
+                      </Center>
+                      <Center>
+                        <Text >{`${order.quantity}x`}</Text>
+                      </Center>
+                      <Center p={6}>
+                        <CheckIcon />
+                      </Center>
+                    </HStack>)
+                })}
+              </VStack>}
+
+            </Box>
+          </Box>
+
+
         </>
       case "RESERVED":
         return <>
@@ -404,28 +472,28 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
   }
 
 
-  return <Modal isOpen={!!tableChoosen} onClose={onCancel}>
+  return <Modal size={"full"} isOpen={!!tableChoosen} onClose={onCancel}>
     <DevTool control={control} /> {/* set up the dev tool */}
     <Modal.CloseButton />
-    <Modal.Content minWidth="500px">
-      <Modal.Header borderColor={"white"}>
+    <Modal.Content >
+      <Modal.Header borderColor={"gray.50"}>
         {"Table " + tableChoosen?._id}
         <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
           {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}</Badge>
       </Modal.Header>
       <Modal.Body>
         {renderContent()}
-        <Modal.Footer borderColor={"white"}>
-          <Button.Group>
-            <Button w={"100px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-              {"Cancel"}
-            </Button>
-            <Button w={"100px"} onPress={handleSubmit(onSubmit)}>
-              {"Open tab"}
-            </Button>
-          </Button.Group>
-        </Modal.Footer>
       </Modal.Body>
+      <Modal.Footer borderColor={"gray.50"}>
+        <Button.Group flex={1} justifyContent={"center"} space={4}>
+          <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
+            {"Cancel"}
+          </Button>
+          <Button w={"200px"} onPress={handleSubmit(onSubmit)}>
+            {"Open tab"}
+          </Button>
+        </Button.Group>
+      </Modal.Footer>
     </Modal.Content>
   </Modal >
 }
