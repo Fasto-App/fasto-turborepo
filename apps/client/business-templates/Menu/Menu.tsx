@@ -1,25 +1,21 @@
-import React from 'react'
+import React from "react";
 // import { MenuScreen } from './MenuScreen'
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import MenuScreen from './MenuScreen';
-import { useMenuMutationHook } from '../../graphQL/MenuQL';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import MenuScreen from "./MenuScreen";
+import { useMenuMutationHook } from "../../graphQL/MenuQL";
 
 // PRODUCT FORM STATE
 const menuSchema = z.object({
-  name: z.string().min(1, { message: 'Name Required' })
-    .max(50, { message: 'Name too long' }),
+  name: z
+    .string()
+    .min(1, { message: "Name Required" })
+    .max(50, { message: "Name too long" }),
 });
 
-
 export function Menu() {
-
-  const
-    {
-      allMenusByBusiness,
-      createMenu,
-    } = useMenuMutationHook()
+  const { allMenusByBusiness, createMenu } = useMenuMutationHook();
 
   const {
     setError,
@@ -28,21 +24,15 @@ export function Menu() {
     control,
     handleSubmit,
     formState,
-    register
+    register,
   } = useForm<{ name: string }>({
     defaultValues: {
-      name: '',
+      name: "",
     },
     resolver: zodResolver(menuSchema),
-
   });
 
-
-
   const onMenuSubmit = (values) => {
-
-
-
     // if error, set error and display to the user
     // and return false to prevent the form from submitting
     // if (formState.errors) {
@@ -54,21 +44,16 @@ export function Menu() {
       variables: {
         input: {
           name: values.name,
-        }
-      }
-    })
-  }
-
-
+        },
+      },
+    });
+  };
 
   return (
-    
     <MenuScreen
-    
       menusData={allMenusByBusiness}
       menuController={control}
       onMenuSubmit={handleSubmit(onMenuSubmit)}
     />
-  )
+  );
 }
-
