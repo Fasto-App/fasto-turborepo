@@ -745,6 +745,13 @@ export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, table: string, admin: string, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus } | null> } | null } | null> | null } | null> | null };
 
+export type CreateTabMutationVariables = Exact<{
+  input: CreateTabInput;
+}>;
+
+
+export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, table: string, status: TabStatus } };
+
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
 }>;
@@ -1342,6 +1349,41 @@ export function useGetSpacesFromBusinessLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetSpacesFromBusinessQueryHookResult = ReturnType<typeof useGetSpacesFromBusinessQuery>;
 export type GetSpacesFromBusinessLazyQueryHookResult = ReturnType<typeof useGetSpacesFromBusinessLazyQuery>;
 export type GetSpacesFromBusinessQueryResult = Apollo.QueryResult<GetSpacesFromBusinessQuery, GetSpacesFromBusinessQueryVariables>;
+export const CreateTabDocument = gql`
+    mutation CreateTab($input: CreateTabInput!) {
+  createTab(input: $input) {
+    _id
+    table
+    status
+  }
+}
+    `;
+export type CreateTabMutationFn = Apollo.MutationFunction<CreateTabMutation, CreateTabMutationVariables>;
+
+/**
+ * __useCreateTabMutation__
+ *
+ * To run a mutation, you first call `useCreateTabMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTabMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTabMutation, { data, loading, error }] = useCreateTabMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTabMutation(baseOptions?: Apollo.MutationHookOptions<CreateTabMutation, CreateTabMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTabMutation, CreateTabMutationVariables>(CreateTabDocument, options);
+      }
+export type CreateTabMutationHookResult = ReturnType<typeof useCreateTabMutation>;
+export type CreateTabMutationResult = Apollo.MutationResult<CreateTabMutation>;
+export type CreateTabMutationOptions = Apollo.BaseMutationOptions<CreateTabMutation, CreateTabMutationVariables>;
 export const CreateTableDocument = gql`
     mutation CreateTable($input: CreateTableInput) {
   createTable(input: $input) {

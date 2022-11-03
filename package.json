@@ -28,8 +28,8 @@
 		"turbo": "latest"
 	},
 	"engines": {
-		"node": "16.13.0",
-		"yarn": "1.22.17"
+		"node": "16.16.0",
+		"yarn": "1.22.19"
 	},
 	"dependencies": {},
 	"packageManager": "yarn@1.22.17"
