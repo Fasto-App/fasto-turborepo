@@ -20,6 +20,7 @@ const MenuTile = ({ menu, onPress, selected }) => {
 
   return (
     <Pressable onPress={onPress}>
+      
       <Box mr={4} w={200} h={"75px"} borderRadius={'lg'} borderColor={color} borderWidth={"1"} justifyContent={"center"}>
         <Text
           fontSize={"lg"}
@@ -41,6 +42,7 @@ export function MenuList({ menuController, onMenuSubmit, menusData }) {
   const renderMenu = ({ item, index }) => {
 
     return (
+      
       <MenuTile
         menu={item}
         selected={item._id === menu}
@@ -52,6 +54,7 @@ export function MenuList({ menuController, onMenuSubmit, menusData }) {
   }
 
   return (
+    
     <Box
       p={"4"}
       shadow={"4"}
@@ -85,6 +88,7 @@ export function MenuList({ menuController, onMenuSubmit, menusData }) {
               </Box>
               : <Text pt={3} fontSize={"xl"}>{texts.emptyListText}</Text>}
           </Box>
+          
           <HStack flex={1} space={1}>
             <FlatList
               horizontal
