@@ -56,6 +56,4 @@ export const validatePassword = (password: string) => {
       .match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/);
 }
 
-export const fetch = (url: RequestInfo, init?: RequestInit) => import("node-fetch").then(({ default: fetch }) => fetch(url, init));
-
 export const IS_DEVELOPMENT_SERVER = process.env.ENVIRONMENT === "development"

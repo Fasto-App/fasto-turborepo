@@ -1,5 +1,6 @@
 import { Connection, Types } from "mongoose"
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
+import { prop, getModelForClass, } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import { Category } from "./category";
 import { Product } from "./product";
 import { Business } from "./business";

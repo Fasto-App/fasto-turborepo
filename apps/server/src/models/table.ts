@@ -1,11 +1,8 @@
 import { Connection } from 'mongoose'
-import { prop, getModelForClass, Ref, pre } from '@typegoose/typegoose';
+import { prop, getModelForClass } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import { Space } from './space';
 import { TableStatus } from './types';
-
-@pre<Table>('save', function () {
-  console.log("DECORATOR Table Save")
-})
 
 export class Table {
   @prop({ required: true })
