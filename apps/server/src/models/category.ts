@@ -1,9 +1,6 @@
 import { Types, Connection } from 'mongoose'
 import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { Product } from './product';
-
-
-
 export class Category {
   @prop({ required: true })
   public name!: string;
