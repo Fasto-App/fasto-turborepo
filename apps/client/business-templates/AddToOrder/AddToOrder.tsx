@@ -123,8 +123,15 @@ export const AddToOrder = (props) => {
               <SmallAddMoreButton onPress={() => console.log("Hello")} />
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {patrons.map((patron) => (
-                    <Tile children={patron.name} selected={false} onPress={undefined} />
+                  {patrons.map((patron, index) => (
+                    <Box key={index}>
+                      <Tile
+                        selected={false}
+                        onPress={undefined}
+                      >
+                        {patron.name}
+                      </Tile>
+                    </Box>
                   ))}
                 </HStack>
               </ScrollView>
@@ -147,7 +154,10 @@ export const AddToOrder = (props) => {
               <Heading pr={10}>Menu</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {categories.map((patron) => (<Tile children={patron.name} selected={false} onPress={undefined} />))}
+                  {categories.map((patron) => (
+                    <Box>
+                      <Tile children={patron.name} selected={false} onPress={undefined} />
+                    </Box>))}
                 </HStack>
               </ScrollView>
             </HStack>

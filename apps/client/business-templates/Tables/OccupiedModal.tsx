@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider } from "native-base"
+import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider, Hidden } from "native-base"
 import { Tile } from "../../components/Tile"
 import { OrderStatus } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
@@ -25,28 +25,37 @@ enum FilterOrderBy {
 }
 
 export const OccupiedModal = () => {
-  const [tabOpen, setTabOpen] = useState<FilterOrderBy>()
+  const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.Patron)
   return (
     <Box>
-      <HStack flex={1} justifyContent={"space-around"}>
+      <HStack flex={1} justifyContent={"space-around"} space={2}>
         <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.Patron)}>
           <Heading size={"md"} textAlign={"center"}>{"By Patron"}</Heading>
-          <Divider />
+          <Divider bg={tabOpen === FilterOrderBy.Patron ? "gray.400" : "gray.300"} />
         </Pressable>
         <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.Table)}>
           <Heading size={"md"} textAlign={"center"}>{"By Table"}</Heading>
-          <Divider />
+          <Divider bg={tabOpen === FilterOrderBy.Table ? "gray.400" : "gray.300"} />
         </Pressable>
       </HStack>
+
+
       <Box p={8}>
-        <HStack space={2} pb={10}>
-          {patrons.map((patron) => (
-            <Tile children={patron.name} selected={false} onPress={undefined} />
-          ))}
-        </HStack>
-        {<VStack space={6}>
-          {orders.map((order) => <OrderTile order={order} />)}
-        </VStack>}
+        {tabOpen === FilterOrderBy.Patron ?
+          <>
+            <HStack space={2} pb={8}>
+              {patrons.map((patron) => (
+                <Tile children={patron.name} selected={false} onPress={undefined} />
+              ))}
+            </HStack>
+            <VStack space={6}>
+              {orders.map((order) => <OrderTile order={order} />)}
+            </VStack>
+          </> : (
+            <VStack space={6} pt={10}>
+              {orders.map((order) => <OrderTile key={order.id} order={order} />)}
+            </VStack>
+          )}
       </Box>
     </Box>
   )
@@ -56,9 +65,9 @@ const OrderTile = ({ order }) => {
   return (<HStack borderRadius={"md"} p={1} backgroundColor={"white"} flex={1} justifyContent={"space-between"}>
     <HStack>
       <Center>
-        <Image src={"https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2022%2F05%2F09%2Fbacon-509429382.jpg&q=60"}
+        <Image src={order.image}
           width={100} height={60}
-        />
+          alt={order.name} />
       </Center>
       <VStack pl={2} pt={3}>
         <Heading size={"sm"}>{`${order.name}`}</Heading>
@@ -68,8 +77,8 @@ const OrderTile = ({ order }) => {
 
     <Center>
       <Select selectedValue={"DELIVERED"} minWidth="200" accessibilityLabel="Choose Service" placeholder="Order Status" mt={1} onValueChange={itemValue => console.log(itemValue)}>
-        {Object.keys(OrderStatus).map((status) => (
-          <Select.Item label={status} value={status.toUpperCase()} />)
+        {Object.keys(OrderStatus).map((status, index) => (
+          <Select.Item key={index} label={status} value={status.toUpperCase()} />)
         )}
       </Select>
     </Center>

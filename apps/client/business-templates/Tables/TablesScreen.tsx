@@ -412,7 +412,7 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
 
 
   return <Modal size={size} isOpen={!!tableChoosen} onClose={onCancel}>
-    <DevTool control={control} /> {/* set up the dev tool */}
+    <DevTool control={control} />
     <Modal.CloseButton />
     <Modal.Content >
       <Modal.Header borderColor={"gray.50"}>
