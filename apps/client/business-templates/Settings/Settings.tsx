@@ -48,6 +48,7 @@ export function Settings() {
   const renderCategories = ({ item }) => {
     const selected = selectedTab === item
     return (
+      
       <Button
         px={4}
         m={0}
@@ -65,6 +66,7 @@ export function Settings() {
 
   return (
     <VStack m={"4"} mt={12} space={"4"} flex={1}>
+      
       <VStack
         space={"2"}
         p={"4"}
@@ -172,6 +174,7 @@ const ManageAccount = () => {
         Config={ManageAccountConfig}
       />
       <Box>
+        
         <HStack alignItems="center" space={2} justifyContent="end">
           <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
             {texts.cancel}
