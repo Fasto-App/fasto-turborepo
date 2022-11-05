@@ -1,5 +1,6 @@
 import { Connection } from 'mongoose'
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+import { getModelForClass, prop } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import { User } from './user';
 import { Table } from './table';
 import { TabStatus } from './types';

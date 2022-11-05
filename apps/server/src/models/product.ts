@@ -1,13 +1,10 @@
 import { Types, Connection } from "mongoose";
-import { prop, getModelForClass, Ref, pre } from '@typegoose/typegoose';
+import { prop, getModelForClass } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import { Business } from "./business";
 import { Category } from "./category";
 
 const defaultImage = "https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png"
-
-@pre<Product>('save', function () {
-
-})
 export class Product {
   @prop({ required: true })
   public name!: string;
