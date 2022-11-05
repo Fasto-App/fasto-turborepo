@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 dotenv.config();
 
 // console.log("mongodb://mongo:8AkiVWxYNcVcjuRDDaHf@containers-us-west-85.railway.app:7492")
