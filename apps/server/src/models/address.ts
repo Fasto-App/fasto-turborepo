@@ -1,11 +1,6 @@
 import { Schema, model, SchemaDefinition, SchemaTypes, Connection } from 'mongoose'
 import { prop, getModelForClass, Ref, pre } from '@typegoose/typegoose';
 
-@pre<Address>('updateOne', function () {
-
-
-})
-
 export class Address {
     @prop({ required: true })
     public city!: string;

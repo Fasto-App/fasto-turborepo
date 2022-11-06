@@ -1,6 +1,6 @@
 import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import dbConnect from '../models/db';
+import { dbConnection } from '../dbConnection';
 import { ApolloExtendedError } from "./ApolloErrorExtended/ApolloErrorExtended";
 import { resolvers } from "./resolvers/GraphResolvers";
 import { getUserFromToken } from "./resolvers/utils";
@@ -23,7 +23,7 @@ import {
 
 
 
-const db = dbConnect();
+const db = dbConnection();
 
 function logUserCredentialsValid(userFromToken: boolean) {
   console.log("BACKEND: ID, EMAIL, BUSINESS  🔐 ", userFromToken ? "✅" : "❌");
