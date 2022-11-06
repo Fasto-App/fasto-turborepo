@@ -54,9 +54,11 @@ const products = new Array(10).fill({
   imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRfpZB0_3qGRT0vx7Jlw662goIgQc9en4esg&usqp=CAU",
 })
 
-export const AddToOrder = (props) => {
+export const AddToOrder = (props: any) => {
   const route = useRouter()
   const { orderId } = route.query
+
+  console.log(props, orderId)
 
   return (
     <Flex flexDirection={"row"} flex={1}>
@@ -124,7 +126,9 @@ export const AddToOrder = (props) => {
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
                   {patrons.map((patron) => (
-                    <Tile children={patron.name} selected={false} onPress={undefined} />
+                    <Tile key={patron._id} selected={false} onPress={undefined}>
+                      {patron.name}
+                    </Tile>
                   ))}
                 </HStack>
               </ScrollView>
@@ -147,14 +151,19 @@ export const AddToOrder = (props) => {
               <Heading pr={10}>Menu</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {categories.map((patron) => (<Tile children={patron.name} selected={false} onPress={undefined} />))}
+                  {categories.map((patron) => (<Tile key={patron._id} selected={false} onPress={undefined}>
+                    {patron.name}
+                  </Tile>))}
                 </HStack>
               </ScrollView>
             </HStack>
 
             <ScrollView pt={2}>
               <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-                {products.map((product) => <ProductTile product={product} onEdit={() => console.log("Hello")} />)}
+                {products.map((product) => <ProductTile
+                  key={product._id}
+                  product={product}
+                  onEdit={() => console.log("Hello")} />)}
               </VStack>
             </ScrollView>
           </BottomSection>

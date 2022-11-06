@@ -8,7 +8,7 @@ import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../..
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Pressable } from "react-native"
-import { add, format } from 'date-fns'
+import { format } from 'date-fns'
 import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { AllAndEditButtons } from "../AllAndAddButons"
