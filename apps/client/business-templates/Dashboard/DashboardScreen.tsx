@@ -1,7 +1,5 @@
 import { Box, HStack, VStack } from "native-base"
 import React from "react"
-import { AppBar } from "../../components/AppBar/AppBar"
-
 
 export const DashboardScreen = () => {
   return (

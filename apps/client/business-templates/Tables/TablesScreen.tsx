@@ -1,6 +1,6 @@
 import React from "react"
 import * as z from "zod"
-import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge } from "native-base"
+import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge, Image, Input, CheckIcon, Select } from "native-base"
 import { useState } from "react"
 import { AiOutlinePlus } from "react-icons/ai"
 import { typedKeys } from "../../authUtilities/utils"
@@ -13,17 +13,22 @@ import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { AllAndEditButtons } from "../AllAndAddButons"
 import { useTableMutationHook } from "../../graphQL/TableQL"
-import { Table, TableStatus } from "../../gen/generated"
+import { OrderStatus, Table, TableStatus } from "../../gen/generated"
 import { DevTool } from "@hookform/devtools";
 import { useTabMutationHook } from "../../graphQL/TabQL"
 import { businessRoute } from "../../routes"
 import { useRouter } from "next/router"
+import { Tile } from "../../components/Tile"
+import { parseToCurrency } from "../../utils"
+import { OccupiedModal } from "./OccupiedModal"
 
 const texts = {
   space: "Space"
 }
 
 type SelectedTable = Omit<Table, "__typename" | "space" | "tab">
+
+
 
 export const TablesScreen = () => {
   const {
@@ -335,6 +340,9 @@ const tableSchema = z.object({
   }),
 })
 
+
+
+
 const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedTable, setTableChoosen: (table: Table) => void }) => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
@@ -383,10 +391,7 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
   const renderContent = () => {
     switch (tableChoosen?.status) {
       case "OCCUPIED":
-        return <>
-          <Text>{"tableChoosen.ocuppant.name"}</Text>
-          <Text>{"tableChoosen.ocuppant.phone"}</Text>
-        </>
+        return <OccupiedModal />
       case "RESERVED":
         return <>
           <Text>{"tableChoosen.reservation.name"}</Text>
@@ -403,29 +408,31 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
     }
   }
 
+  const size = tableChoosen?.status === "OCCUPIED" ? "full" : "lg"
 
-  return <Modal isOpen={!!tableChoosen} onClose={onCancel}>
-    <DevTool control={control} /> {/* set up the dev tool */}
+
+  return <Modal size={size} isOpen={!!tableChoosen} onClose={onCancel}>
+    <DevTool control={control} />
     <Modal.CloseButton />
-    <Modal.Content minWidth="500px">
-      <Modal.Header borderColor={"white"}>
+    <Modal.Content >
+      <Modal.Header borderColor={"gray.50"}>
         {"Table " + tableChoosen?._id}
         <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
           {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}</Badge>
       </Modal.Header>
       <Modal.Body>
         {renderContent()}
-        <Modal.Footer borderColor={"white"}>
-          <Button.Group>
-            <Button w={"100px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-              {"Cancel"}
-            </Button>
-            <Button w={"100px"} onPress={handleSubmit(onSubmit)}>
-              {"Open tab"}
-            </Button>
-          </Button.Group>
-        </Modal.Footer>
       </Modal.Body>
+      <Modal.Footer borderColor={"gray.50"}>
+        <Button.Group flex={1} justifyContent={"center"} space={4}>
+          <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
+            {"Cancel"}
+          </Button>
+          <Button w={"200px"} onPress={handleSubmit(onSubmit)}>
+            {"Open tab"}
+          </Button>
+        </Button.Group>
+      </Modal.Footer>
     </Modal.Content>
   </Modal >
 }

@@ -69,7 +69,6 @@ export const AddToOrder = (props: any) => {
             <Divider orientation="vertical" mx="3" />
             <Text py="2">2 {texts.people}</Text>
           </Flex>
-
           <ScrollView flex={1}>
             {orders.map((order, index) =>
               <SummaryComponent
@@ -84,20 +83,16 @@ export const AddToOrder = (props: any) => {
                 lastItem={index === orders.length - 1}
               />)}
           </ScrollView>
-
           <Box w={"100%"} justifyContent={"end"} pt={2}>
             <Divider mb="3" />
             <HStack justifyContent={"space-between"} pb={2}>
               <Heading size={"md"}>{texts.total}</Heading>
               <Heading size={"md"}>{parseToCurrency(2400)}</Heading>
             </HStack>
-
-
             <VStack space={4}>
               <Button w={"full"}>
                 <Text color={"white"}>{texts.sendToKitchen}</Text>
               </Button>
-
               <Button
                 flex={1}
                 p={0}
@@ -109,18 +104,15 @@ export const AddToOrder = (props: any) => {
               >
                 {texts.back}
               </Button>
-
             </VStack>
           </Box>
         </Flex>
       </LeftSideBar>
       <Box flex={1}>
         <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
-
         <VStack flex={1} p={4} space={4}>
           <UpperSection>
             <Heading>{texts.patrons}</Heading>
-
             <HStack space={2}>
               <SmallAddMoreButton onPress={() => console.log("Hello")} />
               <ScrollView horizontal={true} pb={2}>
@@ -133,7 +125,6 @@ export const AddToOrder = (props: any) => {
                 </HStack>
               </ScrollView>
             </HStack>
-
             <SideBySideButtons
               leftAction={undefined}
               rightAction={undefined}
@@ -143,11 +134,8 @@ export const AddToOrder = (props: any) => {
               rightDisabled={false}
             />
           </UpperSection>
-
-
           <BottomSection>
             <HStack space={2}>
-
               <Heading pr={10}>Menu</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
@@ -157,7 +145,6 @@ export const AddToOrder = (props: any) => {
                 </HStack>
               </ScrollView>
             </HStack>
-
             <ScrollView pt={2}>
               <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
                 {products.map((product) => <ProductTile
