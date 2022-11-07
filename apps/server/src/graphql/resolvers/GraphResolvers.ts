@@ -18,6 +18,7 @@ import {
   CategoryResolverQuery,
 } from './CategoryResolver';
 import {
+  MenuResolver,
   MenuResolverMutation,
   MenuResolverQuery
 } from './MenuResolver';
@@ -85,14 +86,15 @@ export const resolvers = {
   },
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,
-  }
+  },
   // Users: {
   //   orders: getAllOpenOrdersByTabID,
   // }
-  // Menu: {
-  //   sections: getSectionsByMenu,
-  // },
-  // Section: {
-  //   products: getProductsBySection,
-  // }
+  Menu: {
+    // sections: MenuResolver.getSectionsByMenu,
+  },
+  Section: {
+    products: MenuResolver.getProductsBySection,
+    category: MenuResolver.getCategoryBySection,
+  }
 };

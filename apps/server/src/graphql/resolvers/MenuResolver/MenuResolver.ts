@@ -1,5 +1,5 @@
 import { Connection } from "mongoose";
-import { MenuModel, ProductModel, CategoryModel, Section } from "../../../models";
+import { MenuModel, ProductModel, CategoryModel, Section, Product } from "../../../models";
 import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMenuInput, UpdateMenuInput } from "./types";
@@ -28,9 +28,10 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
 
 const getMenuByID = async (_parent: any, { id }: { id: string }, { db }: { db: Connection }) => {
     const Menu = MenuModel(db);
-    const menu = await Menu.findOne({ _id: id });
+    const menu = await Menu.findOne({ _id: "635c687451cb178c2e214465" });
     if (!menu) throw Error('Menu not found');
-    return await menu.populate({ path: 'sections', populate: { path: 'products' } });
+
+    return menu
 }
 
 
@@ -156,8 +157,28 @@ const MenuResolverQuery = {
     getMenuByID,
 }
 
-const MenuResolver = {
+const getSectionsByMenu = async (_parent: any, args: any, { db }: { db: Connection }) => {
+    console.log(_parent)
 
+    return _parent;
+}
+
+const getProductsBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
+    const Product = ProductModel(db);
+    const products = await Product.find({ _id: { $in: _parent.products } })
+    return products;
+}
+
+const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
+    const Category = CategoryModel(db);
+    const category = await Category.find({ _id: { $in: _parent.category } })
+    return category;
+}
+
+const MenuResolver = {
+    getSectionsByMenu,
+    getProductsBySection,
+    getCategoryBySection
 }
 
 export { MenuResolverMutation, MenuResolverQuery, MenuResolver }

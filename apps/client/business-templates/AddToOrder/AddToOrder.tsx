@@ -60,6 +60,8 @@ export const AddToOrder = (props: any) => {
 
   console.log(props, orderId)
 
+  //TODO: get all the products from menu
+
   return (
     <Flex flexDirection={"row"} flex={1}>
       <LeftSideBar>

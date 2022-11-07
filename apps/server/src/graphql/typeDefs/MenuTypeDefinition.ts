@@ -30,6 +30,21 @@ export const MenuTypeDefinition = gql`
     sections: [Section!]
   } 
 
+  input UpdateSectionInput {
+    category: ID!
+    products: [ID]
+  }
+
+  input SectionInput {
+    name: String!
+    products: [String!]!
+  }
+
+  type Section {
+    category: Category!
+    products: [Product!]
+  }
+
 
 
 `

@@ -22,7 +22,6 @@ export const ControlledForm = <T extends Record<string, string>>({
   Config
 }: ControlledFormType<T>) => {
 
-  console.log(formState?.errors)
   return (<ScrollView>
     {
       typedKeys(Config).map((key) => {

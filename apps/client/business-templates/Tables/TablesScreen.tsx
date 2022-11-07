@@ -362,24 +362,33 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
   })
 
   const onSubmit = async (data: any) => {
-    try {
-      console.log({
-        table: tableChoosen._id,
-        admin: data.admin,
-        totalUsers: data.totalUsers
-      })
-      const result = await createTab({
-        variables: {
-          input: {
-            table: tableChoosen._id,
-            admin: data.admin,
-            totalUsers: data.totalUsers
-          }
-        }
-      })
 
-      router.push(businessRoute.add_to_order(result.data.createTab._id))
-    } catch { }
+    console.log("onSubmit click")
+    console.log(tableChoosen)
+
+    switch (tableChoosen?.status) {
+      case "AVAILABLE":
+        try {
+          const result = await createTab({
+            variables: {
+              input: {
+                table: tableChoosen._id,
+                admin: data.admin,
+                totalUsers: data.totalUsers
+              }
+            }
+          })
+
+          router.push(businessRoute.add_to_order(result.data.createTab._id))
+        } catch { }
+        break;
+
+      case "OCCUPIED":
+        console.log(tableChoosen)
+        router.push(businessRoute.add_to_order(tableChoosen._id))
+        break;
+    }
+
   }
 
   const onCancel = () => {
@@ -428,7 +437,7 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
           <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
             {"Cancel"}
           </Button>
-          <Button w={"200px"} onPress={handleSubmit(onSubmit)}>
+          <Button w={"200px"} onPress={tableChoosen?.status === "OCCUPIED" ? onSubmit : handleSubmit(onSubmit)}>
             {"Open tab"}
           </Button>
         </Button.Group>
@@ -462,6 +471,8 @@ const { totalUsers, admin } = TabConfig
 const SideBySideTabConfig: SideBySideInputConfig = {
   info: [{ totalUsers }, { admin }]
 }
+
+
 
 const AddTableModal = ({ isModalOpen, setIsModalOpen, postNewTable }) => {
   const onSubmit = async () => {
