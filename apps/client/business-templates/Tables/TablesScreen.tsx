@@ -379,13 +379,13 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
             }
           })
 
-          router.push(businessRoute.add_to_order(result.data.createTab._id))
+          router.push(businessRoute.add_to_order(result.data.createTab._id, "635c687451cb178c2e214465"),)
         } catch { }
         break;
 
       case "OCCUPIED":
         console.log(tableChoosen)
-        router.push(businessRoute.add_to_order(tableChoosen._id))
+        router.push(businessRoute.add_to_order(tableChoosen._id, "635c687451cb178c2e214465"))
         break;
     }
 

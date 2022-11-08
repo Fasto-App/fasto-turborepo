@@ -26,9 +26,12 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
     }
 }
 
-const getMenuByID = async (_parent: any, { id }: { id: string }, { db }: { db: Connection }) => {
+const getMenuByID = async (_parent: any, args: any, { db }: { db: Connection }) => {
+
+    console.log(args)
+
     const Menu = MenuModel(db);
-    const menu = await Menu.findOne({ _id: "635c687451cb178c2e214465" });
+    const menu = await Menu.findOne({ _id: args.input.id });
     if (!menu) throw Error('Menu not found');
 
     return menu
@@ -37,9 +40,6 @@ const getMenuByID = async (_parent: any, { id }: { id: string }, { db }: { db: C
 
 const getAllMenusByBusinessID = async (_parent: any, { id }: { id: string }, { db, business }: Context) => {
     const Menu = MenuModel(db);
-
-    console.log("business", business)
-
     const allMenusByBusiness = await Menu.find({ business });
     return allMenusByBusiness;
 }
@@ -170,9 +170,11 @@ const getProductsBySection = async (_parent: any, args: any, { db }: { db: Conne
 }
 
 const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
+
+    console.log(_parent)
     const Category = CategoryModel(db);
-    const category = await Category.find({ _id: { $in: _parent.category } })
-    return category;
+    const category = await Category.findById(_parent.category)
+    return category?._id;
 }
 
 const MenuResolver = {

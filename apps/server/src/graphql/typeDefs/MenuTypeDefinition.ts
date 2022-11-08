@@ -2,6 +2,12 @@ import { gql } from "apollo-server-express";
 
 export const MenuTypeDefinition = gql`
 
+  extend type Query {
+    getAllMenusByBusinessID: [Menu]!
+    getMenuByID(input: GetMenuById): Menu!
+    getAllMenus: [Menu!]!
+  }
+
   extend type Mutation {
     createMenu(input: CreateMenuInput): Menu!
     updateMenu(input: UpdateMenuInput): Menu
@@ -16,6 +22,10 @@ export const MenuTypeDefinition = gql`
   input UpdateMenuInfoInput {
     _id: ID!
     name: String!
+  }
+
+  input GetMenuById {
+    id: ID!
   }
 
   input UpdateMenuInput {
@@ -41,7 +51,7 @@ export const MenuTypeDefinition = gql`
   }
 
   type Section {
-    category: Category!
+    category: ID!
     products: [Product!]
   }
 

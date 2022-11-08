@@ -56,11 +56,13 @@ const products = new Array(10).fill({
 
 export const AddToOrder = (props: any) => {
   const route = useRouter()
-  const { orderId } = route.query
+  const { orderId, menuId } = route.query
 
-  console.log(props, orderId)
-
+  console.log(orderId, menuId)
   //TODO: get all the products from menu
+  // map section to extract categories
+  // keep track of the selected category and filter the products array
+  // keep track of the selected product and add it to the order
 
   return (
     <Flex flexDirection={"row"} flex={1}>
@@ -141,8 +143,8 @@ export const AddToOrder = (props: any) => {
               <Heading pr={10}>Menu</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {categories.map((patron) => (<Tile key={patron._id} selected={false} onPress={undefined}>
-                    {patron.name}
+                  {categories.map((category) => (<Tile key={category._id} selected={false} onPress={undefined}>
+                    {category.name}
                   </Tile>))}
                 </HStack>
               </ScrollView>
