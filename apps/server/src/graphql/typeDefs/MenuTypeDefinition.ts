@@ -51,7 +51,7 @@ export const MenuTypeDefinition = gql`
   }
 
   type Section {
-    category: ID!
+    category: Category!
     products: [Product!]
   }
 

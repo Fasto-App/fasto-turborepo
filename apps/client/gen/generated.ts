@@ -148,6 +148,10 @@ export type GetById = {
   _id: Scalars['ID'];
 };
 
+export type GetMenuById = {
+  id: Scalars['ID'];
+};
+
 export type LinkCategoryToProductInput = {
   category: Scalars['ID'];
   products: Array<InputMaybe<Scalars['String']>>;
@@ -419,6 +423,7 @@ export type Query = {
   getAllBusiness?: Maybe<Array<Maybe<Business>>>;
   getAllBusinessByUser?: Maybe<Array<Maybe<Business>>>;
   getAllCategoriesByBusiness: Array<Maybe<Category>>;
+  getAllMenus: Array<Menu>;
   getAllMenusByBusinessID: Array<Maybe<Menu>>;
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllOrderDetailsByOrderID?: Maybe<Array<Maybe<OrderDetail>>>;
@@ -427,7 +432,7 @@ export type Query = {
   getAllUsers: Array<User>;
   getBusinessByID?: Maybe<Business>;
   getCategoryByID?: Maybe<Category>;
-  getMenuByID?: Maybe<Menu>;
+  getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Maybe<Space>>>;
@@ -450,6 +455,11 @@ export type QueryGetAllOrderDetailsByOrderIdArgs = {
 
 export type QueryGetCategoryByIdArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetMenuByIdArgs = {
+  input?: InputMaybe<GetMenuById>;
 };
 
 
@@ -484,8 +494,8 @@ export type RequestUserAccountInput = {
 
 export type Section = {
   __typename?: 'Section';
-  category: Scalars['ID'];
-  products?: Maybe<Array<Scalars['ID']>>;
+  category: Category;
+  products?: Maybe<Array<Product>>;
 };
 
 export type SectionInput = {
@@ -509,7 +519,7 @@ export type Tab = {
   created_date: Scalars['String'];
   orders: Array<Maybe<OrderDetail>>;
   status: TabStatus;
-  table: Scalars['ID'];
+  table: Table;
   users: Array<Scalars['ID']>;
 };
 
@@ -667,24 +677,29 @@ export type UpdateCategoryMutationVariables = Exact<{
 
 export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory?: { __typename?: 'Category', _id: string, name: string, description?: string | null } | null };
 
-export type CreateMenuMutationVariables = Exact<{
-  input?: InputMaybe<CreateMenuInput>;
-}>;
+export type CreateMenuMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CreateMenuMutation = { __typename?: 'Mutation', createMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: string, products?: Array<string> | null }> | null } };
+export type CreateMenuMutation = { __typename?: 'Mutation', createMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', name: string }, products?: Array<{ __typename?: 'Product', _id: string }> | null }> | null } };
 
 export type DeleteMenuMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeleteMenuMutation = { __typename?: 'Mutation', deleteMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: string, products?: Array<string> | null }> | null } };
+export type DeleteMenuMutation = { __typename?: 'Mutation', deleteMenu: { __typename?: 'Menu', _id: string, name: string } };
+
+export type GetMenuByIdQueryVariables = Exact<{
+  input?: InputMaybe<GetMenuById>;
+}>;
+
+
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number }> | null }> | null } };
 
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: string, products?: Array<string> | null }> | null } | null> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string } | null> };
 
 export type UpdateMenuInfoMutationVariables = Exact<{
   input?: InputMaybe<UpdateMenuInfoInput>;
@@ -698,7 +713,7 @@ export type UpdateMenuMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: string, products?: Array<string> | null }> | null } | null };
+export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string } | null };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -743,14 +758,21 @@ export type CreateSpaceMutation = { __typename?: 'Mutation', createSpace: { __ty
 export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, table: string, admin: string, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus } | null> } | null } | null> | null } | null> | null };
+export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus } | null> } | null } | null> | null } | null> | null };
 
 export type CreateTabMutationVariables = Exact<{
   input: CreateTabInput;
 }>;
 
 
-export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, table: string, status: TabStatus } };
+export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, status: TabStatus, table: { __typename?: 'Table', _id: string, tableNumber: string } } };
+
+export type GetTabByIdQueryVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, users: Array<string>, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string } | null> } | null };
 
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
@@ -900,13 +922,17 @@ export type UpdateCategoryMutationHookResult = ReturnType<typeof useUpdateCatego
 export type UpdateCategoryMutationResult = Apollo.MutationResult<UpdateCategoryMutation>;
 export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
 export const CreateMenuDocument = gql`
-    mutation CreateMenu($input: CreateMenuInput) {
-  createMenu(input: $input) {
+    mutation CreateMenu {
+  createMenu {
     _id
     name
     sections {
-      category
-      products
+      category {
+        name
+      }
+      products {
+        _id
+      }
     }
   }
 }
@@ -926,7 +952,6 @@ export type CreateMenuMutationFn = Apollo.MutationFunction<CreateMenuMutation, C
  * @example
  * const [createMenuMutation, { data, loading, error }] = useCreateMenuMutation({
  *   variables: {
- *      input: // value for 'input'
  *   },
  * });
  */
@@ -942,10 +967,6 @@ export const DeleteMenuDocument = gql`
   deleteMenu(id: $id) {
     _id
     name
-    sections {
-      category
-      products
-    }
   }
 }
     `;
@@ -975,15 +996,59 @@ export function useDeleteMenuMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteMenuMutationHookResult = ReturnType<typeof useDeleteMenuMutation>;
 export type DeleteMenuMutationResult = Apollo.MutationResult<DeleteMenuMutation>;
 export type DeleteMenuMutationOptions = Apollo.BaseMutationOptions<DeleteMenuMutation, DeleteMenuMutationVariables>;
+export const GetMenuByIdDocument = gql`
+    query GetMenuByID($input: GetMenuById) {
+  getMenuByID(input: $input) {
+    _id
+    name
+    sections {
+      category {
+        _id
+        name
+      }
+      products {
+        _id
+        name
+        imageUrl
+        price
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMenuByIdQuery__
+ *
+ * To run a query within a React component, call `useGetMenuByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenuByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMenuByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetMenuByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
+      }
+export function useGetMenuByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
+        }
+export type GetMenuByIdQueryHookResult = ReturnType<typeof useGetMenuByIdQuery>;
+export type GetMenuByIdLazyQueryHookResult = ReturnType<typeof useGetMenuByIdLazyQuery>;
+export type GetMenuByIdQueryResult = Apollo.QueryResult<GetMenuByIdQuery, GetMenuByIdQueryVariables>;
 export const GetAllMenusByBusinessIdDocument = gql`
     query GetAllMenusByBusinessID {
   getAllMenusByBusinessID {
     _id
     name
-    sections {
-      category
-      products
-    }
   }
 }
     `;
@@ -1053,10 +1118,6 @@ export const UpdateMenuDocument = gql`
   updateMenu(input: $input) {
     _id
     name
-    sections {
-      category
-      products
-    }
   }
 }
     `;
@@ -1311,7 +1372,10 @@ export const GetSpacesFromBusinessDocument = gql`
       tableNumber
       tab {
         _id
-        table
+        table {
+          _id
+          tableNumber
+        }
         admin
         orders {
           _id
@@ -1353,8 +1417,11 @@ export const CreateTabDocument = gql`
     mutation CreateTab($input: CreateTabInput!) {
   createTab(input: $input) {
     _id
-    table
     status
+    table {
+      _id
+      tableNumber
+    }
   }
 }
     `;
@@ -1384,6 +1451,49 @@ export function useCreateTabMutation(baseOptions?: Apollo.MutationHookOptions<Cr
 export type CreateTabMutationHookResult = ReturnType<typeof useCreateTabMutation>;
 export type CreateTabMutationResult = Apollo.MutationResult<CreateTabMutation>;
 export type CreateTabMutationOptions = Apollo.BaseMutationOptions<CreateTabMutation, CreateTabMutationVariables>;
+export const GetTabByIdDocument = gql`
+    query GetTabByID($input: GetById!) {
+  getTabByID(input: $input) {
+    _id
+    users
+    table {
+      _id
+      tableNumber
+    }
+    orders {
+      _id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTabByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTabByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTabByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTabByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetTabByIdQuery(baseOptions: Apollo.QueryHookOptions<GetTabByIdQuery, GetTabByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTabByIdQuery, GetTabByIdQueryVariables>(GetTabByIdDocument, options);
+      }
+export function useGetTabByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTabByIdQuery, GetTabByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTabByIdQuery, GetTabByIdQueryVariables>(GetTabByIdDocument, options);
+        }
+export type GetTabByIdQueryHookResult = ReturnType<typeof useGetTabByIdQuery>;
+export type GetTabByIdLazyQueryHookResult = ReturnType<typeof useGetTabByIdLazyQuery>;
+export type GetTabByIdQueryResult = Apollo.QueryResult<GetTabByIdQuery, GetTabByIdQueryVariables>;
 export const CreateTableDocument = gql`
     mutation CreateTable($input: CreateTableInput) {
   createTable(input: $input) {

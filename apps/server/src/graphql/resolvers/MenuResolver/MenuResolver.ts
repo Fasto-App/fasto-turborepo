@@ -174,7 +174,7 @@ const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Conne
     console.log(_parent)
     const Category = CategoryModel(db);
     const category = await Category.findById(_parent.category)
-    return category?._id;
+    return category;
 }
 
 const MenuResolver = {

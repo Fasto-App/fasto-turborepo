@@ -56,9 +56,9 @@ export const SummaryComponent = ({ name,
     </HStack>
     <HStack pb={3}>
       <HStack space={2}>
-        <StyledIconButton type="plus" onPress={onPlusPress} />
-        <Text>{quantity}</Text>
         <StyledIconButton type={"minus"} onPress={onMinusPress} />
+        <Text textAlign={"center"} w={4}>{quantity}</Text>
+        <StyledIconButton type="plus" onPress={onPlusPress} />
       </HStack>
       <HStack justifyContent={"space-between"} flex={1} pl={8}>
         <Button

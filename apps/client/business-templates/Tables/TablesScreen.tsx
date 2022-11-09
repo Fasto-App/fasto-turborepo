@@ -26,9 +26,7 @@ const texts = {
   space: "Space"
 }
 
-type SelectedTable = Omit<Table, "__typename" | "space" | "tab">
-
-
+type SelectedTable = Omit<Table, "__typename" | "space" | "tab"> & { tab: string }
 
 export const TablesScreen = () => {
   const {
@@ -78,6 +76,7 @@ export const TablesScreen = () => {
           _id: item._id,
           status: item.status,
           tableNumber: item.tableNumber,
+          tab: item.tab._id
         })
       }} />)
   }
@@ -343,7 +342,8 @@ const tableSchema = z.object({
 
 
 
-const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedTable, setTableChoosen: (table: Table) => void }) => {
+const TableModal = ({ tableChoosen, setTableChoosen }:
+  { tableChoosen: SelectedTable, setTableChoosen: (table: SelectedTable) => void }) => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
 
@@ -385,7 +385,7 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
 
       case "OCCUPIED":
         console.log(tableChoosen)
-        router.push(businessRoute.add_to_order(tableChoosen._id, "635c687451cb178c2e214465"))
+        router.push(businessRoute.add_to_order(tableChoosen.tab, "635c687451cb178c2e214465"))
         break;
     }
 

@@ -20,6 +20,7 @@ import { Tile } from "../../components/Tile";
 import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
+import { Product, useGetMenuByIdQuery, useGetTabByIdQuery } from "../../gen/generated";
 
 const texts = {
   back: "Back",
@@ -30,39 +31,43 @@ const texts = {
   patrons: "Patrons",
 }
 
-const orders = new Array(5).fill({
-  id: 2,
-  name: "Ravioli a la carbonara de Queijo",
-  price: 1200,
-  quantity: 1,
-});
-
-const patrons = new Array(3).fill({
-  id: 2,
-  name: "Alexandre",
-})
-
-const categories = new Array(5).fill({
-  id: 2,
-  name: "Pizzas",
-})
-
-const products = new Array(10).fill({
-  _id: 23,
-  name: "Polenta",
-  price: 2300,
-  imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRfpZB0_3qGRT0vx7Jlw662goIgQc9en4esg&usqp=CAU",
-})
+type NewOrder = Product & { quantity: number }
 
 export const AddToOrder = (props: any) => {
   const route = useRouter()
-  const { orderId, menuId } = route.query
+  const { tabId, menuId } = route.query
+  const [orderItems, setOrderItems] = React.useState<NewOrder[]>([])
+  const [selectedUser, setSelectedUser] = React.useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null)
 
-  console.log(orderId, menuId)
-  //TODO: get all the products from menu
-  // map section to extract categories
-  // keep track of the selected category and filter the products array
-  // keep track of the selected product and add it to the order
+  const { data: menuData } = useGetMenuByIdQuery({
+    variables: {
+      input: {
+        id: menuId as string,
+      }
+    },
+    onCompleted: (data) => {
+      if (data?.getMenuByID?.sections?.[0].category._id) {
+        setSelectedCategory(data?.getMenuByID?.sections?.[0].category._id)
+      }
+    }
+  })
+
+  const { data: tabData } = useGetTabByIdQuery({
+    variables: {
+      input: {
+        _id: tabId as string,
+      }
+    }
+  })
+
+  const sections = menuData?.getMenuByID?.sections || []
+  const filteredSection = sections.find(section => section.category._id === selectedCategory)
+  const products = filteredSection?.products || []
+
+  const onPlusPress = () => {
+
+  }
 
   return (
     <Flex flexDirection={"row"} flex={1}>
@@ -74,17 +79,39 @@ export const AddToOrder = (props: any) => {
             <Text py="2">2 {texts.people}</Text>
           </Flex>
           <ScrollView flex={1}>
-            {orders.map((order, index) =>
+            {orderItems?.map((order, index) =>
               <SummaryComponent
-                key={order.id}
+                key={order._id}
                 name={order.name}
                 price={order.price}
                 quantity={order.quantity}
                 onEditPress={() => console.log("EDIT")}
                 onRemovePress={() => console.log("REMOVE")}
-                onPlusPress={() => console.log("PLUS")}
-                onMinusPress={() => console.log("MINUS")}
-                lastItem={index === orders.length - 1}
+                onPlusPress={() => {
+                  const newOrderItems = orderItems.map(item => {
+                    if (item._id === order._id) {
+                      return {
+                        ...item,
+                        quantity: item.quantity + 1
+                      }
+                    }
+                    return item
+                  })
+                  setOrderItems(newOrderItems)
+                }}
+                onMinusPress={() => {
+                  const newOrderItems = orderItems.map(item => {
+                    if (item._id === order._id && item.quantity > 1) {
+                      return {
+                        ...item,
+                        quantity: item.quantity - 1
+                      }
+                    }
+                    return item
+                  })
+                  setOrderItems(newOrderItems)
+                }}
+                lastItem={index === orderItems.length - 1}
               />)}
           </ScrollView>
           <Box w={"100%"} justifyContent={"end"} pt={2}>
@@ -121,9 +148,13 @@ export const AddToOrder = (props: any) => {
               <SmallAddMoreButton onPress={() => console.log("Hello")} />
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {patrons.map((patron) => (
-                    <Tile key={patron._id} selected={false} onPress={undefined}>
-                      {patron.name}
+                  {tabData?.getTabByID?.users.map((user) => (
+                    <Tile
+                      key={user}
+                      selected={user === selectedUser}
+                      onPress={() => setSelectedUser(user)}
+                    >
+                      {user}
                     </Tile>
                   ))}
                 </HStack>
@@ -143,9 +174,13 @@ export const AddToOrder = (props: any) => {
               <Heading pr={10}>Menu</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {categories.map((category) => (<Tile key={category._id} selected={false} onPress={undefined}>
-                    {category.name}
-                  </Tile>))}
+                  {sections.map((section) => (
+                    <Tile
+                      key={section.category._id}
+                      selected={section.category._id === selectedCategory}
+                      onPress={() => setSelectedCategory(section.category._id)}>
+                      {section.category.name}
+                    </Tile>))}
                 </HStack>
               </ScrollView>
             </HStack>
@@ -154,7 +189,19 @@ export const AddToOrder = (props: any) => {
                 {products.map((product) => <ProductTile
                   key={product._id}
                   product={product}
-                  onEdit={() => console.log("Hello")} />)}
+                  onEdit={() => {
+                    const findIndex = orderItems.findIndex(order => order._id === product._id)
+
+                    if (findIndex >= 0) {
+                      const newOrder = { ...orderItems[findIndex], quantity: orderItems[findIndex].quantity + 1 }
+                      const newArray = orderItems.map(order => order._id === product._id ? newOrder : order)
+
+                      setOrderItems(newArray)
+                      return
+                    }
+
+                    setOrderItems([...orderItems, { ...product, quantity: 1 }])
+                  }} />)}
               </VStack>
             </ScrollView>
           </BottomSection>

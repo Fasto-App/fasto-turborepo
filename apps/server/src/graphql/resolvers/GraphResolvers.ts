@@ -40,7 +40,7 @@ import {
   TableResolverMutation,
   TableResolver
 } from './TableResolver';
-import { TabResolverMutation, TabResolverQuery } from './TabResolver';
+import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -86,6 +86,8 @@ export const resolvers = {
   },
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,
+    table: TabResolver.getTableByTabID,
+    // users: TabResolver.getUsersByTabID,
   },
   // Users: {
   //   orders: getAllOpenOrdersByTabID,

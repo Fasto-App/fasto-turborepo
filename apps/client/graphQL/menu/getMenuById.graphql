@@ -1,0 +1,18 @@
+query GetMenuByID($input: GetMenuById) {
+	getMenuByID(input: $input) {
+		_id
+		name
+		sections {
+			category {
+				_id
+				name
+			}
+			products {
+				_id
+				name
+				imageUrl
+				price
+			}
+		}
+	}
+}
