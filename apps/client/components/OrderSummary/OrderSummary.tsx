@@ -1,5 +1,7 @@
-import { AddIcon, Box, Button, Divider, HStack, IconButton, MinusIcon, Text } from "native-base"
+import { AddIcon, Box, Button, Divider, HStack, Icon, IconButton, MinusIcon, Spacer, Text, VStack } from "native-base"
 import React from "react"
+import { BsFillPersonFill } from "react-icons/bs";
+import { GiRoundTable } from "react-icons/gi";
 import { parseToCurrency } from "../../utils";
 
 const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress: () => void }) => {
@@ -17,14 +19,15 @@ const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress: 
 };
 
 type SummaryProps = {
-  name: string
-  price: number
-  quantity: number
-  onPlusPress?: () => void
-  onMinusPress?: () => void
-  onRemovePress?: () => void
-  onEditPress?: () => void
-  lastItem: boolean
+  name: string;
+  price: number;
+  quantity: number;
+  onPlusPress?: () => void;
+  onMinusPress?: () => void;
+  onRemovePress?: () => void;
+  onEditPress?: () => void;
+  lastItem: boolean;
+  selectedUser: string;
 }
 
 const texts = {
@@ -39,7 +42,8 @@ export const SummaryComponent = ({ name,
   onMinusPress,
   onPlusPress,
   onRemovePress,
-  lastItem
+  lastItem,
+  selectedUser
 }: SummaryProps) => (
   <Box w={"full"} p={1} py={2}>
     <HStack justifyContent={"space-between"} pb={1}>
@@ -73,6 +77,20 @@ export const SummaryComponent = ({ name,
         <Text>{parseToCurrency(price)}</Text>
       </HStack>
     </HStack>
+    {selectedUser ? (
+      <HStack space={1} alignItems={"center"} pb={1}>
+        <Icon color={"tertiary.500"} >
+          <BsFillPersonFill />
+        </Icon>
+        <Text fontSize={"xs"} color={"tertiary.500"}>{selectedUser}</Text>
+      </HStack>) :
+      <HStack space={1} alignItems={"center"} pb={1}>
+        <Icon color={"tertiary.500"}>
+          <GiRoundTable />
+        </Icon>
+        <Text fontSize={"xs"} color={"tertiary.500"}>Table</Text>
+      </HStack>
+    }
     {lastItem ? null : <Divider thickness="1" />}
   </Box>
 );
