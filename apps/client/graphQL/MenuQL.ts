@@ -8,14 +8,7 @@ const useMenuMutationHook = () => {
     onCompleted: (data) => { },
   });
 
-  const [createMenu,
-    {
-      data: newlyCreatedProduct,
-      loading: createMenuIsLoading,
-      error: isProductError,
-      reset: resetCreateMenu
-    }
-  ] = useCreateMenuMutation({
+  const [createMenu] = useCreateMenuMutation({
     onCompleted: (data) => {
 
     },

@@ -9,15 +9,15 @@ export const MenuTypeDefinition = gql`
   }
 
   extend type Mutation {
-    createMenu(input: CreateMenuInput): Menu!
+    createMenu(input: CreateMenuInput!): Menu!
     updateMenu(input: UpdateMenuInput): Menu
     updateMenuInfo(input: UpdateMenuInfoInput): Menu!
     deleteMenu(id: ID!): Menu!
   }
 
   input CreateMenuInput {
-  name: String!
-}
+    name: String!
+  }
 
   input UpdateMenuInfoInput {
     _id: ID!
@@ -54,7 +54,4 @@ export const MenuTypeDefinition = gql`
     category: Category!
     products: [Product!]
   }
-
-
-
 `

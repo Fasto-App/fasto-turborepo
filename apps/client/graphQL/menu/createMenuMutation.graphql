@@ -1,5 +1,5 @@
-mutation CreateMenu {
-	createMenu {
+mutation CreateMenu($input: CreateMenuInput!) {
+	createMenu(input: $input) {
 		_id
 		name
 		sections {

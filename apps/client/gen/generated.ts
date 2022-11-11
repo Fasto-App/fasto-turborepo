@@ -216,7 +216,7 @@ export type MutationCreateCategoryArgs = {
 
 
 export type MutationCreateMenuArgs = {
-  input?: InputMaybe<CreateMenuInput>;
+  input: CreateMenuInput;
 };
 
 
@@ -671,7 +671,9 @@ export type UpdateCategoryMutationVariables = Exact<{
 
 export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory?: { __typename?: 'Category', _id: string, name: string, description?: string | null } | null };
 
-export type CreateMenuMutationVariables = Exact<{ [key: string]: never; }>;
+export type CreateMenuMutationVariables = Exact<{
+  input: CreateMenuInput;
+}>;
 
 
 export type CreateMenuMutation = { __typename?: 'Mutation', createMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', name: string }, products?: Array<{ __typename?: 'Product', _id: string }> | null }> | null } };
@@ -923,8 +925,8 @@ export type UpdateCategoryMutationHookResult = ReturnType<typeof useUpdateCatego
 export type UpdateCategoryMutationResult = Apollo.MutationResult<UpdateCategoryMutation>;
 export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
 export const CreateMenuDocument = gql`
-    mutation CreateMenu {
-  createMenu {
+    mutation CreateMenu($input: CreateMenuInput!) {
+  createMenu(input: $input) {
     _id
     name
     sections {
@@ -953,6 +955,7 @@ export type CreateMenuMutationFn = Apollo.MutationFunction<CreateMenuMutation, C
  * @example
  * const [createMenuMutation, { data, loading, error }] = useCreateMenuMutation({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
