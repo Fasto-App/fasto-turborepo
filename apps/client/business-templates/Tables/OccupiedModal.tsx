@@ -30,8 +30,6 @@ enum FilterOrderBy {
 // filter based on who ordered
 
 export const OccupiedModal = () => {
-
-  console.log("occupied modal mounted")
   const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.Patron)
   return (
     <Box>
@@ -45,8 +43,6 @@ export const OccupiedModal = () => {
           <Divider bg={tabOpen === FilterOrderBy.Table ? "gray.400" : "gray.300"} />
         </Pressable>
       </HStack>
-
-
       <Box p={8}>
         {tabOpen === FilterOrderBy.Patron ?
           <>
