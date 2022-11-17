@@ -54,7 +54,9 @@ export const SmallAddMoreButton = ({ onPress }) => {
       borderWidth={1}
       colorScheme="primary"
       variant={"outline"}
-      onPress={onPress}>
+      onPress={onPress}
+      w={"100px"}
+    >
       <Box borderWidth={1} borderRadius={'full'} justifyContent="center" alignItems={"center"} >
         <AiOutlinePlus size={"1em"} />
       </Box>

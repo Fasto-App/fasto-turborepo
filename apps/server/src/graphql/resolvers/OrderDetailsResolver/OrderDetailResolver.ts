@@ -61,10 +61,8 @@ const createMultipleOrderDetails = async (_parent: any,
             const tab = await Tab.findOne({ _id: parsedInput.tab });
             const user = await User.findOne({ _id: parsedInput.user });
             const guestUser = await GuestUser.findOne({ _id: parsedInput.user });
-
             const product = await Product.findOne({ _id: parsedInput.product });
 
-            // if (!user && !guestUser) throw new ApolloExtendedError('User not found.', 404);
             if (!product) throw new ApolloExtendedError('Product not found', 500);
             if (!tab) throw new ApolloExtendedError('Tab not found', 500);
             if (tab.status !== 'OPEN') throw new ApolloExtendedError('Tab is not open', 500);
@@ -78,39 +76,6 @@ const createMultipleOrderDetails = async (_parent: any,
         }));
 
         return orderDetails;
-
-
-
-        // const tab = await Tab.findOne({ _id: parsedInput.tab });
-        // console.log({ tab })
-
-        // const guestUser = await GuestUser.findOne({ _id: parsedInput.user });
-        // const user = await User.findOne({ _id: parsedInput.user });
-
-        // if (!user?._id && !guestUser) throw new ApolloExtendedError('User not found.', 404);
-        // if (!tab) throw new ApolloExtendedError('Tab not found', 500);
-        // if (tab.status !== 'OPEN') throw new ApolloExtendedError('Tab is not open', 500);
-
-        // const ultimateUser = user?._id || guestUser?._id;
-        // const userFound = tab.users.find(user => user?.toString() === ultimateUser.toString())
-
-        // if (!userFound) return new ApolloExtendedError('User not found in tab', 500);
-
-        // const productIds = parsedInput.orderDetails.map(orderDetails => orderDetails.product);
-        // const productsFound = await Product.find({ _id: { $in: productIds } });
-
-        // if (productsFound.length !== productIds.length) {
-        //     return new ApolloExtendedError(`Numbers of Products doesn't match products ids`, 500)
-        // };
-
-        // const orderDetails = parsedInput.orderDetails.map(orderDetail => ({
-        //     ...orderDetail,
-        //     tab: tab._id,
-        //     user: ultimateUser,
-        //     subTotal: (productsFound.find(product => product._id.toString() === orderDetail.product)?.price || 0) * orderDetail.quantity,
-        // }));
-
-        // return await OrderDetail.insertMany(orderDetails);
 
     } catch (err) {
         console.log({ err })
