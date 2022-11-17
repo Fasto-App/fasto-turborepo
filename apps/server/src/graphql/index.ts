@@ -56,7 +56,7 @@ const server = new ApolloServer({
   // @ts-ignore
   uploads: false,
   schema,
-  introspection: true,
+  introspection: process.env.NODE_ENV === "development",
   context: async ({ req }) => {
     const tokenSecret = process.env.TOKEN_SECRET;
     const bearerToken = req.headers.authorization || '';
