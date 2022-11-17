@@ -33,13 +33,6 @@ export function Menu() {
   });
 
   const onMenuSubmit = (values) => {
-    // if error, set error and display to the user
-    // and return false to prevent the form from submitting
-    // if (formState.errors) {
-    //   setError(formState.errors);
-    //   return false;
-    // }
-
     createMenu({
       variables: {
         input: {

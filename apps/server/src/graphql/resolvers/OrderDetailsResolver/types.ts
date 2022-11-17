@@ -3,24 +3,13 @@ import { z } from "zod";
 
 export const CreateOrderDetail = z.object({
   tab: z.string(),
-  user: z.string(),
   product: z.string(),
+  user: z.string().optional(),
   quantity: z.number().optional().default(1),
   message: z.string().optional(),
 })
 
-const OrderDetail = z.object({
-  product: z.string(),
-  quantity: z.number(),
-  message: z.string().optional(),
-});
-
-export const CreateMultipleOrdersDetail = z.object({
-  user: z.string(),
-  tab: z.string(),
-  orderDetails: z.array(OrderDetail)
-})
-
+export const CreateMultipleOrdersDetail = z.array(CreateOrderDetail)
 export interface CreateOrderDetailInput {
   input: z.infer<typeof CreateOrderDetail>
 }

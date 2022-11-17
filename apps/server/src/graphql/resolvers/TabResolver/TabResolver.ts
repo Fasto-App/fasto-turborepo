@@ -1,9 +1,8 @@
-import { Connection } from "mongoose"
 import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { TabModel } from "../../../models/tab";
 import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
-import { Privileges, TableStatus } from "../../../models/types";
+import { TableStatus } from "../../../models/types";
 import { GuestUserModel } from "../../../models/guestUser";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
@@ -74,13 +73,8 @@ const getAllTabsByBusinessID = async (_parent: any, _args: any, { db, business }
 
 const getTabByID = async (_parent: any, { input }: { input: any }, { db }: Context) => {
 
-    console.log('getTabByID', input._id)
     const Tab = TabModel(db);
     const tab = await Tab.findById(input._id);
-
-    console.log({
-        tab, input
-    })
     return tab;
 }
 
@@ -135,6 +129,26 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
     }
 }
 
+const getUsersByTabID = async (parent: any, _args: any, { db }: Context) => {
+
+    console.log('getUsersByTabID', parent._id)
+    const Tab = TabModel(db);
+    const tab = await Tab.findById(parent._id);
+
+    if (!tab) throw new ApolloExtendedError('Tab not found!')
+
+    return tab.users;
+}
+
+const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
+
+    const Table = TableModel(db);
+    const table = await Table.findById(parent.table);
+    console.log('getTableByTabID', table)
+
+    return table
+}
+
 
 
 const TabResolverMutation = { createTab, updateTab, deleteTab }
@@ -144,5 +158,10 @@ const TabResolverQuery = {
     getAllTabsByBusinessID
 }
 
-export { TabResolverMutation, TabResolverQuery }
+const TabResolver = {
+    getUsersByTabID,
+    getTableByTabID
+}
+
+export { TabResolverMutation, TabResolverQuery, TabResolver }
 

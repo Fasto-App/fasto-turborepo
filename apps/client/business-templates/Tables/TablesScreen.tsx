@@ -8,7 +8,7 @@ import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../..
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Pressable } from "react-native"
-import { add, format } from 'date-fns'
+import { format } from 'date-fns'
 import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { AllAndEditButtons } from "../AllAndAddButons"
@@ -26,9 +26,7 @@ const texts = {
   space: "Space"
 }
 
-type SelectedTable = Omit<Table, "__typename" | "space" | "tab">
-
-
+type SelectedTable = Omit<Table, "__typename" | "space" | "tab"> & { tab: string }
 
 export const TablesScreen = () => {
   const {
@@ -78,6 +76,7 @@ export const TablesScreen = () => {
           _id: item._id,
           status: item.status,
           tableNumber: item.tableNumber,
+          tab: item.tab._id
         })
       }} />)
   }
@@ -343,7 +342,8 @@ const tableSchema = z.object({
 
 
 
-const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedTable, setTableChoosen: (table: Table) => void }) => {
+const TableModal = ({ tableChoosen, setTableChoosen }:
+  { tableChoosen: SelectedTable, setTableChoosen: (table: SelectedTable) => void }) => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
 
@@ -362,24 +362,33 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
   })
 
   const onSubmit = async (data: any) => {
-    try {
-      console.log({
-        table: tableChoosen._id,
-        admin: data.admin,
-        totalUsers: data.totalUsers
-      })
-      const result = await createTab({
-        variables: {
-          input: {
-            table: tableChoosen._id,
-            admin: data.admin,
-            totalUsers: data.totalUsers
-          }
-        }
-      })
 
-      router.push(businessRoute.add_to_order(result.data.createTab._id))
-    } catch { }
+    console.log("onSubmit click")
+    console.log(tableChoosen)
+
+    switch (tableChoosen?.status) {
+      case "AVAILABLE":
+        try {
+          const result = await createTab({
+            variables: {
+              input: {
+                table: tableChoosen._id,
+                admin: data.admin,
+                totalUsers: data.totalUsers
+              }
+            }
+          })
+
+          router.push(businessRoute.add_to_order(result.data.createTab._id, "635c687451cb178c2e214465"),)
+        } catch { }
+        break;
+
+      case "OCCUPIED":
+        console.log(tableChoosen)
+        router.push(businessRoute.add_to_order(tableChoosen.tab, "635c687451cb178c2e214465"))
+        break;
+    }
+
   }
 
   const onCancel = () => {
@@ -428,7 +437,7 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
           <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
             {"Cancel"}
           </Button>
-          <Button w={"200px"} onPress={handleSubmit(onSubmit)}>
+          <Button w={"200px"} onPress={tableChoosen?.status === "OCCUPIED" ? onSubmit : handleSubmit(onSubmit)}>
             {"Open tab"}
           </Button>
         </Button.Group>
@@ -462,6 +471,8 @@ const { totalUsers, admin } = TabConfig
 const SideBySideTabConfig: SideBySideInputConfig = {
   info: [{ totalUsers }, { admin }]
 }
+
+
 
 const AddTableModal = ({ isModalOpen, setIsModalOpen, postNewTable }) => {
   const onSubmit = async () => {

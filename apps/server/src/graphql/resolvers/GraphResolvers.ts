@@ -18,6 +18,7 @@ import {
   CategoryResolverQuery,
 } from './CategoryResolver';
 import {
+  MenuResolver,
   MenuResolverMutation,
   MenuResolverQuery
 } from './MenuResolver';
@@ -39,7 +40,7 @@ import {
   TableResolverMutation,
   TableResolver
 } from './TableResolver';
-import { TabResolverMutation, TabResolverQuery } from './TabResolver';
+import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -85,14 +86,17 @@ export const resolvers = {
   },
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,
-  }
+    table: TabResolver.getTableByTabID,
+    // users: TabResolver.getUsersByTabID,
+  },
   // Users: {
   //   orders: getAllOpenOrdersByTabID,
   // }
-  // Menu: {
-  //   sections: getSectionsByMenu,
-  // },
-  // Section: {
-  //   products: getProductsBySection,
-  // }
+  Menu: {
+    // sections: MenuResolver.getSectionsByMenu,
+  },
+  Section: {
+    products: MenuResolver.getProductsBySection,
+    category: MenuResolver.getCategoryBySection,
+  }
 };

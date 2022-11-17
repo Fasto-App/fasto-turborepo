@@ -100,8 +100,6 @@ const NavigationButton = ({
   text?: string;
   flexDirection?: "row" | "column";
 }) => {
-  // the color of the icon is defined here
-  // ?? selected ? colors.yellow : colors.pureWhite
   const iconSize = useBreakpointValue({
     base: "20px",
     lg: "30px",

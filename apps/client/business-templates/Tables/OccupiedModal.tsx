@@ -6,12 +6,12 @@ import { parseToCurrency } from "../../utils"
 
 
 const patrons = new Array(3).fill({
-  id: 2,
+  _id: 2,
   name: "Alexandre",
 });
 
 const orders = new Array(3).fill({
-  id: "1",
+  _id: "1",
   name: "Pizza de Catupiry com Borda",
   image: "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2022%2F05%2F09%2Fbacon-509429382.jpg&q=60",
   price: 1000,
@@ -24,7 +24,14 @@ enum FilterOrderBy {
   "Table",
 }
 
+
+// TODO read the information comming from the TableHook?
+// Get all the orders from the table
+// filter based on who ordered
+
 export const OccupiedModal = () => {
+
+  console.log("occupied modal mounted")
   const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.Patron)
   return (
     <Box>
@@ -45,11 +52,13 @@ export const OccupiedModal = () => {
           <>
             <HStack space={2} pb={8}>
               {patrons.map((patron) => (
-                <Tile children={patron.name} selected={false} onPress={undefined} />
+                <Tile key={patron._id} selected={false} onPress={undefined} >
+                  {patron.name}
+                </Tile>
               ))}
             </HStack>
             <VStack space={6}>
-              {orders.map((order) => <OrderTile order={order} />)}
+              {orders.map((order) => <OrderTile key={order._id} order={order} />)}
             </VStack>
           </> : (
             <VStack space={6} pt={10}>

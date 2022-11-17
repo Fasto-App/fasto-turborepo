@@ -5,8 +5,6 @@ export const BusinessTypeDefinition = gql`
     getBusinessByID: Business
     getAllBusinessByUser: [Business]
     getAllBusiness: [Business]
-    getAllMenusByBusinessID: [Menu]!
-    getMenuByID: Menu
   }
 
   extend type Mutation {

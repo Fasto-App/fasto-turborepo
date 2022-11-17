@@ -1,5 +1,6 @@
-import { Schema, SchemaDefinition, SchemaType, Types, Connection } from "mongoose"
-import { prop, getModelForClass, Ref, post } from '@typegoose/typegoose';
+import { Types, Connection } from "mongoose"
+import { prop, getModelForClass } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import { OrderStatus } from "./types";
 import { Tab } from "./tab";
 
@@ -7,8 +8,8 @@ export class OrderDetail {
     @prop({ required: true })
     public product!: Types.ObjectId;
 
-    @prop({ required: true })
-    public user!: Types.ObjectId;
+    @prop()
+    public user?: Types.ObjectId;
 
     @prop({ required: true, ref: () => Tab })
     public tab!: Ref<Tab>;

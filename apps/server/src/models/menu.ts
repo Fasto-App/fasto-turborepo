@@ -1,5 +1,6 @@
 import { Connection, Types } from "mongoose"
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
+import { prop, getModelForClass, } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import { Category } from "./category";
 import { Product } from "./product";
 import { Business } from "./business";
@@ -9,7 +10,13 @@ export class Section {
     @prop({ ref: () => Category, required: true })
     public category!: Ref<Category>;
 
-    @prop({ ref: () => Product, default: [] })
+    @prop({
+        type: [Product],
+        ref: () => Product,
+        foreignField: 'sections/products',
+        localField: '_id',
+        default: [],
+    })
     public products?: Ref<Product>[];
 }
 

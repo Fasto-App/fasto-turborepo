@@ -12,21 +12,6 @@ export const typeDefinitions = gql`
     uploadFile(file: Upload!): String!
   }
 
-  input UpdateSectionInput {
-    category: ID!
-    products: [ID]
-  }
-
-  input SectionInput {
-    name: String!
-    products: [String!]!
-  }
-
-  type Section {
-    category: ID!
-    products: [ID!]
-  }
-
   type RequestResponseOK {
     ok: Boolean
   }

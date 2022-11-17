@@ -1,14 +1,11 @@
 
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 dotenv.config();
 
-
 // console.log("mongodb://mongo:8AkiVWxYNcVcjuRDDaHf@containers-us-west-85.railway.app:7492")
-
 const RAILWAY_MONGO_DB = "mongodb://mongo:8sIXR7VXmZ1d7fEZIYUn@containers-us-west-62.railway.app:6178"
-export default function connection() {
-
+function dbConnection() {
 
   const oldUri = `mongodb+srv://dbOpenTab:${process.env.CLUSTER_PASSWORD}@cluster1.ml57r.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
@@ -32,4 +29,6 @@ export default function connection() {
   );
 
   return mongoose.connection;
-}
+};
+
+export { dbConnection };

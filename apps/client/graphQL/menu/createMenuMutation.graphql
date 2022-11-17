@@ -1,10 +1,14 @@
-mutation CreateMenu($input: CreateMenuInput) {
+mutation CreateMenu($input: CreateMenuInput!) {
 	createMenu(input: $input) {
 		_id
 		name
 		sections {
-			category
-			products
+			category {
+				name
+			}
+			products {
+				_id
+			}
 		}
 	}
 }

@@ -1,10 +1,7 @@
 import { Connection } from 'mongoose'
-import { prop, getModelForClass, Ref, pre } from '@typegoose/typegoose';
+import { prop, getModelForClass } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import { Business } from './business';
-
-@pre<Space>('deleteOne', function () {
-  console.log("DECORATOR SPACE")
-})
 
 export class Space {
   @prop({ required: true })
