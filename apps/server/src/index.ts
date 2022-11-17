@@ -20,7 +20,8 @@ async function main() {
   await bootstrapApolloServer(app);
 
   app.listen(PORT, () => {
-    console.log(`[ SERVER 🚀 ] ready on PORT ${PORT}`);
+    console.log(`[📝 GraphQL SERVER ] ready on PORT ${PORT}/graphql`);
+    console.log(`[🚀 Next APP ] ready on PORT ${3000}`);
   });
 }
 

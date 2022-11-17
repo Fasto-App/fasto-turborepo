@@ -695,7 +695,7 @@ export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string } | null> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string }> | null }> | null } | null> };
 
 export type UpdateMenuInfoMutationVariables = Exact<{
   input?: InputMaybe<UpdateMenuInfoInput>;
@@ -709,7 +709,7 @@ export type UpdateMenuMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string } | null };
+export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string }> | null }> | null } | null };
 
 export type CreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<CreateOrderInput> | CreateOrderInput;
@@ -1053,6 +1053,16 @@ export const GetAllMenusByBusinessIdDocument = gql`
   getAllMenusByBusinessID {
     _id
     name
+    sections {
+      category {
+        _id
+        name
+      }
+      products {
+        _id
+        name
+      }
+    }
   }
 }
     `;
@@ -1122,6 +1132,16 @@ export const UpdateMenuDocument = gql`
   updateMenu(input: $input) {
     _id
     name
+    sections {
+      category {
+        _id
+        name
+      }
+      products {
+        _id
+        name
+      }
+    }
   }
 }
     `;

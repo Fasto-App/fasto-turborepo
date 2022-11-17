@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { useAppStore } from '../UseAppStore'
 import { BsPencilSquare } from 'react-icons/bs';
 import { useMenuMutationHook } from '../../graphQL/MenuQL'
+import { Menu } from '../../gen/generated'
 
 const texts = {
   editMenu: "Edit Menu",
@@ -18,9 +19,10 @@ const texts = {
   delete: "Delete",
 }
 
-function MenuProducts({ menusData }) {
+function MenuProducts({ menusData }: { menusData: Menu[] }) {
   const { allCategories } = useCategoryMutationHook()
   const { allProducts } = useProductMutationHook()
+  const { deleteMenu, updateMenu } = useMenuMutationHook()
   const [inputValue, setInputValue] = useState(``)
 
   const isEditingMenu = useAppStore(state => state.isEditingMenu)
@@ -33,33 +35,50 @@ function MenuProducts({ menusData }) {
   const seIsEditingMenu = useAppStore(state => state.seIsEditingMenu)
   const resetEditingAndSectionMap = useAppStore(state => state.resetEditingAndSectionMap)
 
-  const { updateMenu, deleteMenu } = useMenuMutationHook()
-
   const numColumns = useNumOfColumns(isEditingMenu)
 
   const selectedMenu = menusData?.find(menu => menu._id === menuId)
-  const categoriesOnMenu = useMemo(() => selectedMenu?.sections?.map(section => section.category) ?? [],
+  console.log("Selected Menu", selectedMenu)
+
+
+  const categoriesIdsOnMenu = useMemo(() => selectedMenu?.sections?.map(section => section.category._id) ?? [],
     [selectedMenu?.sections])
-  const productsOnMenu = useMemo(() => selectedMenu?.sections?.find(section => section.category === categoryId)?.products ?? [], [categoryId, selectedMenu?.sections])
+  console.log("Categories IDS on Menu", categoriesIdsOnMenu)
+
+
+  const productsOnMenu = useMemo(() => selectedMenu?.sections?.find(section => section.category._id === categoryId)?.products.map(product => product._id) ?? [], [categoryId, selectedMenu?.sections])
+  console.log("Products de um menu por categoria", productsOnMenu)
 
   const selectedCategories = useMemo(() => {
-    return allCategories.filter(cat => categoriesOnMenu.includes(cat._id))
-  }, [allCategories, categoriesOnMenu])
+    return allCategories.filter(cat => categoriesIdsOnMenu.includes(cat._id))
+  }, [allCategories, categoriesIdsOnMenu])
+
+  console.log("Selected Categories", selectedCategories)
 
 
   const productsFiltereByCategory = useMemo(() => {
     return allProducts.filter(product => product?.category?._id === categoryId)
   }, [allProducts, categoryId])
 
+  console.log("Products Filtered by Category", productsFiltereByCategory)
+
   const productsFiltereOnMenu = useMemo(() => {
     return productsFiltereByCategory.filter(product => productsOnMenu.includes(product._id))
   }, [productsFiltereByCategory, productsOnMenu])
+
+  console.log("Products Filtered on Menu", productsFiltereOnMenu)
+
+  console.log("%cSection MAP", "color: green", sectionMap)
 
 
   const setProductCheckbox = useCallback((selected, _id) => {
     const newProductsMap = new Map()
     const newCategoriesMap = new Map()
     const allProducts = sectionMap.get(categoryId)
+
+    console.log("%cSection MAP", "color: pink", sectionMap)
+    console.log("%allProducts", "color: pink", allProducts)
+    console.log("%categoryId", "color: pink", categoryId)
 
     // @ts-ignore
     for (const [categoryKey, productMap] of sectionMap.entries()) {
@@ -155,13 +174,13 @@ function MenuProducts({ menusData }) {
 
   const onEditMEnu = useCallback(() => {
     const sectionMap = new Map()
+    const selectedMenuSections = menusData.find(menu => menu._id === menuId)?.sections ?? []
 
-    menusData.find(menu => menu._id === menuId)?.sections?.forEach(section => {
+    selectedMenuSections.forEach(section => {
       const productMap = new Map()
-      section?.products?.forEach(product => productMap.set(product, true))
-      sectionMap.set(section.category, productMap)
+      section?.products?.forEach(product => productMap.set(product._id, true))
+      sectionMap.set(section.category._id, productMap)
     })
-
 
     setSectionMap?.(sectionMap)
     seIsEditingMenu(true)
@@ -203,9 +222,13 @@ function MenuProducts({ menusData }) {
           colorScheme={"tertiary"}
           px={4}
           m={0}
-          minW={"100px"} onPress={onEditMEnu}>
+          minW={"100px"} onPress={onEditMEnu}
+        >
           {texts.editMenu}
         </Button> : null}
+
+
+
         <FlatList
           key={isEditingMenu ? "edit" : "list"}
           horizontal
@@ -215,6 +238,7 @@ function MenuProducts({ menusData }) {
           keyExtractor={(item) => item._id}
           ListEmptyComponent={<Text>To start adding products, navigato to Categories / Products</Text>}
         />
+
 
       </HStack>
 
@@ -270,6 +294,8 @@ function MenuProducts({ menusData }) {
                   const selectedProducts = Array.from(value.keys()).filter(productKey => value.get(productKey)) // array width all the products
                   newSections.push({ category: key, products: selectedProducts })
                 }
+
+                console.log(newSections);
 
                 await updateMenu({
                   variables: {

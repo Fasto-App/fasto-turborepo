@@ -2,5 +2,15 @@ mutation UpdateMenu($input: UpdateMenuInput) {
 	updateMenu(input: $input) {
 		_id
 		name
+		sections {
+			category {
+				_id
+				name
+			}
+			products {
+				_id
+				name
+			}
+		}
 	}
 }
