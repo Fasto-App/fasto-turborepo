@@ -21,6 +21,7 @@ import { useRouter } from "next/router"
 import { Tile } from "../../components/Tile"
 import { parseToCurrency } from "../../utils"
 import { OccupiedModal } from "./OccupiedModal"
+import { borderColor, badgeScheme, stats } from "./config"
 
 const texts = {
   space: "Space"
@@ -166,56 +167,6 @@ export const TablesScreen = () => {
   )
 }
 
-type statStruct = {
-  number: number,
-  name: TableStatus,
-}
-
-const stats: Record<TableStatus, statStruct> = {
-  OCCUPIED: {
-    number: 1,
-    name: TableStatus.Occupied
-  },
-  RESERVED: {
-    number: 1,
-    name: TableStatus.Reserved
-  },
-  AVAILABLE: {
-    number: 1,
-    name: TableStatus.Available
-  },
-  CLOSED: {
-    number: 1,
-    name: TableStatus.Closed
-  }
-}
-
-const borderColor = (status: TableStatus) => {
-  switch (status) {
-    case "OCCUPIED":
-      return "primary.600"
-    case "RESERVED":
-      return "muted.300"
-    case "AVAILABLE":
-      return "success.600"
-    default:
-      return "tertiary.600"
-  }
-}
-
-const badgeScheme = (status: TableStatus) => {
-  switch (status) {
-    case "OCCUPIED":
-      return "danger"
-    case "RESERVED":
-      return "coolGray"
-    case "AVAILABLE":
-      return "success"
-    default:
-      return "coolGray"
-  }
-}
-
 const Stats = () => (
   <HStack space={4} mr={8}>
     <Heading size={"md"} alignSelf={"center"}>TABLES</Heading>
@@ -338,9 +289,6 @@ const tableSchema = z.object({
     required_error: "Please, enter the number of guests",
   }),
 })
-
-
-
 
 const TableModal = ({ tableChoosen, setTableChoosen }:
   { tableChoosen: SelectedTable, setTableChoosen: (table: SelectedTable) => void }) => {
@@ -471,8 +419,6 @@ const { totalUsers, admin } = TabConfig
 const SideBySideTabConfig: SideBySideInputConfig = {
   info: [{ totalUsers }, { admin }]
 }
-
-
 
 const AddTableModal = ({ isModalOpen, setIsModalOpen, postNewTable }) => {
   const onSubmit = async () => {

@@ -66,11 +66,10 @@ export const AddToOrder = (props: any) => {
 
   const onSendToKitchen = async () => {
     const orderDetails = orderItems.map(order => ({
-      user: order.selectedUser,
+      ...(order?.selectedUser && { user: order?.selectedUser }),
       tab: tabId as string,
       product: order._id,
       quantity: order.quantity,
-      message: "",
     }))
 
     try {
@@ -106,7 +105,7 @@ export const AddToOrder = (props: any) => {
 
 
                 return <SummaryComponent
-                  key={order._id}
+                  key={order._id + personindex}
                   name={order.name}
                   price={order.price}
                   quantity={order.quantity}
@@ -175,6 +174,8 @@ export const AddToOrder = (props: any) => {
             </Box>
           </Flex>
         </LeftSideBar>
+
+
         <Box flex={1}>
           <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
           <VStack flex={1} p={4} space={4}>

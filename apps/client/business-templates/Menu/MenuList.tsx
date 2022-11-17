@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Box, Button, FlatList, FormControl, Heading, HStack, Input, Modal, Pressable, Text } from 'native-base'
-import { AddMoreButton } from '../../components/atoms/AddMoreButton';
+import { Box, Button, FlatList, FormControl, Heading, HStack, Input, Modal, Pressable, ScrollView, Text, VStack } from 'native-base'
+import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { Controller } from 'react-hook-form';
 import { useAppStore } from '../UseAppStore';
 import { AllAndEditButtons } from '../AllAndAddButons';
+import { Tile } from '../../components/Tile';
 
 const texts = {
   title: "Menu",
@@ -15,46 +16,13 @@ const allMenus = new Array(30).fill({
   _id: "123"
 })
 
-const MenuTile = ({ menu, onPress, selected }) => {
-  const color = selected ? "primary.500" : "black"
-
-  return (
-    <Pressable onPress={onPress}>
-      
-      <Box mr={4} w={200} h={"75px"} borderRadius={'lg'} borderColor={color} borderWidth={"1"} justifyContent={"center"}>
-        <Text
-          fontSize={"lg"}
-          textAlign={'center'}
-          color={selected ? "primary.500" : "black"}
-        >{menu.name}</Text>
-      </Box>
-    </Pressable>)
-}
-
-
-
 export function MenuList({ menuController, onMenuSubmit, menusData }) {
   const [showModal, setShowModal] = useState(false)
   const setMenu = useAppStore(state => state.setMenu)
   const menu = useAppStore(state => state.menu ?? menusData?.[0]?._id)
   const resetEditingAndSectionMap = useAppStore(state => state.resetEditingAndSectionMap)
 
-  const renderMenu = ({ item, index }) => {
-
-    return (
-      
-      <MenuTile
-        menu={item}
-        selected={item._id === menu}
-        onPress={() => {
-          setMenu(item._id)
-          resetEditingAndSectionMap()
-        }}
-      />)
-  }
-
   return (
-    
     <Box
       p={"4"}
       shadow={"4"}
@@ -74,30 +42,28 @@ export function MenuList({ menuController, onMenuSubmit, menusData }) {
           </Heading>
         </Box>
 
-        <Box flexDirection={"row"} width={"100%"} flex={1} mb={2}>
-
-          <Box>
-            <AddMoreButton
-              widthProps={200}
-              horizontal
-              onPress={() => setShowModal(true)}
-            />
-            {menusData.length ?
-              <Box paddingTop={"4"}>
-                <AllAndEditButtons allAction={undefined} editAction={undefined} categoryId={true} />
-              </Box>
-              : <Text pt={3} fontSize={"xl"}>{texts.emptyListText}</Text>}
-          </Box>
-          
-          <HStack flex={1} space={1}>
-            <FlatList
-              horizontal
-              data={menusData}
-              renderItem={renderMenu}
-              keyExtractor={(item, index) => item._id.toString()}
-            />
+        <VStack space={4}>
+          <HStack space={2}>
+            <SmallAddMoreButton onPress={() => console.log("Hello")} />
+            <ScrollView horizontal={true} pb={2}>
+              <HStack space={2}>
+                {menusData?.map((item) => (
+                  <Tile
+                    key={item._id}
+                    selected={item._id === menu}
+                    onPress={() => {
+                      setMenu(item._id)
+                      resetEditingAndSectionMap()
+                    }}
+                  >
+                    {item.name}
+                  </Tile>
+                ))}
+              </HStack>
+            </ScrollView>
           </HStack>
-        </Box>
+          <AllAndEditButtons allAction={undefined} editAction={undefined} categoryId={true} />
+        </VStack>
       </Box>
 
       <MenuModal
@@ -164,12 +130,8 @@ const MenuModal = ({ showModal, setShowModal, menuControl, onMenuSubmit }) => {
               {textsMenu.cancel}
             </Button>
             <Button w={"100px"} onPress={() => {
-
               onMenuSubmit()
-
-
               setShowModal(false)
-
             }}>
               {isEditing ? textsMenu.edit : textsMenu.add}
             </Button>
