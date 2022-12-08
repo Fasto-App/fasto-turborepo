@@ -8,7 +8,7 @@ import { VerticalBar } from "./Ghaphs/VerticalBar"
 export const DashboardScreen = () => {
 
 
-  return useIsSsr() ? null : (
+  return (
     <Box flex={1}>
 
       <Box
