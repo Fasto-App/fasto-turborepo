@@ -2,9 +2,5 @@ mutation DeleteMenu($id: ID!) {
 	deleteMenu(id: $id) {
 		_id
 		name
-		sections {
-			category
-			products
-		}
 	}
 }

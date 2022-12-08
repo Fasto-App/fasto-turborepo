@@ -1,5 +1,5 @@
 import { Connection } from "mongoose";
-import { MenuModel, ProductModel, CategoryModel, Section } from "../../../models";
+import { MenuModel, ProductModel, CategoryModel, Section, Product } from "../../../models";
 import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMenuInput, UpdateMenuInput } from "./types";
@@ -26,19 +26,20 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
     }
 }
 
-const getMenuByID = async (_parent: any, { id }: { id: string }, { db }: { db: Connection }) => {
+const getMenuByID = async (_parent: any, args: any, { db }: { db: Connection }) => {
+
+    console.log(args)
+
     const Menu = MenuModel(db);
-    const menu = await Menu.findOne({ _id: id });
+    const menu = await Menu.findOne({ _id: args.input.id });
     if (!menu) throw Error('Menu not found');
-    return await menu.populate({ path: 'sections', populate: { path: 'products' } });
+
+    return menu
 }
 
 
 const getAllMenusByBusinessID = async (_parent: any, { id }: { id: string }, { db, business }: Context) => {
     const Menu = MenuModel(db);
-
-    console.log("business", business)
-
     const allMenusByBusiness = await Menu.find({ business });
     return allMenusByBusiness;
 }
@@ -156,8 +157,30 @@ const MenuResolverQuery = {
     getMenuByID,
 }
 
-const MenuResolver = {
+const getSectionsByMenu = async (_parent: any, args: any, { db }: { db: Connection }) => {
+    console.log(_parent)
 
+    return _parent;
+}
+
+const getProductsBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
+    const Product = ProductModel(db);
+    const products = await Product.find({ _id: { $in: _parent.products } })
+    return products;
+}
+
+const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
+
+    console.log(_parent)
+    const Category = CategoryModel(db);
+    const category = await Category.findById(_parent.category)
+    return category;
+}
+
+const MenuResolver = {
+    getSectionsByMenu,
+    getProductsBySection,
+    getCategoryBySection
 }
 
 export { MenuResolverMutation, MenuResolverQuery, MenuResolver }

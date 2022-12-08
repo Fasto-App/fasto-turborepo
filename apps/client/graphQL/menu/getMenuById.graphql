@@ -1,5 +1,5 @@
-mutation UpdateMenu($input: UpdateMenuInput) {
-	updateMenu(input: $input) {
+query GetMenuByID($input: GetMenuById) {
+	getMenuByID(input: $input) {
 		_id
 		name
 		sections {
@@ -10,6 +10,8 @@ mutation UpdateMenu($input: UpdateMenuInput) {
 			products {
 				_id
 				name
+				imageUrl
+				price
 			}
 		}
 	}

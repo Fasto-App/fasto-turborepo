@@ -46,7 +46,6 @@ const schema = makeExecutableSchema({
   ],
 })
 
-
 const server = new ApolloServer({
   plugins: [
     ApolloServerPluginLandingPageLocalDefault({ embed: true }),
@@ -56,7 +55,7 @@ const server = new ApolloServer({
   // @ts-ignore
   uploads: false,
   schema,
-  introspection: true,
+  introspection: process.env.ENVIRONMENT === "development",
   context: async ({ req }) => {
     const tokenSecret = process.env.TOKEN_SECRET;
     const bearerToken = req.headers.authorization || '';

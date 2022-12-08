@@ -5,6 +5,7 @@ import { onError } from '@apollo/client/link/error';
 import { getCookies } from 'cookies-next';
 
 const PROD_URL = "https://opentab-backend.herokuapp.com/graphql";
+const STAG_URL = "https://fasto-api-dev.herokuapp.com/";
 const DEV_URL = "http://localhost:4000/graphql";
 
 // Log any GraphQL errors or network error that occurred

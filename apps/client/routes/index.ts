@@ -6,7 +6,7 @@ export const BUSINESS_ADMIN = BUSINESS + ADMIN
 
 export const businessRoute = {
   add_products_categories: `${BUSINESS_ADMIN}/add-products-categories`,
-  add_to_order: (orderId: string) => `${BUSINESS_ADMIN}/add-to-order/${orderId}`,
+  add_to_order: (orderId: string, menuId: string) => `${BUSINESS_ADMIN}/add-to-order/${orderId}?menuId=${menuId}`,
   createAccount: `${BUSINESS}/create-account`,
   dashboard: `${BUSINESS_ADMIN}/dashboard`,
   forgotPassword: `${BUSINESS}/forgot-password`,

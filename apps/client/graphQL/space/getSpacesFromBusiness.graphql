@@ -9,7 +9,10 @@ query GetSpacesFromBusiness {
 			tableNumber
 			tab {
 				_id
-				table
+				table {
+					_id
+					tableNumber
+				}
 				admin
 				orders {
 					_id

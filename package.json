@@ -15,12 +15,13 @@
 		"build:api": "turbo run build --filter=server",
 		"start:client": "turbo run start --filter=client",
 		"start:api": "turbo run start --filter=server",
-		"heroku-postbuild": "if [ $CLIENT_ENV ]; then yarn run prod-frontend; elif [ $SERVER_ENV ]; then yarn run prod-backend; else echo no environment detected, please set CLIENT_ENV or SERVER_ENV; fi",
+		"start": "turbo run start --filter=server",
 		"prod-frontend": "yarn run build:client",
 		"prod-backend": "yarn run build:api",
 		"deploy": "git add . && git commit -m Heroku && git push heroku main",
 		"deploy:client": "heroku git:remote -a opentab-frontend && yarn run deploy",
-		"deploy:api": "heroku git:remote -a opentab-backend && yarn run deploy"
+		"deploy:api": "heroku git:remote -a opentab-backend && yarn run deploy",
+		"generate": "yarn workspace client generate"
 	},
 	"devDependencies": {
 		"eslint-config-custom": "*",
@@ -28,7 +29,6 @@
 		"turbo": "latest"
 	},
 	"engines": {
-		"node": "16.16.0",
 		"yarn": "1.22.19"
 	},
 	"dependencies": {},

@@ -10,7 +10,13 @@ export class Section {
     @prop({ ref: () => Category, required: true })
     public category!: Ref<Category>;
 
-    @prop({ ref: () => Product, default: [] })
+    @prop({
+        type: [Product],
+        ref: () => Product,
+        foreignField: 'sections/products',
+        localField: '_id',
+        default: [],
+    })
     public products?: Ref<Product>[];
 }
 

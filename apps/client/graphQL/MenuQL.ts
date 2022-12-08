@@ -4,18 +4,9 @@ import { useGetAllMenusByBusinessIdQuery, useCreateMenuMutation, useUpdateMenuMu
 
 const useMenuMutationHook = () => {
 
-  const { data: allMenusByBusiness } = useGetAllMenusByBusinessIdQuery({
-    onCompleted: (data) => { },
-  });
+  const { data: allMenusByBusiness } = useGetAllMenusByBusinessIdQuery();
 
-  const [createMenu,
-    {
-      data: newlyCreatedProduct,
-      loading: createMenuIsLoading,
-      error: isProductError,
-      reset: resetCreateMenu
-    }
-  ] = useCreateMenuMutation({
+  const [createMenu] = useCreateMenuMutation({
     onCompleted: (data) => {
 
     },
@@ -40,6 +31,13 @@ const useMenuMutationHook = () => {
   const [updateMenu] = useUpdateMenuMutation({
     onCompleted: (data) => {
 
+    },
+    updateQueries: {
+      getAllMenusByBusinessID: (prev, { mutationResult }) => {
+        return Object.assign({}, prev, {
+          getAllMenusByBusinessID: mutationResult.data.updateMenu
+        });
+      }
     }
   });
 

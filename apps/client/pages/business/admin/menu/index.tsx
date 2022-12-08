@@ -1,4 +1,4 @@
 import React from "react"
-import { Menu } from "../../../../business-templates/Menu"
+import { MenuScreen } from "../../../../business-templates/Menu"
 
-export default Menu
+export default MenuScreen

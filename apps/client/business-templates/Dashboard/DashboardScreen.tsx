@@ -1,21 +1,60 @@
 import { Box, HStack, VStack } from "native-base"
 import React from "react"
-import { AppBar } from "../../components/AppBar/AppBar"
-
+import { useIsSsr } from "../../hooks"
+import { AreaChart } from "./Ghaphs/AreaChart"
+import { PieChart } from "./Ghaphs/PieChart"
+import { VerticalBar } from "./Ghaphs/VerticalBar"
 
 export const DashboardScreen = () => {
+
+
   return (
+    <Box flex={1}>
 
-    <VStack space={3} m={"8"} mt={"16"} flex={1}>
-      <Box borderWidth={0.5} borderColor={"gray.50"} shadow={"2"} h={"300px"} w={"100%"} borderRadius={"md"} bgColor={"white"}>
-      </Box>
+      <Box
+        backgroundColor={"primary.500"}
+        h={150}
+        w={"100%"}
+        position={"absolute"}
+        zIndex={-1}
+      />
 
-      <HStack space={3} h={"100%"} w={"100%"} flex={1} flexDirection={"row"}>
-        <Box borderWidth={0.5} borderColor={"gray.50"} shadow={"2"} flex={1} borderRadius={"md"} bgColor={"white"}></Box>
-        <Box borderWidth={0.5} borderColor={"gray.50"} shadow={"2"} flex={1} borderRadius={"md"} bgColor={"white"}></Box>
-      </HStack>
+      <VStack space={3} p={"8"} flex={1}>
+        <Box
+          borderWidth={0.5}
+          borderColor={"gray.50"}
+          shadow={"2"}
+          w={"100%"}
+          borderRadius={"md"}
+          bgColor={"white"}
+          justifyContent={"center"}
+        >
+          <AreaChart />
+        </Box>
 
-    </VStack>
+        <HStack space={3} w={"100%"} flexDirection={"row"} flex={1}>
+          <Box borderWidth={0.5}
+            borderColor={"gray.50"}
+            shadow={"2"}
+            borderRadius={"md"}
+            bgColor={"white"}
+            p={2}
+            flex={1}
+          >
+            <VerticalBar />
+          </Box>
+          <Box borderWidth={0.5}
+            borderColor={"gray.50"}
+            shadow={"2"}
+            borderRadius={"md"}
+            bgColor={"white"}
+          >
+            <PieChart />
+          </Box>
+        </HStack>
+
+      </VStack>
+    </Box >
   )
 
 }

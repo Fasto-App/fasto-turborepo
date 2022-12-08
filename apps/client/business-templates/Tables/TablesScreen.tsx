@@ -1,6 +1,6 @@
 import React from "react"
 import * as z from "zod"
-import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge } from "native-base"
+import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge, Image, Input, CheckIcon, Select } from "native-base"
 import { useState } from "react"
 import { AiOutlinePlus } from "react-icons/ai"
 import { typedKeys } from "../../authUtilities/utils"
@@ -8,22 +8,26 @@ import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../..
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Pressable } from "react-native"
-import { add, format } from 'date-fns'
+import { format } from 'date-fns'
 import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { AllAndEditButtons } from "../AllAndAddButons"
 import { useTableMutationHook } from "../../graphQL/TableQL"
-import { Table, TableStatus } from "../../gen/generated"
+import { OrderStatus, Table, TableStatus } from "../../gen/generated"
 import { DevTool } from "@hookform/devtools";
 import { useTabMutationHook } from "../../graphQL/TabQL"
 import { businessRoute } from "../../routes"
 import { useRouter } from "next/router"
+import { Tile } from "../../components/Tile"
+import { parseToCurrency } from "../../utils"
+import { OccupiedModal } from "./OccupiedModal"
+import { borderColor, badgeScheme, stats } from "./config"
 
 const texts = {
   space: "Space"
 }
 
-type SelectedTable = Omit<Table, "__typename" | "space" | "tab">
+type SelectedTable = Omit<Table, "__typename" | "space" | "tab"> & { tab: string }
 
 export const TablesScreen = () => {
   const {
@@ -73,6 +77,7 @@ export const TablesScreen = () => {
           _id: item._id,
           status: item.status,
           tableNumber: item.tableNumber,
+          tab: item.tab._id
         })
       }} />)
   }
@@ -160,56 +165,6 @@ export const TablesScreen = () => {
       </VStack>
     </Box>
   )
-}
-
-type statStruct = {
-  number: number,
-  name: TableStatus,
-}
-
-const stats: Record<TableStatus, statStruct> = {
-  OCCUPIED: {
-    number: 1,
-    name: TableStatus.Occupied
-  },
-  RESERVED: {
-    number: 1,
-    name: TableStatus.Reserved
-  },
-  AVAILABLE: {
-    number: 1,
-    name: TableStatus.Available
-  },
-  CLOSED: {
-    number: 1,
-    name: TableStatus.Closed
-  }
-}
-
-const borderColor = (status: TableStatus) => {
-  switch (status) {
-    case "OCCUPIED":
-      return "primary.600"
-    case "RESERVED":
-      return "muted.300"
-    case "AVAILABLE":
-      return "success.600"
-    default:
-      return "tertiary.600"
-  }
-}
-
-const badgeScheme = (status: TableStatus) => {
-  switch (status) {
-    case "OCCUPIED":
-      return "danger"
-    case "RESERVED":
-      return "coolGray"
-    case "AVAILABLE":
-      return "success"
-    default:
-      return "coolGray"
-  }
 }
 
 const Stats = () => (
@@ -335,7 +290,8 @@ const tableSchema = z.object({
   }),
 })
 
-const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedTable, setTableChoosen: (table: Table) => void }) => {
+const TableModal = ({ tableChoosen, setTableChoosen }:
+  { tableChoosen: SelectedTable, setTableChoosen: (table: SelectedTable) => void }) => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
 
@@ -354,24 +310,33 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
   })
 
   const onSubmit = async (data: any) => {
-    try {
-      console.log({
-        table: tableChoosen._id,
-        admin: data.admin,
-        totalUsers: data.totalUsers
-      })
-      const result = await createTab({
-        variables: {
-          input: {
-            table: tableChoosen._id,
-            admin: data.admin,
-            totalUsers: data.totalUsers
-          }
-        }
-      })
 
-      router.push(businessRoute.add_to_order(result.data.createTab._id))
-    } catch { }
+    console.log("onSubmit click")
+    console.log(tableChoosen)
+
+    switch (tableChoosen?.status) {
+      case "AVAILABLE":
+        try {
+          const result = await createTab({
+            variables: {
+              input: {
+                table: tableChoosen._id,
+                admin: data.admin,
+                totalUsers: data.totalUsers
+              }
+            }
+          })
+
+          router.push(businessRoute.add_to_order(result.data.createTab._id, "635c687451cb178c2e214465"),)
+        } catch { }
+        break;
+
+      case "OCCUPIED":
+        console.log(tableChoosen)
+        router.push(businessRoute.add_to_order(tableChoosen.tab, "635c687451cb178c2e214465"))
+        break;
+    }
+
   }
 
   const onCancel = () => {
@@ -383,10 +348,7 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
   const renderContent = () => {
     switch (tableChoosen?.status) {
       case "OCCUPIED":
-        return <>
-          <Text>{"tableChoosen.ocuppant.name"}</Text>
-          <Text>{"tableChoosen.ocuppant.phone"}</Text>
-        </>
+        return <OccupiedModal />
       case "RESERVED":
         return <>
           <Text>{"tableChoosen.reservation.name"}</Text>
@@ -403,29 +365,31 @@ const TableModal = ({ tableChoosen, setTableChoosen }: { tableChoosen: SelectedT
     }
   }
 
+  const size = tableChoosen?.status === "OCCUPIED" ? "full" : "lg"
 
-  return <Modal isOpen={!!tableChoosen} onClose={onCancel}>
-    <DevTool control={control} /> {/* set up the dev tool */}
+
+  return <Modal size={size} isOpen={!!tableChoosen} onClose={onCancel}>
+    <DevTool control={control} />
     <Modal.CloseButton />
-    <Modal.Content minWidth="500px">
-      <Modal.Header borderColor={"white"}>
+    <Modal.Content >
+      <Modal.Header borderColor={"gray.50"}>
         {"Table " + tableChoosen?._id}
         <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
           {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}</Badge>
       </Modal.Header>
       <Modal.Body>
         {renderContent()}
-        <Modal.Footer borderColor={"white"}>
-          <Button.Group>
-            <Button w={"100px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-              {"Cancel"}
-            </Button>
-            <Button w={"100px"} onPress={handleSubmit(onSubmit)}>
-              {"Open tab"}
-            </Button>
-          </Button.Group>
-        </Modal.Footer>
       </Modal.Body>
+      <Modal.Footer borderColor={"gray.50"}>
+        <Button.Group flex={1} justifyContent={"center"} space={4}>
+          <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
+            {"Cancel"}
+          </Button>
+          <Button w={"200px"} onPress={tableChoosen?.status === "OCCUPIED" ? onSubmit : handleSubmit(onSubmit)}>
+            {"Open tab"}
+          </Button>
+        </Button.Group>
+      </Modal.Footer>
     </Modal.Content>
   </Modal >
 }

@@ -8,8 +8,8 @@ export class OrderDetail {
     @prop({ required: true })
     public product!: Types.ObjectId;
 
-    @prop({ required: true })
-    public user!: Types.ObjectId;
+    @prop()
+    public user?: Types.ObjectId;
 
     @prop({ required: true, ref: () => Tab })
     public tab!: Ref<Tab>;
