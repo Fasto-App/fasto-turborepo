@@ -1,5 +1,5 @@
 import React from "react"
-import { Menu } from "../../business-templates/Menu";
+import Menu from "../../pages/business/admin/menu";
 import { StoryProvider } from "../StoryProvider"
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

@@ -1,16 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, SectionList, Text, VStack } from 'native-base'
+import React, { useCallback, useMemo, useState } from 'react'
+import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, Text } from 'native-base'
 import { ProductCard, ProductTile } from '../../components/Product/Product'
 import { Product } from '../../components/Product/types'
 import { useNumOfColumns } from '../../hooks'
 import { useCategoryMutationHook } from '../../graphQL/CategoryQL'
 import { useProductMutationHook } from '../../graphQL/ProductQL'
 import { DeleteAlert } from '../../components/DeleteAlert'
-import { useRouter } from 'next/router'
 import { useAppStore } from '../UseAppStore'
 import { BsPencilSquare } from 'react-icons/bs';
 import { useMenuMutationHook } from '../../graphQL/MenuQL'
-import { Menu } from '../../gen/generated'
+import { MenuSections } from './types'
 
 const texts = {
   editMenu: "Edit Menu",
@@ -19,7 +18,7 @@ const texts = {
   delete: "Delete",
 }
 
-function MenuProducts({ menusData }: { menusData: Menu[] }) {
+function MenuProducts({ menusData }: { menusData: MenuSections }) {
   const { allCategories } = useCategoryMutationHook()
   const { allProducts } = useProductMutationHook()
   const { deleteMenu, updateMenu } = useMenuMutationHook()

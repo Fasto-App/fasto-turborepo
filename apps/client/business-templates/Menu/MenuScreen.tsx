@@ -49,9 +49,11 @@ const MenuScreen = () => {
           menuController={menuController}
           onMenuSubmit={handleSubmit(onMenuSubmit)}
         />
-        {allMenusByBusiness.length ? <MenuProducts
-          menusData={allMenusByBusiness}
-        /> : null}
+        {allMenusByBusiness.length ? (
+          <MenuProducts
+            menusData={allMenusByBusiness}
+          />
+        ) : null}
       </VStack>
       <ModalFeedback
         isWarning={false}
