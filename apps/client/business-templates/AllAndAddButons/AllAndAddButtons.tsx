@@ -14,7 +14,7 @@ export const AllAndEditButtons = ({
   return (
     <HStack space={2}>
       <Button
-        width={"100px"}
+        width={"100"}
         variant={"outline"}
         onPress={allAction}
       >

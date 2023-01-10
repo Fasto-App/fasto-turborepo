@@ -72,12 +72,13 @@ export const TablesScreen = () => {
 
   const renderTables = () => {
     return allTables.map((item, index) =>
-      <SquareTable key={index} index={index} status={item.status} onPress={() => {
+      <SquareTable key={item._id} index={index} status={item.status} onPress={() => {
+        console.log("item", item)
         setTableChoosen({
           _id: item._id,
           status: item.status,
           tableNumber: item.tableNumber,
-          tab: item.tab._id
+          tab: item?.tab._id
         })
       }} />)
   }

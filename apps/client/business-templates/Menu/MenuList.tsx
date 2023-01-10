@@ -32,10 +32,7 @@ export function MenuList({ menuController, onMenuSubmit, menusData }) {
       backgroundColor={"white"}
       flexDirection={"row"}
     >
-      {/* Left side / Main content */}
       <Box flex={1}>
-
-        {/* Header */}
         <Box flexDirection={"row"} mb={"2"}>
           <Heading flex={1}>
             {texts.title}

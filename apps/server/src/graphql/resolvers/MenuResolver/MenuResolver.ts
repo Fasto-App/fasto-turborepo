@@ -111,9 +111,7 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
 
     const allSectionsResolved = await Promise.all(newSections);
 
-    menu.sections = allSectionsResolved as Section[];
-
-    console.log(input.name)
+    menu.sections = allSectionsResolved
 
     if (input.name) {
         menu.name = input.name

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, Text } from 'native-base'
+import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text, VStack } from 'native-base'
 import { ProductCard, ProductTile } from '../../components/Product/Product'
 import { Product } from '../../components/Product/types'
 import { useNumOfColumns } from '../../hooks'
@@ -158,7 +158,6 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
 
   const renderListTile = useCallback(() => {
     return (
-
       <FlatList
         key={numColumns}
         data={productsFiltereByCategory}
@@ -167,7 +166,6 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
         keyExtractor={(item) => item._id}
         ItemSeparatorComponent={() => <Box height={"4"} />}
       />
-
     )
   }, [numColumns, productsFiltereByCategory, renderProductTile])
 
@@ -196,7 +194,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
       borderColor={"trueGray.400"}
       backgroundColor={"white"}
     >
-      <HStack flexDirection={"row"} mb={"2"} space={10} justifyContent={"center"} pl={8}>
+      <HStack flexDirection={"row"} mb={"2"} space={10} pl={8}>
         <Box width={300}>
           {isEditingMenu ?
             <Input
@@ -216,35 +214,39 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
 
 
 
-        {/* Edit Button and List with buttons that represent all the categories */}
         {!isEditingMenu ? <Button
           colorScheme={"tertiary"}
           px={4}
           m={0}
-          minW={"100px"} onPress={onEditMEnu}
+          minW={"100px"}
+          onPress={onEditMEnu}
+          h={44}
         >
           {texts.editMenu}
         </Button> : null}
-
-
-
-        <FlatList
-          key={isEditingMenu ? "edit" : "list"}
-          horizontal
-          data={isEditingMenu ? allCategories : selectedCategories}
-          renderItem={renderCategories}
-          ItemSeparatorComponent={() => <Box w={4} />}
-          keyExtractor={(item) => item._id}
-          ListEmptyComponent={<Text>To start adding products, navigato to Categories / Products</Text>}
-        />
-
-
+        <ScrollView flex={1} horizontal>
+          {(isEditingMenu ? allCategories : selectedCategories).map((category) => (
+            <Button
+              key={category._id}
+              px={4}
+              mr={2}
+              m={0}
+              minW={"100px"}
+              disabled={categoryId === category._id}
+              textDecorationColor={"black"}
+              variant={categoryId === category._id ? 'subtle' : 'outline'}
+              colorScheme={categoryId === category._id ? "success" : "black"}
+              onPress={() => setCategory(category._id)}
+            >
+              {category.name}
+            </Button>)
+          )}
+        </ScrollView>
       </HStack>
 
       <Box flex={1} p={"4"}>
         {isEditingMenu ?
           <>
-            {/* Future feature */}
             {false ?? <Checkbox
               value="Select All"
               my="1"
@@ -253,6 +255,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
               Select All
             </Checkbox>}
             {renderListTile()}
+            { }
           </>
           :
           renderListCard()}
