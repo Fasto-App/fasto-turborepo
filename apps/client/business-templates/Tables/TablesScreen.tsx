@@ -1,33 +1,17 @@
-import React from "react"
-import * as z from "zod"
-import { Box, Button, Divider, FlatList, Heading, HStack, Text, VStack, Modal, Center, Badge, Image, Input, CheckIcon, Select } from "native-base"
+import React, { useCallback, useMemo } from "react"
+import { Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
 import { useState } from "react"
 import { AiOutlinePlus } from "react-icons/ai"
-import { typedKeys } from "../../authUtilities/utils"
-import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Pressable } from "react-native"
-import { format } from 'date-fns'
 import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { AllAndEditButtons } from "../AllAndAddButons"
 import { useTableMutationHook } from "../../graphQL/TableQL"
-import { OrderStatus, Table, TableStatus } from "../../gen/generated"
-import { DevTool } from "@hookform/devtools";
-import { useTabMutationHook } from "../../graphQL/TabQL"
-import { businessRoute } from "../../routes"
-import { useRouter } from "next/router"
-import { Tile } from "../../components/Tile"
-import { parseToCurrency } from "../../utils"
-import { OccupiedModal } from "./OccupiedModal"
-import { borderColor, badgeScheme, stats } from "./config"
-
-const texts = {
-  space: "Space"
-}
-
-type SelectedTable = Omit<Table, "__typename" | "space" | "tab"> & { tab: string }
+import { SquareTable } from "./SquareTable"
+import { Stats } from "./Stats"
+import { SpaceModal } from "./SpaceModal"
+import { AddTableModal } from "./AddTableModal"
+import { SelectedTable, TableModal } from "./TableModal"
+import { texts } from "./texts"
 
 export const TablesScreen = () => {
   const {
@@ -39,8 +23,8 @@ export const TablesScreen = () => {
   const [tableChoosen, setTableChoosen] = useState<SelectedTable>(null)
   const [isNewTableModalOpen, setIsNewTableModalOpen] = useState(false)
 
-  const selectedSpace = allSpaces.find(space => space._id === selectedSpaceId)
-  const allTables = selectedSpace?.tables || []
+  const selectedSpace = useMemo(() => allSpaces.find(space => space._id === selectedSpaceId), [allSpaces, selectedSpaceId])
+  const allTables = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
 
   const { createTable } = useTableMutationHook();
   const postNewTable = async () => {
@@ -51,7 +35,7 @@ export const TablesScreen = () => {
     })
   }
 
-  const renderSpaces = ({ item }) => {
+  const renderSpaces = useCallback(({ item }) => {
     const selected = selectedSpaceId === item._id
     return (
       <Button
@@ -68,9 +52,9 @@ export const TablesScreen = () => {
         {item.name}
       </Button>
     )
-  }
+  }, [selectedSpaceId])
 
-  const renderTables = () => {
+  const renderTables = useCallback(() => {
     return allTables.map((item, index) =>
       <SquareTable key={item._id} index={index} status={item.status} onPress={() => {
         console.log("item", item)
@@ -81,7 +65,7 @@ export const TablesScreen = () => {
           tab: item?.tab._id
         })
       }} />)
-  }
+  }, [allTables])
 
   return (
     <Box flex={1}>
@@ -166,288 +150,4 @@ export const TablesScreen = () => {
       </VStack>
     </Box>
   )
-}
-
-const Stats = () => (
-  <HStack space={4} mr={8}>
-    <Heading size={"md"} alignSelf={"center"}>TABLES</Heading>
-    <VStack >
-      {typedKeys(stats).map(stat =>
-        <Text flex={1} key={stat} color={borderColor(stat)}>
-          {stats[stat].name}
-        </Text>
-      )}
-    </VStack>
-    <VStack >
-      {typedKeys(stats).map(key =>
-        <Text flex={1} key={key}>
-          {stats[key].number}
-        </Text>
-      )}
-    </VStack>
-  </HStack>
-)
-
-const SquareTable = ({ index, status, onPress, isButton = false }:
-  { index?: number, status?: TableStatus, onPress: () => void, isButton?: boolean }) => {
-
-  return (
-    <Pressable
-      onPress={onPress}
-    >
-      <Box
-        h={"48"}
-        w={"48"}
-        mb={4}
-        borderWidth={isButton ? 1 : 4}
-        borderRadius={"md"}
-        justifyContent="center"
-        alignItems={"center"}
-        borderColor={isButton ? "muted.500" : borderColor(status)}
-      >
-        {isButton ?
-          <Center size={16} borderWidth={3} borderRadius={"full"}>
-            <AiOutlinePlus size={"5em"} />
-          </Center>
-          :
-          <Heading color={borderColor(status)}>
-            {index + 1}
-          </Heading>}
-      </Box>
-    </Pressable>)
-}
-
-const SpaceModal = ({ isModalOpen, setIsModalOpen }) => {
-  const {
-    control,
-    formState,
-    clearErrors,
-    reset,
-    handleSubmit
-  } = useForm({
-    defaultValues: {
-      space_name: "",
-    },
-    resolver: zodResolver(z.object({
-      space_name: z.string().min(2, "Please, enter a Space Name. Min 2 chars").max(15, "15 characters max")
-    }))
-  })
-
-  const {
-    createSpace,
-  } = useSpacesMutationHook();
-
-  const onSubmit = async (data) => {
-    setIsModalOpen(false)
-
-    await createSpace({
-      variables: {
-        input: { name: data.space_name, }
-      }
-    })
-    reset()
-  }
-
-  const onCancel = () => {
-    setIsModalOpen(false)
-    reset()
-    clearErrors()
-  }
-
-  return <Modal isOpen={isModalOpen} onClose={onCancel}>
-    <Modal.CloseButton />
-    <DevTool control={control} /> {/* set up the dev tool */}
-    <Modal.Content minWidth="500px">
-      <Modal.Header>{"Add Space"}</Modal.Header>
-      <Modal.Body>
-        <ControlledForm
-          control={control}
-          formState={formState}
-          Config={{
-            space_name: {
-              name: "space_name",
-              label: "Space Name",
-              placeholder: "E.g. Patio",
-            }
-          }}
-        />
-        <Button.Group space={2} paddingTop={4}>
-          <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={onCancel}>
-            {"Cancel"}
-          </Button>
-          <Button w={"100px"} onPress={handleSubmit(onSubmit)}>
-            {"Save"}
-          </Button>
-        </Button.Group>
-      </Modal.Body>
-    </Modal.Content>
-  </Modal>
-}
-
-const tableSchema = z.object({
-  admin: z.string().optional(),
-  totalUsers: z.number({
-    required_error: "Please, enter the number of guests",
-  }),
-})
-
-const TableModal = ({ tableChoosen, setTableChoosen }:
-  { tableChoosen: SelectedTable, setTableChoosen: (table: SelectedTable) => void }) => {
-  const router = useRouter()
-  const { createTab } = useTabMutationHook();
-
-  const {
-    control,
-    formState,
-    clearErrors,
-    reset,
-    handleSubmit
-  } = useForm({
-    defaultValues: {
-      admin: "",
-      totalUsers: ""
-    },
-    resolver: zodResolver(tableSchema)
-  })
-
-  const onSubmit = async (data: any) => {
-
-    console.log("onSubmit click")
-    console.log(tableChoosen)
-
-    switch (tableChoosen?.status) {
-      case "AVAILABLE":
-        try {
-          const result = await createTab({
-            variables: {
-              input: {
-                table: tableChoosen._id,
-                admin: data.admin,
-                totalUsers: data.totalUsers
-              }
-            }
-          })
-
-          router.push(businessRoute.add_to_order(result.data.createTab._id, "635c687451cb178c2e214465"),)
-        } catch { }
-        break;
-
-      case "OCCUPIED":
-        console.log(tableChoosen)
-        router.push(businessRoute.add_to_order(tableChoosen.tab, "635c687451cb178c2e214465"))
-        break;
-    }
-
-  }
-
-  const onCancel = () => {
-    setTableChoosen(null)
-    reset()
-    clearErrors()
-  }
-
-  const renderContent = () => {
-    switch (tableChoosen?.status) {
-      case "OCCUPIED":
-        return <OccupiedModal />
-      case "RESERVED":
-        return <>
-          <Text>{"tableChoosen.reservation.name"}</Text>
-          <Text>{"tableChoosen.reservation.phone"}</Text>
-          <Text>{format(new Date(), "PPpp")}</Text>
-        </>
-      case "AVAILABLE":
-      default:
-        return <ControlledForm
-          control={control}
-          formState={formState}
-          Config={SideBySideTabConfig}
-        />
-    }
-  }
-
-  const size = tableChoosen?.status === "OCCUPIED" ? "full" : "lg"
-
-
-  return <Modal size={size} isOpen={!!tableChoosen} onClose={onCancel}>
-    <DevTool control={control} />
-    <Modal.CloseButton />
-    <Modal.Content >
-      <Modal.Header borderColor={"gray.50"}>
-        {"Table " + tableChoosen?._id}
-        <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
-          {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}</Badge>
-      </Modal.Header>
-      <Modal.Body>
-        {renderContent()}
-      </Modal.Body>
-      <Modal.Footer borderColor={"gray.50"}>
-        <Button.Group flex={1} justifyContent={"center"} space={4}>
-          <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-            {"Cancel"}
-          </Button>
-          <Button w={"200px"} onPress={tableChoosen?.status === "OCCUPIED" ? onSubmit : handleSubmit(onSubmit)}>
-            {"Open tab"}
-          </Button>
-        </Button.Group>
-      </Modal.Footer>
-    </Modal.Content>
-  </Modal >
-}
-
-const TabConfig: RegularInputConfig = {
-  totalUsers: {
-    name: "totalUsers",
-    label: "Num Guests",
-    placeholder: "Select number of guests",
-    errorMessage: "Please, enter a number of guests",
-    helperText: "Number of guests",
-    formatOnChange: (value: string, fieldOnchange: (number) => void) => {
-      if (Number.isInteger(Number(value))) {
-        return fieldOnchange(Number(value))
-      }
-    }
-  },
-  admin: {
-    name: "admin",
-    label: "Admin",
-    placeholder: "Select an admin user",
-  },
-}
-
-const { totalUsers, admin } = TabConfig
-
-const SideBySideTabConfig: SideBySideInputConfig = {
-  info: [{ totalUsers }, { admin }]
-}
-
-const AddTableModal = ({ isModalOpen, setIsModalOpen, postNewTable }) => {
-  const onSubmit = async () => {
-    setIsModalOpen(false)
-    await postNewTable()
-  }
-
-  const onCancel = () => {
-    setIsModalOpen(false)
-  }
-
-  return <Modal isOpen={isModalOpen} onClose={onCancel}>
-    <Modal.CloseButton />
-    <Modal.Content minWidth="500px">
-      <Modal.Header>{"Add Space"}</Modal.Header>
-      <Modal.Body>
-        <Text>Would you like to add a new table?</Text>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button.Group space={2} paddingTop={4}>
-          <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={onCancel}>
-            {"Cancel"}
-          </Button>
-          <Button w={"100px"} onPress={onSubmit}>
-            {"Yes"}
-          </Button>
-        </Button.Group>
-      </Modal.Footer>
-    </Modal.Content>
-  </Modal>
 }

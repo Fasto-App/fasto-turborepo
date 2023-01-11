@@ -4,6 +4,8 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { getCookies } from 'cookies-next';
 
+
+// update all of these URLS. Perhaps have them from config File
 const PROD_URL = "https://opentab-backend.herokuapp.com/graphql";
 const STAG_URL = "https://fasto-api-dev.herokuapp.com/";
 const DEV_URL = "http://localhost:4000/graphql";
