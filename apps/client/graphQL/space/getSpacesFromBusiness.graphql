@@ -17,6 +17,13 @@ query GetSpacesFromBusiness {
 				orders {
 					_id
 					status
+					quantity
+					subTotal
+					product {
+						imageUrl
+						price
+						name
+					}
 				}
 			}
 		}

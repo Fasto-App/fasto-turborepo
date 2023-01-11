@@ -1,7 +1,9 @@
 mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
 	createMultipleOrderDetails(input: $input) {
 		_id
-		product
+		product {
+			imageUrl
+		}
 		status
 		quantity
 		subTotal

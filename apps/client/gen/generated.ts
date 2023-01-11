@@ -379,7 +379,7 @@ export type OrderDetail = {
   _id: Scalars['ID'];
   created_date: Scalars['String'];
   message?: Maybe<Scalars['String']>;
-  product: Scalars['ID'];
+  product: Product;
   quantity: Scalars['Int'];
   status: OrderStatus;
   subTotal: Scalars['Int'];
@@ -429,6 +429,7 @@ export type Query = {
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getProductByID?: Maybe<Product>;
+  getProductByOrderDetails?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Maybe<Space>>>;
   getTabByID?: Maybe<Tab>;
   getUserByID?: Maybe<User>;
@@ -464,6 +465,11 @@ export type QueryGetOrderDetailByIdArgs = {
 
 export type QueryGetProductByIdArgs = {
   productID: Scalars['ID'];
+};
+
+
+export type QueryGetProductByOrderDetailsArgs = {
+  orderDetails: Array<OrderDetailInput>;
 };
 
 
@@ -716,7 +722,7 @@ export type CreateMultipleOrderDetailsMutationVariables = Exact<{
 }>;
 
 
-export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails?: Array<{ __typename?: 'OrderDetail', _id: string, product: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null }> | null };
+export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails?: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null, product: { __typename?: 'Product', imageUrl?: string | null } }> | null };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -761,7 +767,7 @@ export type CreateSpaceMutation = { __typename?: 'Mutation', createSpace: { __ty
 export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus } | null> } | null } | null> | null } | null> | null };
+export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null } } | null> } | null } | null> | null } | null> | null };
 
 export type CreateTabMutationVariables = Exact<{
   input: CreateTabInput;
@@ -1175,7 +1181,9 @@ export const CreateMultipleOrderDetailsDocument = gql`
     mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
   createMultipleOrderDetails(input: $input) {
     _id
-    product
+    product {
+      imageUrl
+    }
     status
     quantity
     subTotal
@@ -1442,6 +1450,11 @@ export const GetSpacesFromBusinessDocument = gql`
         orders {
           _id
           status
+          quantity
+          subTotal
+          product {
+            imageUrl
+          }
         }
       }
     }

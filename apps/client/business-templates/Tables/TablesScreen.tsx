@@ -18,13 +18,15 @@ export const TablesScreen = () => {
     allSpaces,
   } = useSpacesMutationHook();
 
+  // TODO: have space pre-selected
+  //TODO: Update the state when succefully fetched
   const [selectedSpaceId, setSelectedSpace] = useState<string>(allSpaces?.[0]?._id);
   const [isSpaceModalOpen, setSpaceIsModalOpen] = useState(false)
   const [tableChoosen, setTableChoosen] = useState<SelectedTable>(null)
   const [isNewTableModalOpen, setIsNewTableModalOpen] = useState(false)
 
   const selectedSpace = useMemo(() => allSpaces.find(space => space._id === selectedSpaceId), [allSpaces, selectedSpaceId])
-  const allTables = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
+  const allTablesFilteredBySpace = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
 
   const { createTable } = useTableMutationHook();
   const postNewTable = async () => {
@@ -53,19 +55,6 @@ export const TablesScreen = () => {
       </Button>
     )
   }, [selectedSpaceId])
-
-  const renderTables = useCallback(() => {
-    return allTables.map((item, index) =>
-      <SquareTable key={item._id} index={index} status={item.status} onPress={() => {
-        console.log("item", item)
-        setTableChoosen({
-          _id: item._id,
-          status: item.status,
-          tableNumber: item.tableNumber,
-          tab: item?.tab._id
-        })
-      }} />)
-  }, [allTables])
 
   return (
     <Box flex={1}>
@@ -140,12 +129,20 @@ export const TablesScreen = () => {
           <Box flex={1}>
             <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
               <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
-              {renderTables()}
+              {allTablesFilteredBySpace.map((table, index) =>
+                <SquareTable key={table._id} index={index} status={table.status} onPress={() => {
+                  console.log("table", table)
+                  setTableChoosen({
+                    _id: table._id,
+                    status: table.status,
+                    tableNumber: table.tableNumber,
+                    tab: table?.tab._id
+                  })
+                }} />)}
             </HStack>
           </Box>
 
         </Box> : null
-
         }
       </VStack>
     </Box>

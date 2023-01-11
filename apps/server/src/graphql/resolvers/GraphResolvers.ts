@@ -98,5 +98,10 @@ export const resolvers = {
   Section: {
     products: MenuResolver.getProductsBySection,
     category: MenuResolver.getCategoryBySection,
-  }
+  },
+  OrderDetail: {
+    // order: OrderDetailsResolver.getOrderDetailsByOrderID,
+    // tab: OrderDetailsResolver.getTabByOrderDetails,
+    product: ProductResolver.getProductByOrderDetails,
+  },
 };

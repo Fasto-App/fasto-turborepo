@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider, Hidden } from "native-base"
+import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider } from "native-base"
 import { Tile } from "../../components/Tile"
 import { OrderStatus } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
@@ -19,32 +19,29 @@ const orders = new Array(3).fill({
   status: "DELIVERED",
 })
 
-enum FilterOrderBy {
-  "Patron",
-  "Table",
-}
+const FilterOrderBy = {
+  patron: "Patron",
+  table: "Table"
+} as const
 
-
-// TODO read the information comming from the TableHook?
-// Get all the orders from the table
-// filter based on who ordered
+type FilterOrderBy = typeof FilterOrderBy[keyof typeof FilterOrderBy]
 
 export const OccupiedModal = () => {
-  const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.Patron)
+  const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.patron)
   return (
     <Box>
       <HStack flex={1} justifyContent={"space-around"} space={2}>
-        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.Patron)}>
+        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.patron)}>
           <Heading size={"md"} textAlign={"center"}>{"By Patron"}</Heading>
-          <Divider bg={tabOpen === FilterOrderBy.Patron ? "gray.400" : "gray.300"} />
+          <Divider bg={tabOpen === FilterOrderBy.patron ? "gray.400" : "gray.300"} />
         </Pressable>
-        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.Table)}>
+        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.table)}>
           <Heading size={"md"} textAlign={"center"}>{"By Table"}</Heading>
-          <Divider bg={tabOpen === FilterOrderBy.Table ? "gray.400" : "gray.300"} />
+          <Divider bg={tabOpen === FilterOrderBy.table ? "gray.400" : "gray.300"} />
         </Pressable>
       </HStack>
       <Box p={8}>
-        {tabOpen === FilterOrderBy.Patron ?
+        {tabOpen === FilterOrderBy.patron ?
           <>
             <HStack space={2} pb={8}>
               {patrons.map((patron) => (
