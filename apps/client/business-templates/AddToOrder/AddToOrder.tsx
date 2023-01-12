@@ -100,7 +100,7 @@ export const AddToOrder = () => {
             </Flex>
             <ScrollView flex={1}>
               {orderItems?.map((order, index) => {
-                const personindex = tabData?.getTabByID?.users.findIndex(userId => userId === order.selectedUser)
+                const personindex = tabData?.getTabByID?.users.findIndex(user => user._id === order.selectedUser)
 
                 return <SummaryComponent
                   key={order._id + personindex}
@@ -190,9 +190,9 @@ export const AddToOrder = () => {
                     </Tile>
                     {tabData?.getTabByID?.users.map((user, index) => (
                       <Tile
-                        key={user}
-                        selected={user === selectedUser}
-                        onPress={() => setSelectedUser(user)}
+                        key={user._id}
+                        selected={user._id === selectedUser}
+                        onPress={() => setSelectedUser(user._id)}
                       >
                         {`Person ${index + 1}`}
                       </Tile>

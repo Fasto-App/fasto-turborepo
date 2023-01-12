@@ -1,23 +1,9 @@
 import React, { useState } from "react"
 import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider } from "native-base"
 import { Tile } from "../../components/Tile"
-import { OrderStatus } from "../../gen/generated"
+import { OrderDetail, OrderStatus } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
-
-
-const patrons = new Array(3).fill({
-  _id: 2,
-  name: "Alexandre",
-});
-
-const orders = new Array(3).fill({
-  _id: "1",
-  name: "Pizza de Catupiry com Borda",
-  image: "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2022%2F05%2F09%2Fbacon-509429382.jpg&q=60",
-  price: 1000,
-  quantity: 2,
-  status: "DELIVERED",
-})
+import { useTableScreenStore } from "./tableScreenStore"
 
 const FilterOrderBy = {
   patron: "Patron",
@@ -28,6 +14,10 @@ type FilterOrderBy = typeof FilterOrderBy[keyof typeof FilterOrderBy]
 
 export const OccupiedModal = () => {
   const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.patron)
+  const tableChoosen = useTableScreenStore(state => state.tableChoosen)
+
+  console.log(tableChoosen, "TABLE CHOSEN")
+
   return (
     <Box>
       <HStack flex={1} justifyContent={"space-around"} space={2}>
@@ -41,54 +31,71 @@ export const OccupiedModal = () => {
         </Pressable>
       </HStack>
       <Box p={8}>
-        {tabOpen === FilterOrderBy.patron ?
-          <>
-            <HStack space={2} pb={8}>
-              {patrons.map((patron) => (
-                <Tile key={patron._id} selected={false} onPress={undefined} >
-                  {patron.name}
-                </Tile>
-              ))}
-            </HStack>
-            <VStack space={6}>
-              {orders.map((order) => <OrderTile key={order._id} order={order} />)}
-            </VStack>
-          </> : (
-            <VStack space={6} pt={10}>
-              {orders.map((order) => <OrderTile key={order.id} order={order} />)}
-            </VStack>
-          )}
+        <HStack space={2} pb={8}>
+          {tableChoosen?.users?.map((patron, index) => (
+            <Tile key={patron._id} selected={false} onPress={undefined} >
+              {`Person ${index + 1}`}
+            </Tile>
+          ))}
+        </HStack>
+        <VStack space={6}>
+          {tableChoosen?.orders?.map((order) => {
+            return <OrderTile key={order._id}
+              imageUrl={order.product.imageUrl}
+              name={order.product.name}
+              price={order.product.price}
+              quantity={order.quantity}
+              status={order.status}
+              subTotal={order.subTotal}
+            />
+          })}
+        </VStack>
       </Box>
     </Box>
   )
 }
 
-const OrderTile = ({ order }) => {
+type OrderTileProps = {
+  imageUrl: OrderDetail["product"]["imageUrl"];
+  name: OrderDetail["product"]["name"];
+  price: OrderDetail["product"]["price"];
+  quantity: OrderDetail["quantity"];
+  subTotal: OrderDetail["subTotal"];
+  status: OrderDetail["status"];
+}
+
+const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderTileProps) => {
   return (<HStack borderRadius={"md"} p={1} backgroundColor={"white"} flex={1} justifyContent={"space-between"}>
     <HStack>
       <Center>
-        <Image src={order.image}
+        <Image src={imageUrl}
           width={100} height={60}
-          alt={order.name} />
+          alt={name} />
       </Center>
       <VStack pl={2} pt={3}>
-        <Heading size={"sm"}>{`${order.name}`}</Heading>
-        <Text>{`${parseToCurrency(order.price)}`}</Text>
+        <Heading size={"sm"}>{`${name}`}</Heading>
+        <Text>{`${parseToCurrency(price)}`}</Text>
       </VStack>
     </HStack>
 
     <Center>
-      <Select selectedValue={"DELIVERED"} minWidth="200" accessibilityLabel="Choose Service" placeholder="Order Status" mt={1} onValueChange={itemValue => console.log(itemValue)}>
+      <Select
+        mt={1}
+        minWidth="200"
+        accessibilityLabel="Choose Service"
+        selectedValue={status}
+        placeholder="Order Status"
+        onValueChange={itemValue => console.log(itemValue)}>
         {Object.keys(OrderStatus).map((status, index) => (
           <Select.Item key={index} label={status} value={status.toUpperCase()} />)
         )}
       </Select>
     </Center>
     <Center>
-      <Text>{`${parseToCurrency(order.price * order.quantity)}`}</Text>
+      <Text>{`${parseToCurrency(subTotal)}`}</Text>
     </Center>
     <Center>
-      <Text >{`${order.quantity}x`}</Text>
+      <Text >{`${quantity}x`}</Text>
     </Center>
     <Center p={6}>
       <CheckIcon />

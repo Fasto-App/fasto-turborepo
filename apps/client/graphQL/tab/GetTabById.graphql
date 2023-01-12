@@ -1,7 +1,9 @@
 query GetTabByID($input: GetById!) {
 	getTabByID(input: $input) {
 		_id
-		users
+		users {
+			_id
+		}
 		table {
 			_id
 			tableNumber

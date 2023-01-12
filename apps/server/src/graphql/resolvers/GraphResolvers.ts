@@ -87,7 +87,7 @@ export const resolvers = {
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,
     table: TabResolver.getTableByTabID,
-    // users: TabResolver.getUsersByTabID,
+    users: TabResolver.getUsersByTabID,
   },
   // Users: {
   //   orders: getAllOpenOrdersByTabID,

@@ -10,20 +10,37 @@ import { SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
 import { AddTableModal } from "./AddTableModal"
-import { SelectedTable, TableModal } from "./TableModal"
+import { TableModal } from "./TableModal"
 import { texts } from "./texts"
+import { useTableScreenStore } from "./tableScreenStore"
+import { shallow } from 'zustand/shallow'
 
 export const TablesScreen = () => {
   const {
     allSpaces,
   } = useSpacesMutationHook();
 
-  // TODO: have space pre-selected
-  //TODO: Update the state when succefully fetched
-  const [selectedSpaceId, setSelectedSpace] = useState<string>(allSpaces?.[0]?._id);
-  const [isSpaceModalOpen, setSpaceIsModalOpen] = useState(false)
-  const [tableChoosen, setTableChoosen] = useState<SelectedTable>(null)
-  const [isNewTableModalOpen, setIsNewTableModalOpen] = useState(false)
+  const { selectedSpaceId,
+    isNewTableModalOpen,
+    setIsNewTableModalOpen,
+    isSpaceModalOpen,
+    setSelectedSpace,
+    tableChoosen,
+    setTableChoosen,
+    setSpaceIsModalOpen
+  } = useTableScreenStore(
+    state => ({
+      tableChoosen: state.tableChoosen,
+      selectedSpaceId: state.selectedSpaceId,
+      isNewTableModalOpen: state.isNewTableModalOpen,
+      setIsNewTableModalOpen: state.setIsNewTableModalOpen,
+      setSelectedSpace: state.setSelectedSpace,
+      isSpaceModalOpen: state.isSpaceModalOpen,
+      setTableChoosen: state.setTableChoosen,
+      setSpaceIsModalOpen: state.setSpaceIsModalOpen
+    }),
+    shallow
+  )
 
   const selectedSpace = useMemo(() => allSpaces.find(space => space._id === selectedSpaceId), [allSpaces, selectedSpaceId])
   const allTablesFilteredBySpace = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
@@ -54,7 +71,7 @@ export const TablesScreen = () => {
         {item.name}
       </Button>
     )
-  }, [selectedSpaceId])
+  }, [selectedSpaceId, setSelectedSpace])
 
   return (
     <Box flex={1}>
@@ -136,7 +153,10 @@ export const TablesScreen = () => {
                     _id: table._id,
                     status: table.status,
                     tableNumber: table.tableNumber,
-                    tab: table?.tab._id
+                    tab: table?.tab?._id,
+                    // @ts-ignore
+                    orders: table.tab?.orders ?? [],
+                    users: table?.tab?.users ?? []
                   })
                 }} />)}
             </HStack>

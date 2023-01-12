@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
@@ -6,15 +6,19 @@ import { Badge, Button, Modal, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { Table } from "../../gen/generated";
+import { OrderDetail, Table, User } from "../../gen/generated";
 import { useTabMutationHook } from "../../graphQL/TabQL";
 import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
 import * as z from "zod"
 
-
-export type SelectedTable = Omit<Table, "__typename" | "space" | "tab"> & { tab: string }
+// get the type from the query itself and not the entity
+export type SelectedTable = Omit<Table, "__typename" | "space" | "tab"> & {
+  tab: string,
+  orders: OrderDetail[],
+  users: User[]
+}
 
 
 const tableSchema = z.object({
@@ -70,10 +74,7 @@ export const TableModal = ({ tableChoosen, setTableChoosen }:
     resolver: zodResolver(tableSchema)
   })
 
-  const onSubmit = async (data: any) => {
-
-    console.log("onSubmit click")
-    console.log(tableChoosen)
+  const onSubmit = useCallback(async (data: any) => {
 
     switch (tableChoosen?.status) {
       case "AVAILABLE":
@@ -98,7 +99,7 @@ export const TableModal = ({ tableChoosen, setTableChoosen }:
         break;
     }
 
-  }
+  }, [createTab, router, tableChoosen])
 
   const onCancel = () => {
     setTableChoosen(null)
@@ -146,7 +147,8 @@ export const TableModal = ({ tableChoosen, setTableChoosen }:
           <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
             {"Cancel"}
           </Button>
-          <Button w={"200px"} onPress={tableChoosen?.status === "OCCUPIED" ? onSubmit : handleSubmit(onSubmit)}>
+          <Button w={"200px"}
+            onPress={tableChoosen?.status === "OCCUPIED" ? onSubmit : handleSubmit(onSubmit)}>
             {"Open tab"}
           </Button>
         </Button.Group>
