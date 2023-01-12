@@ -15,9 +15,6 @@ import { useTableScreenStore } from "./tableScreenStore"
 import { shallow } from 'zustand/shallow'
 
 export const TablesScreen = () => {
-  const {
-    allSpaces,
-  } = useSpacesMutationHook();
 
   const { selectedSpaceId,
     isNewTableModalOpen,
@@ -40,6 +37,10 @@ export const TablesScreen = () => {
     }),
     shallow
   )
+
+  const {
+    allSpaces,
+  } = useSpacesMutationHook(setSelectedSpace);
 
   const selectedSpace = useMemo(() => allSpaces.find(space => space._id === selectedSpaceId), [allSpaces, selectedSpaceId])
   const allTablesFilteredBySpace = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
@@ -147,7 +148,6 @@ export const TablesScreen = () => {
               <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
               {allTablesFilteredBySpace.map((table, index) =>
                 <SquareTable key={table._id} index={index} status={table.status} onPress={() => {
-                  console.log("table", table)
                   setTableChoosen({
                     _id: table._id,
                     status: table.status,

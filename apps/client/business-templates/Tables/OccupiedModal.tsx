@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider } from "native-base"
+import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider, ScrollView } from "native-base"
 import { Tile } from "../../components/Tile"
 import { OrderDetail, OrderStatus } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
@@ -13,42 +13,47 @@ const FilterOrderBy = {
 type FilterOrderBy = typeof FilterOrderBy[keyof typeof FilterOrderBy]
 
 export const OccupiedModal = () => {
-  const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.patron)
+  const [filter, setFilterBy] = useState<FilterOrderBy>(FilterOrderBy.patron)
   const tableChoosen = useTableScreenStore(state => state.tableChoosen)
-
-  console.log(tableChoosen, "TABLE CHOSEN")
 
   return (
     <Box>
       <HStack flex={1} justifyContent={"space-around"} space={2}>
-        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.patron)}>
+        <Pressable flex={1} onPress={() => setFilterBy(FilterOrderBy.patron)}>
           <Heading size={"md"} textAlign={"center"}>{"By Patron"}</Heading>
-          <Divider bg={tabOpen === FilterOrderBy.patron ? "gray.400" : "gray.300"} />
+          <Divider bg={filter === FilterOrderBy.patron ? "gray.400" : "gray.300"} />
         </Pressable>
-        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.table)}>
+        <Pressable flex={1} onPress={() => setFilterBy(FilterOrderBy.table)}>
           <Heading size={"md"} textAlign={"center"}>{"By Table"}</Heading>
-          <Divider bg={tabOpen === FilterOrderBy.table ? "gray.400" : "gray.300"} />
+          <Divider bg={filter === FilterOrderBy.table ? "gray.400" : "gray.300"} />
         </Pressable>
       </HStack>
       <Box p={8}>
-        <HStack space={2} pb={8}>
-          {tableChoosen?.users?.map((patron, index) => (
-            <Tile key={patron._id} selected={false} onPress={undefined} >
-              {`Person ${index + 1}`}
-            </Tile>
-          ))}
-        </HStack>
+        {/* Make this container scrollable */}
+        <ScrollView horizontal={true} pb={2}>
+          <HStack space={2}>
+            {tableChoosen?.users?.map((patron, index) => (
+              <Tile key={patron._id} selected={false} onPress={undefined} >
+                {`Person ${index + 1}`}
+              </Tile>
+            ))}
+          </HStack>
+        </ScrollView>
         <VStack space={6}>
-          {tableChoosen?.orders?.map((order) => {
-            return <OrderTile key={order._id}
-              imageUrl={order.product.imageUrl}
-              name={order.product.name}
-              price={order.product.price}
-              quantity={order.quantity}
-              status={order.status}
-              subTotal={order.subTotal}
-            />
-          })}
+          {!tableChoosen?.orders?.length ?
+            <Center flex={1} paddingY={"10"}>
+              <Heading size={"md"} textAlign={"center"}>{"No orders yet"}</Heading>
+            </Center>
+            : tableChoosen?.orders?.map((order) => {
+              return <OrderTile key={order._id}
+                imageUrl={order.product.imageUrl}
+                name={order.product.name}
+                price={order.product.price}
+                quantity={order.quantity}
+                status={order.status}
+                subTotal={order.subTotal}
+              />
+            })}
         </VStack>
       </Box>
     </Box>

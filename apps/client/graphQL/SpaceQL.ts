@@ -5,8 +5,15 @@ import {
 } from "../gen/generated";
 
 
-export const useSpacesMutationHook = () => {
-  const [createSpace, { loading: createSpaceIsLoading }] = useCreateSpaceMutation({
+export const useSpacesMutationHook = (onGetSucess: (spaceId?: string) => void) => {
+
+  const { data } = useGetSpacesFromBusinessQuery({
+    onCompleted: (data) => {
+      onGetSucess(data.getSpacesFromBusiness?.[0]._id)
+    },
+  });
+
+  const [createSpace] = useCreateSpaceMutation({
     onCompleted: () => {
       console.log('space created')
     },
@@ -21,8 +28,6 @@ export const useSpacesMutationHook = () => {
       });
     }
   });
-
-  const { data } = useGetSpacesFromBusinessQuery();
 
   return {
     allSpaces: data?.getSpacesFromBusiness ?? [],
