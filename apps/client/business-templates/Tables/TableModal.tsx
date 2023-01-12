@@ -6,13 +6,14 @@ import { Badge, Button, Modal, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { OrderDetail, Table, User } from "../../gen/generated";
+import { OrderDetail, Table, useGetTabByIdQuery, User } from "../../gen/generated";
 import { useTabMutationHook } from "../../graphQL/TabQL";
 import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
 import * as z from "zod"
 import { SelectedTable } from "./types";
+import { useTableScreenStore } from "./tableScreenStore";
 
 const tableSchema = z.object({
   admin: z.string().optional(),
@@ -54,14 +55,30 @@ const texts = {
 }
 
 
-export const TableModal = ({ tableChoosen, setTableChoosen }:
-  { tableChoosen: SelectedTable, setTableChoosen: (table: SelectedTable) => void }) => {
+export const TableModal = () => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
+
+  const tableChoosen = useTableScreenStore(state => state.tableChoosen)
+  const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
+
   const isOcuppiedTable = tableChoosen?.status === "OCCUPIED"
   const isAvailableTable = tableChoosen?.status === "AVAILABLE"
   const isReservedTable = tableChoosen?.status === "RESERVED"
   const size = isOcuppiedTable ? "full" : "lg"
+
+
+  // store the id and go through the array of orders
+  // fetch information for an specific TAB 
+  const { data } = useGetTabByIdQuery({
+    variables: {
+      input: {
+        _id: tableChoosen?.tab
+      }
+    }
+  })
+
+  console.log({ data })
 
   const {
     control,

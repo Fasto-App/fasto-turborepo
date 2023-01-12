@@ -15,7 +15,7 @@ import {
   PresenceTransition
 } from "native-base"
 import { Tile } from "../../components/Tile"
-import { OrderDetail, OrderStatus } from "../../gen/generated"
+import { OrderDetail, OrderStatus, useGetTabByIdQuery } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
 import { useTableScreenStore } from "./tableScreenStore"
 
@@ -39,6 +39,17 @@ export const OccupiedModal = () => {
   const [filter, setFilterBy] = useState<FilterOrderBy>(FilterOrderBy.patron)
   const tableChoosen = useTableScreenStore(state => state.tableChoosen)
   const isFilteredByPatron = filter === FilterOrderBy.patron
+  // store the id and go through the array of orders
+  // fetch information for an specific TAB 
+  // const { data } = useGetTabByIdQuery({
+  //   variables: {
+  //     input: {
+  //       _id: tableChoosen?._id
+  //     }
+  //   }
+  // })
+
+  // console.log({ data })
 
   return (
     <Box>

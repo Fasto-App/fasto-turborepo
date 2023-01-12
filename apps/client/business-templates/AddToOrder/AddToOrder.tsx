@@ -63,7 +63,9 @@ export const AddToOrder = () => {
     },
   })
 
-  const [createOrders, { data }] = useCreateMultipleOrderDetailsMutation()
+  const [createOrders, { data }] = useCreateMultipleOrderDetailsMutation({
+    refetchQueries: ["GetSpacesFromBusiness"],
+  })
 
   const onSendToKitchen = async () => {
     const orderDetails = orderItems.map(order => ({

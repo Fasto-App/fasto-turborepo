@@ -73,6 +73,8 @@ export const TablesScreen = () => {
     )
   }, [selectedSpaceId, setSelectedSpace])
 
+  console.log("tableChoosen", tableChoosen)
+
   return (
     <Box flex={1}>
       <ModalFeedback
@@ -85,7 +87,7 @@ export const TablesScreen = () => {
         setIsModalOpen={setIsNewTableModalOpen}
         postNewTable={postNewTable} />
       <SpaceModal isModalOpen={isSpaceModalOpen} setIsModalOpen={setSpaceIsModalOpen} />
-      <TableModal tableChoosen={tableChoosen} setTableChoosen={setTableChoosen} />
+      <TableModal />
       <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
       <VStack m={"4"} space={"4"} flex={1}>
         <VStack

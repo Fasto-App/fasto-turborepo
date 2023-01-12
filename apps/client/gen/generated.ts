@@ -775,7 +775,7 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string } | null> } | null };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null };
 
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
@@ -1532,12 +1532,22 @@ export const GetTabByIdDocument = gql`
     users {
       _id
     }
+    _id
     table {
       _id
       tableNumber
     }
+    admin
     orders {
       _id
+      status
+      quantity
+      subTotal
+      product {
+        imageUrl
+        price
+        name
+      }
     }
   }
 }
