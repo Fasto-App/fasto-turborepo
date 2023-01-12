@@ -5,11 +5,11 @@ import {
 } from "../gen/generated";
 
 
-export const useSpacesMutationHook = (onGetSucess: (spaceId?: string) => void) => {
+export const useSpacesMutationHook = (onGetSucess?: (spaceId?: string) => void) => {
 
   const { data } = useGetSpacesFromBusinessQuery({
     onCompleted: (data) => {
-      onGetSucess(data.getSpacesFromBusiness?.[0]._id)
+      onGetSucess?.(data.getSpacesFromBusiness?.[0]._id)
     },
   });
 
