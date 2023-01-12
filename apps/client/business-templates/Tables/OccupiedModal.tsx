@@ -32,6 +32,7 @@ const texts = {
   person: "Person",
   chooseService: "Choose a service",
   orderStatus: "Order Status",
+  noOrdersYet: "No orders yet",
 }
 
 export const OccupiedModal = () => {
@@ -86,7 +87,7 @@ export const OccupiedModal = () => {
         <VStack space={6} pt={"5"}>
           {!tableChoosen?.orders?.length ?
             <Center flex={1} paddingY={"10"}>
-              <Heading size={"md"} textAlign={"center"}>{"No orders yet"}</Heading>
+              <Heading size={"md"} textAlign={"center"}>{texts.noOrdersYet}</Heading>
             </Center>
             : tableChoosen?.orders?.map((order) => {
               return <OrderTile key={order._id}

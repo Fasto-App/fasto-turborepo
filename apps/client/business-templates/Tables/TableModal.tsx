@@ -47,11 +47,21 @@ const SideBySideTabConfig: SideBySideInputConfig = {
   info: [{ totalUsers }, { admin }]
 }
 
+const texts = {
+  addNewItem: "Add New Item",
+  openTab: "Open a New Tab",
+  cancel: "Cancel",
+}
+
 
 export const TableModal = ({ tableChoosen, setTableChoosen }:
   { tableChoosen: SelectedTable, setTableChoosen: (table: SelectedTable) => void }) => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
+  const isOcuppiedTable = tableChoosen?.status === "OCCUPIED"
+  const isAvailableTable = tableChoosen?.status === "AVAILABLE"
+  const isReservedTable = tableChoosen?.status === "RESERVED"
+  const size = isOcuppiedTable ? "full" : "lg"
 
   const {
     control,
@@ -100,29 +110,6 @@ export const TableModal = ({ tableChoosen, setTableChoosen }:
     clearErrors()
   }
 
-  const renderContent = () => {
-    switch (tableChoosen?.status) {
-      case "OCCUPIED":
-        return <OccupiedModal />
-      case "RESERVED":
-        return <>
-          <Text>{"tableChoosen.reservation.name"}</Text>
-          <Text>{"tableChoosen.reservation.phone"}</Text>
-          <Text>{format(new Date(), "PPpp")}</Text>
-        </>
-      case "AVAILABLE":
-      default:
-        return <ControlledForm
-          control={control}
-          formState={formState}
-          Config={SideBySideTabConfig}
-        />
-    }
-  }
-
-  const size = tableChoosen?.status === "OCCUPIED" ? "full" : "lg"
-
-
   return <Modal size={size} isOpen={!!tableChoosen} onClose={onCancel}>
     <DevTool control={control} />
     <Modal.CloseButton />
@@ -133,16 +120,26 @@ export const TableModal = ({ tableChoosen, setTableChoosen }:
           {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}</Badge>
       </Modal.Header>
       <Modal.Body>
-        {renderContent()}
+        {isOcuppiedTable ? <OccupiedModal /> : isAvailableTable ?
+          <ControlledForm
+            control={control}
+            formState={formState}
+            Config={SideBySideTabConfig}
+          /> : isReservedTable ? <>
+            <Text>{"tableChoosen.reservation.name"}</Text>
+            <Text>{"tableChoosen.reservation.phone"}</Text>
+            <Text>{format(new Date(), "PPpp")}</Text>
+          </> : null
+        }
       </Modal.Body>
       <Modal.Footer borderColor={"gray.50"}>
         <Button.Group flex={1} justifyContent={"center"} space={4}>
           <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-            {"Cancel"}
+            {texts.cancel}
           </Button>
           <Button w={"200px"}
-            onPress={tableChoosen?.status === "OCCUPIED" ? onSubmit : handleSubmit(onSubmit)}>
-            {"Open tab"}
+            onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}>
+            {isOcuppiedTable ? texts.addNewItem : texts.openTab}
           </Button>
         </Button.Group>
       </Modal.Footer>
