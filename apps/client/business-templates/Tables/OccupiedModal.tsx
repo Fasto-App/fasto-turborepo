@@ -1,5 +1,19 @@
 import React, { useState } from "react"
-import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider, ScrollView } from "native-base"
+import {
+  Box,
+  Center,
+  CheckIcon,
+  Heading,
+  HStack,
+  Select,
+  VStack,
+  Text,
+  Image,
+  Pressable,
+  Divider,
+  ScrollView,
+  PresenceTransition
+} from "native-base"
 import { Tile } from "../../components/Tile"
 import { OrderDetail, OrderStatus } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
@@ -12,34 +26,64 @@ const FilterOrderBy = {
 
 type FilterOrderBy = typeof FilterOrderBy[keyof typeof FilterOrderBy]
 
+const texts = {
+  byPatron: "By Patron",
+  byTable: "By Table",
+  person: "Person",
+  chooseService: "Choose a service",
+  orderStatus: "Order Status",
+}
+
 export const OccupiedModal = () => {
   const [filter, setFilterBy] = useState<FilterOrderBy>(FilterOrderBy.patron)
   const tableChoosen = useTableScreenStore(state => state.tableChoosen)
+  const isFilteredByPatron = filter === FilterOrderBy.patron
 
   return (
     <Box>
       <HStack flex={1} justifyContent={"space-around"} space={2}>
         <Pressable flex={1} onPress={() => setFilterBy(FilterOrderBy.patron)}>
-          <Heading size={"md"} textAlign={"center"}>{"By Patron"}</Heading>
-          <Divider bg={filter === FilterOrderBy.patron ? "gray.400" : "gray.300"} />
+          <Heading
+            size={"md"}
+            textAlign={"center"}
+            color={isFilteredByPatron ? undefined : "gray.400"}
+          >
+            {texts.byPatron}
+          </Heading>
+          <Divider bg={isFilteredByPatron ? "gray.400" : "gray.300"} />
         </Pressable>
         <Pressable flex={1} onPress={() => setFilterBy(FilterOrderBy.table)}>
-          <Heading size={"md"} textAlign={"center"}>{"By Table"}</Heading>
-          <Divider bg={filter === FilterOrderBy.table ? "gray.400" : "gray.300"} />
+          <Heading
+            size={"md"}
+            textAlign={"center"}
+            color={!isFilteredByPatron ? undefined : "gray.400"}
+          >
+            {texts.byTable}
+          </Heading>
+          <Divider bg={!isFilteredByPatron ? "gray.400" : "gray.300"} />
         </Pressable>
       </HStack>
-      <Box p={8}>
-        {/* Make this container scrollable */}
-        <ScrollView horizontal={true} pb={2}>
-          <HStack space={2}>
-            {tableChoosen?.users?.map((patron, index) => (
-              <Tile key={patron._id} selected={false} onPress={undefined} >
-                {`Person ${index + 1}`}
-              </Tile>
-            ))}
-          </HStack>
-        </ScrollView>
-        <VStack space={6}>
+      <Box pb={8} pt={4}>
+        <PresenceTransition
+          visible={isFilteredByPatron}
+          initial={{ opacity: 0, }}
+          animate={{
+            opacity: 1,
+            transition: {
+              duration: 250
+            }
+          }}>
+          <ScrollView horizontal={true} pb={2}>
+            <HStack space={2}>
+              {tableChoosen?.users?.map((patron, index) => (
+                <Tile key={patron._id} selected={false} onPress={undefined} >
+                  {`${texts.person} ${index + 1}`}
+                </Tile>
+              ))}
+            </HStack>
+          </ScrollView>
+        </PresenceTransition>
+        <VStack space={6} pt={"5"}>
           {!tableChoosen?.orders?.length ?
             <Center flex={1} paddingY={"10"}>
               <Heading size={"md"} textAlign={"center"}>{"No orders yet"}</Heading>
@@ -82,14 +126,13 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
         <Text>{`${parseToCurrency(price)}`}</Text>
       </VStack>
     </HStack>
-
     <Center>
       <Select
         mt={1}
-        minWidth="200"
-        accessibilityLabel="Choose Service"
+        minWidth="400"
         selectedValue={status}
-        placeholder="Order Status"
+        placeholder={texts.orderStatus}
+        accessibilityLabel={texts.chooseService}
         onValueChange={itemValue => console.log(itemValue)}>
         {Object.keys(OrderStatus).map((status, index) => (
           <Select.Item key={index} label={status} value={status.toUpperCase()} />)
