@@ -12,14 +12,7 @@ import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
 import * as z from "zod"
-
-// get the type from the query itself and not the entity
-export type SelectedTable = Omit<Table, "__typename" | "space" | "tab"> & {
-  tab: string,
-  orders: OrderDetail[],
-  users: User[]
-}
-
+import { SelectedTable } from "./types";
 
 const tableSchema = z.object({
   admin: z.string().optional(),

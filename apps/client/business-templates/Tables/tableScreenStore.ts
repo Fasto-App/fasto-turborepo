@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { SelectedTable } from './TableModal'
+import { SelectedTable } from './types'
 
 interface TableScreenStore {
   tableChoosen?: SelectedTable
@@ -9,9 +9,9 @@ interface TableScreenStore {
 }
 
 interface TableScreenStoreActions extends TableScreenStore {
-  setSelectedSpace: (spaceId: string) => void
+  setSelectedSpace: (spaceId?: string) => void
   setSpaceIsModalOpen: (isOpen: boolean) => void
-  setTableChoosen: (table: SelectedTable) => void
+  setTableChoosen: (table?: SelectedTable) => void
   setIsNewTableModalOpen: (isOpen: boolean) => void
 }
 

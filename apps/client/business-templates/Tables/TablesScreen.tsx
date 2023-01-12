@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react"
 import { Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
-import { useState } from "react"
 import { AiOutlinePlus } from "react-icons/ai"
 import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
@@ -154,7 +153,6 @@ export const TablesScreen = () => {
                     status: table.status,
                     tableNumber: table.tableNumber,
                     tab: table?.tab?._id,
-                    // @ts-ignore
                     orders: table.tab?.orders ?? [],
                     users: table?.tab?.users ?? []
                   })
