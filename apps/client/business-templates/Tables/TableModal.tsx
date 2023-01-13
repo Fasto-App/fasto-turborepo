@@ -65,8 +65,6 @@ export const TableModal = () => {
   const isOcuppiedTable = tableChoosen?.status === "OCCUPIED"
   const isAvailableTable = tableChoosen?.status === "AVAILABLE"
   const isReservedTable = tableChoosen?.status === "RESERVED"
-  const size = isOcuppiedTable ? "full" : "lg"
-
 
   // store the id and go through the array of orders
   // fetch information for an specific TAB 
@@ -127,7 +125,11 @@ export const TableModal = () => {
     clearErrors()
   }
 
-  return <Modal size={size} isOpen={!!tableChoosen} onClose={onCancel}>
+  return <Modal
+    size={isOcuppiedTable ? "full" : "lg"}
+    isOpen={!!tableChoosen}
+    onClose={onCancel}
+  >
     <DevTool control={control} />
     <Modal.CloseButton />
     <Modal.Content >
