@@ -379,7 +379,7 @@ export type OrderDetail = {
   _id: Scalars['ID'];
   created_date: Scalars['String'];
   message?: Maybe<Scalars['String']>;
-  product: Scalars['ID'];
+  product: Product;
   quantity: Scalars['Int'];
   status: OrderStatus;
   subTotal: Scalars['Int'];
@@ -514,7 +514,7 @@ export type Tab = {
   orders: Array<Maybe<OrderDetail>>;
   status: TabStatus;
   table: Table;
-  users: Array<Scalars['ID']>;
+  users?: Maybe<Array<User>>;
 };
 
 export enum TabStatus {
@@ -716,7 +716,7 @@ export type CreateMultipleOrderDetailsMutationVariables = Exact<{
 }>;
 
 
-export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails?: Array<{ __typename?: 'OrderDetail', _id: string, product: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null }> | null };
+export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails?: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null, product: { __typename?: 'Product', imageUrl?: string | null } }> | null };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -761,7 +761,7 @@ export type CreateSpaceMutation = { __typename?: 'Mutation', createSpace: { __ty
 export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus } | null> } | null } | null> | null } | null> | null };
+export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null } | null> | null } | null> | null };
 
 export type CreateTabMutationVariables = Exact<{
   input: CreateTabInput;
@@ -775,7 +775,7 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, users: Array<string>, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string } | null> } | null };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null };
 
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
@@ -1175,7 +1175,9 @@ export const CreateMultipleOrderDetailsDocument = gql`
     mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
   createMultipleOrderDetails(input: $input) {
     _id
-    product
+    product {
+      imageUrl
+    }
     status
     quantity
     subTotal
@@ -1433,6 +1435,9 @@ export const GetSpacesFromBusinessDocument = gql`
       status
       tableNumber
       tab {
+        users {
+          _id
+        }
         _id
         table {
           _id
@@ -1442,6 +1447,13 @@ export const GetSpacesFromBusinessDocument = gql`
         orders {
           _id
           status
+          quantity
+          subTotal
+          product {
+            imageUrl
+            price
+            name
+          }
         }
       }
     }
@@ -1517,13 +1529,25 @@ export const GetTabByIdDocument = gql`
     query GetTabByID($input: GetById!) {
   getTabByID(input: $input) {
     _id
-    users
+    users {
+      _id
+    }
+    _id
     table {
       _id
       tableNumber
     }
+    admin
     orders {
       _id
+      status
+      quantity
+      subTotal
+      product {
+        imageUrl
+        price
+        name
+      }
     }
   }
 }

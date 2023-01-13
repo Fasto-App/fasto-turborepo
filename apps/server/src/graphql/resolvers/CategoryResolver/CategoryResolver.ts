@@ -2,13 +2,12 @@ import { Ref } from "@typegoose/typegoose";
 import { Connection } from "mongoose"
 import { CategoryModel, Category, BusinessModel, ProductModel, IUserModel } from "../../../models";
 import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { Context } from "../types";
 import { CreateCategoryInput, UpdateCategoryInput } from "./types";
 
 type GetCategoryByIDInput = {
     business: string
 }
-
-export type GQLContext = { db: Connection, user?: IUserModel, business?: string }
 // FIXME: THIS SHOULD SHOULD BE OF TYPE USERINPUT DONT REFERENCE DATABASE DIRECTLY
 type LinkCategoryToProductInput = {
     category: string;
@@ -23,9 +22,8 @@ const isCategoryNameUnique = (categories: Ref<Category>[], uniqueNameToCompare: 
     })
 }
 
-const createCategory = async (_parent: any, { input }: { input: CreateCategoryInput }, { db, user, business }: GQLContext) => {
+const createCategory = async (_parent: any, { input }: { input: CreateCategoryInput }, { db, user, business }: Context) => {
 
-    console.log('input', input)
 
     if (!user?._id) throw new ApolloExtendedError('User not found')
 
@@ -94,7 +92,7 @@ const createCategory = async (_parent: any, { input }: { input: CreateCategoryIn
 
 
 
-const getAllCategoriesByBusiness = async (_parent: any, _: any, { db, business }: GQLContext) => {
+const getAllCategoriesByBusiness = async (_parent: any, _: any, { db, business }: Context) => {
 
 
     const Category = CategoryModel(db);
@@ -114,7 +112,7 @@ const getAllCategoriesByBusiness = async (_parent: any, _: any, { db, business }
 //     })
 // }
 
-const getCategoryByID = async (_parent: any, { id }: { id: string }, { db }: GQLContext) => {
+const getCategoryByID = async (_parent: any, { id }: { id: string }, { db }: Context) => {
     const Category = CategoryModel(db);
     const category = await Category.findOne({ _id: id });
     return category;
@@ -123,7 +121,7 @@ const getCategoryByID = async (_parent: any, { id }: { id: string }, { db }: GQL
 // what's the input for create category is going to look like?
 
 // update category
-const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryInput }, { db, user, business }: GQLContext) => {
+const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryInput }, { db, user, business }: Context) => {
 
 
 
@@ -188,7 +186,7 @@ const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryIn
 
 
 // delete category
-const deleteCategory = async (_parent: any, args: { id: string }, { db, business }: GQLContext) => {
+const deleteCategory = async (_parent: any, args: { id: string }, { db, business }: Context) => {
 
     if (!business) throw new ApolloExtendedError('Business not found')
     const Category = CategoryModel(db);
@@ -215,7 +213,7 @@ const deleteCategory = async (_parent: any, args: { id: string }, { db, business
 
 const linkCategoryToProducts = async (_parent: any,
     { input }: { input: LinkCategoryToProductInput },
-    { db, user }: GQLContext) => {
+    { db, user }: Context) => {
 
     if (!user?._id) throw new ApolloExtendedError('User not found')
     // Get both the category and the product Models

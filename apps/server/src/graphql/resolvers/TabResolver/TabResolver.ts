@@ -141,12 +141,8 @@ const getUsersByTabID = async (parent: any, _args: any, { db }: Context) => {
 }
 
 const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
-
     const Table = TableModel(db);
-    const table = await Table.findById(parent.table);
-    console.log('getTableByTabID', table)
-
-    return table
+    return await Table.findById(parent.table);
 }
 
 

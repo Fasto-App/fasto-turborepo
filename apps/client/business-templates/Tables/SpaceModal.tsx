@@ -1,0 +1,76 @@
+import React from "react"
+import { DevTool } from "@hookform/devtools";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Modal } from "native-base";
+import { useForm } from "react-hook-form";
+import { } from "react-native";
+import { z } from "zod";
+import { ControlledForm } from "../../components/ControlledForm/ControlledForm";
+import { useSpacesMutationHook } from "../../graphQL/SpaceQL";
+
+export const SpaceModal = ({ isModalOpen, setIsModalOpen }) => {
+  const {
+    control,
+    formState,
+    clearErrors,
+    reset,
+    handleSubmit
+  } = useForm({
+    defaultValues: {
+      space_name: "",
+    },
+    resolver: zodResolver(z.object({
+      space_name: z.string().min(2, "Please, enter a Space Name. Min 2 chars").max(15, "15 characters max")
+    }))
+  })
+
+  const {
+    createSpace,
+  } = useSpacesMutationHook();
+
+  const onSubmit = async (data) => {
+    setIsModalOpen(false)
+
+    await createSpace({
+      variables: {
+        input: { name: data.space_name, }
+      }
+    })
+    reset()
+  }
+
+  const onCancel = () => {
+    setIsModalOpen(false)
+    reset()
+    clearErrors()
+  }
+
+  return <Modal isOpen={isModalOpen} onClose={onCancel}>
+    <Modal.CloseButton />
+    <DevTool control={control} /> {/* set up the dev tool */}
+    <Modal.Content minWidth="500px">
+      <Modal.Header>{"Add Space"}</Modal.Header>
+      <Modal.Body>
+        <ControlledForm
+          control={control}
+          formState={formState}
+          Config={{
+            space_name: {
+              name: "space_name",
+              label: "Space Name",
+              placeholder: "E.g. Patio",
+            }
+          }}
+        />
+        <Button.Group space={2} paddingTop={4}>
+          <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={onCancel}>
+            {"Cancel"}
+          </Button>
+          <Button w={"100px"} onPress={handleSubmit(onSubmit)}>
+            {"Save"}
+          </Button>
+        </Button.Group>
+      </Modal.Body>
+    </Modal.Content>
+  </Modal>
+}

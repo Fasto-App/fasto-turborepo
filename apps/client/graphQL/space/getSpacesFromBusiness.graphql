@@ -8,6 +8,9 @@ query GetSpacesFromBusiness {
 			status
 			tableNumber
 			tab {
+				users {
+					_id
+				}
 				_id
 				table {
 					_id
@@ -17,6 +20,13 @@ query GetSpacesFromBusiness {
 				orders {
 					_id
 					status
+					quantity
+					subTotal
+					product {
+						imageUrl
+						price
+						name
+					}
 				}
 			}
 		}

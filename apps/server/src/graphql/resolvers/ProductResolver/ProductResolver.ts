@@ -2,18 +2,12 @@ import { Product, ProductModel } from "../../../models/product";
 import { Connection } from "mongoose"
 import { BusinessModel } from "../../../models/business";
 import { CategoryModel } from "../../../models/category";
-import { GQLContext } from "../CategoryResolver/CategoryResolver";
 import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
-import { Bugsnag } from "../../../bugsnag/bugsnag";
 import { CreateProductInput } from "./types";
 import { uploadFileS3Bucket } from "../../../s3/s3";
-
-
+import { Context } from "../types";
 
 const createProduct = async (_parent: any, { input }: { input: CreateProductInput }, { db, business }: { db: Connection, business: string }) => {
-
-    console.log("Creating Product")
-    console.log({ input })
 
 
     const Product = ProductModel(db);
@@ -69,7 +63,7 @@ const createProduct = async (_parent: any, { input }: { input: CreateProductInpu
 }
 
 
-const getProductsByCategory = async (parent: Parent, args: any, { db }: GQLContext) => {
+const getProductsByCategory = async (parent: Parent, args: any, { db }: Context) => {
     const products = parent.products;
 
 
@@ -105,7 +99,7 @@ const getProductByID = async (_parent: any,
 }
 
 // TODO: Properly type input
-const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, business }: GQLContext) => {
+const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, business }: Context) => {
     const { input } = arg;
 
     console.log({ input })
@@ -187,7 +181,7 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 }
 
 // delete category
-const deleteProduct = async (_parent: any, args: { id: string }, { db, user, business }: GQLContext) => {
+const deleteProduct = async (_parent: any, args: { id: string }, { db, user, business }: Context) => {
     // INIATILY DELETING THE PRODUCT
 
 
@@ -205,6 +199,13 @@ const deleteProduct = async (_parent: any, args: { id: string }, { db, user, bus
 const uploadFile = async (_parent: any, { file }: { file: any }) => {
     const imageUrl = await uploadFileS3Bucket(file);
     return imageUrl.Location;
+}
+
+
+const getProductByOrderDetails = async (parent: any, args: any, { db }: Context) => {
+    const Product = ProductModel(db);
+    const product = await Product.findById(parent.product);
+    return product;
 }
 
 
@@ -233,7 +234,8 @@ const ProductResolverMutation = {
 
 const ProductResolver = {
     getProductsByCategory,
-    getCategoryByProduct
+    getCategoryByProduct,
+    getProductByOrderDetails,
 }
 
 export { ProductResolverMutation, ProductResolverQuery, ProductResolver }
