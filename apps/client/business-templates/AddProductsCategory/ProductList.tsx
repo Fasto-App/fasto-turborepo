@@ -15,6 +15,7 @@ import { useProductFormHook } from './useProductFormHook';
 
 const texts = {
 	all: "All",
+	editItem: "Edit Item",
 	showList: "Show List",
 	showCards: "Show Cards",
 	emptyListText: "Start adding dishes by clicking in the button below.",
@@ -68,12 +69,12 @@ const ProductList = (
 
 	const renderProductCard = useCallback((item: Product, index: number) => {
 		if (index === 0) return <AddMoreButton key={"AddMoreButton"} onPress={addProduct} />
-		return <ProductCard product={item} onEdit={() => setProductValues(item)} key={item._id} />
+		return <ProductCard product={item} onPress={() => setProductValues(item)} key={item._id} ctaTitle={texts.editItem} />
 	}, [addProduct, setProductValues])
 
 	const renderProductTile = useCallback(({ item, index }: { item: Product, index: number }) => {
 		if (index === 0) return <AddMoreButton horizontal onPress={addProduct} />
-		return <ProductTile product={item} onEdit={() => setProductValues(item)} />
+		return <ProductTile product={item} onPress={() => setProductValues(item)} ctaTitle={texts.editItem} />
 	}, [addProduct, setProductValues])
 
 	const EmptyState = () => {
