@@ -14,11 +14,12 @@ import {
 import { Product } from './types';
 
 type ProductProps = {
-	onEdit?: () => void;
+	onPress?: () => void;
 	product: Product;
 	singleButton?: boolean;
 	isChecked?: boolean;
 	onCheckboxClick?: (selected: boolean) => void;
+	ctaTitle: string;
 };
 
 const texts = {
@@ -33,7 +34,7 @@ const Price = ({ price }: { price: number }) => (
 		{`$${(price / 100).toFixed(2)}`}
 	</Text>)
 
-const ProductCard = ({ product, onEdit, singleButton }: ProductProps) => {
+const ProductCard = ({ product, onPress, singleButton }: ProductProps) => {
 	const { name, price, imageUrl, description } = product
 
 	const formattedDescriptions = description.length > maxLength ?
@@ -72,7 +73,7 @@ const ProductCard = ({ product, onEdit, singleButton }: ProductProps) => {
 					{singleButton ?? <Price price={price} />}
 					<HStack alignItems="center" space={2} justifyContent="space-between">
 						{singleButton ? <Price price={price} /> : <Button w={"100"}>{texts.addToMenu}</Button>}
-						<Button w={"100"} colorScheme="tertiary" onPress={onEdit}>{texts.editItem}</Button>
+						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{texts.editItem}</Button>
 					</HStack>
 				</VStack>
 
@@ -80,7 +81,7 @@ const ProductCard = ({ product, onEdit, singleButton }: ProductProps) => {
 		</Box>)
 };
 
-const ProductTile = ({ product, onEdit, isChecked, onCheckboxClick }: ProductProps) => {
+const ProductTile = ({ product, onPress, isChecked, onCheckboxClick, ctaTitle }: ProductProps) => {
 	const { name, imageUrl, _id } = product
 
 	return <Box mr={"4"}
@@ -120,7 +121,7 @@ const ProductTile = ({ product, onEdit, isChecked, onCheckboxClick }: ProductPro
 					</Checkbox>
 					:
 					<Button w={"100"} colorScheme="tertiary"
-						onPress={onEdit}>{texts.editItem}
+						onPress={onPress}>{ctaTitle}
 					</Button>
 				}
 			</HStack>

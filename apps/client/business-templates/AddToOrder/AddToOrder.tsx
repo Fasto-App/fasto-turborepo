@@ -146,7 +146,7 @@ export const AddToOrder = () => {
                     setOrderItems(newOrderItems)
                   }}
                   lastItem={index === orderItems.length - 1}
-                  selectedUser={personindex !== -1 ? `Person ${personindex + 1}` : undefined}
+                  assignedToPersonIndex={personindex !== -1 ? personindex + 1 : undefined}
                 />
               })}
             </ScrollView>
@@ -231,9 +231,10 @@ export const AddToOrder = () => {
                 <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
                   {products.map((product) => (
                     <ProductTile
+                      ctaTitle="Add"
                       key={product._id}
                       product={product}
-                      onEdit={() => {
+                      onPress={() => {
                         const findIndex = orderItems.findIndex(order => (
                           order._id === product._id && order?.selectedUser === selectedUser)
                         )

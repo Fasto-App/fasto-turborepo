@@ -27,12 +27,14 @@ type SummaryProps = {
   onRemovePress?: () => void;
   onEditPress?: () => void;
   lastItem: boolean;
-  selectedUser: string;
+  assignedToPersonIndex?: number;
 }
 
 const texts = {
   delete: "Delete",
   extras: "Extras",
+  table: "Table",
+  person: "Person",
 }
 
 export const SummaryComponent = ({ name,
@@ -43,7 +45,7 @@ export const SummaryComponent = ({ name,
   onPlusPress,
   onRemovePress,
   lastItem,
-  selectedUser
+  assignedToPersonIndex
 }: SummaryProps) => (
   <Box w={"full"} p={1} py={2}>
     <HStack justifyContent={"space-between"} pb={1}>
@@ -77,20 +79,12 @@ export const SummaryComponent = ({ name,
         <Text>{parseToCurrency(price)}</Text>
       </HStack>
     </HStack>
-    {selectedUser ? (
-      <HStack space={1} alignItems={"center"} pb={1}>
-        <Icon color={"tertiary.500"} >
-          <BsFillPersonFill />
-        </Icon>
-        <Text fontSize={"xs"} color={"tertiary.500"}>{selectedUser}</Text>
-      </HStack>) :
-      <HStack space={1} alignItems={"center"} pb={1}>
-        <Icon color={"tertiary.500"}>
-          <GiRoundTable />
-        </Icon>
-        <Text fontSize={"xs"} color={"tertiary.500"}>Table</Text>
-      </HStack>
-    }
+    <HStack space={1} alignItems={"center"} pb={1}>
+      <Icon color={"tertiary.500"} >
+        {assignedToPersonIndex ? <BsFillPersonFill /> : <GiRoundTable />}
+      </Icon>
+      <Text fontSize={"xs"} color={"tertiary.500"}>{assignedToPersonIndex ? `${texts.person} ${assignedToPersonIndex}` : texts.table}</Text>
+    </HStack>
     {lastItem ? null : <Divider thickness="1" />}
   </Box>
 );
