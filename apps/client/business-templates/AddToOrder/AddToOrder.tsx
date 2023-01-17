@@ -233,7 +233,8 @@ export const AddToOrder = () => {
                     <ProductTile
                       ctaTitle="Add"
                       key={product._id}
-                      product={product}
+                      name={product.name}
+                      imageUrl={product.imageUrl}
                       onPress={() => {
                         const findIndex = orderItems.findIndex(order => (
                           order._id === product._id && order?.selectedUser === selectedUser)

@@ -73,8 +73,6 @@ export const TablesScreen = () => {
     )
   }, [selectedSpaceId, setSelectedSpace])
 
-  console.log("tableChoosen", tableChoosen)
-
   return (
     <Box flex={1}>
       <ModalFeedback

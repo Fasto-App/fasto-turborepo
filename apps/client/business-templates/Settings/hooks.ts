@@ -69,3 +69,36 @@ export const useManageAccountFormHook = () => {
     handleSubmit
   }
 }
+
+
+const employeeFormSchema = z.object({
+  name: z.string().trim().min(3, { message: 'Name Required' })
+    .max(50, { message: 'Name too long' }),
+  role: z.string().trim().min(4, { message: 'Role Required' }),
+  phone: z.string().optional(),
+  picture: z.string().optional(),
+})
+
+type EmployeeInfo = z.infer<typeof employeeFormSchema>
+
+export const useManageEmployeeFormHook = () => {
+  const {
+    control,
+    formState,
+    handleSubmit
+  } = useForm<EmployeeInfo>({
+    defaultValues: {
+      name: "",
+      role: "",
+      phone: "",
+      picture: ""
+    },
+    resolver: zodResolver(employeeFormSchema)
+  })
+
+  return {
+    control,
+    formState,
+    handleSubmit
+  }
+}

@@ -69,12 +69,25 @@ const ProductList = (
 
 	const renderProductCard = useCallback((item: Product, index: number) => {
 		if (index === 0) return <AddMoreButton key={"AddMoreButton"} onPress={addProduct} />
-		return <ProductCard product={item} onPress={() => setProductValues(item)} key={item._id} ctaTitle={texts.editItem} />
+		return <ProductCard
+			name={item.name}
+			description={item.description}
+			price={item.price}
+			imageUrl={item.imageUrl}
+			onPress={() => setProductValues(item)}
+			key={item._id}
+			ctaTitle={texts.editItem}
+		/>
 	}, [addProduct, setProductValues])
 
 	const renderProductTile = useCallback(({ item, index }: { item: Product, index: number }) => {
 		if (index === 0) return <AddMoreButton horizontal onPress={addProduct} />
-		return <ProductTile product={item} onPress={() => setProductValues(item)} ctaTitle={texts.editItem} />
+		return <ProductTile
+			name={item.name}
+			imageUrl={item.imageUrl}
+			onPress={() => setProductValues(item)}
+			ctaTitle={texts.editItem}
+		/>
 	}, [addProduct, setProductValues])
 
 	const EmptyState = () => {

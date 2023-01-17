@@ -9,6 +9,7 @@ const texts = {
 
 }
 
+// TODO: Wrong API - this should accept a function and call the onPress
 const ModalAddButtons = ({
   cancelAction,
   saveAction,

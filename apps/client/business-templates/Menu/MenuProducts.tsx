@@ -117,8 +117,12 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
   const renderProductCard = useCallback(({ item, index }: { item: Product, index: number }) => {
     return (
       <ProductCard
-        product={item}
-        onEdit={() => console.log("HELLO")}
+        description={item.description}
+        price={item.price}
+        ctaTitle={"Edit Item"}
+        imageUrl={item.imageUrl}
+        name={item.name}
+        onPress={() => console.log("HELLO")}
         singleButton={true}
       />)
   }, [])
@@ -133,7 +137,9 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
 
     return (
       <ProductTile
-        product={item}
+        name={item.name}
+        ctaTitle={"Edit Item"}
+        imageUrl={item.imageUrl}
         isChecked={isSelected}
         onCheckboxClick={(selected) => setProductCheckbox(selected, item._id)}
       />)

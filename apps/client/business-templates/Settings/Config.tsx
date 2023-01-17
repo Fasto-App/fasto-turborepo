@@ -1,4 +1,4 @@
-import { RegularInputConfig } from "../../components/ControlledForm/ControlledForm";
+import { RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
 
 export const ManageBusinessConfig: RegularInputConfig = {
   businessName: {
@@ -54,4 +54,29 @@ export const ManageAccountConfig: RegularInputConfig = {
     label: "Confirm Password",
   },
 
+}
+
+export const ManageEmployeeConfig: SideBySideInputConfig = {
+  name: {
+    name: "name",
+    label: "Name",
+    placeholder: "Enter Name"
+  },
+  role: {
+    name: "role",
+    label: "Job Role",
+    placeholder: "Enter Role"
+  },
+  phonePic: [{
+    phone: {
+      name: "phone",
+      label: "Phone",
+      placeholder: "Enter Phone"
+    },
+  }, {
+    picture: {
+      name: "picture",
+      label: "Picture",
+    },
+  }]
 }

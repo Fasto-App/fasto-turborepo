@@ -13,14 +13,20 @@ import {
 } from 'native-base';
 import { Product } from './types';
 
-type ProductProps = {
+type ProductTileProps = {
 	onPress?: () => void;
-	product: Product;
 	singleButton?: boolean;
 	isChecked?: boolean;
 	onCheckboxClick?: (selected: boolean) => void;
 	ctaTitle: string;
+	name: string;
+	imageUrl: string;
 };
+
+type ProductCardProps = ProductTileProps & {
+	description: string;
+	price: number;
+}
 
 const texts = {
 	addToMenu: 'Add to Menu',
@@ -34,8 +40,7 @@ const Price = ({ price }: { price: number }) => (
 		{`$${(price / 100).toFixed(2)}`}
 	</Text>)
 
-const ProductCard = ({ product, onPress, singleButton }: ProductProps) => {
-	const { name, price, imageUrl, description } = product
+const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton }: ProductCardProps) => {
 
 	const formattedDescriptions = description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
@@ -81,8 +86,7 @@ const ProductCard = ({ product, onPress, singleButton }: ProductProps) => {
 		</Box>)
 };
 
-const ProductTile = ({ product, onPress, isChecked, onCheckboxClick, ctaTitle }: ProductProps) => {
-	const { name, imageUrl, _id } = product
+const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle }: ProductTileProps) => {
 
 	return <Box mr={"4"}
 		shadow="4"
@@ -100,10 +104,11 @@ const ProductTile = ({ product, onPress, isChecked, onCheckboxClick, ctaTitle }:
 				uri: imageUrl
 			}} />
 			<VStack>
-				<Text color="coolGray.800" _dark={{
-					color: 'warmGray.50'
-				}} bold>
+				<Text color="coolGray.800" bold>
 					{name}
+				</Text>
+				<Text color="coolGray.600">
+					{"Server"}
 				</Text>
 			</VStack>
 			<Spacer />
