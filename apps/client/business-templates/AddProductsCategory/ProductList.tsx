@@ -155,14 +155,10 @@ const ProductList = (
 			overflow={"scroll"}
 		>
 
-			{/* Header */}
 			<Box flexDirection={"column"}>
-				{/* Title */}
 				<Heading flex={1}>
 					{selectedCategory?.name ?? texts.all}
 				</Heading>
-
-				{/* Toggle */}
 				{products?.length ?
 					<Link isUnderlined={false} alignSelf={"self-end"} p={4}
 						_text={{

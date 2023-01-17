@@ -1,24 +1,16 @@
 import React, { useCallback } from "react"
 import AddProductCategoriesScreen from "./AddProductCategoriesScreen";
-import * as z from 'zod';
 import { useProductMutationHook } from "../../graphQL/ProductQL";
 import { useCategoryMutationHook } from "../../graphQL/CategoryQL";
-import { useAppStore } from "../UseAppStore";
-import { useProductFormHook } from "./useProductFormHook";
 
 export const AddProductsCategories = () => {
 
-  const categoryId = useAppStore(state => state.category)
 
-  const { createProduct,
-    resetCreateProduct,
+  const { resetCreateProduct,
     resetDeleteProduct,
-    resetUpdateProduct,
-    updateProduct } = useProductMutationHook()
+    resetUpdateProduct } = useProductMutationHook()
 
-  const { createCategory,
-    updateCategory,
-    resetCreateCategories,
+  const { resetCreateCategories,
     resetUpdateCategory,
     resetDeleteCategory } = useCategoryMutationHook()
 

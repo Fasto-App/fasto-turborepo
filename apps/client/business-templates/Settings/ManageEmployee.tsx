@@ -1,4 +1,4 @@
-import React, { useState, } from "react"
+import React, { useMemo, useState, } from "react"
 import { Box, Button, Heading, ScrollView, Text, VStack } from "native-base"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
@@ -55,13 +55,10 @@ const mock = {
 const employeesData: typeof mock[] = new Array(5).fill(mock)
 
 export const ManageEmployee = () => {
-  const [isModalopen, setIsModalOpen] = useState(true)
+  const [isModalopen, setIsModalOpen] = useState(false)
 
-  // Let's have all the states for this tab
-  // 01. No Employees yet, empty state
-  // 02. one or more employees
-  // 03. Modal to add new employee
-  // transform the modal into a reusable API
+  // add button to not empty array
+  const employeesWithButton = useMemo(() => [{ name: "Button" } as const, ...employeesData], [])
 
   return (
     <Box>
@@ -69,29 +66,35 @@ export const ManageEmployee = () => {
         isModalOpen={isModalopen}
         setIsModalOpen={setIsModalOpen}
       />
-
       {!employeesData.length
         ?
-
         <VStack>
           <Text pt={5}>{texts.startAddingEmployees}</Text>
           <AddMoreButton
             onPress={() => setIsModalOpen(true)} empty={true} />
         </VStack>
-
         :
         <ScrollView pt={4}>
           <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-            {/* <SmallAddMoreButton onPress={() => console.log("hello")} /> */}
-            {employeesData.map((employee, index) => (
-              <ProductTile
-                ctaTitle="Add"
-                key={employee._id + index}
-                name={employee.name}
-                imageUrl={employee.imageUrl}
-                onPress={() => console.log("Hello")}
-              />
-            ))}
+            {employeesWithButton.map((employee, index) => {
+              if (employee?.name === "Button") {
+                return <AddMoreButton
+                  horizontal
+                  key={"button"}
+                  onPress={() => setIsModalOpen(true)}
+                />
+              }
+
+              return (
+                <ProductTile
+                  ctaTitle="Edit"
+                  key={employee._id + index}
+                  name={employee.name}
+                  imageUrl={employee.imageUrl}
+                  onPress={() => console.log("Hello")}
+                />
+              )
+            })}
           </VStack>
         </ScrollView>
       }
