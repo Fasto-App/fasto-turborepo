@@ -75,21 +75,23 @@ const employeeFormSchema = z.object({
   name: z.string().trim().min(3, { message: 'Name Required' })
     .max(50, { message: 'Name too long' }),
   role: z.string().trim().min(4, { message: 'Role Required' }),
+  email: z.string().email().min(4, { message: 'Email Required' }),
   phone: z.string().optional(),
   picture: z.string().optional(),
 })
 
-type EmployeeInfo = z.infer<typeof employeeFormSchema>
+export type EmployeeInfo = z.infer<typeof employeeFormSchema>
 
 export const useManageEmployeeFormHook = () => {
   const {
     control,
     formState,
-    handleSubmit
+    handleSubmit,
+    reset
   } = useForm<EmployeeInfo>({
     defaultValues: {
-      name: "",
       role: "",
+      email: "",
       phone: "",
       picture: ""
     },
@@ -99,6 +101,7 @@ export const useManageEmployeeFormHook = () => {
   return {
     control,
     formState,
-    handleSubmit
+    handleSubmit,
+    reset
   }
 }

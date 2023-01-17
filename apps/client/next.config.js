@@ -7,6 +7,7 @@ const withTM = require('next-transpile-modules')([
 	'native-base',
 	'react-native-svg',
 	'react-native',
+	'app-helpers',
 ]);
 
 const nextConfig = {

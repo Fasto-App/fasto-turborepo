@@ -3,7 +3,7 @@ import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
 import { Space } from './space';
 import { TableStatus } from './types';
-
+import type { TableStatusType } from './types';
 export class Table {
   @prop({ required: true })
   public space!: Ref<Space>;
@@ -12,7 +12,7 @@ export class Table {
   public tableNumber!: string;
 
   @prop({ required: true, default: TableStatus.AVAILABLE })
-  public status!: TableStatus;
+  public status!: TableStatusType;
 
   @prop({ default: Date.now() })
   public created_date!: Date;

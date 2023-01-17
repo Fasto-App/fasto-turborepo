@@ -83,8 +83,12 @@ export const TablesScreen = () => {
       <AddTableModal
         isModalOpen={isNewTableModalOpen}
         setIsModalOpen={setIsNewTableModalOpen}
-        postNewTable={postNewTable} />
-      <SpaceModal isModalOpen={isSpaceModalOpen} setIsModalOpen={setSpaceIsModalOpen} />
+        postNewTable={postNewTable}
+      />
+      <SpaceModal
+        isModalOpen={isSpaceModalOpen}
+        setIsModalOpen={setSpaceIsModalOpen}
+      />
       <TableModal />
       <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
       <VStack m={"4"} space={"4"} flex={1}>

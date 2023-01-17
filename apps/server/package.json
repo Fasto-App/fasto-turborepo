@@ -29,7 +29,8 @@
 		"node-fetch": "^3.2.6",
 		"ts-node": "^10.7.0",
 		"typescript": "^4.8.4",
-		"zod": "^3.19.1"
+		"zod": "^3.19.1",
+		"helpers": "*"
 	},
 	"devDependencies": {
 		"nodemon": "^2.0.16"

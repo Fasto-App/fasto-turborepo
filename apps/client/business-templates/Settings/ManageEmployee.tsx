@@ -2,7 +2,7 @@ import React, { useMemo, useState, } from "react"
 import { Box, Button, Heading, ScrollView, Text, VStack } from "native-base"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
-import { useManageEmployeeFormHook } from "./hooks"
+import { EmployeeInfo, useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
 import { texts } from "./texts"
 import { AddMoreButton, SmallAddMoreButton } from "../../components/atoms/AddMoreButton"
@@ -11,12 +11,23 @@ import { ProductTile } from "../../components/Product/Product"
 const ManageEmployeeModal = ({
   isModalOpen, setIsModalOpen }:
   { isModalOpen: boolean, setIsModalOpen: (isOpen: boolean) => void }) => {
-  const { control, formState, handleSubmit } = useManageEmployeeFormHook()
+  const { control, formState, handleSubmit, reset } = useManageEmployeeFormHook()
+
+  const onSubmit = (data: EmployeeInfo) => {
+    console.log("data", data)
+    // post data to backend and refresh query to fetch all employees
+  }
+
+  const onCancel = () => {
+    // clear input values
+    setIsModalOpen(false)
+    reset()
+  }
 
   return (
     <CustomModal
       isOpen={isModalOpen}
-      onClose={() => console.log("Closing")}
+      onClose={onCancel}
       HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
       ModalBody={
         <ControlledForm
@@ -30,13 +41,13 @@ const ManageEmployeeModal = ({
             flex={1}
             variant="outline"
             colorScheme="tertiary"
-            onPress={() => setIsModalOpen(false)}
+            onPress={onCancel}
           >
             {texts.cancel}
           </Button>
           <Button
             flex={1}
-            onPress={() => console.log("saving information")}
+            onPress={handleSubmit(onSubmit)}
           >
             {texts.save}
           </Button>

@@ -12,6 +12,7 @@
 		"generate": "graphql-codegen"
 	},
 	"dependencies": {
+		"app-helpers": "*",
 		"@apollo/client": "^3.6.2",
 		"@expo/next-adapter": "4.0.6",
 		"@hookform/devtools": "^4.2.2",

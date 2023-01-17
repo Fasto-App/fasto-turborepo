@@ -1,4 +1,6 @@
 import { RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
+import { Privileges } from "app-helpers"
+import { typedKeys } from "../../authUtilities/utils";
 
 export const ManageBusinessConfig: RegularInputConfig = {
   businessName: {
@@ -53,19 +55,32 @@ export const ManageAccountConfig: RegularInputConfig = {
     name: "confirm_password",
     label: "Confirm Password",
   },
-
 }
+
+const privilegesArray = typedKeys(Privileges).map(privilege => ({
+  name: privilege,
+  _id: privilege,
+}))
 
 export const ManageEmployeeConfig: SideBySideInputConfig = {
   name: {
+    isRequired: true,
     name: "name",
     label: "Name",
     placeholder: "Enter Name"
   },
   role: {
+    isRequired: true,
     name: "role",
     label: "Job Role",
-    placeholder: "Enter Role"
+    placeholder: "Enter Role",
+    inputType: "Select",
+    array: privilegesArray,
+  },
+  email: {
+    name: "email",
+    label: "Email",
+    placeholder: "example@email.com",
   },
   phonePic: [{
     phone: {
