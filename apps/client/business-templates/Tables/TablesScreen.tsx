@@ -131,7 +131,7 @@ export const TablesScreen = () => {
           </HStack>
           <Box>
             <AllAndEditButtons
-              allAction={undefined}
+              allAction={() => console.log("All")}
               editAction={(edit) => console.log("Edit", edit)}
               categoryId={selectedSpaceId} />
           </Box>

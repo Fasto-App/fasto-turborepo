@@ -5,6 +5,7 @@ import {
   BusinessResolver
 } from './BusinessResolver';
 import {
+  UserResolver,
   UserResolverMutation,
   UserResolverQuery
 } from './UserResolver';
@@ -89,9 +90,10 @@ export const resolvers = {
     table: TabResolver.getTableByTabID,
     users: TabResolver.getUsersByTabID,
   },
-  // Users: {
-  //   orders: getAllOpenOrdersByTabID,
-  // }
+  User: {
+    business: UserResolver.getBusinessByUser,
+    // orders: getAllOpenOrdersByTabID,
+  },
   Menu: {
     // sections: MenuResolver.getSectionsByMenu,
   },

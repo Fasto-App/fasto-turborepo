@@ -1,4 +1,3 @@
-import { RequestInfo, RequestInit } from "node-fetch";
 import * as jose from "jose"
 import * as z from "zod"
 
@@ -11,7 +10,7 @@ export async function tokenSigning(id: string, email: string, business?: string)
   return await new jose.SignJWT({ _id: id, email, business })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('30d')
+    .setExpirationTime('1h')
     .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 

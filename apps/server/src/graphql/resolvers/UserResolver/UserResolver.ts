@@ -1,7 +1,7 @@
 
 import bcrypt from "bcryptjs";
 import { CourierClient } from "@trycourier/courier";
-import { UserModel } from "../../../models/user";
+import { User, UserModel } from "../../../models/user";
 import { SessionModel } from "../../../models/session";
 import {
   tokenSigning,
@@ -10,13 +10,14 @@ import {
   IS_DEVELOPMENT_SERVER,
   typedKeys
 } from "../utils"
-import { Connection } from "mongoose"
+import { Connection, Types } from "mongoose"
 import { Context } from "../types";
 import { UserInputError, ValidationError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
 import { CreateUserInput, RequestUserAccountCreationInput, UpdateUserInput } from "./types";
-import { CannotBeSymbolError } from "@typegoose/typegoose/lib/internal/errors";
+import { PrivilegesType } from "app-helpers";
+import type { Ref } from '@typegoose/typegoose';
 
 const courier = CourierClient({ authorizationToken: "pk_prod_9AMCPRZA2MM1GKGAX8NPA99CKXPV" });
 
@@ -141,6 +142,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateUserInp
       user: savedUser._id,
       name: savedUser.name,
       email: savedUser.email,
+      employees: [savedUser._id]
     })
 
     const businessToString = creatingBusiness._id.toString()
@@ -329,6 +331,105 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
   return { ok: !!requestId }
 }
 
+// take a this input
+// {
+//   "name": "Jubileu Rodrigues",
+//   "privileges": "MANAGER",
+//   "email": "mendes.realtor@gmail.com",
+//   "phone": "9173303561",
+//   "picture": ""
+// }
+
+// receive the input from the dashboard for a new employee
+// try to find the email on the database, if it exists, add the new
+
+type AddEmployeeInput = {
+  name: string;
+  privileges: PrivilegesType;
+  email: string;
+  phone: string;
+  picture: string;
+}
+
+export const addEmployeeToBusiness = async (_parent: any, { input }: { input: AddEmployeeInput }, { db, user, business }: Context) => {
+  const User = UserModel(db)
+  const Business = BusinessModel(db)
+  const userFound = await User.findOne({ email: input.email })
+  const businessFound = await Business.findById(business)
+
+  async function updatebusiness(userId: Ref<User, Types.ObjectId>) {
+    if (!businessFound?.employees) throw new Error("Object with Key employees not found")
+
+    const arr = [...businessFound?.employees, userId]
+    const uniqueEmployees = arr.filter((a, i) => arr.findIndex((s) => a?.toString() === s?.toString()) === i)
+    businessFound.employees = uniqueEmployees
+    await businessFound.save()
+
+    console.log(businessFound)
+  }
+
+  if (!business || !businessFound) throw new Error("Business not found")
+
+  if (userFound) {
+    if (!userFound.businesses) throw new Error("Object with Key business not found")
+
+    if (userFound.businesses[business]) {
+      const privileges = [...new Set([...userFound.businesses[business], input.privileges])]
+      userFound.businesses[business] = privileges
+      userFound.save()
+      await updatebusiness(userFound._id)
+
+
+      return userFound
+    }
+
+    userFound.businesses = { ...userFound.businesses, [business]: [input.privileges] }
+    userFound.save()
+
+    await updatebusiness(userFound._id)
+    return userFound
+  }
+
+  // create a new user
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(input.email, salt);
+
+  console.log(input)
+
+  try {
+    const newUser = await User.create({
+      name: input.name,
+      email: input.email,
+      password: hashedPassword,
+      businesses: { [business]: [input.privileges] },
+      ...(input.phone && { phone: input.phone }),
+      ...(input.picture && { picture: input.picture }),
+    })
+
+    await updatebusiness(newUser._id)
+
+    return newUser
+
+  } catch (error) {
+    console.log(error)
+
+  }
+
+}
+
+const getBusinessByUser = (user: User, input: any, context: Context) => {
+  console.log("user", user)
+  const business = user.businesses
+
+  if (!business) return []
+
+  const mappedbusinesses = typedKeys(business).map((businessId) => {
+    return { business: businessId, privileges: business[businessId] }
+  })
+
+  return mappedbusinesses
+}
+
 
 
 
@@ -339,6 +440,7 @@ const UserResolverMutation = {
   createUser,
   recoverPassword,
   postUserLogin,
+  addEmployeeToBusiness,
 }
 const UserResolverQuery = {
   getUserByID,
@@ -347,7 +449,7 @@ const UserResolverQuery = {
 }
 
 const UserResolver = {
-
+  getBusinessByUser
 }
 
 export { UserResolver, UserResolverMutation, UserResolverQuery }

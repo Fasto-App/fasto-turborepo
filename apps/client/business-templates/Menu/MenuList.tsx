@@ -59,7 +59,10 @@ export function MenuList({ menuController, onMenuSubmit, menusData }) {
               </HStack>
             </ScrollView>
           </HStack>
-          <AllAndEditButtons allAction={undefined} editAction={undefined} categoryId={true} />
+          <AllAndEditButtons
+            allAction={() => console.log("Hello")}
+            editAction={() => console.log("Hello")}
+            categoryId={true} />
         </VStack>
       </Box>
 

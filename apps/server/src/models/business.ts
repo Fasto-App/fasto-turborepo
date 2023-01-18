@@ -5,6 +5,7 @@ import type { Ref } from '@typegoose/typegoose';
 import { Address } from './address';
 import { Product } from './product';
 import { Category } from './category';
+import { User } from './user';
 
 export class Business {
     @prop({ required: true })
@@ -38,6 +39,9 @@ export class Business {
 
     @prop({ ref: () => Menu })
     public menus!: Ref<Menu>[];
+
+    @prop({ default: [] })
+    public employees?: Ref<User>[];
 
     @prop({ default: Date.now() })
     public created_date!: Date;

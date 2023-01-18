@@ -17,11 +17,18 @@ export const UserTypeDefinition = gql`
     updateUserInformation(input: UpdateUserInput!): User!
     recoverPassword(input: String!): RequestResponseOK
     deleteUser: RequestResponseOK!
+    addEmployeeToBusiness(input: AddEmployeeInput!): User!
   }
 
   type AccountCreationResponse {
     ok: Boolean!
     url: String
+  }
+
+  input AddEmployeeInput {
+    name: String!
+    email: String!
+    privileges: UserPrivileges!
   }
 
   input UserInput {
@@ -51,7 +58,7 @@ export const UserTypeDefinition = gql`
     name: String
     email: String!
     token: String!
-    privileges: UserPrivileges
+    business: [BusinessPrivileges]!
   }
 
   input loginInput {
@@ -69,6 +76,9 @@ export const UserTypeDefinition = gql`
     BARTENDER
   }
 
-
+  type BusinessPrivileges {
+    business: String!
+    privileges: [UserPrivileges]!
+  }
 
 `

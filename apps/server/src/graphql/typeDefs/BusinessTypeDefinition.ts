@@ -38,6 +38,7 @@ export const BusinessTypeDefinition = gql`
     address: Address
     categories: [Category!]!
     products: [Product!]!
+    employees: [String]!
   }
 
   type DeleteBusinessPayload {
