@@ -35,8 +35,8 @@ export const BusinessResetPassword = ({ _id, email }) => {
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: {
-      "password": "",
-      "passwordConfirmation": ""
+      password: "",
+      passwordConfirmation: ""
     },
   });
 

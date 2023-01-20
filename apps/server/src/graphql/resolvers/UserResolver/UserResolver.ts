@@ -18,26 +18,22 @@ import { Privileges } from "../../../models/types";
 import { CreateUserInput, RequestUserAccountCreationInput, UpdateUserInput } from "./types";
 import { PrivilegesType } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
+import { sendCourierEmail } from "../../../courier";
 
-const courier = CourierClient({ authorizationToken: "pk_prod_9AMCPRZA2MM1GKGAX8NPA99CKXPV" });
-
-const URL_FRONT_DEV = process.env.FRONTEND_DEV_URL;
-const URL_FRONT_PROD = process.env.FRONTEND_PROD_URL;
-const ABSOLUTE_URL = IS_DEVELOPMENT_SERVER ? URL_FRONT_DEV : URL_FRONT_PROD;
-
-
+const hashPassword = (password: string) => {
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt);
+}
 
 export const requestUserAccountCreation = async (_parent: any,
   { input }: { input: RequestUserAccountCreationInput },
   { db }: Context) => {
 
-  const Session = SessionModel(db)
-
   if (input.email !== input.emailConfirmation || !validateEmail(input.email)) {
-
     throw new UserInputError("Invalid email");
   }
 
+  const Session = SessionModel(db)
   const User = UserModel(db)
   const user = await User.findOne({ email: input.email })
 
@@ -47,9 +43,7 @@ export const requestUserAccountCreation = async (_parent: any,
     email: input.email,
   })
 
-  if (!newSession?.email) {
-    throw new Error("Could not create session");
-  }
+  if (!newSession?.email) throw new Error("Could not create session");
 
   let token;
 
@@ -59,42 +53,24 @@ export const requestUserAccountCreation = async (_parent: any,
     return { ok: false }
   }
 
-  newSession.token = `${token}`
+  newSession.token = token;
   newSession.save()
 
-  const url = `${ABSOLUTE_URL}/business/create-account?token=${token}&email=${input.email}`
-
-  if (!token) {
-    throw new Error("Token not found");
-  }
+  if (!token) throw new Error("Token not found");
 
   try {
+    const courierResponse = await sendCourierEmail({
+      template: "request-account-creation",
+      email: input.email,
+      _id: newSession._id,
+      name: input.email,
+      token,
+    })
 
-    const { requestId } = await courier.send({
-      message: {
-        to: {
-          email: newSession.email,
-          data: {
-            name: newSession.email,
-            url,
-          },
-        },
-        template: "8ETVZCQK0KM7S5KK5YMEBXCDYH3T",
-        routing: {
-          method: "single",
-          channels: ["email"],
-        },
-      },
-    });
-
-    // if we have a request id it means the email was sent
-    return { ok: !!requestId, url };
+    return courierResponse;
   } catch (err) {
     throw new Error(`Could not send email ${err}`);
-
   }
-
-
 }
 
 export const createUser = async (_parent: any, { input }: { input: CreateUserInput }, { db }: { db: Connection }) => {
@@ -102,7 +78,6 @@ export const createUser = async (_parent: any, { input }: { input: CreateUserInp
   // TODO: user needs a valid token
   // find a session with the email id. 
   // if we the email is the same as the one from the DB, then move forward
-
   const Session = SessionModel(db)
   const Business = BusinessModel(db)
   const findSession = await Session.findOne({ email: input.email })
@@ -125,8 +100,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateUserInp
     throw new UserInputError('Password must be at least 8 characters long and contain letters and numbers.');
   }
 
-  const salt = bcrypt.genSaltSync(10);
-  const hashedPassword = bcrypt.hashSync(input.password, salt);
+  const hashedPassword = hashPassword(input.password)
   const User = UserModel(db)
 
   try {
@@ -215,7 +189,7 @@ export const getUserByID = async (_parent: any, { userID }: { userID: string }, 
   });
 }
 
-export const getUserByToken = async (_parent: any, _: any, { db, user }: Context) => {
+export const getToken = async (_parent: any, _: any, { db, user }: Context) => {
   if (!user) throw new Error("User not found");
 
   const userProfile = await UserModel(db).findById(user._id);
@@ -236,9 +210,7 @@ export const getUserByToken = async (_parent: any, _: any, { db, user }: Context
 
 export const getAllUsers = async (_parent: any, _args: any, { db }: Context) => {
   const User = UserModel(db)
-  const users = await User.find({})
-
-  return users
+  return await User.find({})
 }
 
 // 
@@ -258,8 +230,7 @@ export const updateUserInformation = async (_parent: any,
 
   if (input?._id && input.password) {
 
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(input.password, salt);
+    const hashedPassword = hashPassword(input.password)
 
     const updatedUser = await UserModel(db).findByIdAndUpdate(input._id, {
       password: hashedPassword
@@ -305,43 +276,25 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] : undefined;
-
   const token = await tokenSigning(user._id, user.email as string, businessId);
-  const url = `${ABSOLUTE_URL}/business/reset-password?token=${token}&email=${user.email}&_id=${user._id}`;
 
   if (!token) return { ok: false }
 
-  const { requestId } = await courier.send({
-    message: {
-      to: {
-        email: user.email,
-        data: {
-          name: user.name,
-          url,
-        },
-      },
-      template: "DWCK46XWTH4GHYG03D1NFZAMYN6J",
-      routing: {
-        method: "single",
-        channels: ["email"],
-      },
-    },
-  });
+  try {
 
-  return { ok: !!requestId }
+    const courierResponse = await sendCourierEmail({
+      template: "reset-password",
+      email: user.email,
+      token,
+      name: user.name,
+      _id: user._id,
+    })
+
+    return courierResponse
+  } catch (err) {
+    throw new Error(`Could not send email ${err}`);
+  }
 }
-
-// take a this input
-// {
-//   "name": "Jubileu Rodrigues",
-//   "privileges": "MANAGER",
-//   "email": "mendes.realtor@gmail.com",
-//   "phone": "9173303561",
-//   "picture": ""
-// }
-
-// receive the input from the dashboard for a new employee
-// try to find the email on the database, if it exists, add the new
 
 type AddEmployeeInput = {
   name: string;
@@ -364,8 +317,6 @@ export const addEmployeeToBusiness = async (_parent: any, { input }: { input: Ad
     const uniqueEmployees = arr.filter((a, i) => arr.findIndex((s) => a?.toString() === s?.toString()) === i)
     businessFound.employees = uniqueEmployees
     await businessFound.save()
-
-    console.log(businessFound)
   }
 
   if (!business || !businessFound) throw new Error("Business not found")
@@ -387,14 +338,11 @@ export const addEmployeeToBusiness = async (_parent: any, { input }: { input: Ad
     userFound.save()
 
     await updatebusiness(userFound._id)
+
     return userFound
   }
 
-  // create a new user
-  const salt = bcrypt.genSaltSync(10);
-  const hashedPassword = bcrypt.hashSync(input.email, salt);
-
-  console.log(input)
+  const hashedPassword = hashPassword(input.email)
 
   try {
     const newUser = await User.create({
@@ -408,11 +356,22 @@ export const addEmployeeToBusiness = async (_parent: any, { input }: { input: Ad
 
     await updatebusiness(newUser._id)
 
+    const token = await tokenSigning(newUser._id, newUser.email as string, business);
+
+    if (!token) throw new Error("Could not create token")
+
+    sendCourierEmail({
+      template: "reset-password",
+      email: newUser.email,
+      token,
+      name: newUser.name,
+      _id: newUser._id,
+    })
+
     return newUser
 
   } catch (error) {
     console.log(error)
-
   }
 
 }
@@ -431,8 +390,6 @@ const getBusinessByUser = (user: User, input: any, context: Context) => {
 }
 
 
-
-
 const UserResolverMutation = {
   requestUserAccountCreation,
   updateUserInformation,
@@ -445,7 +402,7 @@ const UserResolverMutation = {
 const UserResolverQuery = {
   getUserByID,
   getAllUsers,
-  getUserByToken,
+  getToken,
 }
 
 const UserResolver = {

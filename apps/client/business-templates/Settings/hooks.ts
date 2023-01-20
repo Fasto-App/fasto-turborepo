@@ -1,36 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { businessInfoSchema, businessInfoSchemaInput } from 'app-helpers';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-
-const businessInfoSchema = z.object({
-  businessName: z.string().trim().min(3, { message: 'Name Required' })
-    .max(50, { message: 'Name too long' }),
-  addressLine1: z.string().trim().min(4, { message: 'Street Required' }),
-  zipCode: z.string().trim().min(4, { message: 'Zip/Postal Code Required' }),
-  city: z.string().trim().min(2, { message: 'City Required' }),
-  state: z.string().trim().min(2, { message: 'State Required' }),
-  country: z.string().trim().min(2, { message: 'Country Required' }),
-  hours: z.string().trim().optional(),
-  days: z.string().trim().optional(),
-})
-
-export type BusinessInfo = z.infer<typeof businessInfoSchema>
 
 export const useManageBusinessFormHook = () => {
   const {
     control,
     formState,
     handleSubmit
-  } = useForm<BusinessInfo>({
+  } = useForm<businessInfoSchemaInput>({
     defaultValues: {
-      businessName: "",
-      addressLine1: "",
+      name: "",
+      streetName: "",
+      streetNumber: "",
       zipCode: "",
       city: "",
       state: "",
       country: "",
-      hours: "",
-      days: ""
     },
     resolver: zodResolver(businessInfoSchema)
   })

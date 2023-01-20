@@ -5,7 +5,7 @@ export const UserTypeDefinition = gql`
       """
       Returns a user based on the Bearer token
       """
-    getUserByToken: User
+    getToken: User
     getAllUsers: [User!]!
     getUserByID(userID: ID): User
   }

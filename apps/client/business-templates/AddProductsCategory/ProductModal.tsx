@@ -176,7 +176,7 @@ const ProductModal = ({
 			placeholder: texts.photo,
 			helperText: texts.productsHelperText,
 			inputType: 'File',
-			handleFileUpload,
+			handleOnChange: handleFileUpload,
 		}
 	}
 

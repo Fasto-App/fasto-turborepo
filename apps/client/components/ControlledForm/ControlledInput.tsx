@@ -1,5 +1,5 @@
-import { Box, CheckIcon, FormControl, HStack, IInputProps, Input, Select, TextArea, } from 'native-base'
-import React from 'react'
+import { Box, CheckIcon, FormControl, Hidden, HStack, IInputProps, Input, Select, TextArea, } from 'native-base'
+import React, { SyntheticEvent } from 'react'
 import { Control, Controller, UseControllerProps } from 'react-hook-form'
 import { AiOutlineCloudDownload } from 'react-icons/ai';
 
@@ -12,7 +12,7 @@ type CustomInputProps = {
   array?: { name: string, _id: string }[];
   formatValue?: (value: string) => string;
   formatOnChange?: (value: string, cb: (number) => void) => void;
-  handleFileUpload?: (e: any) => void;
+  handleOnChange?: (e: SyntheticEvent) => void;
 }
 
 type InputType = "Input" | "TextArea" | "Select" | "File"
@@ -34,7 +34,7 @@ export const ControlledInput = <T extends Record<string, string>>({
   isRequired,
   formatValue,
   formatOnChange,
-  handleFileUpload,
+  handleOnChange,
 }: ControlledFormInput<T>) => {
   return (
     <>
@@ -82,15 +82,17 @@ export const ControlledInput = <T extends Record<string, string>>({
                   </Select>)
               case "File":
                 return (
-                  <HStack justifyContent={""}>
-                    <Box mr={2} >
-                      <AiOutlineCloudDownload color={"gray"} size={"1.5em"} />
-                    </Box>
-                    <input type="file" onChange={handleFileUpload} accept="image/*" />
-                  </HStack>
-
+                  <label tabIndex={0}>
+                    <input type="file" style={{ display: "none" }} onChange={handleOnChange} accept="image/*" />
+                    <span>
+                      <HStack borderWidth={1} flex={1} h={"32"} justifyContent={"center"}>
+                        <Box mr={2} alignSelf={"center"}>
+                          <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
+                        </Box>
+                      </HStack>
+                    </span>
+                  </label>
                 )
-
             }
           }}
         />

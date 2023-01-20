@@ -6,8 +6,7 @@ const getAddressFromBusiness = async (
     _args: any,
     { db }: { db: Connection },
 ) => {
-    // from the business we will populate the address field and return the address object
-
+    return await AddressModel(db).findById(parent.address)
 }
 
 const getAddress = async (parent: any,

@@ -1,41 +1,55 @@
 import { RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { Privileges } from "app-helpers"
+import { businessInfoSchemaInputKeys, Privileges } from "app-helpers"
 import { typedKeys } from "../../authUtilities/utils";
 
-export const ManageBusinessConfig: RegularInputConfig = {
-  businessName: {
+export const ManageBusinessConfig: SideBySideInputConfig = {
+  name: {
     name: "business_name",
     label: "Business Name",
   },
-  addressLine1: {
-    name: "addressLine1",
-    label: "Street Name"
+  streetName: {
+    name: "street_name",
+    label: "Street Name",
   },
-
-  zipCode: {
-    name: "zipCode",
-    label: "Zip/Postal"
-  },
+  street: [{
+    streetNumber: {
+      name: "street_number",
+      label: "Street Number",
+    },
+  }, {
+    zipCode: {
+      name: "zipCode",
+      label: "Zip/Postal"
+    },
+  }],
   city: {
     name: "city",
     label: "City"
   },
-  state: {
-    name: "state",
-    label: "State"
+  stateCountry: [{
+    state: {
+      name: "state",
+      label: "State"
+    }
+  }, {
+    country: {
+      name: "country",
+      label: "Country"
+    }
+  }],
+  uploadPicture: {
+    name: "uploadPicture",
+    label: "Upload Picture",
+    inputType: "File",
+    handleOnChange: (evt: any) => {
+      console.log("file", evt.target.files[0])
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png")
+        }, 2000)
+      })
+    }
   },
-  country: {
-    name: "country",
-    label: "Country"
-  },
-  hours: {
-    name: "hours",
-    label: "Hours"
-  },
-  days: {
-    name: "days",
-    label: "Days",
-  }
 };
 
 export const ManageAccountConfig: RegularInputConfig = {

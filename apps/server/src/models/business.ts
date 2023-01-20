@@ -6,7 +6,7 @@ import { Address } from './address';
 import { Product } from './product';
 import { Category } from './category';
 import { User } from './user';
-
+// import type { HousOfOperationType } from 'app-helpers';
 export class Business {
     @prop({ required: true })
     public user!: Types.ObjectId;
@@ -25,6 +25,9 @@ export class Business {
 
     @prop({ ref: Address })
     public address?: Ref<Address>;
+
+    // @prop()
+    // public hoursOfOperation?: HousOfOperationType;
 
     @prop({ ref: () => Product, default: [] })
     public products!: Ref<Product>[];
@@ -47,7 +50,8 @@ export class Business {
     public created_date!: Date;
 }
 
-// TODO: a business can have multiple properties for users this way we are going to know what privileges the user has
-
 export const BusinessModel = (conn: Connection) =>
-    getModelForClass(Business, { existingConnection: conn, schemaOptions: { collection: 'Business' } });
+    getModelForClass(Business, {
+        existingConnection: conn,
+        schemaOptions: { collection: 'Business' }
+    });

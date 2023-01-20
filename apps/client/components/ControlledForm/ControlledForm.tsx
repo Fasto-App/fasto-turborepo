@@ -22,9 +22,9 @@ export const ControlledForm = <T extends Record<string, string>>({
   Config
 }: ControlledFormType<T>) => {
 
-  return (<ScrollView>
-    {
-      typedKeys(Config).map((key) => {
+  return (
+    <ScrollView>
+      {typedKeys(Config).map((key) => {
         const config = Config[key];
 
         if (isConfigArray(config)) {
@@ -38,7 +38,7 @@ export const ControlledForm = <T extends Record<string, string>>({
                   <Box
                     key={keyName as string}
                     flex={1}
-                    ml={index % 2 !== 0 ? 16 : 0}
+                    ml={index % 2 !== 0 ? 10 : 0}
                   >
                     <ControlledInput
                       {...subKeyConfig[keyName]}
@@ -65,9 +65,9 @@ export const ControlledForm = <T extends Record<string, string>>({
             errorMessage={formState.errors?.[key]?.message as string}
           />
         )
-      })
-    }
-  </ScrollView>)
+      })}
+    </ScrollView>
+  )
 }
 
 type RegularInputConfig = Record<string, InputProps>;

@@ -7,7 +7,13 @@ import { CategoryModel } from "../../../models/category";
 import { ProductModel } from '../../../models/product';
 import { Context } from '../types';
 import { Privileges } from '../../../models/types';
+import {
+  businessInfoSchema,
+  businessInfoSchemaInput
+} from 'app-helpers';
 
+
+//FIX: this should be a validation of the token, not the business id
 const updateBusinessToken = async (_: any,
   args: {
     input: {
@@ -16,7 +22,6 @@ const updateBusinessToken = async (_: any,
   }, context: Context) => {
   if (!context.user) throw new Error("User not found");
   const newToken = tokenSigning(context.user._id, context.user.email, args.input.business)
-
 
   return newToken
 }
@@ -27,20 +32,16 @@ const getAllBusinessByUser = async (_parent: any, _args: any, { db, user }: Cont
 }
 
 const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection }) => {
-  const business = await BusinessModel(db).find({})
-
-  return business
+  return await BusinessModel(db).find({})
 }
 
-const getBusinessByID = async (
+const getBusiness = async (
   _parent: any,
-  args: { businessID: string },
-  { db, business }: { db: Connection, business: string },
+  args: any,
+  { db, business }: Context,
 ) => {
-  const { businessID } = args;
   const Business = BusinessModel(db)
-
-  return await Business.findById(businessID);
+  return await Business.findById(business);
 };
 
 const createBusiness = async (_parent: any,
@@ -134,19 +135,65 @@ const updateBusiness = async (_parent: any, { input }: { input: Business & { id:
   return updateBusiness
 }
 
-const deleteBusiness = async (parent: any, args: any, context: any) => {
-  // 
-  // 
-  const { businessID } = args;
+const updateBusinessInfo = async (
+  _parent: any,
+  { input }: { input: businessInfoSchemaInput },
+  { db, business }: Context) => {
+  // get the id, find the business and update its information
+  const Business = BusinessModel(db)
+  const Address = AddressModel(db)
 
-  // find this business and delete it
   try {
 
+    console.log(input)
 
+    const validatedInput = businessInfoSchema.parse(input)
+    const updateBusiness = await Business.findById(business)
+
+    if (!updateBusiness) throw new Error("Business not found");
+
+    if (updateBusiness?.address) {
+      await Address.findByIdAndUpdate(updateBusiness.address, {
+        zipcode: validatedInput.zipCode,
+        city: validatedInput.city,
+        streetName: validatedInput.streetName,
+        streetNumber: validatedInput.streetNumber,
+      })
+    } else {
+
+      const address = new Address({
+        zipcode: validatedInput.zipCode,
+        city: validatedInput.city,
+        streetName: validatedInput.streetName,
+        streetNumber: validatedInput.streetNumber,
+      })
+
+      const savedAddress = await address.save()
+      updateBusiness.address = savedAddress._id
+
+      await updateBusiness.save()
+    }
+
+
+    updateBusiness.name = validatedInput.name
+    // updateBusiness.hoursOfOperation = validatedInput.hoursOfOperation
+
+    return await updateBusiness.save()
+  } catch (err) {
+    throw new Error(`Error saving business information: ${err}`);
+  }
+}
+
+
+
+const deleteBusiness = async (parent: any, args: any, context: any) => {
+  const { businessID } = args;
+
+  try {
     const BusinessDB = BusinessModel(context.db)
     const deletedBusiness = await BusinessDB.deleteOne({ _id: businessID })
 
-    return ({ success: true, message: 'Business deleted ' })
+    return ({ success: !!deletedBusiness, message: 'Business deleted ' })
   } catch {
     return ({ success: false, message: 'Business not found' })
   }
@@ -169,12 +216,13 @@ const BusinessResolverMutation = {
   createBusiness,
   updateBusinessToken,
   deleteBusiness,
-  updateBusiness
+  updateBusiness,
+  updateBusinessInfo,
 }
 const BusinessResolverQuery = {
   getAllBusiness,
   getAllBusinessByUser,
-  getBusinessByID
+  getBusiness
 }
 
 const BusinessResolver = {
