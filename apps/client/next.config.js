@@ -10,10 +10,22 @@ const withTM = require('next-transpile-modules')([
 	'app-helpers',
 ]);
 
+/**
+ * @type {import('next').NextConfig}
+ */
+
 const nextConfig = {
 	env: {
 		NEXT_PUBLIC_ENVIRONMENT: process.env.ENVIRONMENT,
 		NEXT_PUBLIC_API_KEY: process.env.API_KEY,
+	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: '*',
+			},
+		],
 	},
 };
 

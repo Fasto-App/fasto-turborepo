@@ -12,7 +12,7 @@ export const BusinessTypeDefinition = gql`
     updateBusiness(input: UpdateBusinessInput): Business
     deleteBusiness(businessID: ID!): DeleteBusinessPayload
     updateBusinessToken(input: String): String
-    updateBusinessInfo(input: BusinessInfoInput): Business
+    updateBusinessLocation(input: BusinessInfoInput): Business
   }
 
   input BusinessInput {

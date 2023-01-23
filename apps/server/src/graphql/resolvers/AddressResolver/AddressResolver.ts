@@ -27,10 +27,11 @@ const updateAddress = async (parent: any, { input }: { input: any }, { db }: { d
 const createAddress = (parent: any, { input }: { input: Address }, { db }: { db: Connection }) => {
     const Address = AddressModel(db)
     const address = new Address({
-        zipcode: input.zipcode,
+        streetAddress: input.streetAddress,
+        complement: input.complement,
+        postalCode: input.postalCode,
         city: input.city,
-        streetName: input.streetName,
-        streetNumber: input.streetNumber,
+        country: input.country,
     })
 
     return address.save()

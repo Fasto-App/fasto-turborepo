@@ -8,8 +8,8 @@ import { ProductModel } from '../../../models/product';
 import { Context } from '../types';
 import { Privileges } from '../../../models/types';
 import {
-  businessInfoSchema,
-  businessInfoSchemaInput
+  businessLocationSchema,
+  businessLocationSchemaInput
 } from 'app-helpers';
 
 
@@ -87,10 +87,11 @@ const createBusiness = async (_parent: any,
 
     if (input.address) {
       const address = new Address({
-        zipcode: input.address.zipcode,
+        postalCode: input.address.postalCode,
         city: input.address.city,
-        streetName: input.address.streetName,
-        streetNumber: input.address.streetNumber,
+        streetAddress: input.address.streetAddress,
+        country: input.address.country,
+        complement: input.address.complement,
       })
 
       savedAddress = await address.save()
@@ -113,10 +114,6 @@ const createBusiness = async (_parent: any,
   }
 };
 
-interface UpdateBusinessInput {
-
-}
-
 const updateBusiness = async (_parent: any, { input }: { input: Business & { id: string; address: Address } }, { db }: { db: Connection }) => {
   // get the id, find the business and update its information
   const Business = BusinessModel(db)
@@ -135,9 +132,9 @@ const updateBusiness = async (_parent: any, { input }: { input: Business & { id:
   return updateBusiness
 }
 
-const updateBusinessInfo = async (
+const updateBusinessLocation = async (
   _parent: any,
-  { input }: { input: businessInfoSchemaInput },
+  { input }: { input: businessLocationSchemaInput },
   { db, business }: Context) => {
   // get the id, find the business and update its information
   const Business = BusinessModel(db)
@@ -147,25 +144,25 @@ const updateBusinessInfo = async (
 
     console.log(input)
 
-    const validatedInput = businessInfoSchema.parse(input)
+    const validatedInput = businessLocationSchema.parse(input)
     const updateBusiness = await Business.findById(business)
 
     if (!updateBusiness) throw new Error("Business not found");
 
     if (updateBusiness?.address) {
       await Address.findByIdAndUpdate(updateBusiness.address, {
-        zipcode: validatedInput.zipCode,
+        postalCode: validatedInput.postalCode,
         city: validatedInput.city,
-        streetName: validatedInput.streetName,
-        streetNumber: validatedInput.streetNumber,
+        streetAddress: validatedInput.streetAddress,
+        complement: validatedInput.complement,
       })
     } else {
 
       const address = new Address({
-        zipcode: validatedInput.zipCode,
         city: validatedInput.city,
-        streetName: validatedInput.streetName,
-        streetNumber: validatedInput.streetNumber,
+        postalCode: validatedInput.postalCode,
+        streetAddress: validatedInput.streetAddress,
+        complement: validatedInput.complement,
       })
 
       const savedAddress = await address.save()
@@ -174,8 +171,6 @@ const updateBusinessInfo = async (
       await updateBusiness.save()
     }
 
-
-    updateBusiness.name = validatedInput.name
     // updateBusiness.hoursOfOperation = validatedInput.hoursOfOperation
 
     return await updateBusiness.save()
@@ -217,7 +212,7 @@ const BusinessResolverMutation = {
   updateBusinessToken,
   deleteBusiness,
   updateBusiness,
-  updateBusinessInfo,
+  updateBusinessLocation,
 }
 const BusinessResolverQuery = {
   getAllBusiness,

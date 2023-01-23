@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { businessInfoSchema, businessInfoSchemaInput } from 'app-helpers';
+import { businessLocationSchema, businessLocationSchemaInput } from 'app-helpers';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -8,17 +8,16 @@ export const useManageBusinessFormHook = () => {
     control,
     formState,
     handleSubmit
-  } = useForm<businessInfoSchemaInput>({
+  } = useForm<businessLocationSchemaInput>({
     defaultValues: {
-      name: "",
-      streetName: "",
-      streetNumber: "",
-      zipCode: "",
+      streetAddress: "",
+      complement: "",
+      postalCode: "",
       city: "",
-      state: "",
+      stateOrProvince: "",
       country: "",
     },
-    resolver: zodResolver(businessInfoSchema)
+    resolver: zodResolver(businessLocationSchema)
   })
 
   return {

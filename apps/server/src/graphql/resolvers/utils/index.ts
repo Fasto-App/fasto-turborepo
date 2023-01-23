@@ -33,7 +33,7 @@ export const getUserFromToken = async (token: string, tokenSecret: string) => {
 
   } catch (error) {
 
-    console.log("🚯 Token error: ");
+    console.log("🚯 Token error: User Token INVALID");
     return null
   }
 }

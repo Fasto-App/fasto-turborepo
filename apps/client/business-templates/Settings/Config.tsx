@@ -1,8 +1,9 @@
 import { RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { businessInfoSchemaInputKeys, Privileges } from "app-helpers"
+import { businessLocationSchemaInputKeys, Privileges } from "app-helpers"
 import { typedKeys } from "../../authUtilities/utils";
+import { InputProps } from "../../components/ControlledForm/ControlledInput";
 
-export const ManageBusinessConfig: SideBySideInputConfig = {
+export const ManageLocationConfig: SideBySideInputConfig = {
   name: {
     name: "business_name",
     label: "Business Name",
@@ -37,19 +38,6 @@ export const ManageBusinessConfig: SideBySideInputConfig = {
       label: "Country"
     }
   }],
-  uploadPicture: {
-    name: "uploadPicture",
-    label: "Upload Picture",
-    inputType: "File",
-    handleOnChange: (evt: any) => {
-      console.log("file", evt.target.files[0])
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png")
-        }, 2000)
-      })
-    }
-  },
 };
 
 export const ManageAccountConfig: RegularInputConfig = {
@@ -70,6 +58,69 @@ export const ManageAccountConfig: RegularInputConfig = {
     label: "Confirm Password",
   },
 }
+
+export const ManageBusinessConfig: RegularInputConfig = {
+  businessName: {
+    name: "businessName",
+    label: "Business Name",
+  },
+  description: {
+    name: "description",
+    label: "Description",
+  },
+  monday: {
+    name: "monday",
+    label: "Monday",
+    inputType: "Date",
+  },
+  tuesday: {
+    name: "tuesday",
+    label: "Tuesday",
+    inputType: "Date",
+  },
+  wednesday: {
+    name: "wednesday",
+    label: "Wednesday",
+    inputType: "Date",
+  },
+  thursday: {
+    name: "thursday",
+    label: "Thursday",
+    inputType: "Date",
+  },
+  friday: {
+    name: "friday",
+    label: "Friday",
+    inputType: "Date",
+  },
+  saturday: {
+    name: "saturday",
+    label: "Saturday",
+    inputType: "Date",
+  },
+  sunday: {
+    name: "sunday",
+    label: "Sunday",
+    inputType: "Date",
+  },
+}
+
+export const uploadPicture: InputProps = {
+  name: "uploadPicture",
+  label: "Upload Picture",
+  inputType: "File",
+  handleOnChange: (evt: any) => {
+    console.log("file", evt.target.files[0])
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png")
+      }, 2000)
+    })
+  }
+}
+
+// create a new config for the new form
+// the forms need better validation to garantee that the config types and the schema types are the same
 
 const privilegesArray = typedKeys(Privileges).map(privilege => ({
   name: privilege,

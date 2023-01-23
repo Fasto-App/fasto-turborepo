@@ -73,7 +73,8 @@ export const TableModal = () => {
       input: {
         _id: tableChoosen?.tab
       }
-    }
+    },
+    skip: !tableChoosen?.tab
   })
 
   console.log({ data })

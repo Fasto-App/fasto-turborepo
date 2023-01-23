@@ -3,12 +3,17 @@ import React, { useState } from 'react'
 import { typedKeys } from '../../authUtilities/utils'
 import { ManageAccount } from './ManageAccount'
 import { ManageBusiness } from './ManageBusiness'
+import { ManageBusinessLocation } from './ManageBusinessLocation'
 import { ManageEmployee } from './ManageEmployee'
 import { texts } from './texts'
 
 const manageTabs = {
   manage_business: {
     button_title: "Manage Restaurant",
+    title: "Restaurant Info"
+  },
+  manage_business_location: {
+    button_title: "Manage Location",
     title: "Restaurant Info"
   },
   manage_employee: {
@@ -70,7 +75,6 @@ export const Settings = () => {
           keyExtractor={(item) => item}
         />
       </VStack>
-
       <Box
         p={"4"}
         flex={1}
@@ -84,8 +88,11 @@ export const Settings = () => {
           {manageTabs[selectedTab].title}
         </Heading>
         <Box>
-          {selectedTab === "manage_business" ? <ManageBusiness /> :
-            selectedTab === "manage_account" ? <ManageAccount /> : <ManageEmployee />}
+          {selectedTab === "manage_business_location" ? <ManageBusinessLocation /> :
+            selectedTab === "manage_account" ? <ManageAccount /> :
+              selectedTab === "manage_employee" ? <ManageEmployee /> :
+                selectedTab === "manage_business" ? <ManageBusiness /> : null
+          }
         </Box>
       </Box>
     </VStack>

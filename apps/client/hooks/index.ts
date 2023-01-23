@@ -19,3 +19,35 @@ export const useNumOfColumns = (showTilesList: boolean) => {
 
   return numColumns;
 }
+
+
+export const useUploadFileHook = () => {
+  const [imageSrc, setImageUrl] = useState("")
+  const [imageFile, setImageFile] = useState<File>(null)
+
+
+  const handleFileOnChange = (evt: any) => {
+    const file = evt.target.files[0]
+
+    if (!file) {
+      setImageUrl("")
+      setImageFile(null)
+      return
+    }
+
+    const reader = new FileReader()
+
+    reader.readAsDataURL(file)
+    reader.onload = (e) => {
+      const url = e.target.result
+      setImageUrl(url as string)
+      setImageFile(file)
+    }
+  }
+
+  return {
+    imageSrc,
+    imageFile,
+    handleFileOnChange
+  }
+}

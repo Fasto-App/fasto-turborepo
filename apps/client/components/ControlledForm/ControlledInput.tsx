@@ -1,9 +1,11 @@
-import { Box, CheckIcon, FormControl, Hidden, HStack, IInputProps, Input, Select, TextArea, } from 'native-base'
+import { AspectRatio, Box, CheckIcon, FormControl, Hidden, HStack, IInputProps, Input, Select, Switch, TextArea, Text } from 'native-base'
 import React, { SyntheticEvent } from 'react'
 import { Control, Controller, UseControllerProps } from 'react-hook-form'
 import { AiOutlineCloudDownload } from 'react-icons/ai';
+import Image from 'next/image'
 
 type CustomInputProps = {
+  src?: string;
   name: string;
   label: string;
   errorMessage?: string;
@@ -15,13 +17,14 @@ type CustomInputProps = {
   handleOnChange?: (e: SyntheticEvent) => void;
 }
 
-type InputType = "Input" | "TextArea" | "Select" | "File"
+type InputType = "Input" | "TextArea" | "Select" | "File" | "Date"
 
 export type InputProps = IInputProps & CustomInputProps
 export type ControlledFormInput<T extends Record<string, string>> = Omit<UseControllerProps, "control"> & InputProps &
 { control: Control<T> }
 
 export const ControlledInput = <T extends Record<string, string>>({
+  src,
   control,
   errorMessage,
   label,
@@ -39,7 +42,12 @@ export const ControlledInput = <T extends Record<string, string>>({
   return (
     <>
       <FormControl isInvalid={!!errorMessage}>
-        <FormControl.Label isRequired={isRequired}>{label}</FormControl.Label>
+
+        {/* dont show for type Date */}
+        {inputType !== "Date" ? (<FormControl.Label isRequired={isRequired}>
+          {label}
+        </FormControl.Label>) : null}
+
         <Controller
           control={control}
           // @ts-ignore
@@ -79,18 +87,84 @@ export const ControlledInput = <T extends Record<string, string>>({
                     {array.map(category => (
                       <Select.Item key={category._id} label={category.name} value={category._id} />))
                     }
-                  </Select>)
-              case "File":
+                  </Select>
+                )
+              case "Date":
                 return (
-                  <label tabIndex={0}>
-                    <input type="file" style={{ display: "none" }} onChange={handleOnChange} accept="image/*" />
-                    <span>
-                      <HStack borderWidth={1} flex={1} h={"32"} justifyContent={"center"}>
-                        <Box mr={2} alignSelf={"center"}>
-                          <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
-                        </Box>
-                      </HStack>
-                    </span>
+                  <HStack w={"100%"} justifyContent={"flex-end"} space={"2"}>
+
+                    <HStack
+                      alignItems={"center"}
+                      space={"4"}
+                      flex={1}
+                      borderWidth={1}>
+                      <FormControl.Label isRequired={isRequired} flex={1}>
+                        {label}
+                      </FormControl.Label>
+                      <Switch size="lg" />
+                      <Text>
+                        {"Open"}
+                      </Text>
+                    </HStack>
+
+                    <HStack alignItems={"center"} space={"4"}>
+                      <Select
+                        onValueChange={field.onChange}
+                        selectedValue={field.value}
+                        accessibilityLabel="Choose Category"
+                        placeholder="Choose Category"
+                        _selectedItem={{
+                          endIcon: <CheckIcon size="5" />
+                        }}
+                      >
+                        {["1", "2", "3"].map((category, index) => (
+                          <Select.Item key={index} label={category} value={category} />))
+                        }
+                      </Select>
+                      <Text alignSelf={"center"}>
+                        {"To"}
+                      </Text>
+                      <Select
+                        onValueChange={field.onChange}
+                        selectedValue={field.value}
+                        accessibilityLabel="Choose Category"
+                        placeholder="Choose Category"
+                        _selectedItem={{
+                          endIcon: <CheckIcon size="5" />
+                        }}
+                      >
+                        {["1", "2", "3"].map((category, index) => (
+                          <Select.Item key={index} label={category} value={category} />))
+                        }
+                      </Select>
+                    </HStack>
+
+                  </HStack>)
+              case "File":
+                // If we have a valid url or source, we render the image
+                // otherwise we render the upload button
+                // use aspect Ratio component to keep the image ratio
+                return (
+                  <label tabIndex={0} style={{ cursor: "pointer" }}>
+                    <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
+                      <input type="file" style={{ display: "none" }} onChange={handleOnChange} accept="image/*" />
+                      <span>
+                        <AspectRatio maxHeight={300}>
+                          {!src ?
+                            <Box mr={2} alignItems={"center"} justifyContent={"center"}>
+                              <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
+                            </Box>
+                            :
+                            <Image
+                              src={src}
+                              alt="Next.js logo"
+                              layout={'fill'}
+                              objectFit={'contain'}
+                            />
+                          }
+                        </AspectRatio>
+                      </span>
+                    </Box>
                   </label>
                 )
             }

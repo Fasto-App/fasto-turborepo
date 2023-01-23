@@ -26,7 +26,6 @@ export const ManageAccount = () => {
         Config={ManageAccountConfig}
       />
       <Box>
-
         <HStack alignItems="center" space={2} justifyContent="end">
           <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
             {texts.cancel}
