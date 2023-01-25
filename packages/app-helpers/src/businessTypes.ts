@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+// hours arrays
+export const hours = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "00"] as const
+export const minutes = ["00", "15", "30", "45"] as const
+
+export type Hours = typeof hours[number]
+export type Minutes = typeof minutes[number]
+export type Time = `${Hours}:${Minutes}`
+
 const DaysOfWeek = {
   Monday: "Monday",
   Tuesday: "Tuesday",

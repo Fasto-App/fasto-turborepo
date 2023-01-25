@@ -18,6 +18,7 @@ import { Tile } from "../../components/Tile"
 import { OrderDetail, OrderStatus, useGetTabByIdQuery } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
 import { useTableScreenStore } from "./tableScreenStore"
+import { Transition } from "../../components/Transition"
 
 const FilterOrderBy = {
   patron: "Patron",
@@ -76,15 +77,9 @@ export const OccupiedModal = () => {
         </Pressable>
       </HStack>
       <Box pb={8} pt={4}>
-        <PresenceTransition
-          visible={isFilteredByPatron}
-          initial={{ opacity: 0, }}
-          animate={{
-            opacity: 1,
-            transition: {
-              duration: 250
-            }
-          }}>
+        <Transition
+          isVisible={isFilteredByPatron}
+        >
           <ScrollView horizontal={true} pb={2}>
             <HStack space={2}>
               {tableChoosen?.users?.map((patron, index) => (
@@ -94,7 +89,7 @@ export const OccupiedModal = () => {
               ))}
             </HStack>
           </ScrollView>
-        </PresenceTransition>
+        </Transition>
         <VStack space={6} pt={"5"}>
           {!tableChoosen?.orders?.length ?
             <Center flex={1} paddingY={"10"}>

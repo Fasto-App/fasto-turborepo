@@ -7,8 +7,7 @@ import { texts } from "./texts"
 import { useUploadFileHook } from "../../hooks"
 import { useUploadFileMutation } from "../../gen/generated"
 import { ControlledInput } from "../../components/ControlledForm/ControlledInput"
-
-
+import { WeeklySchedule } from "../../components/ControlledForm/WeeklySchedule"
 
 export const ManageBusiness = () => {
 
@@ -34,18 +33,28 @@ export const ManageBusiness = () => {
     console.log("values", values)
     alert(JSON.stringify(values))
 
+    // this may or may not have a ImageFile
+    // if it does, then upload the file
+    // if it doesn't, then just make the mutation to post Address information
+    if (!imageFile) {
+      // make the mutation to post Address information
+      return
+    }
+
+
 
     const { data } = await uploadFile({
       variables: {
         file: imageFile
-      }
+      },
     })
 
     console.log("data", data.uploadFile)
+    // make the mutation to post Address information
   }
 
   return (
-    <HStack flex={1} flexDir={"column"}>
+    <HStack flex={1} flexDir={"column"} space={"4"}>
       <ControlledForm
         control={control}
         formState={formState}
@@ -57,8 +66,8 @@ export const ManageBusiness = () => {
         src={imageSrc}
         control={control}
       />
-      <Box>
-
+      <WeeklySchedule />
+      <Box pt={4}>
         <HStack alignItems="center" space={2} justifyContent="end">
           <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
             {texts.cancel}
@@ -66,7 +75,9 @@ export const ManageBusiness = () => {
           <Button
             w={"100"}
             colorScheme="tertiary"
-            onPress={handleSubmit(handleSaveAccountInfo)}>{texts.save}
+            onPress={handleSubmit(handleSaveAccountInfo)}
+          >
+            {texts.save}
           </Button>
         </HStack>
       </Box>

@@ -84,7 +84,7 @@ export const Settings = () => {
         backgroundColor={"white"}
         overflow={"scroll"}
       >
-        <Heading>
+        <Heading size={"md"}>
           {manageTabs[selectedTab].title}
         </Heading>
         <Box>

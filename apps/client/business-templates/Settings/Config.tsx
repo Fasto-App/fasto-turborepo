@@ -63,45 +63,12 @@ export const ManageBusinessConfig: RegularInputConfig = {
   businessName: {
     name: "businessName",
     label: "Business Name",
+    isRequired: true,
   },
   description: {
     name: "description",
     label: "Description",
-  },
-  monday: {
-    name: "monday",
-    label: "Monday",
-    inputType: "Date",
-  },
-  tuesday: {
-    name: "tuesday",
-    label: "Tuesday",
-    inputType: "Date",
-  },
-  wednesday: {
-    name: "wednesday",
-    label: "Wednesday",
-    inputType: "Date",
-  },
-  thursday: {
-    name: "thursday",
-    label: "Thursday",
-    inputType: "Date",
-  },
-  friday: {
-    name: "friday",
-    label: "Friday",
-    inputType: "Date",
-  },
-  saturday: {
-    name: "saturday",
-    label: "Saturday",
-    inputType: "Date",
-  },
-  sunday: {
-    name: "sunday",
-    label: "Sunday",
-    inputType: "Date",
+    inputType: "TextArea",
   },
 }
 
