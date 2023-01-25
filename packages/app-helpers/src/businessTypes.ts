@@ -20,16 +20,7 @@ const DaysOfWeek = {
 
 export type DaysOfWeekType = typeof DaysOfWeek[keyof typeof DaysOfWeek];
 
-type AddressSchemaType = {
-  streetAddress: string;
-  complement?: string;
-  postalCode: string;
-  city: string;
-  stateOrProvince: string;
-  country: string;
-}
-
-export const businessLocationSchema: z.ZodSchema<AddressSchemaType> = z.object({
+export const businessLocationSchema = z.object({
   streetAddress: z.string().trim().min(3, { message: 'Name Required' }),
   complement: z.string(),
   postalCode: z.string().trim().min(4, { message: 'Zip/Postal Code Required' }),
