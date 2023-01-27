@@ -22,20 +22,30 @@ export type AccountCreationResponse = {
   url?: Maybe<Scalars['String']>;
 };
 
+export type AddEmployeeInput = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+  privileges: UserPrivileges;
+};
+
 export type Address = {
   __typename?: 'Address';
+  _id: Scalars['ID'];
   city: Scalars['String'];
-  id: Scalars['ID'];
-  streetName: Scalars['String'];
-  streetNumber: Scalars['String'];
-  zipcode: Scalars['String'];
+  complement?: Maybe<Scalars['String']>;
+  country: Scalars['String'];
+  postalCode: Scalars['String'];
+  stateOrProvince: Scalars['String'];
+  streetAddress: Scalars['String'];
 };
 
 export type AddressInput = {
   city: Scalars['String'];
-  streetName: Scalars['String'];
-  streetNumber: Scalars['String'];
-  zipcode: Scalars['String'];
+  complement?: InputMaybe<Scalars['String']>;
+  country: Scalars['String'];
+  postalCode: Scalars['String'];
+  stateOrProvince: Scalars['String'];
+  streetAddress: Scalars['String'];
 };
 
 export type Business = {
@@ -45,6 +55,8 @@ export type Business = {
   categories: Array<Category>;
   cuisine?: Maybe<Array<Scalars['String']>>;
   email: Scalars['String'];
+  employees: Array<Maybe<Scalars['String']>>;
+  hoursOfOperation?: Maybe<HoursOfOperation>;
   menus?: Maybe<Array<Menu>>;
   name: Scalars['String'];
   price_range?: Maybe<Scalars['String']>;
@@ -58,6 +70,12 @@ export type BusinessInput = {
   name: Scalars['String'];
   phone: Scalars['String'];
   website?: InputMaybe<Scalars['String']>;
+};
+
+export type BusinessPrivileges = {
+  __typename?: 'BusinessPrivileges';
+  business: Scalars['String'];
+  privileges: Array<Maybe<UserPrivileges>>;
 };
 
 export type Category = {
@@ -118,6 +136,16 @@ export type CreateTableInput = {
   space: Scalars['ID'];
 };
 
+export enum DaysOfWeek {
+  Friday = 'FRIDAY',
+  Monday = 'MONDAY',
+  Saturday = 'SATURDAY',
+  Sunday = 'SUNDAY',
+  Thursday = 'THURSDAY',
+  Tuesday = 'TUESDAY',
+  Wednesday = 'WEDNESDAY'
+}
+
 export type DeleteBusinessPayload = {
   __typename?: 'DeleteBusinessPayload';
   message?: Maybe<Scalars['String']>;
@@ -146,6 +174,27 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type HoursOfOperation = {
+  __typename?: 'HoursOfOperation';
+  Friday?: Maybe<WorkingHours>;
+  Monday?: Maybe<WorkingHours>;
+  Saturday?: Maybe<WorkingHours>;
+  Sunday?: Maybe<WorkingHours>;
+  Thursday?: Maybe<WorkingHours>;
+  Tuesday?: Maybe<WorkingHours>;
+  Wednesday?: Maybe<WorkingHours>;
+};
+
+export type HoursOfOperationInput = {
+  Friday?: InputMaybe<WorkingHoursInput>;
+  Monday?: InputMaybe<WorkingHoursInput>;
+  Saturday?: InputMaybe<WorkingHoursInput>;
+  Sunday?: InputMaybe<WorkingHoursInput>;
+  Thursday?: InputMaybe<WorkingHoursInput>;
+  Tuesday?: InputMaybe<WorkingHoursInput>;
+  Wednesday?: InputMaybe<WorkingHoursInput>;
+};
+
 export type LinkCategoryToProductInput = {
   category: Scalars['ID'];
   products: Array<InputMaybe<Scalars['String']>>;
@@ -161,6 +210,7 @@ export type Menu = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  addEmployeeToBusiness: User;
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
@@ -187,6 +237,7 @@ export type Mutation = {
   requestUserAccountCreation: AccountCreationResponse;
   updateAddress?: Maybe<Address>;
   updateBusiness?: Maybe<Business>;
+  updateBusinessLocation?: Maybe<Business>;
   updateBusinessToken?: Maybe<Scalars['String']>;
   updateCategory?: Maybe<Category>;
   updateMenu?: Maybe<Menu>;
@@ -197,6 +248,11 @@ export type Mutation = {
   updateTab: Tab;
   updateUserInformation: User;
   uploadFile: Scalars['String'];
+};
+
+
+export type MutationAddEmployeeToBusinessArgs = {
+  input: AddEmployeeInput;
 };
 
 
@@ -325,6 +381,11 @@ export type MutationUpdateBusinessArgs = {
 };
 
 
+export type MutationUpdateBusinessLocationArgs = {
+  input?: InputMaybe<AddressInput>;
+};
+
+
 export type MutationUpdateBusinessTokenArgs = {
   input?: InputMaybe<Scalars['String']>;
 };
@@ -416,7 +477,7 @@ export type Query = {
   getAddress: Address;
   getAllBusiness?: Maybe<Array<Maybe<Business>>>;
   getAllBusinessByUser?: Maybe<Array<Maybe<Business>>>;
-  getAllCategoriesByBusiness: Array<Maybe<Category>>;
+  getAllCategoriesByBusiness: Array<Category>;
   getAllMenus: Array<Menu>;
   getAllMenusByBusinessID: Array<Maybe<Menu>>;
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
@@ -424,16 +485,17 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
-  getBusinessByID?: Maybe<Business>;
+  getBusiness: Business;
+  getBusinessLocation?: Maybe<Address>;
   getCategoryByID?: Maybe<Category>;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Maybe<Space>>>;
   getTabByID?: Maybe<Tab>;
-  getUserByID?: Maybe<User>;
   /** Returns a user based on the Bearer token */
-  getUserByToken?: Maybe<User>;
+  getToken?: Maybe<User>;
+  getUserByID?: Maybe<User>;
 };
 
 
@@ -540,10 +602,12 @@ export enum TableStatus {
 
 export type UpdateAddressInput = {
   _id: Scalars['ID'];
-  city?: InputMaybe<Scalars['String']>;
-  streetName?: InputMaybe<Scalars['String']>;
-  streetNumber?: InputMaybe<Scalars['String']>;
-  zipcode?: InputMaybe<Scalars['String']>;
+  city: Scalars['String'];
+  complement?: InputMaybe<Scalars['String']>;
+  country: Scalars['String'];
+  postalCode: Scalars['String'];
+  stateOrProvince: Scalars['String'];
+  streetAddress: Scalars['String'];
 };
 
 export type UpdateBusinessInput = {
@@ -616,9 +680,9 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
+  business: Array<Maybe<BusinessPrivileges>>;
   email: Scalars['String'];
   name?: Maybe<Scalars['String']>;
-  privileges?: Maybe<UserPrivileges>;
   token: Scalars['String'];
 };
 
@@ -640,10 +704,33 @@ export enum UserPrivileges {
   Waiter = 'WAITER'
 }
 
+export type WorkingHours = {
+  __typename?: 'WorkingHours';
+  close: Scalars['String'];
+  open: Scalars['String'];
+};
+
+export type WorkingHoursInput = {
+  close: Scalars['String'];
+  open: Scalars['String'];
+};
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
 };
+
+export type GetBusinessLocationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBusinessLocationQuery = { __typename?: 'Query', getBusinessLocation?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null };
+
+export type UpdateBusinessLocationMutationVariables = Exact<{
+  input?: InputMaybe<AddressInput>;
+}>;
+
+
+export type UpdateBusinessLocationMutation = { __typename?: 'Mutation', updateBusinessLocation?: { __typename?: 'Business', address?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null } | null };
 
 export type CreateCategoryMutationVariables = Exact<{
   input: CategoryInput;
@@ -662,7 +749,7 @@ export type DeleteCategoryMutation = { __typename?: 'Mutation', deleteCategory?:
 export type GetAllCategoriesByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllCategoriesByBusinessQuery = { __typename?: 'Query', getAllCategoriesByBusiness: Array<{ __typename?: 'Category', _id: string, name: string, description?: string | null } | null> };
+export type GetAllCategoriesByBusinessQuery = { __typename?: 'Query', getAllCategoriesByBusiness: Array<{ __typename?: 'Category', _id: string, name: string, description?: string | null }> };
 
 export type UpdateCategoryMutationVariables = Exact<{
   input?: InputMaybe<UpdateCategoryInput>;
@@ -785,6 +872,87 @@ export type CreateTableMutationVariables = Exact<{
 export type CreateTableMutation = { __typename?: 'Mutation', createTable: { __typename?: 'Table', space: string, _id: string } };
 
 
+export const GetBusinessLocationDocument = gql`
+    query GetBusinessLocation {
+  getBusinessLocation {
+    streetAddress
+    stateOrProvince
+    postalCode
+    country
+    complement
+    city
+    _id
+  }
+}
+    `;
+
+/**
+ * __useGetBusinessLocationQuery__
+ *
+ * To run a query within a React component, call `useGetBusinessLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBusinessLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBusinessLocationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBusinessLocationQuery(baseOptions?: Apollo.QueryHookOptions<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>(GetBusinessLocationDocument, options);
+      }
+export function useGetBusinessLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>(GetBusinessLocationDocument, options);
+        }
+export type GetBusinessLocationQueryHookResult = ReturnType<typeof useGetBusinessLocationQuery>;
+export type GetBusinessLocationLazyQueryHookResult = ReturnType<typeof useGetBusinessLocationLazyQuery>;
+export type GetBusinessLocationQueryResult = Apollo.QueryResult<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>;
+export const UpdateBusinessLocationDocument = gql`
+    mutation UpdateBusinessLocation($input: AddressInput) {
+  updateBusinessLocation(input: $input) {
+    address {
+      streetAddress
+      stateOrProvince
+      postalCode
+      country
+      complement
+      city
+      _id
+    }
+  }
+}
+    `;
+export type UpdateBusinessLocationMutationFn = Apollo.MutationFunction<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
+
+/**
+ * __useUpdateBusinessLocationMutation__
+ *
+ * To run a mutation, you first call `useUpdateBusinessLocationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBusinessLocationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBusinessLocationMutation, { data, loading, error }] = useUpdateBusinessLocationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateBusinessLocationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>(UpdateBusinessLocationDocument, options);
+      }
+export type UpdateBusinessLocationMutationHookResult = ReturnType<typeof useUpdateBusinessLocationMutation>;
+export type UpdateBusinessLocationMutationResult = Apollo.MutationResult<UpdateBusinessLocationMutation>;
+export type UpdateBusinessLocationMutationOptions = Apollo.BaseMutationOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
 export const CreateCategoryDocument = gql`
     mutation CreateCategory($input: CategoryInput!) {
   createCategory(input: $input) {

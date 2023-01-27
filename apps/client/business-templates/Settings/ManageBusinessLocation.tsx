@@ -5,21 +5,47 @@ import { ManageLocationConfig } from "./Config"
 import { useManageBusinessFormHook, } from "./hooks"
 import { texts } from "./texts"
 import { businessLocationSchemaInput } from "app-helpers";
+import { useGetBusinessLocationQuery, useUpdateBusinessLocationMutation } from "../../gen/generated";
+import { DevTool } from "@hookform/devtools";
 
 export const ManageBusinessLocation = () => {
   const {
     control,
     formState,
-    handleSubmit
+    handleSubmit,
+    reset
   } = useManageBusinessFormHook()
+
+  const { data } = useGetBusinessLocationQuery({
+    onCompleted: (data) => {
+
+      const locationData = data.getBusinessLocation
+      reset({
+        ...locationData,
+        complement: locationData?.complement ?? "",
+      })
+    }
+  })
+
+  const [updateBusinessLocation] = useUpdateBusinessLocationMutation({
+    refetchQueries: ["GetBusinessLocation"]
+  })
+
+  console.log("Location Data", data)
 
   const handleSaveBusinessInfo = async (values: businessLocationSchemaInput) => {
     console.log(values, "values")
-    // send information to backend
+
+    await updateBusinessLocation({
+      variables: {
+        input: values
+      }
+    })
   }
 
   return (
     <VStack space={"2"}>
+      <DevTool control={control} /> {/* set up the dev tool */}
       <ControlledForm
         control={control}
         formState={formState}

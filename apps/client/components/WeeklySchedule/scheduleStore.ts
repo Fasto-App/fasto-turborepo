@@ -1,13 +1,12 @@
-import { DaysOfWeekType, Time } from 'app-helpers'
+import { DaysOfWeekType } from 'app-helpers'
 import { create } from 'zustand'
 
-// create interface for store
 export interface ScheduleStore {
   daysOfTheWeek: {
     [key in DaysOfWeekType]: {
       isOpen: boolean
-      openHour?: Time
-      closeHour?: Time
+      openHour?: string
+      closeHour?: string
     }
   }
 }
@@ -41,8 +40,8 @@ const initialState = (): ScheduleStore => ({
 // create interface for store actions
 export interface ScheduleStoreActions extends ScheduleStore {
   toggleDay: (day: DaysOfWeekType) => void
-  setOpenHour: (day: DaysOfWeekType, hour: Time) => void
-  setCloseHour: (day: DaysOfWeekType, hour: Time) => void
+  setOpenHour: (day: DaysOfWeekType, hour: string) => void
+  setCloseHour: (day: DaysOfWeekType, hour: string) => void
 }
 
 export const useScheduleStore = create<ScheduleStoreActions>((set) => ({
@@ -51,6 +50,7 @@ export const useScheduleStore = create<ScheduleStoreActions>((set) => ({
     return { ...state, daysOfTheWeek: { ...state.daysOfTheWeek, [day]: { ...state.daysOfTheWeek[day], isOpen: !state.daysOfTheWeek[day].isOpen } } }
   }),
   setOpenHour: (day: DaysOfWeekType, hour) => set(state => {
+    console.log('setOpenHour', day, hour)
     return { ...state, daysOfTheWeek: { ...state.daysOfTheWeek, [day]: { ...state.daysOfTheWeek[day], openHour: hour } } }
   }),
   setCloseHour: (day: DaysOfWeekType, hour) => set(state => {

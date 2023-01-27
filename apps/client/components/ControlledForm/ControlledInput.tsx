@@ -13,7 +13,7 @@ type CustomInputProps = {
   inputType?: InputType;
   array?: { name: string, _id: string }[];
   formatValue?: (value: string) => string;
-  formatOnChange?: (value: string, cb: (number) => void) => void;
+  formatOnChange?: (value: string, cb: (num: number) => void) => void;
   handleOnChange?: (e: SyntheticEvent) => void;
 }
 
@@ -84,7 +84,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                     endIcon: <CheckIcon size="5" />
                   }} mt={1} onValueChange={field.onChange}>
 
-                    {array.map(category => (
+                    {array?.map(category => (
                       <Select.Item key={category._id} label={category.name} value={category._id} />))
                     }
                   </Select>
@@ -149,7 +149,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                     <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
                       <input type="file" style={{ display: "none" }} onChange={handleOnChange} accept="image/*" />
                       <span>
-                        <AspectRatio maxHeight={300}>
+                        <AspectRatio maxHeight={300} borderRadius={"lg"} overflow={"hidden"}>
                           {!src ?
                             <Box mr={2} alignItems={"center"} justifyContent={"center"}>
                               <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
@@ -159,7 +159,8 @@ export const ControlledInput = <T extends Record<string, string>>({
                               src={src}
                               alt="Next.js logo"
                               layout={'fill'}
-                              objectFit={'contain'}
+                              objectFit={'cover'}
+                              style={{ borderRadius: "10", borderWidth: 1 }}
                             />
                           }
                         </AspectRatio>

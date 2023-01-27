@@ -80,6 +80,8 @@ const CategoryModal = ({
   };
 
   const deleteCategoryCb = () => {
+    if (!categoryId) return;
+
     closeModalAndClearQueryParams();
     deleteCategory({
       variables: {

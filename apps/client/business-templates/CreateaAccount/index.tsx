@@ -1,1 +1,1 @@
-export * from "./BusinessCreateAccountScreen";
+export * from "./CreateAccountScreen";

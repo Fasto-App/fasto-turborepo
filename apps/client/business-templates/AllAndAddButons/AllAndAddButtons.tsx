@@ -6,11 +6,17 @@ const texts = {
   all: "All",
 }
 
+type AllAndEditButtonsProps = {
+  allAction: () => void;
+  editAction: (categoryId?: string | null) => void;
+  categoryId?: string | null;
+}
+
 export const AllAndEditButtons = ({
   allAction,
   editAction,
   categoryId
-}) => {
+}: AllAndEditButtonsProps) => {
   return (
     <HStack space={2}>
       <Button
@@ -34,6 +40,15 @@ export const AllAndEditButtons = ({
   )
 }
 
+type SideBySideButtonsProps = {
+  leftAction: () => void;
+  rightAction: () => void;
+  leftText: string;
+  rightText: string;
+  leftDisabled: boolean;
+  rightDisabled: boolean;
+}
+
 export const SideBySideButtons = ({
   leftAction,
   rightAction,
@@ -41,7 +56,7 @@ export const SideBySideButtons = ({
   rightText,
   leftDisabled,
   rightDisabled,
-}) => {
+}: SideBySideButtonsProps) => {
   return (
     <HStack space={2}>
       <Button

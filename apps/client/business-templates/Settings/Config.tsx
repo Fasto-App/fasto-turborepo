@@ -1,41 +1,41 @@
 import { RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { businessLocationSchemaInputKeys, Privileges } from "app-helpers"
-import { typedKeys } from "../../authUtilities/utils";
+import { businessLocationSchemaInputKeys, Privileges, typedKeys } from "app-helpers"
 import { InputProps } from "../../components/ControlledForm/ControlledInput";
 
 export const ManageLocationConfig: SideBySideInputConfig = {
-  name: {
-    name: "business_name",
-    label: "Business Name",
-  },
-  streetName: {
+  streetAddress: {
+    isRequired: true,
     name: "street_name",
     label: "Street Name",
   },
-  street: [{
-    streetNumber: {
-      name: "street_number",
-      label: "Street Number",
+  complementAndPostal: [{
+    complement: {
+      name: "complement",
+      label: "Complement",
     },
   }, {
-    zipCode: {
+    postalCode: {
       name: "zipCode",
-      label: "Zip/Postal"
+      label: "Zip/Postal",
+      isRequired: true,
     },
   }],
   city: {
     name: "city",
-    label: "City"
+    label: "City",
+    isRequired: true,
   },
   stateCountry: [{
-    state: {
+    stateOrProvince: {
       name: "state",
-      label: "State"
+      label: "State",
+      isRequired: true,
     }
   }, {
     country: {
       name: "country",
-      label: "Country"
+      label: "Country",
+      isRequired: true,
     }
   }],
 };

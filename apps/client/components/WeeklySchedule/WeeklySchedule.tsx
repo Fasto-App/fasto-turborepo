@@ -1,21 +1,32 @@
-import { Hours, Minutes, hours, minutes, Time, DaysOfWeekType } from 'app-helpers'
+import { DaysOfWeekType, typedKeys } from 'app-helpers'
 import { HStack, FormControl, Select, CheckIcon, Switch, Text, VStack, Heading, Box } from 'native-base'
-import React, { useState } from 'react'
+import React from 'react'
 import { shallow } from 'zustand/shallow'
-import { typedKeys } from '../../authUtilities/utils'
 import { Transition } from '../Transition'
 import { useScheduleStore } from './scheduleStore'
 
 const texts = {
   open: "Open",
   close: "Close",
-  setStandardHours: "Set Standard Hours",
+  setStandardHours: "Set Standard string",
   configureStandardHours: "Configure the standard hours of operation for this location.",
   to: "To"
 }
 
-const getHour = (time?: Time) => time?.split(":")?.[0] ?? "09"
-const getMinute = (time?: Time) => time?.split(":")?.[1] ?? "00"
+// Copy code
+const start = new Date();
+start.setHours(0, 0, 0, 0);
+const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+
+const hourArray: string[] = [];
+let current = start;
+while (current < end) {
+  hourArray.push(current.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
+  current = new Date(current.getTime() + 60 * 60 * 1000);
+}
+
+const getHour = (time?: string) => time?.split(":")?.[0] ?? "09"
+const getMinute = (time?: string) => time?.split(":")?.[1] ?? "00"
 
 const WeeklySchedule = () => {
   const { daysOfTheWeek, setOpenHour, setCloseHour, togggleDay } = useScheduleStore(state => ({
@@ -27,29 +38,22 @@ const WeeklySchedule = () => {
     shallow
   )
 
-  const updateOpenHour = (day: DaysOfWeekType, hour: Hours) => {
+  console.log("daysOfTheWeek", daysOfTheWeek)
+
+  const updateOpenHour = (day: DaysOfWeekType, hour: string) => {
+    console.log("updateOpenHour", day, hour)
     const currentCloseHour = daysOfTheWeek[day].openHour
-    const currentCloseHourMinutes = getMinute(currentCloseHour) as Minutes
+    const currentCloseHourMinutes = getMinute(currentCloseHour) as string
     setOpenHour(day, `${hour}:${currentCloseHourMinutes}`)
   }
 
-  const updateOpenMinute = (day: DaysOfWeekType, minute: Minutes) => {
-    const currentCloseHour = daysOfTheWeek[day].openHour
-    const currentCloseHourHours = getHour(currentCloseHour) as Hours
-    setOpenHour(day, `${currentCloseHourHours}:${minute}`)
-  }
-
-  const updateCloseHour = (day: DaysOfWeekType, hour: Hours) => {
+  const updateCloseHour = (day: DaysOfWeekType, hour: string) => {
     const currentCloseHour = daysOfTheWeek[day].closeHour
-    const currentCloseHourMinutes = getMinute(currentCloseHour) as Minutes
+    const currentCloseHourMinutes = getMinute(currentCloseHour)
     setCloseHour(day, `${hour}:${currentCloseHourMinutes}`)
   }
 
-  const updateCloseMinute = (day: DaysOfWeekType, minute: Minutes) => {
-    const currentCloseHour = daysOfTheWeek[day].closeHour
-    const currentCloseHourHours = getHour(currentCloseHour) as Hours
-    setCloseHour(day, `${currentCloseHourHours}:${minute}`)
-  }
+  console.log(getHour(daysOfTheWeek["Monday"].openHour))
 
   return (
     <Box py={"4"} px={"2"}>
@@ -93,18 +97,14 @@ const WeeklySchedule = () => {
                 justifyContent={"flex-end"}>
                 <HoursInput
                   valueHours={getHour(daysOfTheWeek[day].openHour)}
-                  valueMinutes={getMinute(daysOfTheWeek[day].openHour)}
                   onChangeHours={(value) => updateOpenHour(day, value)}
-                  onChangeMinutes={(value) => updateOpenMinute(day, value)}
                 />
                 <Text alignSelf={"center"}>
                   {texts.to}
                 </Text>
                 <HoursInput
                   valueHours={getHour(daysOfTheWeek[day].closeHour)}
-                  valueMinutes={getMinute(daysOfTheWeek[day].closeHour)}
                   onChangeHours={(value) => updateCloseHour(day, value)}
-                  onChangeMinutes={(value) => updateCloseMinute(day, value)}
                 />
               </HStack>
             </Transition>
@@ -115,40 +115,30 @@ const WeeklySchedule = () => {
   )
 }
 
+type HoursInputProps = {
+  onChangeHours: (value: string) => void
+  valueHours: string
+}
+
 const HoursInput = ({
   onChangeHours,
   valueHours,
-  onChangeMinutes,
-  valueMinutes,
-}) => {
+}: HoursInputProps) => {
+
   return (
-    <HStack space={"2"}>
+    <HStack space={2}>
       <Select
-        w={100}
+        w={150}
         onValueChange={onChangeHours}
         selectedValue={valueHours}
-        accessibilityLabel="hour"
-        placeholder="Hour"
+        accessibilityLabel="time"
+        placeholder="09:00 AM"
         _selectedItem={{
           endIcon: <CheckIcon />
         }}
       >
-        {hours.map((hour, index) => (
-          <Select.Item key={index} label={hour + `h`} value={hour} />))
-        }
-      </Select>
-      <Select
-        w={100}
-        onValueChange={onChangeMinutes}
-        selectedValue={valueMinutes}
-        accessibilityLabel="minutes"
-        placeholder="Min"
-        _selectedItem={{
-          endIcon: <CheckIcon size="5" />
-        }}
-      >
-        {minutes.map((minute, index) => (
-          <Select.Item key={index} label={minute} value={minute} />))
+        {hourArray.map((hour, index) => (
+          <Select.Item key={index} label={hour} value={hour} />))
         }
       </Select>
     </HStack>

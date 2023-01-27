@@ -20,11 +20,11 @@ type ProductTileProps = {
 	onCheckboxClick?: (selected: boolean) => void;
 	ctaTitle: string;
 	name: string;
-	imageUrl: string;
+	imageUrl?: string;
 };
 
 type ProductCardProps = ProductTileProps & {
-	description: string;
+	description?: string;
 	price: number;
 }
 
@@ -42,7 +42,7 @@ const Price = ({ price }: { price: number }) => (
 
 const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton }: ProductCardProps) => {
 
-	const formattedDescriptions = description.length > maxLength ?
+	const formattedDescriptions = description && description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
 
 	return (

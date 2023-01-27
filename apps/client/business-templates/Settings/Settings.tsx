@@ -1,6 +1,6 @@
+import { typedKeys } from 'app-helpers'
 import { Box, Button, FlatList, Heading, VStack } from 'native-base'
 import React, { useState } from 'react'
-import { typedKeys } from '../../authUtilities/utils'
 import { ManageAccount } from './ManageAccount'
 import { ManageBusiness } from './ManageBusiness'
 import { ManageBusinessLocation } from './ManageBusinessLocation'
@@ -24,7 +24,9 @@ const manageTabs = {
     button_title: "Manage Account",
     title: "Account Info"
   }
-}
+} as const
+
+type ManageTab = keyof typeof manageTabs
 
 type ManageTabKeys = keyof typeof manageTabs
 const tabs = typedKeys(manageTabs)
@@ -32,7 +34,7 @@ const tabs = typedKeys(manageTabs)
 export const Settings = () => {
   const [selectedTab, setSelectedTab] = useState<ManageTabKeys>("manage_business")
 
-  const renderCategories = ({ item }) => {
+  const renderCategories = ({ item }: { item: ManageTab }) => {
     const selected = selectedTab === item
     return (
 

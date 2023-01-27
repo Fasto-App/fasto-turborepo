@@ -11,6 +11,7 @@ import { ProductFields } from './useProductFormHook';
 import { DevTool } from "@hookform/devtools";
 import { useUploadFileMutation } from '../../gen/generated';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm/ControlledForm';
+import { UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form';
 
 const texts = {
 	addTitle: "Add New Product",
@@ -28,6 +29,16 @@ const texts = {
 	edit: "Save",
 }
 
+type ProductModalProps = {
+	showModal: boolean,
+	setShowModal: (value: boolean) => void,
+	resetAll: () => void,
+	handleProductSubmit: UseFormHandleSubmit<ProductFields>,
+	productFormState: any,
+	productControl: any,
+	setProductValue: UseFormSetValue<ProductFields>,
+	resetProduct: () => void,
+}
 
 const ProductModal = ({
 	showModal,
@@ -38,7 +49,7 @@ const ProductModal = ({
 	productControl,
 	setProductValue,
 	resetProduct
-}) => {
+}: ProductModalProps) => {
 	const productId = useAppStore(state => state.product)
 	const setProduct = useAppStore(state => state.setProduct)
 
@@ -68,6 +79,10 @@ const ProductModal = ({
 	}
 
 	const deleteProductCb = () => {
+
+		if (!productId) return
+
+
 		deleteProduct({
 			variables: {
 				id: productId
@@ -146,7 +161,7 @@ const ProductModal = ({
 						.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 					: ""
 			},
-			formatOnChange: (value: string, fieldOnchange: (number) => void) => {
+			formatOnChange: (value: string, fieldOnchange: (num: number) => void) => {
 				const text = value.replace(/[$,.]/g, '')
 				const convertedValue = Number(text)
 				if (Number.isInteger(convertedValue)) {
@@ -161,7 +176,7 @@ const ProductModal = ({
 			placeholder: texts.category,
 			helperText: texts.productsHelperText,
 			inputType: 'Select',
-			array: allCategories
+			array: allCategories.map(cat => ({ name: cat.name, _id: cat._id })) ?? []
 		},
 		description: {
 			name: 'description',
@@ -184,7 +199,7 @@ const ProductModal = ({
 	return (
 		<>
 			<Modal isOpen={showModal} onClose={closeModalAndClearQueryParams}>
-				<DevTool control={productControl} /> {/* set up the dev tool */}
+				<DevTool control={productControl} />
 				<Modal.Content maxWidth="400px">
 					<Modal.CloseButton />
 					<Modal.Header>{isEditing ? texts.editTitle : texts.addTitle}</Modal.Header>
@@ -197,7 +212,6 @@ const ProductModal = ({
 						{isEditing ? <DeleteAlert deleteItem={deleteProductCb} title={texts.delete} /> : null}
 					</Modal.Body>
 
-					{/* Button Options */}
 					<Modal.Footer>
 						<Button.Group space={2}>
 							<Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={() => {

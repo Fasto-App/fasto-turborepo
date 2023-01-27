@@ -8,7 +8,6 @@ import {
   validateEmail,
   validatePassword,
   IS_DEVELOPMENT_SERVER,
-  typedKeys
 } from "../utils"
 import { Connection, Types } from "mongoose"
 import { Context } from "../types";
@@ -16,7 +15,7 @@ import { UserInputError, ValidationError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
 import { CreateUserInput, RequestUserAccountCreationInput, UpdateUserInput } from "./types";
-import { PrivilegesType } from "app-helpers";
+import { PrivilegesType, typedKeys } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
 import { sendCourierEmail } from "../../../courier";
 

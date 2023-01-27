@@ -5,6 +5,7 @@ export const BusinessTypeDefinition = gql`
     getBusiness: Business!
     getAllBusinessByUser: [Business]
     getAllBusiness: [Business]
+    getBusinessLocation: Address
   }
 
   extend type Mutation {
@@ -12,7 +13,7 @@ export const BusinessTypeDefinition = gql`
     updateBusiness(input: UpdateBusinessInput): Business
     deleteBusiness(businessID: ID!): DeleteBusinessPayload
     updateBusinessToken(input: String): String
-    updateBusinessLocation(input: BusinessInfoInput): Business
+    updateBusinessLocation(input: AddressInput): Business
   }
 
   input BusinessInput {
@@ -20,17 +21,6 @@ export const BusinessTypeDefinition = gql`
     phone: String!
     website: String
     address: AddressInput
-  }
-
-  input BusinessInfoInput {
-    name: String!
-    streetName: String!
-    streetNumber: String!
-    zipCode: String!
-    city: String!
-    state: String!
-    country: String!
-    # hoursOfOperation: HoursOfOperationInput!
   }
 
   input WorkingHoursInput {

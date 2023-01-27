@@ -1,9 +1,6 @@
 import * as jose from "jose"
 import * as z from "zod"
 
-export const typedKeys = <T extends object>(obj?: T) => Object.keys(obj || {}) as Array<keyof T>
-export const typesValues = <T extends object>(obj?: T) => Object.values(obj || {}) as Array<T[keyof T]>
-
 export async function tokenSigning(id: string, email: string, business?: string) {
   if (!process.env.TOKEN_SECRET) return
 

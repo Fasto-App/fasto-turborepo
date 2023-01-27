@@ -1,0 +1,11 @@
+query GetBusinessLocation {
+	getBusinessLocation {
+		streetAddress
+		stateOrProvince
+		postalCode
+		country
+		complement
+		city
+		_id
+	}
+}

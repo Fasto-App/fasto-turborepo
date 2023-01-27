@@ -7,7 +7,7 @@ import { texts } from "./texts"
 import { useUploadFileHook } from "../../hooks"
 import { useUploadFileMutation } from "../../gen/generated"
 import { ControlledInput } from "../../components/ControlledForm/ControlledInput"
-import { WeeklySchedule } from "../../components/ControlledForm/WeeklySchedule"
+import { WeeklySchedule } from "../../components/WeeklySchedule/WeeklySchedule"
 
 export const ManageBusiness = () => {
 
@@ -41,16 +41,13 @@ export const ManageBusiness = () => {
       return
     }
 
-
-
     const { data } = await uploadFile({
       variables: {
         file: imageFile
       },
     })
 
-    console.log("data", data.uploadFile)
-    // make the mutation to post Address information
+    console.log("data", data?.uploadFile)
   }
 
   return (

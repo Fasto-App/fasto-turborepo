@@ -2,20 +2,24 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { businessLocationSchema, businessLocationSchemaInput } from 'app-helpers';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { GetBusinessLocationQuery, UpdateBusinessLocationMutation } from '../../gen/generated';
 
-export const useManageBusinessFormHook = () => {
+type R = NonNullable<UpdateBusinessLocationMutation["updateBusinessLocation"]>["address"]
+
+export const useManageBusinessFormHook = (data?: GetBusinessLocationQuery["getBusinessLocation"] | null) => {
   const {
     control,
     formState,
-    handleSubmit
+    handleSubmit,
+    reset
   } = useForm<businessLocationSchemaInput>({
     defaultValues: {
-      streetAddress: "",
-      complement: "",
-      postalCode: "",
-      city: "",
-      stateOrProvince: "",
-      country: "",
+      streetAddress: data?.streetAddress ?? "",
+      complement: data?.complement ?? "",
+      postalCode: data?.postalCode ?? "",
+      city: data?.city ?? "",
+      stateOrProvince: data?.stateOrProvince ?? "",
+      country: data?.country ?? "",
     },
     resolver: zodResolver(businessLocationSchema)
   })
@@ -23,7 +27,8 @@ export const useManageBusinessFormHook = () => {
   return {
     control,
     formState,
-    handleSubmit
+    handleSubmit,
+    reset
   }
 }
 

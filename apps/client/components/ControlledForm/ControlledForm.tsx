@@ -1,10 +1,9 @@
 
 import React from "react";
 import { Box, HStack, ScrollView } from "native-base";
-import { typedKeys } from "../../authUtilities/utils";
 import { ControlledInput, InputProps } from "./ControlledInput";
 import { FormState, Control } from "react-hook-form";
-
+import { typedKeys } from "app-helpers";
 
 type ControlledFormType<T extends Record<string, string>> = {
   formState: FormState<T>;

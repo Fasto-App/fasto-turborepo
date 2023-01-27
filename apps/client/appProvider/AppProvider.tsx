@@ -19,7 +19,7 @@ const AppWrapper = ({ children }: PropsWithChildren<{}>) => {
   return isSSR ? null : <>{children}</ >
 }
 
-export const AppProvider = ({ children }) => {
+export const AppProvider: React.FC = ({ children }) => {
   const [state, setState] = useState(clientAppInitialState);
 
 

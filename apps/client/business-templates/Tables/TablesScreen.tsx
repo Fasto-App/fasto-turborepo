@@ -42,15 +42,18 @@ export const TablesScreen = () => {
     allSpaces,
   } = useSpacesMutationHook(setSelectedSpace);
 
-  const selectedSpace = useMemo(() => allSpaces.find(space => space._id === selectedSpaceId), [allSpaces, selectedSpaceId])
+  const selectedSpace = useMemo(() => allSpaces.find(space => space?._id === selectedSpaceId), [allSpaces, selectedSpaceId])
   const allTablesFilteredBySpace = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
 
   const { createTable } = useTableMutationHook();
   const postNewTable = async () => {
+
+    if (!selectedSpaceId) return;
+
     await createTable({
       variables: {
         input: { space: selectedSpaceId },
-      }
+      },
     })
   }
 
@@ -123,21 +126,18 @@ export const TablesScreen = () => {
               data={allSpaces}
               renderItem={renderSpaces}
               ItemSeparatorComponent={() => <Box w={4} />}
-              keyExtractor={(item) => item._id}
+              keyExtractor={(item, index) => `${item?._id}-${index}`}
             />
-
             <Divider orientation="vertical" />
             <Stats />
           </HStack>
           <Box>
             <AllAndEditButtons
               allAction={() => console.log("All")}
-              editAction={(edit) => console.log("Edit", edit)}
+              editAction={() => console.log("Edit")}
               categoryId={selectedSpaceId} />
           </Box>
-
         </VStack>
-
         {selectedSpaceId ? <Box
           p={"4"}
           flex={1}
@@ -151,13 +151,13 @@ export const TablesScreen = () => {
             <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
               <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
               {allTablesFilteredBySpace.map((table, index) =>
-                <SquareTable key={table._id} index={index} status={table.status} onPress={() => {
+                <SquareTable key={table?._id} index={index} status={table?.status} onPress={() => {
                   setTableChoosen({
-                    _id: table._id,
-                    status: table.status,
-                    tableNumber: table.tableNumber,
+                    _id: table?._id,
+                    status: table?.status,
+                    tableNumber: table?.tableNumber,
                     tab: table?.tab?._id,
-                    orders: table.tab?.orders ?? [],
+                    orders: table?.tab?.orders ?? [],
                     users: table?.tab?.users ?? []
                   })
                 }} />)}

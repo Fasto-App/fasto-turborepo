@@ -1,5 +1,5 @@
 import { Connection } from 'mongoose'
-import { tokenSigning, typedKeys } from "../utils";
+import { tokenSigning } from "../utils";
 import { Address, AddressModel } from "../../../models/address";
 import { Business, BusinessModel } from "../../../models/business";
 import { IUserModel, UserModel } from "../../../models/user";
@@ -9,7 +9,8 @@ import { Context } from '../types';
 import { Privileges } from '../../../models/types';
 import {
   businessLocationSchema,
-  businessLocationSchemaInput
+  businessLocationSchemaInput,
+  typedKeys
 } from 'app-helpers';
 
 
@@ -136,13 +137,11 @@ const updateBusinessLocation = async (
   _parent: any,
   { input }: { input: businessLocationSchemaInput },
   { db, business }: Context) => {
-  // get the id, find the business and update its information
+  console.log("Location Input", input)
   const Business = BusinessModel(db)
   const Address = AddressModel(db)
 
   try {
-
-    console.log(input)
 
     const validatedInput = businessLocationSchema.parse(input)
     const updateBusiness = await Business.findById(business)
@@ -151,18 +150,22 @@ const updateBusinessLocation = async (
 
     if (updateBusiness?.address) {
       await Address.findByIdAndUpdate(updateBusiness.address, {
-        postalCode: validatedInput.postalCode,
-        city: validatedInput.city,
         streetAddress: validatedInput.streetAddress,
         complement: validatedInput.complement,
+        postalCode: validatedInput.postalCode,
+        city: validatedInput.city,
+        stateOrProvince: validatedInput.stateOrProvince,
+        country: validatedInput.country,
       })
     } else {
 
       const address = new Address({
-        city: validatedInput.city,
-        postalCode: validatedInput.postalCode,
         streetAddress: validatedInput.streetAddress,
         complement: validatedInput.complement,
+        postalCode: validatedInput.postalCode,
+        city: validatedInput.city,
+        stateOrProvince: validatedInput.stateOrProvince,
+        country: validatedInput.country,
       })
 
       const savedAddress = await address.save()
@@ -171,15 +174,11 @@ const updateBusinessLocation = async (
       await updateBusiness.save()
     }
 
-    // updateBusiness.hoursOfOperation = validatedInput.hoursOfOperation
-
     return await updateBusiness.save()
   } catch (err) {
     throw new Error(`Error saving business information: ${err}`);
   }
 }
-
-
 
 const deleteBusiness = async (parent: any, args: any, context: any) => {
   const { businessID } = args;
@@ -206,6 +205,23 @@ const getCategoriesByBusiness = async (parent: any, args: any, context: Context)
   }
 }
 
+const getBusinessLocation = async (parent: null, args: null, { business, db }: Context) => {
+
+  console.log("Business", business)
+  if (business) {
+
+    const Business = BusinessModel(db)
+    const Address = AddressModel(db)
+    const foundBusiness = await Business.findById(business)
+
+    if (foundBusiness?.address) {
+      const address = await Address.findById(foundBusiness.address)
+      console.log("Address", address)
+      return address
+    }
+  }
+}
+
 
 const BusinessResolverMutation = {
   createBusiness,
@@ -215,6 +231,7 @@ const BusinessResolverMutation = {
   updateBusinessLocation,
 }
 const BusinessResolverQuery = {
+  getBusinessLocation,
   getAllBusiness,
   getAllBusinessByUser,
   getBusiness
