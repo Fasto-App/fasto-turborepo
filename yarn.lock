@@ -10616,11 +10616,6 @@ header-case@^2.0.4:
     capital-case "^1.0.4"
     tslib "^2.0.3"
 
-helpers@*:
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/helpers/-/helpers-0.0.6.tgz#b7cc9a46fffa877f8d58e447c8b8e74b830e08a9"
-  integrity sha512-oi7CoWXnvnqmdiofPw5XG9ePBKr0w9TqBkS97a2/yvfRLInWb250XbKqvGJ5rQchn2fielYGY9cMAXGweWjCxg==
-
 hermes-engine@~0.11.0:
   version "0.11.0"
   resolved "https://registry.npmjs.org/hermes-engine/-/hermes-engine-0.11.0.tgz#bb224730d230a02a5af02c4e090d1f52d57dd3db"

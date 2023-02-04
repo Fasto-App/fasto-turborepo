@@ -4,6 +4,7 @@ import express, { Express } from 'express';
 import apolloServer from './graphql';
 import { graphqlUploadExpress } from 'graphql-upload'
 import { Bugsnag } from "./bugsnag/bugsnag";
+import cors from 'cors';
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
@@ -16,6 +17,20 @@ async function main() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(graphqlUploadExpress());
+
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  console.log("process", process.env.NODE_ENV)
+
+
+  // app.use(cors({
+  //   origin: function (origin, callback) {
+  //     if (origin && origin.startsWith("https://fastoapp")) {
+  //       callback(null, true)
+  //     } else {
+  //       callback(new Error('Not allowed by CORS'))
+  //     }
+  //   }
+  // }));
 
   await bootstrapApolloServer(app);
 
