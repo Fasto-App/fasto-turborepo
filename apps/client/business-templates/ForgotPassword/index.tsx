@@ -1,1 +1,1 @@
-export * from "./BusinessForgotPassword"
+export * from "./ForgotPasswordForm"

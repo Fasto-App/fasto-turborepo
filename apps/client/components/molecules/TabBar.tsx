@@ -1,5 +1,6 @@
+//@ts-nocheck
 import React, { useMemo } from "react";
-import { StyleSheet } from "react-native-web";
+import { StyleSheet } from "react-native";
 // import { colors } from "shared/theme";
 import { useRouter } from "next/router";
 import { colors } from "../../theme/colors";

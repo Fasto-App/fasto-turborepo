@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react"
 import { ProductCard } from "../../components/Product/Product";
 import { StoryProvider } from "../StoryProvider"

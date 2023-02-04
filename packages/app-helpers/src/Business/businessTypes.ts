@@ -40,3 +40,42 @@ export type businessInfoSchemaInput = z.infer<typeof businessInfoSchema>
 
 type HoursOfOperationObject = Pick<businessInfoSchemaInput, "hoursOfOperation">
 export type HoursOfOperationType = HoursOfOperationObject["hoursOfOperation"]
+
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email({ message: 'Invalid email' }),
+});
+
+
+export type forgotPasswordSchemaInput = z.infer<typeof forgotPasswordSchema>
+
+export const loginSchema = z.object({
+  email: z.string().email({ message: 'Invalid email' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+});
+
+export type loginSchemaInput = z.infer<typeof loginSchema>
+
+
+export const menuSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: "Name Required" })
+    .max(50, { message: "Name too long" }),
+});
+
+export type menuSchemaInput = z.infer<typeof menuSchema>
+
+export const resetPasswordSchema = z.object({
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  passwordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+});
+
+export type resetPasswordSchemaInput = z.infer<typeof resetPasswordSchema>
+
+export const signUpSchema = z.object({
+  email: z.string().email({ message: 'Invalid email' }),
+  emailConfirmation: z.string().email({ message: 'Invalid email' }),
+});
+
+export type signUpSchemaInput = z.infer<typeof signUpSchema>

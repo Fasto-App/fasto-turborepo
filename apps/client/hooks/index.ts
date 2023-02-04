@@ -23,7 +23,7 @@ export const useNumOfColumns = (showTilesList: boolean) => {
 
 export const useUploadFileHook = () => {
   const [imageSrc, setImageUrl] = useState("")
-  const [imageFile, setImageFile] = useState<File>(null)
+  const [imageFile, setImageFile] = useState<File>()
 
 
   const handleFileOnChange = (evt: any) => {
@@ -31,7 +31,7 @@ export const useUploadFileHook = () => {
 
     if (!file) {
       setImageUrl("")
-      setImageFile(null)
+      setImageFile(undefined)
       return
     }
 
@@ -39,7 +39,7 @@ export const useUploadFileHook = () => {
 
     reader.readAsDataURL(file)
     reader.onload = (e) => {
-      const url = e.target.result
+      const url = e.target?.result
       setImageUrl(url as string)
       setImageFile(file)
     }

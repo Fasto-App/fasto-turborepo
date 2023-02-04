@@ -20,8 +20,8 @@ type CategoriesModalProps = {
 const texts = {
   addTitle: "Add New Category",
   editTitle: "Edit Category",
-  dishesCategoriess: "Category name",
-  categoriessHelperText: "Max 12 characters",
+  dishesCategories: "Category name",
+  categoriesHelperText: "Max 12 characters",
   description: "Description",
   descriptionHelperText: "Max 5 lines",
   add: "Add",
@@ -106,9 +106,9 @@ const CategoryModal = ({
               Config={{
                 categoryName: {
                   name: "categoryName",
-                  label: texts.dishesCategoriess,
-                  placeholder: texts.dishesCategoriess,
-                  helperText: texts.categoriessHelperText,
+                  label: texts.dishesCategories,
+                  placeholder: texts.dishesCategories,
+                  helperText: texts.categoriesHelperText,
                 },
               }}
             />

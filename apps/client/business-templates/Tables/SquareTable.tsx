@@ -28,7 +28,7 @@ export const SquareTable = ({ index, status, onPress, isButton = false }:
           </Center>
           :
           <Heading color={borderColor(status)}>
-            {index + 1}
+            {index ? index++ : 1}
           </Heading>}
       </Box>
     </Pressable>)

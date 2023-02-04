@@ -1,12 +1,17 @@
-import { GetSpacesFromBusinessQuery } from "../../gen/generated";
+import { GetSpacesFromBusinessQuery, TableStatus } from "../../gen/generated";
 
-type SpaceFromSpacesQuery = GetSpacesFromBusinessQuery['getSpacesFromBusiness'][number]
+type SpaceFromSpacesQuery = NonNullable<GetSpacesFromBusinessQuery['getSpacesFromBusiness']>[number]
 
-type TableFromSpacesQuery = SpaceFromSpacesQuery["tables"][number]
+type TablesFromSpacesQuery = SpaceFromSpacesQuery["tables"]
 
-export type SelectedTable = Omit<TableFromSpacesQuery, "tab"> & {
-  tab?: SpaceFromSpacesQuery["_id"]
-  orders: TableFromSpacesQuery["tab"]["orders"]
-  users: TableFromSpacesQuery["tab"]["users"]
+type TableFromSpaceQuery = NonNullable<TablesFromSpacesQuery>[number]
+
+export type SelectedTable = Exclude<TablesFromSpacesQuery, "tab"> & {
+  _id?: TableFromSpaceQuery["_id"];
+  tab?: SpaceFromSpacesQuery["_id"];
+  status?: NonNullable<TableFromSpaceQuery["status"]>;
+  tableNumber?: string;
+  orders: NonNullable<TableFromSpaceQuery["tab"]>["orders"];
+  users: NonNullable<TableFromSpaceQuery["tab"]>["users"];
 }
 

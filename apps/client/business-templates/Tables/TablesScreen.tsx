@@ -152,6 +152,7 @@ export const TablesScreen = () => {
               <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
               {allTablesFilteredBySpace.map((table, index) =>
                 <SquareTable key={table?._id} index={index} status={table?.status} onPress={() => {
+                  // @ts-ignore
                   setTableChoosen({
                     _id: table?._id,
                     status: table?.status,

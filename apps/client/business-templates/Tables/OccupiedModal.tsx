@@ -96,6 +96,8 @@ export const OccupiedModal = () => {
               <Heading size={"md"} textAlign={"center"}>{texts.noOrdersYet}</Heading>
             </Center>
             : tableChoosen?.orders?.map((order) => {
+              if (!order) return null
+
               return <OrderTile key={order._id}
                 imageUrl={order.product.imageUrl}
                 name={order.product.name}
@@ -124,7 +126,7 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
   return (<HStack borderRadius={"md"} p={1} backgroundColor={"white"} flex={1} justifyContent={"space-between"}>
     <HStack>
       <Center>
-        <Image src={imageUrl}
+        <Image src={imageUrl ?? ""}
           width={100} height={60}
           alt={name} />
       </Center>

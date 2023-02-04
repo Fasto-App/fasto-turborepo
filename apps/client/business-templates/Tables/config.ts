@@ -24,7 +24,7 @@ export const stats: Record<TableStatus, statStruct> = {
   }
 }
 
-export const borderColor = (status: TableStatus) => {
+export const borderColor = (status?: TableStatus) => {
   switch (status) {
     case "OCCUPIED":
       return "primary.600"
@@ -37,7 +37,7 @@ export const borderColor = (status: TableStatus) => {
   }
 }
 
-export const badgeScheme = (status: TableStatus) => {
+export const badgeScheme = (status?: TableStatus) => {
   switch (status) {
     case "OCCUPIED":
       return "danger"

@@ -46,7 +46,7 @@ const AddMoreButton = ({ onPress, empty = false, horizontal = false, widthProps,
   );
 };
 
-export const SmallAddMoreButton = ({ onPress }) => {
+export const SmallAddMoreButton = ({ onPress }: { onPress: () => void }) => {
 
   return (
     <Button

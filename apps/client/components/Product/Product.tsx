@@ -11,7 +11,6 @@ import {
 	VStack,
 	Spacer, Checkbox
 } from 'native-base';
-import { Product } from './types';
 
 type ProductTileProps = {
 	onPress?: () => void;

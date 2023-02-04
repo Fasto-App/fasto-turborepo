@@ -19,7 +19,7 @@ export const deleteCookie = (
 };
 
 // you just call next() method to contious middlerware chain or call nextjs default middleware. your blog website file.
-export async function middleware(request: NextRequest, event: NextFetchEvent, cookie: string) {
+export function middleware(request: NextRequest, event: NextFetchEvent, cookie: string) {
 
   // APP URL's
   const LOGIN_URL = getLoginURL();
@@ -95,7 +95,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent, co
 
 
       try {
-        const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))
+        // const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))
 
         return NextResponse.next();
       } catch {

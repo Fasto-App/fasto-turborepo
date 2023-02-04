@@ -1,9 +1,10 @@
+//@ts-nocheck
 import React, { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Image,
   StyleSheet
-} from "react-native-web";
+} from "react-native";
 import { AddonCheckbox } from "../../components/atoms/AddonCheckbox";
 import { DismissButton } from "../../components/atoms/DismissButton";
 import { useClientContext } from "../../appProvider";

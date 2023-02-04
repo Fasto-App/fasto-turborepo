@@ -1,0 +1,7 @@
+mutation PostUserLogin($input: loginInput!) {
+	postUserLogin(input: $input) {
+		name
+		email
+		token
+	}
+}

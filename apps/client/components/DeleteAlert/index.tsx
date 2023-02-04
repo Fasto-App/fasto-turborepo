@@ -9,7 +9,12 @@ const alertText = {
 	cancel: "Cancel",
 }
 
-export const DeleteAlert = ({ title, deleteItem }) => {
+type DeleteAlertProps = {
+	title: string,
+	deleteItem: () => void
+}
+
+export const DeleteAlert = ({ title, deleteItem }: DeleteAlertProps) => {
 	const [isOpen, setIsOpen] = React.useState(false);
 	const onClose = () => setIsOpen(false);
 	const cancelRef = React.useRef(null);

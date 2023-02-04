@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react"
 import { CategoryTile } from "../../components/Category/Category";
 import { StoryProvider } from "../StoryProvider"

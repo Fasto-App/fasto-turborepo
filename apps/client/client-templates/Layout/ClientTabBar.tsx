@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { StyleSheet } from "react-native-web";
+import { StyleSheet } from "react-native";
 // import { colors } from "shared/theme";
 import { useRouter } from "next/router";
 import { colors } from "../../theme/colors";
@@ -11,7 +11,7 @@ import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { NavigationButtonType } from "../../components/types";
 
 
-const ClientTabBar = (props) => {
+const ClientTabBar: React.FC = (props) => {
   const router = useRouter();
 
   const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
@@ -81,9 +81,9 @@ const styles = StyleSheet.create({
     borderColor: colors.pureWhite,
     // borderWidth: 1,
   },
-  icon: {
-    stroke: "blue",
-  },
+  // icon: {
+  //   stroke: "blue",
+  // },
   micro: {
     fontSize: 12,
     textAlign: "center",

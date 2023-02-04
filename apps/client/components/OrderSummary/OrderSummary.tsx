@@ -4,7 +4,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { GiRoundTable } from "react-icons/gi";
 import { parseToCurrency } from "../../utils";
 
-const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress: () => void }) => {
+const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress?: () => void }) => {
   const Icon = type === "plus" ? AddIcon : MinusIcon
   return (
     <IconButton

@@ -17,14 +17,14 @@ export const useSpacesMutationHook = (onGetSucess?: (spaceId?: string) => void) 
     onCompleted: () => {
       console.log('space created')
     },
-    update: (cache, { data: { createSpace } }) => {
+    update: (cache, { data }) => {
       console.log('space created', createSpace)
 
       // @ts-ignore
       const { getSpacesFromBusiness } = cache.readQuery({ query: GetSpacesFromBusinessDocument });
       cache.writeQuery({
         query: GetSpacesFromBusinessDocument,
-        data: { getSpacesFromBusiness: [createSpace, ...getSpacesFromBusiness] }
+        data: { getSpacesFromBusiness: [data?.createSpace, ...getSpacesFromBusiness] }
       });
     }
   });
