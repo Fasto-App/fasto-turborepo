@@ -22,20 +22,30 @@ export type AccountCreationResponse = {
   url?: Maybe<Scalars['String']>;
 };
 
+export type AddEmployeeInput = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+  privileges: UserPrivileges;
+};
+
 export type Address = {
   __typename?: 'Address';
+  _id: Scalars['ID'];
   city: Scalars['String'];
-  id: Scalars['ID'];
-  streetName: Scalars['String'];
-  streetNumber: Scalars['String'];
-  zipcode: Scalars['String'];
+  complement?: Maybe<Scalars['String']>;
+  country: Scalars['String'];
+  postalCode: Scalars['String'];
+  stateOrProvince: Scalars['String'];
+  streetAddress: Scalars['String'];
 };
 
 export type AddressInput = {
   city: Scalars['String'];
-  streetName: Scalars['String'];
-  streetNumber: Scalars['String'];
-  zipcode: Scalars['String'];
+  complement?: InputMaybe<Scalars['String']>;
+  country: Scalars['String'];
+  postalCode: Scalars['String'];
+  stateOrProvince: Scalars['String'];
+  streetAddress: Scalars['String'];
 };
 
 export type Business = {
@@ -45,6 +55,8 @@ export type Business = {
   categories: Array<Category>;
   cuisine?: Maybe<Array<Scalars['String']>>;
   email: Scalars['String'];
+  employees: Array<Maybe<Scalars['String']>>;
+  hoursOfOperation?: Maybe<HoursOfOperation>;
   menus?: Maybe<Array<Menu>>;
   name: Scalars['String'];
   price_range?: Maybe<Scalars['String']>;
@@ -58,6 +70,12 @@ export type BusinessInput = {
   name: Scalars['String'];
   phone: Scalars['String'];
   website?: InputMaybe<Scalars['String']>;
+};
+
+export type BusinessPrivileges = {
+  __typename?: 'BusinessPrivileges';
+  business: Scalars['String'];
+  privileges: Array<Maybe<UserPrivileges>>;
 };
 
 export type Category = {
@@ -118,6 +136,16 @@ export type CreateTableInput = {
   space: Scalars['ID'];
 };
 
+export enum DaysOfWeek {
+  Friday = 'FRIDAY',
+  Monday = 'MONDAY',
+  Saturday = 'SATURDAY',
+  Sunday = 'SUNDAY',
+  Thursday = 'THURSDAY',
+  Tuesday = 'TUESDAY',
+  Wednesday = 'WEDNESDAY'
+}
+
 export type DeleteBusinessPayload = {
   __typename?: 'DeleteBusinessPayload';
   message?: Maybe<Scalars['String']>;
@@ -146,6 +174,27 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type HoursOfOperation = {
+  __typename?: 'HoursOfOperation';
+  Friday?: Maybe<WorkingHours>;
+  Monday?: Maybe<WorkingHours>;
+  Saturday?: Maybe<WorkingHours>;
+  Sunday?: Maybe<WorkingHours>;
+  Thursday?: Maybe<WorkingHours>;
+  Tuesday?: Maybe<WorkingHours>;
+  Wednesday?: Maybe<WorkingHours>;
+};
+
+export type HoursOfOperationInput = {
+  Friday?: InputMaybe<WorkingHoursInput>;
+  Monday?: InputMaybe<WorkingHoursInput>;
+  Saturday?: InputMaybe<WorkingHoursInput>;
+  Sunday?: InputMaybe<WorkingHoursInput>;
+  Thursday?: InputMaybe<WorkingHoursInput>;
+  Tuesday?: InputMaybe<WorkingHoursInput>;
+  Wednesday?: InputMaybe<WorkingHoursInput>;
+};
+
 export type LinkCategoryToProductInput = {
   category: Scalars['ID'];
   products: Array<InputMaybe<Scalars['String']>>;
@@ -161,6 +210,7 @@ export type Menu = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  addEmployeeToBusiness: User;
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
@@ -187,6 +237,7 @@ export type Mutation = {
   requestUserAccountCreation: AccountCreationResponse;
   updateAddress?: Maybe<Address>;
   updateBusiness?: Maybe<Business>;
+  updateBusinessLocation?: Maybe<Business>;
   updateBusinessToken?: Maybe<Scalars['String']>;
   updateCategory?: Maybe<Category>;
   updateMenu?: Maybe<Menu>;
@@ -197,6 +248,11 @@ export type Mutation = {
   updateTab: Tab;
   updateUserInformation: User;
   uploadFile: Scalars['String'];
+};
+
+
+export type MutationAddEmployeeToBusinessArgs = {
+  input: AddEmployeeInput;
 };
 
 
@@ -325,6 +381,11 @@ export type MutationUpdateBusinessArgs = {
 };
 
 
+export type MutationUpdateBusinessLocationArgs = {
+  input?: InputMaybe<AddressInput>;
+};
+
+
 export type MutationUpdateBusinessTokenArgs = {
   input?: InputMaybe<Scalars['String']>;
 };
@@ -379,7 +440,7 @@ export type OrderDetail = {
   _id: Scalars['ID'];
   created_date: Scalars['String'];
   message?: Maybe<Scalars['String']>;
-  product: Scalars['ID'];
+  product: Product;
   quantity: Scalars['Int'];
   status: OrderStatus;
   subTotal: Scalars['Int'];
@@ -416,7 +477,7 @@ export type Query = {
   getAddress: Address;
   getAllBusiness?: Maybe<Array<Maybe<Business>>>;
   getAllBusinessByUser?: Maybe<Array<Maybe<Business>>>;
-  getAllCategoriesByBusiness: Array<Maybe<Category>>;
+  getAllCategoriesByBusiness: Array<Category>;
   getAllMenus: Array<Menu>;
   getAllMenusByBusinessID: Array<Maybe<Menu>>;
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
@@ -424,16 +485,17 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
-  getBusinessByID?: Maybe<Business>;
+  getBusiness: Business;
+  getBusinessLocation?: Maybe<Address>;
   getCategoryByID?: Maybe<Category>;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getProductByID?: Maybe<Product>;
-  getSpacesFromBusiness?: Maybe<Array<Maybe<Space>>>;
+  getSpacesFromBusiness?: Maybe<Array<Space>>;
   getTabByID?: Maybe<Tab>;
-  getUserByID?: Maybe<User>;
   /** Returns a user based on the Bearer token */
-  getUserByToken?: Maybe<User>;
+  getToken?: Maybe<User>;
+  getUserByID?: Maybe<User>;
 };
 
 
@@ -502,7 +564,7 @@ export type Space = {
   _id: Scalars['ID'];
   business: Scalars['ID'];
   name: Scalars['String'];
-  tables?: Maybe<Array<Maybe<Table>>>;
+  tables?: Maybe<Array<Table>>;
 };
 
 export type Tab = {
@@ -514,7 +576,7 @@ export type Tab = {
   orders: Array<Maybe<OrderDetail>>;
   status: TabStatus;
   table: Table;
-  users: Array<Scalars['ID']>;
+  users?: Maybe<Array<User>>;
 };
 
 export enum TabStatus {
@@ -540,10 +602,12 @@ export enum TableStatus {
 
 export type UpdateAddressInput = {
   _id: Scalars['ID'];
-  city?: InputMaybe<Scalars['String']>;
-  streetName?: InputMaybe<Scalars['String']>;
-  streetNumber?: InputMaybe<Scalars['String']>;
-  zipcode?: InputMaybe<Scalars['String']>;
+  city: Scalars['String'];
+  complement?: InputMaybe<Scalars['String']>;
+  country: Scalars['String'];
+  postalCode: Scalars['String'];
+  stateOrProvince: Scalars['String'];
+  streetAddress: Scalars['String'];
 };
 
 export type UpdateBusinessInput = {
@@ -616,9 +680,9 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
+  business: Array<Maybe<BusinessPrivileges>>;
   email: Scalars['String'];
   name?: Maybe<Scalars['String']>;
-  privileges?: Maybe<UserPrivileges>;
   token: Scalars['String'];
 };
 
@@ -640,10 +704,33 @@ export enum UserPrivileges {
   Waiter = 'WAITER'
 }
 
+export type WorkingHours = {
+  __typename?: 'WorkingHours';
+  close: Scalars['String'];
+  open: Scalars['String'];
+};
+
+export type WorkingHoursInput = {
+  close: Scalars['String'];
+  open: Scalars['String'];
+};
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
 };
+
+export type GetBusinessLocationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBusinessLocationQuery = { __typename?: 'Query', getBusinessLocation?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null };
+
+export type UpdateBusinessLocationMutationVariables = Exact<{
+  input?: InputMaybe<AddressInput>;
+}>;
+
+
+export type UpdateBusinessLocationMutation = { __typename?: 'Mutation', updateBusinessLocation?: { __typename?: 'Business', address?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null } | null };
 
 export type CreateCategoryMutationVariables = Exact<{
   input: CategoryInput;
@@ -662,7 +749,7 @@ export type DeleteCategoryMutation = { __typename?: 'Mutation', deleteCategory?:
 export type GetAllCategoriesByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllCategoriesByBusinessQuery = { __typename?: 'Query', getAllCategoriesByBusiness: Array<{ __typename?: 'Category', _id: string, name: string, description?: string | null } | null> };
+export type GetAllCategoriesByBusinessQuery = { __typename?: 'Query', getAllCategoriesByBusiness: Array<{ __typename?: 'Category', _id: string, name: string, description?: string | null }> };
 
 export type UpdateCategoryMutationVariables = Exact<{
   input?: InputMaybe<UpdateCategoryInput>;
@@ -695,7 +782,7 @@ export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string }> | null }> | null } | null> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> | null }> | null } | null> };
 
 export type UpdateMenuInfoMutationVariables = Exact<{
   input?: InputMaybe<UpdateMenuInfoInput>;
@@ -716,7 +803,7 @@ export type CreateMultipleOrderDetailsMutationVariables = Exact<{
 }>;
 
 
-export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails?: Array<{ __typename?: 'OrderDetail', _id: string, product: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null }> | null };
+export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails?: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null, product: { __typename?: 'Product', imageUrl?: string | null } }> | null };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -761,7 +848,7 @@ export type CreateSpaceMutation = { __typename?: 'Mutation', createSpace: { __ty
 export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus } | null> } | null } | null> | null } | null> | null };
+export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null }> | null }> | null };
 
 export type CreateTabMutationVariables = Exact<{
   input: CreateTabInput;
@@ -775,7 +862,7 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, users: Array<string>, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string } | null> } | null };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null };
 
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
@@ -784,7 +871,116 @@ export type CreateTableMutationVariables = Exact<{
 
 export type CreateTableMutation = { __typename?: 'Mutation', createTable: { __typename?: 'Table', space: string, _id: string } };
 
+export type PostUserLoginMutationVariables = Exact<{
+  input: LoginInput;
+}>;
 
+
+export type PostUserLoginMutation = { __typename?: 'Mutation', postUserLogin: { __typename?: 'User', name?: string | null, email: string, token: string } };
+
+export type RecoverPasswordMutationVariables = Exact<{
+  input: Scalars['String'];
+}>;
+
+
+export type RecoverPasswordMutation = { __typename?: 'Mutation', recoverPassword?: { __typename?: 'RequestResponseOK', ok?: boolean | null } | null };
+
+export type RequestUserAccountCreationMutationVariables = Exact<{
+  input?: InputMaybe<RequestUserAccountInput>;
+}>;
+
+
+export type RequestUserAccountCreationMutation = { __typename?: 'Mutation', requestUserAccountCreation: { __typename?: 'AccountCreationResponse', ok: boolean, url?: string | null } };
+
+export type UpdateUserInformationMutationVariables = Exact<{
+  input: UpdateUserInput;
+}>;
+
+
+export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', token: string, email: string, name?: string | null, _id: string } };
+
+
+export const GetBusinessLocationDocument = gql`
+    query GetBusinessLocation {
+  getBusinessLocation {
+    streetAddress
+    stateOrProvince
+    postalCode
+    country
+    complement
+    city
+    _id
+  }
+}
+    `;
+
+/**
+ * __useGetBusinessLocationQuery__
+ *
+ * To run a query within a React component, call `useGetBusinessLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBusinessLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBusinessLocationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBusinessLocationQuery(baseOptions?: Apollo.QueryHookOptions<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>(GetBusinessLocationDocument, options);
+      }
+export function useGetBusinessLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>(GetBusinessLocationDocument, options);
+        }
+export type GetBusinessLocationQueryHookResult = ReturnType<typeof useGetBusinessLocationQuery>;
+export type GetBusinessLocationLazyQueryHookResult = ReturnType<typeof useGetBusinessLocationLazyQuery>;
+export type GetBusinessLocationQueryResult = Apollo.QueryResult<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>;
+export const UpdateBusinessLocationDocument = gql`
+    mutation UpdateBusinessLocation($input: AddressInput) {
+  updateBusinessLocation(input: $input) {
+    address {
+      streetAddress
+      stateOrProvince
+      postalCode
+      country
+      complement
+      city
+      _id
+    }
+  }
+}
+    `;
+export type UpdateBusinessLocationMutationFn = Apollo.MutationFunction<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
+
+/**
+ * __useUpdateBusinessLocationMutation__
+ *
+ * To run a mutation, you first call `useUpdateBusinessLocationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBusinessLocationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBusinessLocationMutation, { data, loading, error }] = useUpdateBusinessLocationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateBusinessLocationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>(UpdateBusinessLocationDocument, options);
+      }
+export type UpdateBusinessLocationMutationHookResult = ReturnType<typeof useUpdateBusinessLocationMutation>;
+export type UpdateBusinessLocationMutationResult = Apollo.MutationResult<UpdateBusinessLocationMutation>;
+export type UpdateBusinessLocationMutationOptions = Apollo.BaseMutationOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
 export const CreateCategoryDocument = gql`
     mutation CreateCategory($input: CategoryInput!) {
   createCategory(input: $input) {
@@ -1061,6 +1257,9 @@ export const GetAllMenusByBusinessIdDocument = gql`
       products {
         _id
         name
+        description
+        imageUrl
+        price
       }
     }
   }
@@ -1175,7 +1374,9 @@ export const CreateMultipleOrderDetailsDocument = gql`
     mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
   createMultipleOrderDetails(input: $input) {
     _id
-    product
+    product {
+      imageUrl
+    }
     status
     quantity
     subTotal
@@ -1433,6 +1634,9 @@ export const GetSpacesFromBusinessDocument = gql`
       status
       tableNumber
       tab {
+        users {
+          _id
+        }
         _id
         table {
           _id
@@ -1442,6 +1646,13 @@ export const GetSpacesFromBusinessDocument = gql`
         orders {
           _id
           status
+          quantity
+          subTotal
+          product {
+            imageUrl
+            price
+            name
+          }
         }
       }
     }
@@ -1517,13 +1728,25 @@ export const GetTabByIdDocument = gql`
     query GetTabByID($input: GetById!) {
   getTabByID(input: $input) {
     _id
-    users
+    users {
+      _id
+    }
+    _id
     table {
       _id
       tableNumber
     }
+    admin
     orders {
       _id
+      status
+      quantity
+      subTotal
+      product {
+        imageUrl
+        price
+        name
+      }
     }
   }
 }
@@ -1590,3 +1813,141 @@ export function useCreateTableMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateTableMutationHookResult = ReturnType<typeof useCreateTableMutation>;
 export type CreateTableMutationResult = Apollo.MutationResult<CreateTableMutation>;
 export type CreateTableMutationOptions = Apollo.BaseMutationOptions<CreateTableMutation, CreateTableMutationVariables>;
+export const PostUserLoginDocument = gql`
+    mutation PostUserLogin($input: loginInput!) {
+  postUserLogin(input: $input) {
+    name
+    email
+    token
+  }
+}
+    `;
+export type PostUserLoginMutationFn = Apollo.MutationFunction<PostUserLoginMutation, PostUserLoginMutationVariables>;
+
+/**
+ * __usePostUserLoginMutation__
+ *
+ * To run a mutation, you first call `usePostUserLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePostUserLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [postUserLoginMutation, { data, loading, error }] = usePostUserLoginMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function usePostUserLoginMutation(baseOptions?: Apollo.MutationHookOptions<PostUserLoginMutation, PostUserLoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PostUserLoginMutation, PostUserLoginMutationVariables>(PostUserLoginDocument, options);
+      }
+export type PostUserLoginMutationHookResult = ReturnType<typeof usePostUserLoginMutation>;
+export type PostUserLoginMutationResult = Apollo.MutationResult<PostUserLoginMutation>;
+export type PostUserLoginMutationOptions = Apollo.BaseMutationOptions<PostUserLoginMutation, PostUserLoginMutationVariables>;
+export const RecoverPasswordDocument = gql`
+    mutation RecoverPassword($input: String!) {
+  recoverPassword(input: $input) {
+    ok
+  }
+}
+    `;
+export type RecoverPasswordMutationFn = Apollo.MutationFunction<RecoverPasswordMutation, RecoverPasswordMutationVariables>;
+
+/**
+ * __useRecoverPasswordMutation__
+ *
+ * To run a mutation, you first call `useRecoverPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRecoverPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [recoverPasswordMutation, { data, loading, error }] = useRecoverPasswordMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRecoverPasswordMutation(baseOptions?: Apollo.MutationHookOptions<RecoverPasswordMutation, RecoverPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RecoverPasswordMutation, RecoverPasswordMutationVariables>(RecoverPasswordDocument, options);
+      }
+export type RecoverPasswordMutationHookResult = ReturnType<typeof useRecoverPasswordMutation>;
+export type RecoverPasswordMutationResult = Apollo.MutationResult<RecoverPasswordMutation>;
+export type RecoverPasswordMutationOptions = Apollo.BaseMutationOptions<RecoverPasswordMutation, RecoverPasswordMutationVariables>;
+export const RequestUserAccountCreationDocument = gql`
+    mutation RequestUserAccountCreation($input: RequestUserAccountInput) {
+  requestUserAccountCreation(input: $input) {
+    ok
+    url
+  }
+}
+    `;
+export type RequestUserAccountCreationMutationFn = Apollo.MutationFunction<RequestUserAccountCreationMutation, RequestUserAccountCreationMutationVariables>;
+
+/**
+ * __useRequestUserAccountCreationMutation__
+ *
+ * To run a mutation, you first call `useRequestUserAccountCreationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestUserAccountCreationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestUserAccountCreationMutation, { data, loading, error }] = useRequestUserAccountCreationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRequestUserAccountCreationMutation(baseOptions?: Apollo.MutationHookOptions<RequestUserAccountCreationMutation, RequestUserAccountCreationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RequestUserAccountCreationMutation, RequestUserAccountCreationMutationVariables>(RequestUserAccountCreationDocument, options);
+      }
+export type RequestUserAccountCreationMutationHookResult = ReturnType<typeof useRequestUserAccountCreationMutation>;
+export type RequestUserAccountCreationMutationResult = Apollo.MutationResult<RequestUserAccountCreationMutation>;
+export type RequestUserAccountCreationMutationOptions = Apollo.BaseMutationOptions<RequestUserAccountCreationMutation, RequestUserAccountCreationMutationVariables>;
+export const UpdateUserInformationDocument = gql`
+    mutation UpdateUserInformation($input: UpdateUserInput!) {
+  updateUserInformation(input: $input) {
+    token
+    email
+    name
+    _id
+  }
+}
+    `;
+export type UpdateUserInformationMutationFn = Apollo.MutationFunction<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>;
+
+/**
+ * __useUpdateUserInformationMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserInformationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserInformationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserInformationMutation, { data, loading, error }] = useUpdateUserInformationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateUserInformationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>(UpdateUserInformationDocument, options);
+      }
+export type UpdateUserInformationMutationHookResult = ReturnType<typeof useUpdateUserInformationMutation>;
+export type UpdateUserInformationMutationResult = Apollo.MutationResult<UpdateUserInformationMutation>;
+export type UpdateUserInformationMutationOptions = Apollo.BaseMutationOptions<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>;

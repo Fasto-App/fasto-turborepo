@@ -3,31 +3,6 @@ import { useAppStore } from "../business-templates/UseAppStore";
 import { useGetAllMenusByBusinessIdQuery, useCreateMenuMutation, useUpdateMenuMutation, useUpdateMenuInfoMutation, useDeleteMenuMutation, GetAllMenusByBusinessIdDocument } from "../gen/generated";
 
 const useMenuMutationHook = () => {
-
-  const { data: allMenusByBusiness } = useGetAllMenusByBusinessIdQuery();
-
-  const [createMenu] = useCreateMenuMutation({
-    onCompleted: (data) => {
-
-    },
-    onError: (error) => {
-
-    },
-    update: (cache, { data: { createMenu } }) => {
-      // @ts-ignore
-      const { getAllMenusByBusinessID } = cache.readQuery({
-        query: GetAllMenusByBusinessIdDocument
-      });
-
-      cache.writeQuery({
-        query: GetAllMenusByBusinessIdDocument,
-        data: {
-          getAllMenusByBusinessID: [createMenu, ...getAllMenusByBusinessID]
-        }
-      });
-    }
-  });
-
   const [updateMenu] = useUpdateMenuMutation({
     onCompleted: (data) => {
 
@@ -35,7 +10,7 @@ const useMenuMutationHook = () => {
     updateQueries: {
       getAllMenusByBusinessID: (prev, { mutationResult }) => {
         return Object.assign({}, prev, {
-          getAllMenusByBusinessID: mutationResult.data.updateMenu
+          getAllMenusByBusinessID: mutationResult?.data?.updateMenu
         });
       }
     }
@@ -51,7 +26,7 @@ const useMenuMutationHook = () => {
     onCompleted: (data) => {
 
     },
-    update: (cache, { data: { deleteMenu } }) => {
+    update: (cache, { data }) => {
       // @ts-ignore
       const { getAllMenusByBusinessID } = cache.readQuery({
         query: GetAllMenusByBusinessIdDocument
@@ -59,7 +34,7 @@ const useMenuMutationHook = () => {
       cache.writeQuery({
         query: GetAllMenusByBusinessIdDocument,
         data: {
-          getAllMenusByBusinessID: getAllMenusByBusinessID.filter(menu => menu._id !== deleteMenu._id)
+          getAllMenusByBusinessID: getAllMenusByBusinessID.filter((menu: { _id: string | undefined; }) => menu._id !== data?.deleteMenu._id)
         }
       });
     }
@@ -67,8 +42,6 @@ const useMenuMutationHook = () => {
 
 
   return {
-    allMenusByBusiness: allMenusByBusiness?.getAllMenusByBusinessID ?? [],
-    createMenu,
     updateMenu,
     updateMenuInfo,
     deleteMenu

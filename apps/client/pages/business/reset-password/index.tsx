@@ -1,5 +1,5 @@
 import type { GetServerSidePropsContext } from "next"
-import { BusinessResetPassword } from "../../../business-templates/ResetPassword";
+import { ResetPasswordScreen } from "../../../business-templates/ResetPassword";
 import * as jose from 'jose'
 import { businessRoute } from "../../../routes";
 
@@ -48,4 +48,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 
-export default BusinessResetPassword
+export default ResetPasswordScreen

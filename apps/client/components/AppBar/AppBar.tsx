@@ -3,8 +3,8 @@ import { Box, HStack, StatusBar, Text } from "native-base"
 import { HamburgerMenu } from "../../business-templates/MenuHamburguer"
 import { useRouter } from "next/router"
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export const AppBar = () => {

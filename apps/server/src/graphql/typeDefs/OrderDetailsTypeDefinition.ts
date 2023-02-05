@@ -36,7 +36,7 @@ export const OrderDetailsTypeDefinition = gql`
 
   type OrderDetail {
     _id: ID!
-    product: ID!
+    product: Product!
     user: ID
     quantity: Int!
     subTotal: Int!

@@ -1,9 +1,5 @@
-import { RequestInfo, RequestInit } from "node-fetch";
 import * as jose from "jose"
 import * as z from "zod"
-
-export const typedKeys = <T extends object>(obj?: T) => Object.keys(obj || {}) as Array<keyof T>
-export const typesValues = <T extends object>(obj?: T) => Object.values(obj || {}) as Array<T[keyof T]>
 
 export async function tokenSigning(id: string, email: string, business?: string) {
   if (!process.env.TOKEN_SECRET) return
@@ -11,7 +7,7 @@ export async function tokenSigning(id: string, email: string, business?: string)
   return await new jose.SignJWT({ _id: id, email, business })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('30d')
+    .setExpirationTime('1h')
     .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 
@@ -34,7 +30,7 @@ export const getUserFromToken = async (token: string, tokenSecret: string) => {
 
   } catch (error) {
 
-    console.log("🚯 Token error: ");
+    console.log("🚯 Token error: User Token INVALID");
     return null
   }
 }
@@ -57,3 +53,4 @@ export const validatePassword = (password: string) => {
 }
 
 export const IS_DEVELOPMENT_SERVER = process.env.ENVIRONMENT === "development"
+export const ABSOLUTE_URL = process.env.FRONTEND;

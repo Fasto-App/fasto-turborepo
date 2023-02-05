@@ -28,18 +28,19 @@ const texts = {
   table: "Table",
   total: "Total",
   sendToKitchen: "Send to kitchen",
-  people: "People",
   patrons: "Patrons",
+  people: (number: string | number) => `${number} People`,
+  tableNumber: (number: string | number) => `Table ${number}`,
 }
 
 type NewOrder = Product & { quantity: number, selectedUser?: string }
 
-export const AddToOrder = (props: any) => {
+export const AddToOrder = () => {
   const route = useRouter()
   const { tabId, menuId } = route.query
   const [orderItems, setOrderItems] = React.useState<NewOrder[]>([])
-  const [selectedUser, setSelectedUser] = React.useState<string | undefined>(undefined)
-  const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(undefined)
+  const [selectedUser, setSelectedUser] = React.useState<string>()
+  const [selectedCategory, setSelectedCategory] = React.useState<string>()
 
   const { data: menuData } = useGetMenuByIdQuery({
     variables: {
@@ -62,7 +63,9 @@ export const AddToOrder = (props: any) => {
     },
   })
 
-  const [createOrders, { data }] = useCreateMultipleOrderDetailsMutation()
+  const [createOrders, { data }] = useCreateMultipleOrderDetailsMutation({
+    refetchQueries: ["GetSpacesFromBusiness"],
+  })
 
   const onSendToKitchen = async () => {
     const orderDetails = orderItems.map(order => ({
@@ -79,7 +82,6 @@ export const AddToOrder = (props: any) => {
         }
       })
     } catch { }
-
   }
 
   const sections = menuData?.getMenuByID?.sections || []
@@ -88,21 +90,19 @@ export const AddToOrder = (props: any) => {
   const total = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)
 
   return (
-
     <>
       <ModalFeedback isOpen={!!data} onClose={() => route.back()} />
       <Flex flexDirection={"row"} flex={1}>
         <LeftSideBar>
-          <Flex flex={1} pt={2} pb={4} justifyContent={""}>
+          <Flex flex={1} pt={2} pb={4}>
             <Flex direction="row" justify="space-evenly" mb={4}>
-              <Text py="2">Table 1</Text>
+              <Text py="2">{texts.tableNumber(1)}</Text>
               <Divider orientation="vertical" mx="3" />
-              <Text py="2">2 {texts.people}</Text>
+              <Text py="2">{texts.people(2)}</Text>
             </Flex>
             <ScrollView flex={1}>
               {orderItems?.map((order, index) => {
-                const personindex = tabData?.getTabByID?.users.findIndex(userId => userId === order.selectedUser)
-
+                const personindex = tabData?.getTabByID?.users?.findIndex(user => user._id === order.selectedUser)
 
                 return <SummaryComponent
                   key={order._id + personindex}
@@ -126,6 +126,7 @@ export const AddToOrder = (props: any) => {
                     })
                     setOrderItems(newOrderItems)
                   }}
+                  // useCallback(() => {},[])
                   onMinusPress={() => {
                     if (order.quantity === 1) {
                       const newOrderItems = orderItems.filter((_, orderIndex) => index !== orderIndex)
@@ -145,7 +146,7 @@ export const AddToOrder = (props: any) => {
                     setOrderItems(newOrderItems)
                   }}
                   lastItem={index === orderItems.length - 1}
-                  selectedUser={personindex !== -1 ? `Person ${personindex + 1}` : undefined}
+                  assignedToPersonIndex={personindex && personindex !== -1 ? personindex + 1 : undefined}
                 />
               })}
             </ScrollView>
@@ -175,7 +176,6 @@ export const AddToOrder = (props: any) => {
           </Flex>
         </LeftSideBar>
 
-
         <Box flex={1}>
           <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
           <VStack flex={1} p={4} space={4}>
@@ -187,15 +187,15 @@ export const AddToOrder = (props: any) => {
                   <HStack space={2}>
                     <Tile
                       selected={!selectedUser}
-                      onPress={() => setSelectedUser(null)}
+                      onPress={() => setSelectedUser(undefined)}
                     >
-                      {`Table`}
+                      {texts.table}
                     </Tile>
-                    {tabData?.getTabByID?.users.map((user, index) => (
+                    {tabData?.getTabByID?.users?.map((user, index) => (
                       <Tile
-                        key={user}
-                        selected={user === selectedUser}
-                        onPress={() => setSelectedUser(user)}
+                        key={user._id}
+                        selected={user._id === selectedUser}
+                        onPress={() => setSelectedUser(user._id)}
                       >
                         {`Person ${index + 1}`}
                       </Tile>
@@ -204,8 +204,8 @@ export const AddToOrder = (props: any) => {
                 </ScrollView>
               </HStack>
               <SideBySideButtons
-                leftAction={undefined}
-                rightAction={undefined}
+                leftAction={() => console.log("Close Tab")}
+                rightAction={() => console.log("See Details")}
                 leftText={"Close Tab"}
                 rightText={"See Details"}
                 leftDisabled={false}
@@ -229,29 +229,32 @@ export const AddToOrder = (props: any) => {
               </HStack>
               <ScrollView pt={2}>
                 <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-                  {products.map((product) => (<ProductTile
-                    key={product._id}
-                    product={product}
-                    onEdit={() => {
-                      const findIndex = orderItems.findIndex(order => (
-                        order._id === product._id && order?.selectedUser === selectedUser)
-                      )
+                  {products.map((product) => (
+                    <ProductTile
+                      ctaTitle="Add"
+                      key={product._id}
+                      name={product.name}
+                      imageUrl={product.imageUrl ?? ""}
+                      onPress={() => {
+                        const findIndex = orderItems.findIndex(order => (
+                          order._id === product._id && order?.selectedUser === selectedUser)
+                        )
 
-                      if (findIndex >= 0) {
-                        const newOrder = {
-                          ...orderItems[findIndex],
-                          quantity: orderItems[findIndex].quantity + 1,
-                          selectedUser
+                        if (findIndex >= 0) {
+                          const newOrder = {
+                            ...orderItems[findIndex],
+                            quantity: orderItems[findIndex].quantity + 1,
+                            selectedUser
+                          }
+
+                          const newArray = orderItems.map((order, index) => index === findIndex ? newOrder : order)
+
+                          return setOrderItems(newArray)
                         }
 
-                        const newArray = orderItems.map((order, index) => index === findIndex ? newOrder : order)
-
-                        setOrderItems(newArray)
-                        return
-                      }
-
-                      setOrderItems([...orderItems, { ...product, quantity: 1, selectedUser }])
-                    }} />
+                        setOrderItems([...orderItems, { ...product, quantity: 1, selectedUser }])
+                      }}
+                    />
                   ))}
                 </VStack>
               </ScrollView>

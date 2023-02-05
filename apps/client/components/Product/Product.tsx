@@ -11,15 +11,21 @@ import {
 	VStack,
 	Spacer, Checkbox
 } from 'native-base';
-import { Product } from './types';
 
-type ProductProps = {
-	onEdit?: () => void;
-	product: Product;
+type ProductTileProps = {
+	onPress?: () => void;
 	singleButton?: boolean;
 	isChecked?: boolean;
 	onCheckboxClick?: (selected: boolean) => void;
+	ctaTitle: string;
+	name: string;
+	imageUrl?: string;
 };
+
+type ProductCardProps = ProductTileProps & {
+	description?: string;
+	price: number;
+}
 
 const texts = {
 	addToMenu: 'Add to Menu',
@@ -33,10 +39,9 @@ const Price = ({ price }: { price: number }) => (
 		{`$${(price / 100).toFixed(2)}`}
 	</Text>)
 
-const ProductCard = ({ product, onEdit, singleButton }: ProductProps) => {
-	const { name, price, imageUrl, description } = product
+const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton }: ProductCardProps) => {
 
-	const formattedDescriptions = description.length > maxLength ?
+	const formattedDescriptions = description && description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
 
 	return (
@@ -72,7 +77,7 @@ const ProductCard = ({ product, onEdit, singleButton }: ProductProps) => {
 					{singleButton ?? <Price price={price} />}
 					<HStack alignItems="center" space={2} justifyContent="space-between">
 						{singleButton ? <Price price={price} /> : <Button w={"100"}>{texts.addToMenu}</Button>}
-						<Button w={"100"} colorScheme="tertiary" onPress={onEdit}>{texts.editItem}</Button>
+						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{texts.editItem}</Button>
 					</HStack>
 				</VStack>
 
@@ -80,8 +85,7 @@ const ProductCard = ({ product, onEdit, singleButton }: ProductProps) => {
 		</Box>)
 };
 
-const ProductTile = ({ product, onEdit, isChecked, onCheckboxClick }: ProductProps) => {
-	const { name, imageUrl, _id } = product
+const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle }: ProductTileProps) => {
 
 	return <Box mr={"4"}
 		shadow="4"
@@ -99,10 +103,11 @@ const ProductTile = ({ product, onEdit, isChecked, onCheckboxClick }: ProductPro
 				uri: imageUrl
 			}} />
 			<VStack>
-				<Text color="coolGray.800" _dark={{
-					color: 'warmGray.50'
-				}} bold>
+				<Text color="coolGray.800" bold>
 					{name}
+				</Text>
+				<Text color="coolGray.600">
+					{"Server"}
 				</Text>
 			</VStack>
 			<Spacer />
@@ -120,7 +125,7 @@ const ProductTile = ({ product, onEdit, isChecked, onCheckboxClick }: ProductPro
 					</Checkbox>
 					:
 					<Button w={"100"} colorScheme="tertiary"
-						onPress={onEdit}>{texts.editItem}
+						onPress={onPress}>{ctaTitle}
 					</Button>
 				}
 			</HStack>

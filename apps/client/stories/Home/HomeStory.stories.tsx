@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import { StoryProvider } from '../StoryProvider';
 import Home from "../../pages/index"

@@ -11,7 +11,7 @@ type AddMoreButtonProps = {
 };
 
 const AddMoreButton = ({ onPress, empty = false, horizontal = false, widthProps, small }: AddMoreButtonProps) => {
-  const width = widthProps ? widthProps : horizontal ? "450px" : "280px"
+  const width = widthProps ? widthProps : horizontal ? "80" : "280px"
   const height = horizontal ? "75px" : "300px"
 
   const innerWidth = horizontal ? "100%" : "120px"
@@ -46,7 +46,7 @@ const AddMoreButton = ({ onPress, empty = false, horizontal = false, widthProps,
   );
 };
 
-export const SmallAddMoreButton = ({ onPress }) => {
+export const SmallAddMoreButton = ({ onPress }: { onPress: () => void }) => {
 
   return (
     <Button

@@ -10,6 +10,9 @@ query GetAllMenusByBusinessID {
 			products {
 				_id
 				name
+				description
+				imageUrl
+				price
 			}
 		}
 	}

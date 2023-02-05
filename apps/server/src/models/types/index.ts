@@ -1,28 +1,36 @@
-export enum Privileges {
-  ADMIN = 'ADMIN',
-  MANAGER = 'MANAGER',
-  WAITER = 'WAITER',
-  COOK = 'COOK',
-  BAR = 'BAR',
-  BARTENDER = 'BARTENDER'
-};
+export const Privileges = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  SERVER: 'SERVER',
+  COOK: 'COOK',
+  BARTENDER: 'BARTENDER',
+  BUSSER: 'BUSSER'
+} as const;
 
-export enum TableStatus {
-  AVAILABLE = 'AVAILABLE',
-  OCCUPIED = 'OCCUPIED',
-  RESERVED = 'RESERVED',
-  CLOSED = 'CLOSED'
-};
+export type PrivilegesType = typeof Privileges[keyof typeof Privileges];
 
-export enum OrderStatus {
-  OPEN = 'OPEN',
-  PENDENT = 'PENDENT',
-  DELIVERED = 'DELIVERED',
-  CLOSED = 'CLOSED'
-};
+export const TableStatus = {
+  AVAILABLE: 'AVAILABLE',
+  OCCUPIED: 'OCCUPIED',
+  RESERVED: 'RESERVED',
+  CLOSED: 'CLOSED'
+} as const;
 
-export enum TabStatus {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED'
-}
+export type TableStatusType = typeof TableStatus[keyof typeof TableStatus];
+
+export const OrderStatus = {
+  OPEN: 'OPEN',
+  PENDENT: 'PENDENT',
+  DELIVERED: 'DELIVERED',
+  CLOSED: 'CLOSED'
+} as const;
+
+export type OrderStatusType = typeof OrderStatus[keyof typeof OrderStatus];
+
+export const TabStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED'
+} as const
+
+export type TabStatusType = typeof TabStatus[keyof typeof TabStatus];
 

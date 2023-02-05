@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Text } from "native-base";
 import React from "react"
 import { BusinessLayout } from "../../business-templates/Layout/BusinessLayout";

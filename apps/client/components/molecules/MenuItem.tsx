@@ -1,10 +1,11 @@
-import * as React from "react";
+// @ts-nocheck
+import React from "react";
 import {
   Text,
   View,
   StyleSheet,
   Image,
-} from "react-native-web";
+} from "react-native";
 import { colors } from "../../theme/colors";
 
 const styles = StyleSheet.create({

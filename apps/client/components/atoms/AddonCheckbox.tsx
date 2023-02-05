@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Box } from "native-base";
 import React from "react";
 import {
@@ -5,7 +6,7 @@ import {
   Text,
   View,
   CheckBox,
-} from "react-native-web";
+} from "react-native";
 import { colors } from "../../theme/colors";
 // import { colors } from "shared/theme";
 

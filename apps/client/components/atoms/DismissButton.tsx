@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native-web";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 
 const styles = StyleSheet.create({
   button: {

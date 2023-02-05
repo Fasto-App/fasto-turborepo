@@ -1,9 +1,9 @@
 import { Types, Connection } from "mongoose"
 import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
-import { OrderStatus } from "./types";
 import { Tab } from "./tab";
-
+import { OrderStatus } from "./types";
+import type { OrderStatusType } from "./types";
 export class OrderDetail {
     @prop({ required: true })
     public product!: Types.ObjectId;
@@ -21,7 +21,7 @@ export class OrderDetail {
     public subTotal!: number;
 
     @prop({ required: true, default: OrderStatus.PENDENT })
-    public status!: OrderStatus;
+    public status!: OrderStatusType;
 
     @prop()
     public message?: string;

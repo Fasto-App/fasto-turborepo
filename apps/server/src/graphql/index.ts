@@ -63,7 +63,7 @@ const server = new ApolloServer({
     if (!tokenSecret) throw new Error('Token secret or bearer token not found');
 
     if (req.headers["x-api-key"] !== process.env.API_KEY) {
-      console.log("NOT AUTORIZED")
+      console.log("NOT AUTORIZED: invalid API key 🔑")
       console.log(req.headers["x-api-key"], process.env.API_KEY)
       return new ApolloExtendedError('Invalid API key 🔑');
     }

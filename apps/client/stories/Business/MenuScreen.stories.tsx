@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react"
 import Menu from "../../pages/business/admin/menu";
 import { StoryProvider } from "../StoryProvider"

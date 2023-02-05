@@ -1,24 +1,16 @@
 import React from 'react'
-import { Center, Box, Heading, VStack, FormControl, Input, Link, HStack, Button, Pressable, Text, Hidden } from "native-base";
+import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text } from "native-base";
 import NextLink from "next/link";
-import { Control, Controller, FieldErrors } from "react-hook-form";
 import { businessRoute } from '../../routes';
-import { validateEmail, validatePassword } from '../../authUtilities/utils';
-import { HideAndShowIcon } from '../../components/atoms/HideAndShowIcon';
-
-type ResetPasswordScreenErrors = FieldErrors<{
-  password: string;
-  passwordConfirmation: string;
-}>
-
-type ResetPasswordScreenControl = Control<{
-  password: string;
-  passwordConfirmation: string;
-}, object>
+import { useResetPasswordHook } from './hook';
+import { setCookies } from 'cookies-next';
+import { useRouter } from 'next/router';
+import { useUpdateUserInformationMutation } from '../../gen/generated';
+import { resetPasswordSchemaInput } from 'app-helpers';
 
 const texts = {
   resetPassword: "Reset Password",
-  pleaseEnterYourPassword: (email) => `${email}, Please enter and confirm your new password`,
+  pleaseEnterYourPassword: (email: string) => `${email}, Please enter and confirm your new password`,
   newPassword: "New Password",
   reset: "Reset",
   passwordConfirmation: "Password Confirmation",
@@ -27,11 +19,40 @@ const texts = {
   goBack: "Go Back",
 }
 
-export const ResetPasswordScreen = ({ control, handleSubmit, errors, newtworkError, email }) => {
+export const ResetPasswordScreen = ({ _id, email }: {
+  _id: string;
+  email: string;
+}) => {
+  const { control, formState, reset, handleSubmit } = useResetPasswordHook()
 
   const isConfirmAccountValid = (passwordConfirmation: string) => control._formValues.password === passwordConfirmation;
 
   const [showPass, setShowPass] = React.useState(false);
+
+  const router = useRouter();
+  const [resetPassword, { data, loading, error: newtworkError }] = useUpdateUserInformationMutation({
+    onCompleted: (data) => {
+      console.log("Reset password completed")
+      setCookies("opentab-cookies-name", data.updateUserInformation.name);
+      setCookies("opentab-cookies-token", data.updateUserInformation.token);
+      setCookies("opentab-cookies-email", data.updateUserInformation.email);
+      router.push(businessRoute.dashboard);
+    }
+  });
+
+  const onResetSubmit = (formData: resetPasswordSchemaInput) => {
+    resetPassword({
+      variables: {
+        input: {
+          _id,
+          password: formData.password,
+          passwordConfirmation: formData.passwordConfirmation
+        }
+      }
+    })
+
+    reset();
+  }
 
 
   return (<Center w="100%" height={"100%"}>
@@ -50,7 +71,7 @@ export const ResetPasswordScreen = ({ control, handleSubmit, errors, newtworkErr
       </Center>
 
       <VStack space={3} mt="5">
-        <FormControl>
+        {/* <FormControl>
           <FormControl.Label>New Password</FormControl.Label>
           <Controller
             name="password"
@@ -87,8 +108,8 @@ export const ResetPasswordScreen = ({ control, handleSubmit, errors, newtworkErr
           />
         </FormControl>
         {errors.password ? <Text color={"red.500"}>{"Provide a valid password. At leat 8 characters, mixing letters and numbers."}</Text> :
-          errors.passwordConfirmation ? <Text color={"red.500"}>{"Make sure both passwords match."}</Text> : errors.email ? <Text color={"red.500"}>{"Provide a valid email."}</Text> : newtworkError ? <Text color={"red.500"}>{"Somethng went wrong."}</Text> : null}
-        <Button mt="2" bg="primary.500" onPress={handleSubmit}>
+          errors.passwordConfirmation ? <Text color={"red.500"}>{"Make sure both passwords match."}</Text> : errors.email ? <Text color={"red.500"}>{"Provide a valid email."}</Text> : newtworkError ? <Text color={"red.500"}>{"Somethng went wrong."}</Text> : null} */}
+        <Button mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
           Reset
         </Button>
         <HStack mt="6" justifyContent="center">

@@ -9,9 +9,8 @@ import { useCategoryMutationHook } from "../../graphQL/CategoryQL";
 import { useAppStore } from "../UseAppStore";
 import { Box } from "native-base";
 
-export default function AddProductCategoriesScreen({ resetAll }) {
-  const { allCategories, categoryDeleted, loadingCategory, categoryCreated } =
-    useCategoryMutationHook();
+export default function AddProductCategoriesScreen({ resetAll }: { resetAll: () => void }) {
+  const { allCategories, loadingCategory } = useCategoryMutationHook();
   const { allProducts, loadingProduct } = useProductMutationHook();
 
   const networkStatus = useAppStore((state) => state.networkState);

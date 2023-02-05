@@ -1,1 +1,1 @@
-export * from "./BusinessResetPassword";
+export * from "./ResetPasswordScreen";

@@ -1,44 +1,34 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { businessLocationSchema, businessLocationSchemaInput } from 'app-helpers';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { GetBusinessLocationQuery, UpdateBusinessLocationMutation } from '../../gen/generated';
 
-const businessInfoSchema = z.object({
-  businessName: z.string().trim().min(3, { message: 'Name Required' })
-    .max(50, { message: 'Name too long' }),
-  addressLine1: z.string().trim().min(4, { message: 'Street Required' }),
-  zipCode: z.string().trim().min(4, { message: 'Zip/Postal Code Required' }),
-  city: z.string().trim().min(2, { message: 'City Required' }),
-  state: z.string().trim().min(2, { message: 'State Required' }),
-  country: z.string().trim().min(2, { message: 'Country Required' }),
-  hours: z.string().trim().optional(),
-  days: z.string().trim().optional(),
-})
+type R = NonNullable<UpdateBusinessLocationMutation["updateBusinessLocation"]>["address"]
 
-export type BusinessInfo = z.infer<typeof businessInfoSchema>
-
-export const useManageBusinessFormHook = () => {
+export const useManageBusinessFormHook = (data?: GetBusinessLocationQuery["getBusinessLocation"] | null) => {
   const {
     control,
     formState,
-    handleSubmit
-  } = useForm<BusinessInfo>({
+    handleSubmit,
+    reset
+  } = useForm<businessLocationSchemaInput>({
     defaultValues: {
-      businessName: "",
-      addressLine1: "",
-      zipCode: "",
-      city: "",
-      state: "",
-      country: "",
-      hours: "",
-      days: ""
+      streetAddress: data?.streetAddress ?? "",
+      complement: data?.complement ?? "",
+      postalCode: data?.postalCode ?? "",
+      city: data?.city ?? "",
+      stateOrProvince: data?.stateOrProvince ?? "",
+      country: data?.country ?? "",
     },
-    resolver: zodResolver(businessInfoSchema)
+    resolver: zodResolver(businessLocationSchema)
   })
 
   return {
     control,
     formState,
-    handleSubmit
+    handleSubmit,
+    reset
   }
 }
 
@@ -67,5 +57,41 @@ export const useManageAccountFormHook = () => {
     control,
     formState,
     handleSubmit
+  }
+}
+
+
+const employeeFormSchema = z.object({
+  name: z.string().trim().min(3, { message: 'Name Required' })
+    .max(50, { message: 'Name too long' }),
+  role: z.string().trim().min(4, { message: 'Role Required' }),
+  email: z.string().email().min(4, { message: 'Email Required' }),
+  phone: z.string().optional(),
+  picture: z.string().optional(),
+})
+
+export type EmployeeInfo = z.infer<typeof employeeFormSchema>
+
+export const useManageEmployeeFormHook = () => {
+  const {
+    control,
+    formState,
+    handleSubmit,
+    reset
+  } = useForm<EmployeeInfo>({
+    defaultValues: {
+      role: "",
+      email: "",
+      phone: "",
+      picture: ""
+    },
+    resolver: zodResolver(employeeFormSchema)
+  })
+
+  return {
+    control,
+    formState,
+    handleSubmit,
+    reset
   }
 }

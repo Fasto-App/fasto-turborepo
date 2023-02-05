@@ -1,5 +1,5 @@
 import { Connection } from 'mongoose'
-import { tokenSigning, typedKeys } from "../utils";
+import { tokenSigning } from "../utils";
 import { Address, AddressModel } from "../../../models/address";
 import { Business, BusinessModel } from "../../../models/business";
 import { IUserModel, UserModel } from "../../../models/user";
@@ -7,7 +7,14 @@ import { CategoryModel } from "../../../models/category";
 import { ProductModel } from '../../../models/product';
 import { Context } from '../types';
 import { Privileges } from '../../../models/types';
+import {
+  businessLocationSchema,
+  businessLocationSchemaInput,
+  typedKeys
+} from 'app-helpers';
 
+
+//FIX: this should be a validation of the token, not the business id
 const updateBusinessToken = async (_: any,
   args: {
     input: {
@@ -16,7 +23,6 @@ const updateBusinessToken = async (_: any,
   }, context: Context) => {
   if (!context.user) throw new Error("User not found");
   const newToken = tokenSigning(context.user._id, context.user.email, args.input.business)
-
 
   return newToken
 }
@@ -27,20 +33,16 @@ const getAllBusinessByUser = async (_parent: any, _args: any, { db, user }: Cont
 }
 
 const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection }) => {
-  const business = await BusinessModel(db).find({})
-
-  return business
+  return await BusinessModel(db).find({})
 }
 
-const getBusinessByID = async (
+const getBusiness = async (
   _parent: any,
-  args: { businessID: string },
-  { db, business }: { db: Connection, business: string },
+  args: any,
+  { db, business }: Context,
 ) => {
-  const { businessID } = args;
   const Business = BusinessModel(db)
-
-  return await Business.findById(businessID);
+  return await Business.findById(business);
 };
 
 const createBusiness = async (_parent: any,
@@ -86,10 +88,11 @@ const createBusiness = async (_parent: any,
 
     if (input.address) {
       const address = new Address({
-        zipcode: input.address.zipcode,
+        postalCode: input.address.postalCode,
         city: input.address.city,
-        streetName: input.address.streetName,
-        streetNumber: input.address.streetNumber,
+        streetAddress: input.address.streetAddress,
+        country: input.address.country,
+        complement: input.address.complement,
       })
 
       savedAddress = await address.save()
@@ -112,10 +115,6 @@ const createBusiness = async (_parent: any,
   }
 };
 
-interface UpdateBusinessInput {
-
-}
-
 const updateBusiness = async (_parent: any, { input }: { input: Business & { id: string; address: Address } }, { db }: { db: Connection }) => {
   // get the id, find the business and update its information
   const Business = BusinessModel(db)
@@ -134,19 +133,61 @@ const updateBusiness = async (_parent: any, { input }: { input: Business & { id:
   return updateBusiness
 }
 
-const deleteBusiness = async (parent: any, args: any, context: any) => {
-  // 
-  // 
-  const { businessID } = args;
+const updateBusinessLocation = async (
+  _parent: any,
+  { input }: { input: businessLocationSchemaInput },
+  { db, business }: Context) => {
+  console.log("Location Input", input)
+  const Business = BusinessModel(db)
+  const Address = AddressModel(db)
 
-  // find this business and delete it
   try {
 
+    const validatedInput = businessLocationSchema.parse(input)
+    const updateBusiness = await Business.findById(business)
 
+    if (!updateBusiness) throw new Error("Business not found");
+
+    if (updateBusiness?.address) {
+      await Address.findByIdAndUpdate(updateBusiness.address, {
+        streetAddress: validatedInput.streetAddress,
+        complement: validatedInput.complement,
+        postalCode: validatedInput.postalCode,
+        city: validatedInput.city,
+        stateOrProvince: validatedInput.stateOrProvince,
+        country: validatedInput.country,
+      })
+    } else {
+
+      const address = new Address({
+        streetAddress: validatedInput.streetAddress,
+        complement: validatedInput.complement,
+        postalCode: validatedInput.postalCode,
+        city: validatedInput.city,
+        stateOrProvince: validatedInput.stateOrProvince,
+        country: validatedInput.country,
+      })
+
+      const savedAddress = await address.save()
+      updateBusiness.address = savedAddress._id
+
+      await updateBusiness.save()
+    }
+
+    return await updateBusiness.save()
+  } catch (err) {
+    throw new Error(`Error saving business information: ${err}`);
+  }
+}
+
+const deleteBusiness = async (parent: any, args: any, context: any) => {
+  const { businessID } = args;
+
+  try {
     const BusinessDB = BusinessModel(context.db)
     const deletedBusiness = await BusinessDB.deleteOne({ _id: businessID })
 
-    return ({ success: true, message: 'Business deleted ' })
+    return ({ success: !!deletedBusiness, message: 'Business deleted ' })
   } catch {
     return ({ success: false, message: 'Business not found' })
   }
@@ -164,17 +205,36 @@ const getCategoriesByBusiness = async (parent: any, args: any, context: Context)
   }
 }
 
+const getBusinessLocation = async (parent: null, args: null, { business, db }: Context) => {
+
+  console.log("Business", business)
+  if (business) {
+
+    const Business = BusinessModel(db)
+    const Address = AddressModel(db)
+    const foundBusiness = await Business.findById(business)
+
+    if (foundBusiness?.address) {
+      const address = await Address.findById(foundBusiness.address)
+      console.log("Address", address)
+      return address
+    }
+  }
+}
+
 
 const BusinessResolverMutation = {
   createBusiness,
   updateBusinessToken,
   deleteBusiness,
-  updateBusiness
+  updateBusiness,
+  updateBusinessLocation,
 }
 const BusinessResolverQuery = {
+  getBusinessLocation,
   getAllBusiness,
   getAllBusinessByUser,
-  getBusinessByID
+  getBusiness
 }
 
 const BusinessResolver = {

@@ -88,7 +88,7 @@ class MyDocument extends Document {
           <link rel="shortcut icon" href="/favicon.ico" />
           {/* ADDED FROM NEXT-PWA */}
           <meta name="twitter:card" content="summary" />
-          <meta name="twitter:url" content={process.env.FRONTEND_PROD_URL} />
+          <meta name="twitter:url" content={process.env.FRONTEND_URL} />
           <meta name="twitter:title" content="OpenTab" />
           <meta
             name="twitter:description"
@@ -103,7 +103,7 @@ class MyDocument extends Document {
           <meta property="og:title" content="OpenTab" />
           <meta property="og:description" content="The Smartest and Fastest Way to Order" />
           <meta property="og:site_name" content="OpenTab" />
-          <meta property="og:url" content={process.env.FRONTEND_PROD_URL} />
+          <meta property="og:url" content={process.env.FRONTEND_URL} />
           <meta
             property="og:image"
             content="https://yourdomain.com/icons/apple-touch-icon.png"

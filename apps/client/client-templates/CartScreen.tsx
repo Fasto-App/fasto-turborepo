@@ -1,6 +1,8 @@
+// TODO
+//@ts-nocheck
 import { Button } from "native-base";
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native-web";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CartTile } from "../components/organisms/CartTile";
 
 const CartScreen = () => {

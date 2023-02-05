@@ -1,97 +1,158 @@
 import React, { useState } from "react"
-import { Box, Center, CheckIcon, Heading, HStack, Select, VStack, Text, Image, Pressable, Divider, Hidden } from "native-base"
+import {
+  Box,
+  Center,
+  CheckIcon,
+  Heading,
+  HStack,
+  Select,
+  VStack,
+  Text,
+  Image,
+  Pressable,
+  Divider,
+  ScrollView,
+  PresenceTransition
+} from "native-base"
 import { Tile } from "../../components/Tile"
-import { OrderStatus } from "../../gen/generated"
+import { OrderDetail, OrderStatus, useGetTabByIdQuery } from "../../gen/generated"
 import { parseToCurrency } from "../../utils"
+import { useTableScreenStore } from "./tableScreenStore"
+import { Transition } from "../../components/Transition"
 
+const FilterOrderBy = {
+  patron: "Patron",
+  table: "Table"
+} as const
 
-const patrons = new Array(3).fill({
-  _id: 2,
-  name: "Alexandre",
-});
+type FilterOrderBy = typeof FilterOrderBy[keyof typeof FilterOrderBy]
 
-const orders = new Array(3).fill({
-  _id: "1",
-  name: "Pizza de Catupiry com Borda",
-  image: "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2022%2F05%2F09%2Fbacon-509429382.jpg&q=60",
-  price: 1000,
-  quantity: 2,
-  status: "DELIVERED",
-})
-
-enum FilterOrderBy {
-  "Patron",
-  "Table",
+const texts = {
+  byPatron: "By Patron",
+  byTable: "By Table",
+  person: "Person",
+  chooseService: "Choose a service",
+  orderStatus: "Order Status",
+  noOrdersYet: "No orders yet",
 }
 
-
-// TODO read the information comming from the TableHook?
-// Get all the orders from the table
-// filter based on who ordered
-
 export const OccupiedModal = () => {
-  const [tabOpen, setTabOpen] = useState<FilterOrderBy>(FilterOrderBy.Patron)
+  const [filter, setFilterBy] = useState<FilterOrderBy>(FilterOrderBy.patron)
+  const tableChoosen = useTableScreenStore(state => state.tableChoosen)
+  const isFilteredByPatron = filter === FilterOrderBy.patron
+  // store the id and go through the array of orders
+  // fetch information for an specific TAB 
+  // const { data } = useGetTabByIdQuery({
+  //   variables: {
+  //     input: {
+  //       _id: tableChoosen?._id
+  //     }
+  //   }
+  // })
+
+  // console.log({ data })
+
   return (
     <Box>
       <HStack flex={1} justifyContent={"space-around"} space={2}>
-        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.Patron)}>
-          <Heading size={"md"} textAlign={"center"}>{"By Patron"}</Heading>
-          <Divider bg={tabOpen === FilterOrderBy.Patron ? "gray.400" : "gray.300"} />
+        <Pressable flex={1} onPress={() => setFilterBy(FilterOrderBy.patron)}>
+          <Heading
+            size={"md"}
+            textAlign={"center"}
+            color={isFilteredByPatron ? undefined : "gray.400"}
+          >
+            {texts.byPatron}
+          </Heading>
+          <Divider bg={isFilteredByPatron ? "gray.400" : "gray.300"} />
         </Pressable>
-        <Pressable flex={1} onPress={() => setTabOpen(FilterOrderBy.Table)}>
-          <Heading size={"md"} textAlign={"center"}>{"By Table"}</Heading>
-          <Divider bg={tabOpen === FilterOrderBy.Table ? "gray.400" : "gray.300"} />
+        <Pressable flex={1} onPress={() => setFilterBy(FilterOrderBy.table)}>
+          <Heading
+            size={"md"}
+            textAlign={"center"}
+            color={!isFilteredByPatron ? undefined : "gray.400"}
+          >
+            {texts.byTable}
+          </Heading>
+          <Divider bg={!isFilteredByPatron ? "gray.400" : "gray.300"} />
         </Pressable>
       </HStack>
-      <Box p={8}>
-        {tabOpen === FilterOrderBy.Patron ?
-          <>
-            <HStack space={2} pb={8}>
-              {patrons.map((patron) => (
+      <Box pb={8} pt={4}>
+        <Transition
+          isVisible={isFilteredByPatron}
+        >
+          <ScrollView horizontal={true} pb={2}>
+            <HStack space={2}>
+              {tableChoosen?.users?.map((patron, index) => (
                 <Tile key={patron._id} selected={false} onPress={undefined} >
-                  {patron.name}
+                  {`${texts.person} ${index + 1}`}
                 </Tile>
               ))}
             </HStack>
-            <VStack space={6}>
-              {orders.map((order) => <OrderTile key={order._id} order={order} />)}
-            </VStack>
-          </> : (
-            <VStack space={6} pt={10}>
-              {orders.map((order) => <OrderTile key={order.id} order={order} />)}
-            </VStack>
-          )}
+          </ScrollView>
+        </Transition>
+        <VStack space={6} pt={"5"}>
+          {!tableChoosen?.orders?.length ?
+            <Center flex={1} paddingY={"10"}>
+              <Heading size={"md"} textAlign={"center"}>{texts.noOrdersYet}</Heading>
+            </Center>
+            : tableChoosen?.orders?.map((order) => {
+              if (!order) return null
+
+              return <OrderTile key={order._id}
+                imageUrl={order.product.imageUrl}
+                name={order.product.name}
+                price={order.product.price}
+                quantity={order.quantity}
+                status={order.status}
+                subTotal={order.subTotal}
+              />
+            })}
+        </VStack>
       </Box>
     </Box>
   )
 }
 
-const OrderTile = ({ order }) => {
+type OrderTileProps = {
+  imageUrl: OrderDetail["product"]["imageUrl"];
+  name: OrderDetail["product"]["name"];
+  price: OrderDetail["product"]["price"];
+  quantity: OrderDetail["quantity"];
+  subTotal: OrderDetail["subTotal"];
+  status: OrderDetail["status"];
+}
+
+const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderTileProps) => {
   return (<HStack borderRadius={"md"} p={1} backgroundColor={"white"} flex={1} justifyContent={"space-between"}>
     <HStack>
       <Center>
-        <Image src={order.image}
+        <Image src={imageUrl ?? ""}
           width={100} height={60}
-          alt={order.name} />
+          alt={name} />
       </Center>
       <VStack pl={2} pt={3}>
-        <Heading size={"sm"}>{`${order.name}`}</Heading>
-        <Text>{`${parseToCurrency(order.price)}`}</Text>
+        <Heading size={"sm"}>{`${name}`}</Heading>
+        <Text>{`${parseToCurrency(price)}`}</Text>
       </VStack>
     </HStack>
-
     <Center>
-      <Select selectedValue={"DELIVERED"} minWidth="200" accessibilityLabel="Choose Service" placeholder="Order Status" mt={1} onValueChange={itemValue => console.log(itemValue)}>
+      <Select
+        mt={1}
+        minWidth="400"
+        selectedValue={status}
+        placeholder={texts.orderStatus}
+        accessibilityLabel={texts.chooseService}
+        onValueChange={itemValue => console.log(itemValue)}>
         {Object.keys(OrderStatus).map((status, index) => (
           <Select.Item key={index} label={status} value={status.toUpperCase()} />)
         )}
       </Select>
     </Center>
     <Center>
-      <Text>{`${parseToCurrency(order.price * order.quantity)}`}</Text>
+      <Text>{`${parseToCurrency(subTotal)}`}</Text>
     </Center>
     <Center>
-      <Text >{`${order.quantity}x`}</Text>
+      <Text >{`${quantity}x`}</Text>
     </Center>
     <Center p={6}>
       <CheckIcon />

@@ -1,6 +1,7 @@
+//@ts-nocheck
 // import { TextBox } from "../../molecules";
 // import { Layout } from "@/organisms";
-import { View, Text, StyleSheet } from "react-native-web";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 // import { Button, Text } from "shared/components/atoms";
 import QRCode from "react-qr-code"; // react native needs react-svg

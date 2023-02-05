@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export const SpaceTypeDefinition = gql`
 
 extend type Query {
-  getSpacesFromBusiness: [Space]
+  getSpacesFromBusiness: [Space!]
 }
 
   extend type Mutation {
@@ -28,13 +28,11 @@ type Space {
   _id: ID!
   name: String!
   business: ID!
-  tables: [Table]
+  tables: [Table!]
   }
 
   input DeleteSpaceInput {
     space: ID!
   }
-
-
 
 `

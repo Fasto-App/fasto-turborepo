@@ -1,5 +1,6 @@
+//@ts-nocheck
 import React from "react"
-import { SignUpBusiness } from "../../business-templates/SignUp"
+import { SignUpFormScreen } from "../../business-templates/SignUp"
 
 import { StoryProvider } from "../StoryProvider"
 
@@ -7,14 +8,14 @@ import { StoryProvider } from "../StoryProvider"
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: "Business/Signup",
-  component: SignUpBusiness,
+  component: SignUpFormScreen,
   decorators: [StoryProvider],
   argTypes: {
     primary: { control: "color" },
   }
 }
 
-const Template = (args) => <SignUpBusiness {...args} />
+const Template = (args) => <SignUpFormScreen {...args} />
 
 // our current primary color is #00bcd4
 export const InitialState = Template.bind({});
