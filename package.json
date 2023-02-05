@@ -28,7 +28,7 @@
 	},
 	"engines": {
 		"yarn": "1.22.19",
-		"node": "16.16.0"
+		"node": "16.x.x"
 	},
 	"dependencies": {},
 	"packageManager": "yarn@1.22.17"
