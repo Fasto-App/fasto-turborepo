@@ -8,6 +8,7 @@ import cors from 'cors';
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
+const FRONTEND_URL = process.env.FRONTEND_URL as string
 
 async function main() {
   const app = express();
@@ -18,25 +19,22 @@ async function main() {
   app.use(express.urlencoded({ extended: true }));
   app.use(graphqlUploadExpress());
 
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
-  console.log("process", process.env.NODE_ENV)
+  console.log("process.env.FRONTEND_URL", FRONTEND_URL)
 
-
-  // app.use(cors({
-  //   origin: function (origin, callback) {
-  //     if (origin && origin.startsWith("https://fastoapp")) {
-  //       callback(null, true)
-  //     } else {
-  //       callback(new Error('Not allowed by CORS'))
-  //     }
-  //   }
-  // }));
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (origin && origin.startsWith(FRONTEND_URL)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    }
+  }));
 
   await bootstrapApolloServer(app);
 
   app.listen(PORT, () => {
     console.log(`[📝 GraphQL SERVER ] ready on PORT ${PORT}/graphql`);
-    console.log(`[🚀 Next APP ] ready on PORT ${3000}`);
   });
 }
 

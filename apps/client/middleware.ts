@@ -1,10 +1,5 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { businessRoute, BUSINESS_ADMIN } from "./routes";
-import { businessCookies } from "./cookies/businessCookies";
-import * as jose from 'jose'
-
-// eslint-disable-next-line turbo/no-undeclared-env-vars
-const secret = process.env.NEXTAUTH_SECRET
 
 export const deleteCookie = (
   request: NextRequest,

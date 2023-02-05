@@ -18,6 +18,7 @@ const nextConfig = {
 	env: {
 		NEXT_PUBLIC_ENVIRONMENT: process.env.ENVIRONMENT,
 		NEXT_PUBLIC_API_KEY: process.env.API_KEY,
+		BACKEND_URL: process.env.BACKEND_URL,
 	},
 	images: {
 		remotePatterns: [
