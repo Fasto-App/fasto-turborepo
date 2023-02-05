@@ -32,7 +32,6 @@ const ProgressBar = () => {
 }
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-	console.log(`[🚀 Next APP ] ready on PORT ${3000}`);
 	const router = useRouter();
 	const isBusinessExp = router.route.includes(BUSINESS);
 	const isClientExp = router.route.includes(CLIENT);
