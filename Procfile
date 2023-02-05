@@ -1,1 +1,1 @@
-limo: yarn start:api
+limo: cd apps/server && yarn start
