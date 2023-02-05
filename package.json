@@ -15,6 +15,7 @@
 		"start:client": "turbo run start --filter=client",
 		"prod-frontend": "yarn run build:client",
 		"prod-backend": "yarn run build:api",
+		"start": "cd apps/client && yarn run start",
 		"deploy": "git add . && git commit -m Heroku && git push heroku main",
 		"deploy:client": "heroku git:remote -a opentab-frontend && yarn run deploy",
 		"deploy:api": "heroku git:remote -a opentab-backend && yarn run deploy",
@@ -26,7 +27,8 @@
 		"turbo": "latest"
 	},
 	"engines": {
-		"yarn": "1.22.19"
+		"yarn": "1.22.19",
+		"node": "16.16.0"
 	},
 	"dependencies": {},
 	"packageManager": "yarn@1.22.17"
