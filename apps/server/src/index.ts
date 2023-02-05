@@ -20,16 +20,18 @@ async function main() {
   app.use(graphqlUploadExpress());
 
   console.log("process.env.FRONTEND_URL", FRONTEND_URL)
+  console.log("API_KEY", process.env.API_KEY)
 
-  app.use(cors({
-    origin: function (origin, callback) {
-      if (origin && origin.startsWith(FRONTEND_URL)) {
-        callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
-      }
-    }
-  }));
+  // app.use(cors({
+  //   origin: function (origin, callback) {
+  //     console.log("FRONTEND_URL", FRONTEND_URL)
+  //     if (origin && origin.startsWith(FRONTEND_URL)) {
+  //       callback(null, true)
+  //     } else {
+  //       callback(new Error('Not allowed by CORS'))
+  //     }
+  //   }
+  // }));
 
   await bootstrapApolloServer(app);
 
