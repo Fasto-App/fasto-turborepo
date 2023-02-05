@@ -1,3 +1,3 @@
-import { BusinessForgotPassword } from "../../../business-templates/ForgotPassword"
+import { ForgotPasswordForm } from "../../../business-templates/ForgotPassword/ForgotPasswordForm"
 
-export default BusinessForgotPassword
+export default ForgotPasswordForm

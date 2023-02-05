@@ -5,25 +5,30 @@ import {
 import { ProductCard, ProductTile } from '../../components/Product/Product';
 import { AddMoreButton } from '../../components/atoms/AddMoreButton';
 import { ProductModal } from './ProductModal';
-import type { Product } from '../../components/Product/types';
 import { useNumOfColumns } from '../../hooks';
-import { Control, FormState } from 'react-hook-form';
 import { useAppStore } from '../UseAppStore';
 import { useCategoryMutationHook } from '../../graphQL/CategoryQL';
 import { useProductFormHook } from './useProductFormHook';
+import { GetAllProductsByBusinessIdQuery } from '../../gen/generated';
 
 
 const texts = {
 	all: "All",
+	editItem: "Edit Item",
 	showList: "Show List",
 	showCards: "Show Cards",
 	emptyListText: "Start adding dishes by clicking in the button below.",
 }
 
+type Products = GetAllProductsByBusinessIdQuery["getAllProductsByBusinessID"];
+
 
 const ProductList = (
 	{ products,
 		resetAll,
+	}: {
+		products: Products,
+		resetAll: () => void,
 	}) => {
 	const [showProductModal, setShowProductModal] = useState(false);
 	const [showTilesList, setShowTileList] = useState(false);
@@ -33,7 +38,7 @@ const ProductList = (
 	const { allCategories } = useCategoryMutationHook()
 
 	const selectedCategory = useMemo(() => {
-		return allCategories.find(cat => cat._id === category)
+		return allCategories.find(cat => cat?._id === category)
 	}, [allCategories, category])
 
 	const {
@@ -66,14 +71,31 @@ const ProductList = (
 		setShowProductModal(true)
 	}, [category, setProductValue])
 
-	const renderProductCard = useCallback((item: Product, index: number) => {
+	const renderProductCard = useCallback((item: Products[number], index: number) => {
 		if (index === 0) return <AddMoreButton key={"AddMoreButton"} onPress={addProduct} />
-		return <ProductCard product={item} onEdit={() => setProductValues(item)} key={item._id} />
+		if (!item) return null
+
+		return <ProductCard
+			name={item.name}
+			description={item.description ?? ""}
+			price={item.price}
+			imageUrl={item.imageUrl ?? ""}
+			onPress={() => setProductValues(item)}
+			key={item._id}
+			ctaTitle={texts.editItem}
+		/>
 	}, [addProduct, setProductValues])
 
-	const renderProductTile = useCallback(({ item, index }: { item: Product, index: number }) => {
+	const renderProductTile = useCallback(({ item, index }: { item: Products[number], index: number }) => {
 		if (index === 0) return <AddMoreButton horizontal onPress={addProduct} />
-		return <ProductTile product={item} onEdit={() => setProductValues(item)} />
+		if (!item) return null
+
+		return <ProductTile
+			name={item.name}
+			imageUrl={item.imageUrl ?? ""}
+			onPress={() => setProductValues(item)}
+			ctaTitle={texts.editItem}
+		/>
 	}, [addProduct, setProductValues])
 
 	const EmptyState = () => {
@@ -89,7 +111,7 @@ const ProductList = (
 	}
 
 
-	const productsWithButton = useMemo(() => [{ name: "Button" } as Product, ...products], [products])
+	const productsWithButton = useMemo(() => [{ name: "Button" } as Products[number], ...products], [products])
 
 	const renderListTile = useCallback(() => {
 		return (
@@ -100,7 +122,7 @@ const ProductList = (
 						data={productsWithButton}
 						numColumns={numColumns}
 						renderItem={renderProductTile}
-						keyExtractor={(item) => item._id}
+						keyExtractor={(item) => `${item?._id}_product`}
 						ListEmptyComponent={EmptyState}
 						ItemSeparatorComponent={() => <Box height={"4"} />}
 					/>
@@ -141,14 +163,10 @@ const ProductList = (
 			overflow={"scroll"}
 		>
 
-			{/* Header */}
 			<Box flexDirection={"column"}>
-				{/* Title */}
 				<Heading flex={1}>
 					{selectedCategory?.name ?? texts.all}
 				</Heading>
-
-				{/* Toggle */}
 				{products?.length ?
 					<Link isUnderlined={false} alignSelf={"self-end"} p={4}
 						_text={{

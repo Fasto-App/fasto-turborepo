@@ -29,7 +29,7 @@ const TabConfig: RegularInputConfig = {
     placeholder: "Select number of guests",
     errorMessage: "Please, enter a number of guests",
     helperText: "Number of guests",
-    formatOnChange: (value: string, fieldOnchange: (number) => void) => {
+    formatOnChange: (value: string, fieldOnchange: (num: number) => void) => {
       if (Number.isInteger(Number(value))) {
         return fieldOnchange(Number(value))
       }
@@ -71,9 +71,10 @@ export const TableModal = () => {
   const { data } = useGetTabByIdQuery({
     variables: {
       input: {
-        _id: tableChoosen?.tab
+        _id: `${tableChoosen?.tab}`
       }
-    }
+    },
+    skip: !tableChoosen?.tab
   })
 
   console.log({ data })
@@ -97,30 +98,33 @@ export const TableModal = () => {
     switch (tableChoosen?.status) {
       case "AVAILABLE":
         try {
+
+          if (!tableChoosen?._id) throw ("Table id is undefined")
+
           const result = await createTab({
             variables: {
               input: {
-                table: tableChoosen._id,
+                table: tableChoosen?._id,
                 admin: data.admin,
                 totalUsers: data.totalUsers
               }
             }
           })
 
-          router.push(businessRoute.add_to_order(result.data.createTab._id, "635c687451cb178c2e214465"),)
+          router.push(businessRoute.add_to_order(`${result.data?.createTab._id}`, "635c687451cb178c2e214465"),)
         } catch { }
         break;
 
       case "OCCUPIED":
         console.log(tableChoosen)
-        router.push(businessRoute.add_to_order(tableChoosen.tab, "635c687451cb178c2e214465"))
+        router.push(businessRoute.add_to_order(`${tableChoosen?.tab}`, "635c687451cb178c2e214465"))
         break;
     }
 
   }, [createTab, router, tableChoosen])
 
   const onCancel = () => {
-    setTableChoosen(null)
+    setTableChoosen(undefined)
     reset()
     clearErrors()
   }

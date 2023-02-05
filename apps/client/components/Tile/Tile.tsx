@@ -1,7 +1,12 @@
 import React from "react"
 import { Button } from "native-base"
 
-export const Tile = ({
+type TileProps = {
+  selected: boolean,
+  onPress?: () => void
+}
+
+export const Tile: React.FC<TileProps> = ({
   children,
   selected,
   onPress,

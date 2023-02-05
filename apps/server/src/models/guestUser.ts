@@ -1,6 +1,5 @@
 import { Document, Connection } from 'mongoose'
 import { prop, getModelForClass, pre } from '@typegoose/typegoose';
-import { Privileges } from './types';
 @pre<GuestUser>('deleteOne', function () {
   console.log("Delete user", this);
 })

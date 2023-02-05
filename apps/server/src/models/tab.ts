@@ -3,8 +3,9 @@ import { getModelForClass, prop } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
 import { User } from './user';
 import { Table } from './table';
-import { TabStatus } from './types';
 import { OrderDetail } from './orderDetail';
+import { TabStatus } from './types';
+import type { TabStatusType } from './types';
 
 
 export class Tab {
@@ -12,7 +13,7 @@ export class Tab {
     public admin!: Ref<User>;
 
     @prop({ default: TabStatus.OPEN })
-    public status!: TabStatus;
+    public status!: TabStatusType;
 
     @prop({ required: true })
     public table!: Ref<Table>;

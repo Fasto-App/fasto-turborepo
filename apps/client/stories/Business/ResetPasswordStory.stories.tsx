@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react"
 import { BusinessResetPassword } from "../../business-templates/ResetPassword";
 import { StoryProvider } from "../StoryProvider"

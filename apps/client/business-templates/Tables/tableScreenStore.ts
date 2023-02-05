@@ -25,8 +25,8 @@ const getInitialState = (): TableScreenStore => ({
 
 export const useTableScreenStore = create<TableScreenStoreActions>((set) => ({
   ...getInitialState(),
-  setTableChoosen: (table: SelectedTable) => set({ tableChoosen: table }),
-  setSelectedSpace: (spaceId: string) => set({ selectedSpaceId: spaceId }),
+  setTableChoosen: (table?: SelectedTable) => set({ tableChoosen: table }),
+  setSelectedSpace: (spaceId?: string) => set({ selectedSpaceId: spaceId }),
   setSpaceIsModalOpen: (isOpen: boolean) => set({ isSpaceModalOpen: isOpen }),
   setIsNewTableModalOpen: (isOpen: boolean) => set({ isNewTableModalOpen: isOpen })
 }))

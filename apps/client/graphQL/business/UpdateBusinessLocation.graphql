@@ -1,0 +1,13 @@
+mutation UpdateBusinessLocation($input: AddressInput) {
+	updateBusinessLocation(input: $input) {
+		address {
+			streetAddress
+			stateOrProvince
+			postalCode
+			country
+			complement
+			city
+			_id
+		}
+	}
+}

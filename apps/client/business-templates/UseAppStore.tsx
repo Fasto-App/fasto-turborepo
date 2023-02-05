@@ -11,7 +11,7 @@ interface AppState {
   setNetworkState: (state: "idle" | "error" | "success") => void;
   setCategory: (category: null | string) => void;
   setProduct: (product: null | string) => void;
-  setMenu: (menu: null | string) => void;
+  setMenu: (menu: undefined | string) => void;
   setSectionMap: (newSection: any) => void;
   seIsEditingMenu: (isEditingMenu: boolean) => void;
   resetEditingAndSectionMap: () => void;

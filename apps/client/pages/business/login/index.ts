@@ -1,6 +1,6 @@
-import { BusinessLogin } from "../../../business-templates/Login";
+import { LoginForm } from "../../../business-templates/Login";
 import { GetServerSidePropsContext } from "next";
 import { businessRoute } from "../../../routes";
 import * as jose from 'jose'
 
-export default BusinessLogin;
+export default LoginForm;

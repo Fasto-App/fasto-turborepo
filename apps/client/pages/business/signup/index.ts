@@ -1,5 +1,5 @@
-import { SignUpBusiness } from "../../../business-templates/SignUp";
+import { SignUpFormScreen } from "../../../business-templates/SignUp";
 
-export default SignUpBusiness;
+export default SignUpFormScreen;
 
 

@@ -1,6 +1,6 @@
 import React from "react"
 import Link from 'next/link';
-import { Pressable } from 'react-native-web'
+import { Pressable } from 'react-native'
 import { HStack, Text, Center, VStack, useBreakpointValue, } from "native-base"
 
 export default function Home() {

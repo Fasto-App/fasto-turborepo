@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react"
 import { AddMoreButton } from "../../components/atoms/AddMoreButton";
 import { StoryProvider } from "../StoryProvider"

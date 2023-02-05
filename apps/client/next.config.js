@@ -7,12 +7,26 @@ const withTM = require('next-transpile-modules')([
 	'native-base',
 	'react-native-svg',
 	'react-native',
+	'app-helpers',
 ]);
+
+/**
+ * @type {import('next').NextConfig}
+ */
 
 const nextConfig = {
 	env: {
-		NEXT_PUBLIC_ENVIRONMENT: process.env.ENVIRONMENT,
-		NEXT_PUBLIC_API_KEY: process.env.API_KEY,
+		NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
+		NEXT_PUBLIC_API_KEY: process.env.NEXT_PUBLIC_API_KEY,
+		BACKEND_URL: process.env.BACKEND_URL,
+	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: '*',
+			},
+		],
 	},
 };
 

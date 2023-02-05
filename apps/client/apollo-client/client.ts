@@ -4,12 +4,6 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { getCookies } from 'cookies-next';
 
-
-// update all of these URLS. Perhaps have them from config File
-const PROD_URL = "https://opentab-backend.herokuapp.com/graphql";
-const STAG_URL = "https://fasto-api-dev.herokuapp.com/";
-const DEV_URL = "http://localhost:4000/graphql";
-
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
@@ -19,19 +13,19 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       )
     );
   if (networkError) console.log(`[Network error]: ${networkError}`);
-});
 
-const URL = process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ? DEV_URL : PROD_URL;
+  //TODO: if graphQL error has something about authentication, then logout
+});
 
 const httpLink = createUploadLink({
-  uri: URL,
-});
+  uri: process.env.BACKEND_URL,
+})
+
 
 const authLink = setContext((_: any, { headers }) => {
   const cookies = getCookies()
   const token = cookies["opentab-cookies-token"]
   const businessID = cookies["opentab-cookies-businessID"]
-  console.log("process.env.NEXT_PUBLIC_ENVIRONMENT", process.env.NEXT_PUBLIC_ENVIRONMENT)
 
   return {
     headers: {

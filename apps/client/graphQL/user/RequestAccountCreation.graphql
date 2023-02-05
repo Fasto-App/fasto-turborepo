@@ -1,0 +1,6 @@
+mutation RequestUserAccountCreation($input: RequestUserAccountInput) {
+	requestUserAccountCreation(input: $input) {
+		ok
+		url
+	}
+}

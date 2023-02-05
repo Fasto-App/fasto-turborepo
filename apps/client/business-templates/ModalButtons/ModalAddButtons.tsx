@@ -9,11 +9,17 @@ const texts = {
 
 }
 
+type ModalAddButtonsProps = {
+  cancelAction: () => void;
+  saveAction: () => void;
+  isEditing: boolean;
+}
+
 const ModalAddButtons = ({
   cancelAction,
   saveAction,
   isEditing,
-}) => {
+}: ModalAddButtonsProps) => {
   return (
     <Button.Group space={2}>
       <Button w={"100px"}

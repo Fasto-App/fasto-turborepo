@@ -1,19 +1,20 @@
+//@ts-nocheck
 import React from "react"
-import { BusinessCreateAccountScreen } from "../../business-templates/CreateaAccount";
+import { CreateAccountScreen } from "../../business-templates/CreateaAccount";
 import { StoryProvider } from "../StoryProvider"
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: "Business/CreateAccount",
-  component: BusinessCreateAccountScreen,
+  component: CreateAccountScreen,
   decorators: [StoryProvider],
   argTypes: {
     primary: { control: "color" },
   }
 }
 
-const Template = (args) => <BusinessCreateAccountScreen {...args} />
+const Template = (args: {}) => <CreateAccountScreen {...args} />
 
 export const InitialState = Template.bind({});
 InitialState.args = {

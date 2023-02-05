@@ -13,7 +13,11 @@ import NextNProgress from "nextjs-progressbar";
 import { Box, useTheme } from 'native-base';
 
 
-const LandingWrapper = (props) => <Fragment><ClientNavBar />{props.children}</Fragment>
+const LandingWrapper: React.FC = ({ children }) => (
+	<Fragment>
+		<ClientNavBar />
+		{children}
+	</Fragment>)
 
 
 const ProgressBar = () => {

@@ -1,13 +1,20 @@
-// eslint-disable-next-line @next/next/no-server-import-in-page
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { businessRoute, BUSINESS_ADMIN } from "./routes";
-import { businessCookies } from "./cookies/businessCookies";
-import * as jose from 'jose'
 
-const secret = process.env.NEXTAUTH_SECRET
+export const deleteCookie = (
+  request: NextRequest,
+  response: NextResponse,
+  cookie: string
+) => {
+  const { value, options } = request.cookies.getWithOptions(cookie);
+  if (value) {
+    response.cookies.set(cookie, value, options);
+    response.cookies.delete(cookie);
+  }
+};
 
 // you just call next() method to contious middlerware chain or call nextjs default middleware. your blog website file.
-export function middleware(request: NextRequest, event: NextFetchEvent) {
+export function middleware(request: NextRequest, event: NextFetchEvent, cookie: string) {
 
   // APP URL's
   const LOGIN_URL = getLoginURL();
@@ -21,6 +28,7 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
 
 
     return NextResponse.redirect(
+      // eslint-disable-next-line turbo/no-undeclared-env-vars
       `https://www.${process.env.HOST_NAME}${request.nextUrl.pathname}`,
       301
     )
@@ -78,12 +86,21 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
   // otherwise, navigate back to LOGIN
   if (request.nextUrl.pathname.startsWith(BUSINESS_ADMIN)) {
     if (requestCookiesToken) {
+      console.log("COOKIE", cookie)
 
-      // const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))
 
-      // console.log("Payload", payload)
+      try {
+        // const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))
 
-      return NextResponse.next();
+        return NextResponse.next();
+      } catch {
+
+        const response = NextResponse.next()
+        deleteCookie(request, response, "opentab-cookies-token")
+        return response;
+      }
+
+
     }
 
     return NextResponse.redirect(LOGIN_URL);

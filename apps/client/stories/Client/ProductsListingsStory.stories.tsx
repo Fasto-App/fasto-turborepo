@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import { StoryProvider } from '../StoryProvider';
 import { ProductsListingScreen } from '../../client-templates/ProductsListingScreen';

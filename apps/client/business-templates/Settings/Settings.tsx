@@ -1,22 +1,19 @@
-import { Box, Button, FlatList, Heading, HStack, VStack } from 'native-base'
+import { typedKeys } from 'app-helpers'
+import { Box, Button, FlatList, Heading, VStack } from 'native-base'
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { typedKeys } from '../../authUtilities/utils'
-import { ControlledForm } from '../../components/ControlledForm/ControlledForm'
-import { ControlledInput, InputProps } from '../../components/ControlledForm/ControlledInput'
-import { ManageBusinessConfig, ManageAccountConfig } from './Config'
-import { AccountInfo, BusinessInfo, useManageAccountFormHook, useManageBusinessFormHook } from './hooks'
-
-
-const texts = {
-  title: "Change Account Information",
-  save: "Save",
-  cancel: "cancel"
-}
+import { ManageAccount } from './ManageAccount'
+import { ManageBusiness } from './ManageBusiness'
+import { ManageBusinessLocation } from './ManageBusinessLocation'
+import { ManageEmployee } from './ManageEmployee'
+import { texts } from './texts'
 
 const manageTabs = {
   manage_business: {
     button_title: "Manage Restaurant",
+    title: "Restaurant Info"
+  },
+  manage_business_location: {
+    button_title: "Manage Location",
     title: "Restaurant Info"
   },
   manage_employee: {
@@ -27,25 +24,17 @@ const manageTabs = {
     button_title: "Manage Account",
     title: "Account Info"
   }
-}
+} as const
 
-type Keys = keyof typeof manageTabs
-type TabType = Exclude<Keys, "title">
+type ManageTab = keyof typeof manageTabs
+
+type ManageTabKeys = keyof typeof manageTabs
 const tabs = typedKeys(manageTabs)
 
-export function Settings() {
-  const [selectedTab, setSelectedTab] = useState<TabType>("manage_business")
-  const SettingsSwitch = (selectedTab: TabType) => {
-    switch (selectedTab) {
-      case ("manage_business"):
-        return <ManageBusiness />
-      case "manage_account":
-        return <ManageAccount />
+export const Settings = () => {
+  const [selectedTab, setSelectedTab] = useState<ManageTabKeys>("manage_business")
 
-    }
-  }
-
-  const renderCategories = ({ item }) => {
+  const renderCategories = ({ item }: { item: ManageTab }) => {
     const selected = selectedTab === item
     return (
 
@@ -88,7 +77,6 @@ export function Settings() {
           keyExtractor={(item) => item}
         />
       </VStack>
-
       <Box
         p={"4"}
         flex={1}
@@ -98,95 +86,18 @@ export function Settings() {
         backgroundColor={"white"}
         overflow={"scroll"}
       >
-        <Heading>
+        <Heading size={"md"}>
           {manageTabs[selectedTab].title}
         </Heading>
         <Box>
-          {SettingsSwitch(selectedTab)}
+          {selectedTab === "manage_business_location" ? <ManageBusinessLocation /> :
+            selectedTab === "manage_account" ? <ManageAccount /> :
+              selectedTab === "manage_employee" ? <ManageEmployee /> :
+                selectedTab === "manage_business" ? <ManageBusiness /> : null
+          }
         </Box>
       </Box>
     </VStack>
-  )
-}
-
-const ManageBusiness = () => {
-
-  const {
-    control,
-    formState,
-    handleSubmit
-  } = useManageBusinessFormHook()
-
-  const handleSaveBusinessInfo = (values: BusinessInfo) => {
-    console.log("values", values)
-    alert(JSON.stringify(values))
-  }
-
-  return (
-    <VStack>
-      <HStack flex={1}>
-        <ControlledForm
-          control={control}
-          formState={formState}
-          Config={ManageBusinessConfig}
-        />
-        <Box w={"40%"} px={"4"} justifyContent={"space-between"}>
-          <ControlledInput
-            label='Upload Picture'
-            name='uploadPicture'
-            //@ts-ignore
-            control={control}
-          />
-        </Box>
-      </HStack>
-      <HStack alignItems="center" space={2} justifyContent="end">
-        <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
-          {texts.cancel}
-        </Button>
-        <Button
-          w={"100"}
-          colorScheme="tertiary"
-          onPress={handleSubmit(handleSaveBusinessInfo)}>{texts.save}
-        </Button>
-      </HStack>
-    </VStack>
-  )
-}
-
-const ManageAccount = () => {
-
-  const {
-    control,
-    formState,
-    handleSubmit
-  } = useManageAccountFormHook()
-
-  const handleSaveAccountInfo = (values: AccountInfo) => {
-    console.log("values", values)
-    alert(JSON.stringify(values))
-  }
-
-  return (
-    <HStack flex={1} flexDir={"column"}>
-      <ControlledForm
-        control={control}
-        formState={formState}
-        Config={ManageAccountConfig}
-      />
-      <Box>
-
-        <HStack alignItems="center" space={2} justifyContent="end">
-          <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
-            {texts.cancel}
-          </Button>
-          <Button
-            w={"100"}
-            colorScheme="tertiary"
-            onPress={handleSubmit(handleSaveAccountInfo)}>{texts.save}
-          </Button>
-        </HStack>
-      </Box>
-    </HStack>
   )
 }
 

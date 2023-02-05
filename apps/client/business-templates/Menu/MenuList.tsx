@@ -5,18 +5,19 @@ import { Controller } from 'react-hook-form';
 import { useAppStore } from '../UseAppStore';
 import { AllAndEditButtons } from '../AllAndAddButons';
 import { Tile } from '../../components/Tile';
+import { MenuConfig, useMenuHook } from './hooks';
+import { ControlledForm } from '../../components/ControlledForm';
+import { GetAllMenusByBusinessIdDocument, GetAllMenusByBusinessIdQueryResult, useCreateMenuMutation } from '../../gen/generated';
+import { menuSchemaInput } from 'app-helpers';
+import { AllMenusbyBusiness } from './types';
 
 const texts = {
   title: "Menu",
   emptyListText: "Start adding Menus by clicking in the button above.",
 }
 
-const allMenus = new Array(30).fill({
-  name: "Weekends",
-  _id: "123"
-})
+export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
 
-export function MenuList({ menuController, onMenuSubmit, menusData }) {
   const [showModal, setShowModal] = useState(false)
   const setMenu = useAppStore(state => state.setMenu)
   const menu = useAppStore(state => state.menu ?? menusData?.[0]?._id)
@@ -46,28 +47,30 @@ export function MenuList({ menuController, onMenuSubmit, menusData }) {
               <HStack space={2}>
                 {menusData?.map((item) => (
                   <Tile
-                    key={item._id}
-                    selected={item._id === menu}
+                    key={item?._id}
+                    selected={item?._id === menu}
                     onPress={() => {
-                      setMenu(item._id)
+                      setMenu(item?._id)
                       resetEditingAndSectionMap()
                     }}
                   >
-                    {item.name}
+                    {item?.name}
                   </Tile>
                 ))}
               </HStack>
             </ScrollView>
           </HStack>
-          <AllAndEditButtons allAction={undefined} editAction={undefined} categoryId={true} />
+          <AllAndEditButtons
+            allAction={() => console.log("Hello")}
+            editAction={() => console.log("Hello")}
+            categoryId={"true"}
+          />
         </VStack>
       </Box>
 
       <MenuModal
         setShowModal={setShowModal}
         showModal={showModal}
-        menuControl={menuController}
-        onMenuSubmit={onMenuSubmit}
       />
     </Box>
   );
@@ -84,9 +87,43 @@ const textsMenu = {
   edit: "Edit",
 }
 
-const MenuModal = ({ showModal, setShowModal, menuControl, onMenuSubmit }) => {
-  const isEditing = false;
-  const isInvalid = false;
+const MenuModal = ({ showModal, setShowModal }: {
+  showModal: boolean,
+  setShowModal: (value: boolean) => void
+}) => {
+  const { control, handleSubmit, formState } = useMenuHook()
+
+  const [createMenu] = useCreateMenuMutation({
+    update: (cache, { data }) => {
+      // @ts-ignore
+      const { getAllMenusByBusinessID } = cache.readQuery({
+        query: GetAllMenusByBusinessIdDocument
+      });
+
+      cache.writeQuery({
+        query: GetAllMenusByBusinessIdDocument,
+        data: {
+          getAllMenusByBusinessID: [data?.createMenu, ...getAllMenusByBusinessID]
+        }
+      });
+    }
+  });
+
+
+  const onMenuSubmit = (values: menuSchemaInput) => {
+    createMenu({
+      variables: {
+        input: {
+          name: values.name,
+        },
+      },
+    });
+
+    setShowModal(false)
+  };
+
+  // TODO
+  const isEditing = false
 
   return (
     <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
@@ -94,42 +131,22 @@ const MenuModal = ({ showModal, setShowModal, menuControl, onMenuSubmit }) => {
         <Modal.CloseButton />
         <Modal.Header>{isEditing ? textsMenu.editMenu : textsMenu.addMenu}</Modal.Header>
         <Modal.Body>
-          {/* Name */}
-          <FormControl isInvalid={isInvalid}>
-            <FormControl.Label isRequired={!isEditing}>
-              {textsMenu.menuName}
-            </FormControl.Label>
-
-            <Controller
-              name="name"
-              control={menuControl}
-              rules={{ required: true, validate: (value) => !!(value.length >= 3) }}
-              render={({ field }) => {
-                return (
-                  <Input {...field} placeholder="Weekends" />
-                )
-              }}
-            />
-
-            <FormControl.HelperText>
-              {textsMenu.maxChar}
-            </FormControl.HelperText>
-            <FormControl.ErrorMessage>{textsMenu.maxChar}</FormControl.ErrorMessage>
-          </FormControl>
+          <ControlledForm
+            Config={MenuConfig}
+            control={control}
+            formState={formState}
+          />
         </Modal.Body>
-
         <Modal.Footer>
           <Button.Group space={2}>
-            <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={() => {
-
-              setShowModal(false)
-            }}>
+            <Button
+              w={"100px"}
+              variant="ghost"
+              colorScheme="tertiary"
+              onPress={() => setShowModal(false)}>
               {textsMenu.cancel}
             </Button>
-            <Button w={"100px"} onPress={() => {
-              onMenuSubmit()
-              setShowModal(false)
-            }}>
+            <Button w={"100px"} onPress={handleSubmit(onMenuSubmit)}>
               {isEditing ? textsMenu.edit : textsMenu.add}
             </Button>
           </Button.Group>

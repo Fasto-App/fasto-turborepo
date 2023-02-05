@@ -10,6 +10,7 @@ import { useAppStore } from '../UseAppStore';
 import { AllAndEditButtons } from '../AllAndAddButons';
 import { useCategoryFormHook } from './useCategoryFormHook';
 import { CategoryModal } from './CategoryModal';
+import { GetAllCategoriesByBusinessQuery } from '../../gen/generated';
 
 
 const texts = {
@@ -20,7 +21,10 @@ const texts = {
 	emptyListText: "Start adding Categories by clicking in the button above.",
 }
 
-const CategoryList = ({ resetAll, categories }) => {
+type Categories = NonNullable<GetAllCategoriesByBusinessQuery["getAllCategoriesByBusiness"]>
+
+const CategoryList = ({ resetAll, categories }:
+	{ resetAll: () => void, categories: Categories }) => {
 	const [showCategoryModal, setShowCategoryModal] = useState(false);
 	const setCategory = useAppStore(state => state.setCategory)
 	const categoryId = useAppStore(state => state.category)
@@ -47,7 +51,9 @@ const CategoryList = ({ resetAll, categories }) => {
 
 	// cada list vai saber que all clicar nele, um modal eh aberto e ele esta pornto para ser editado
 	// so precisamos do id do modal
-	const renderCategory = useCallback(({ item }: { item: Category, index: number }) => {
+	const renderCategory = useCallback(({ item }: { item: Categories[number], index: number }) => {
+		if (!item) return null
+
 		return (
 			<CategoryTile
 				category={{ name: item.name, id: item._id }}
@@ -103,11 +109,10 @@ const CategoryList = ({ resetAll, categories }) => {
 					<HStack flex={1} space={1}>
 						<FlatList
 							horizontal
-							data={categories}
+							data={categories.length ? categories : []}
 							renderItem={renderCategory}
-							// estimatedItemSize={products.length ?? 1}
 							ListEmptyComponent={EmptyState}
-							keyExtractor={(item) => item._id}
+							keyExtractor={(item) => `${item?._id}_category`}
 						/>
 					</HStack>
 				</Box>

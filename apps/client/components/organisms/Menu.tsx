@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react";
 import {
   StyleSheet,
@@ -6,7 +7,7 @@ import {
   TouchableOpacity,
   View,
   FlatList,
-} from "react-native-web";
+} from "react-native";
 // import { MenuItem } from "../molecules";
 import { useRouter } from "next/router";
 import { MenuItem } from "../molecules/MenuItem";

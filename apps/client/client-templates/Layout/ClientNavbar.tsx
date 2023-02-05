@@ -31,7 +31,7 @@ const texts = {
   navigationTitle: "OpenTab",
 }
 
-const ClientNavBar = (props) => {
+const ClientNavBar: React.FC = (props) => {
   const router = useRouter();
   let isBackButtonAvailable = true;
 

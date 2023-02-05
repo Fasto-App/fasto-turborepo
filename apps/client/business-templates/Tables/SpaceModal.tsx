@@ -3,12 +3,22 @@ import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Modal } from "native-base";
 import { useForm } from "react-hook-form";
-import { } from "react-native";
 import { z } from "zod";
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm";
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL";
 
-export const SpaceModal = ({ isModalOpen, setIsModalOpen }) => {
+const spaceSchema = z.object({
+  space_name: z.string().min(2, "Please, enter a Space Name. Min 2 chars").max(15, "15 characters max")
+})
+
+type spaceSchemaInput = z.infer<typeof spaceSchema>
+
+type SpaceModalProps = {
+  isModalOpen: boolean
+  setIsModalOpen: (value: boolean) => void
+}
+
+export const SpaceModal = ({ isModalOpen, setIsModalOpen }: SpaceModalProps) => {
   const {
     control,
     formState,
@@ -28,7 +38,7 @@ export const SpaceModal = ({ isModalOpen, setIsModalOpen }) => {
     createSpace,
   } = useSpacesMutationHook();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: spaceSchemaInput) => {
     setIsModalOpen(false)
 
     await createSpace({

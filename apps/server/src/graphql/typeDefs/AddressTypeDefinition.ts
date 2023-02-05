@@ -12,25 +12,31 @@ export const AddressTypeDefinition = gql`
 
   input UpdateAddressInput {
     _id: ID!
-    streetName: String
-    streetNumber: String
-    zipcode: String
-    city: String
+    streetAddress: String!
+    complement: String
+    postalCode: String!
+    city: String!
+    stateOrProvince: String!
+    country: String!
   }
 
   type Address {
-    id: ID!
+    _id: ID!
+    streetAddress: String!
+    complement: String
+    postalCode: String!
     city: String!
-    zipcode: String!
-    streetName: String!
-    streetNumber: String!
+    stateOrProvince: String!
+    country: String!
   }
 
   input AddressInput {
+    streetAddress: String!
+    complement: String
+    postalCode: String!
     city: String!
-    zipcode: String!
-    streetName: String!
-    streetNumber: String!
+    stateOrProvince: String!
+    country: String!
   }
 
   type Geo {

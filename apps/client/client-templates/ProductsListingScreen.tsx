@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
@@ -7,7 +8,7 @@ import {
   SafeAreaView,
   Image,
   Text
-} from "react-native-web";
+} from "react-native";
 import { NextRouter } from "next/router";
 
 // import ProductDescriptionTemplate from "../ProductDescriptionScreen/ProductDescriptionScreen";

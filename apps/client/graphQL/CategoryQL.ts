@@ -28,7 +28,7 @@ export const useCategoryMutationHook = () => {
     onError: (error) => {
       setNetworkState("error")
     },
-    update: (cache, { data: { createCategory } }) => {
+    update: (cache, { data }) => {
       // @ts-ignore
       const { getAllCategoriesByBusiness } = cache.readQuery({
         query: GetAllCategoriesByBusinessDocument
@@ -37,7 +37,7 @@ export const useCategoryMutationHook = () => {
       cache.writeQuery({
         query: GetAllCategoriesByBusinessDocument,
         data: {
-          getAllCategoriesByBusiness: [createCategory, ...getAllCategoriesByBusiness]
+          getAllCategoriesByBusiness: [data?.createCategory, ...getAllCategoriesByBusiness]
         }
       });
     }
@@ -55,7 +55,7 @@ export const useCategoryMutationHook = () => {
       onError: (error) => {
         setNetworkState("error")
       },
-      update: (cache, { data: { updateCategory } }) => {
+      update: (cache, { data }) => {
         // @ts-ignore
         const { getAllCategoriesByBusiness } = cache.readQuery({
           query: GetAllCategoriesByBusinessDocument
@@ -64,8 +64,8 @@ export const useCategoryMutationHook = () => {
         cache.writeQuery({
           query: GetAllCategoriesByBusinessDocument,
           data: {
-            getAllCategoriesByBusiness: getAllCategoriesByBusiness.map(category => {
-              if (category._id === updateCategory._id) {
+            getAllCategoriesByBusiness: getAllCategoriesByBusiness.map((category: { _id: any; }) => {
+              if (category._id === data?.updateCategory?._id) {
                 return updateCategory;
               }
               return category;

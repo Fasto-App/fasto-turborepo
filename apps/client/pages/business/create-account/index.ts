@@ -1,4 +1,5 @@
-import { BusinessCreateAccountScreen } from "../../../business-templates/CreateaAccount";
+import { CreateAccountScreen } from "../../../business-templates/CreateaAccount/";
 
-export default BusinessCreateAccountScreen
+
+export default CreateAccountScreen
 

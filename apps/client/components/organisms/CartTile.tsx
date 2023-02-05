@@ -1,16 +1,15 @@
 import React, { Fragment, useState } from "react";
 import {
   View,
-  // Text,
   StyleSheet,
   Image,
   Pressable,
   Text,
-} from "react-native-web";
+} from "react-native";
 // import { Text, Link } from "shared/components/atoms";
 import { useRouter } from "next/router";
 
-const styles = ({ index }) =>
+const styles = ({ index }: { index: number }) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -85,7 +84,6 @@ const CartTile = (props: BagItem) => {
           <View style={{ flexDirection: "row" }}>
             <Image
               style={styles(props).image}
-              alt="logo"
               source={{ uri: order.uri }}
             />
             <View

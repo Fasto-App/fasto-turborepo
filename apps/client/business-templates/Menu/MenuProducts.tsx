@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text, VStack } from 'native-base'
 import { ProductCard, ProductTile } from '../../components/Product/Product'
-import { Product } from '../../components/Product/types'
 import { useNumOfColumns } from '../../hooks'
 import { useCategoryMutationHook } from '../../graphQL/CategoryQL'
 import { useProductMutationHook } from '../../graphQL/ProductQL'
@@ -9,7 +8,7 @@ import { DeleteAlert } from '../../components/DeleteAlert'
 import { useAppStore } from '../UseAppStore'
 import { BsPencilSquare } from 'react-icons/bs';
 import { useMenuMutationHook } from '../../graphQL/MenuQL'
-import { MenuSections } from './types'
+import { AllMenusbyBusiness, Product } from './types'
 
 const texts = {
   editMenu: "Edit Menu",
@@ -18,7 +17,7 @@ const texts = {
   delete: "Delete",
 }
 
-function MenuProducts({ menusData }: { menusData: MenuSections }) {
+function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
   const { allCategories } = useCategoryMutationHook()
   const { allProducts } = useProductMutationHook()
   const { deleteMenu, updateMenu } = useMenuMutationHook()
@@ -36,7 +35,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
 
   const numColumns = useNumOfColumns(isEditingMenu)
 
-  const selectedMenu = menusData?.find(menu => menu._id === menuId)
+  const selectedMenu = menusData?.find(menu => menu?._id === menuId)
   console.log("Selected Menu", selectedMenu)
 
 
@@ -45,8 +44,18 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
   console.log("Categories IDS on Menu", categoriesIdsOnMenu)
 
 
-  const productsOnMenu = useMemo(() => selectedMenu?.sections?.find(section => section.category._id === categoryId)?.products.map(product => product._id) ?? [], [categoryId, selectedMenu?.sections])
-  console.log("Products de um menu por categoria", productsOnMenu)
+  const productsOnMenu = useMemo(() => {
+    const sections = selectedMenu?.sections
+    if (!sections || sections.length === 0) {
+      return []
+    }
+
+    const filteredSection = sections.filter(section => section.category._id === categoryId)[0]
+    const filteredMenus = filteredSection?.products?.map(product => product._id) ?? []
+
+    return filteredMenus
+  }, [categoryId, selectedMenu?.sections])
+
 
   const selectedCategories = useMemo(() => {
     return allCategories.filter(cat => categoriesIdsOnMenu.includes(cat._id))
@@ -62,7 +71,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
   console.log("Products Filtered by Category", productsFiltereByCategory)
 
   const productsFiltereOnMenu = useMemo(() => {
-    return productsFiltereByCategory.filter(product => productsOnMenu.includes(product._id))
+    return productsFiltereByCategory.filter(product => productsOnMenu.includes(product?._id ?? ""))
   }, [productsFiltereByCategory, productsOnMenu])
 
   console.log("Products Filtered on Menu", productsFiltereOnMenu)
@@ -95,35 +104,26 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
   }, [categoryId, sectionMap, setSectionMap])
 
 
+  const renderProductCard = useCallback(({ item, index }: { item: Product | null, index: number }) => {
 
-  const renderCategories = ({ item, index }) => {
-    const selected = categoryId === item._id
-    return (
-      <Button
-        px={4}
-        m={0}
-        minW={"100px"}
-        disabled={selected}
-        textDecorationColor={"black"}
-        variant={selected ? 'subtle' : 'outline'}
-        colorScheme={selected ? "success" : "black"}
-        onPress={() => setCategory(item._id)}
-      >
-        {item.name}
-      </Button>
-    )
-  }
+    if (!item) return null
 
-  const renderProductCard = useCallback(({ item, index }: { item: Product, index: number }) => {
     return (
       <ProductCard
-        product={item}
-        onEdit={() => console.log("HELLO")}
+        description={item.description ?? ""}
+        price={item.price}
+        ctaTitle={"Edit Item"}
+        imageUrl={item.imageUrl ?? ""}
+        name={item.name}
+        onPress={() => console.log("HELLO")}
         singleButton={true}
       />)
   }, [])
 
-  const renderProductTile = useCallback(({ item, index }: { item: Product, index: number }) => {
+  const renderProductTile = useCallback(({ item, index }: { item?: Product | null, index: number }) => {
+
+    if (!item) return null
+
     let isSelected = false
     if (sectionMap.get(categoryId)) {
       if (sectionMap.get(categoryId).get(item._id)) {
@@ -133,7 +133,9 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
 
     return (
       <ProductTile
-        product={item}
+        name={item.name}
+        ctaTitle={"Edit Item"}
+        imageUrl={item.imageUrl ?? ""}
         isChecked={isSelected}
         onCheckboxClick={(selected) => setProductCheckbox(selected, item._id)}
       />)
@@ -148,7 +150,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
         data={productsFiltereOnMenu}
         numColumns={numColumns}
         renderItem={renderProductCard}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => `${item?._id}`}
         ItemSeparatorComponent={() => <Box height={"4"} />}
         ListEmptyComponent={<Text>To start adding products press "Edit Menu"</Text>}
       />
@@ -163,7 +165,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
         data={productsFiltereByCategory}
         numColumns={numColumns}
         renderItem={renderProductTile}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => `${item?._id}`}
         ItemSeparatorComponent={() => <Box height={"4"} />}
       />
     )
@@ -171,7 +173,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
 
   const onEditMEnu = useCallback(() => {
     const sectionMap = new Map()
-    const selectedMenuSections = menusData.find(menu => menu._id === menuId)?.sections ?? []
+    const selectedMenuSections = menusData.find(menu => menu?._id === menuId)?.sections ?? []
 
     selectedMenuSections.forEach(section => {
       const productMap = new Map()
@@ -266,13 +268,13 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
         <HStack justifyContent="space-between">
           <HStack alignItems="center" space={2} py={4}>
             <DeleteAlert title={"Delete Menu"} deleteItem={async () => {
+              if (!menuId) throw new Error("Menu not found")
+
               await deleteMenu({
                 variables: {
                   id: menuId
                 }
               })
-
-              console.log("deleting", menuId)
             }} />
           </HStack>
           <HStack alignItems="center" space={2} justifyContent="end" py={4}>
@@ -284,7 +286,7 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
               colorScheme="tertiary"
               onPress={async () => {
                 console.log(sectionMap)
-                const newSections = []
+                const newSections: { category: string, products: string[] }[] = []
 
                 if (!sectionMap.size) {
                   console.warn("Nothing to do here")
@@ -293,11 +295,15 @@ function MenuProducts({ menusData }: { menusData: MenuSections }) {
 
                 // @ts-ignore
                 for (const [key, value] of sectionMap.entries()) {
-                  const selectedProducts = Array.from(value.keys()).filter(productKey => value.get(productKey)) // array width all the products
-                  newSections.push({ category: key, products: selectedProducts })
+                  // array width all the products that are selected
+                  const selectedProducts = Array.from(value.keys()).filter(productKey => value.get(productKey))
+                  newSections.push({ category: key, products: selectedProducts as string[] })
                 }
 
-                console.log(newSections);
+                if (!menuId) {
+                  console.warn("Nothing to do here")
+                  return;
+                }
 
                 await updateMenu({
                   variables: {

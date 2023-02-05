@@ -13,7 +13,3 @@ export const validatePassword = (password: string) => {
     String(password)
       .match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/));
 }
-
-
-export const typedKeys = <T>(obj: T) => Object.keys(obj) as Array<keyof T>
-export const typesValues = <T>(obj: T) => Object.values(obj) as Array<T[keyof T]>

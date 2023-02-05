@@ -1,7 +1,7 @@
 import React from "react"
 import { HStack, Heading, VStack, Text } from "native-base";
-import { typedKeys } from "../../authUtilities/utils";
 import { stats, borderColor } from "./config";
+import { typedKeys } from "app-helpers";
 
 export const Stats = () => (
   <HStack space={4} mr={8}>
