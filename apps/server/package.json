@@ -4,7 +4,7 @@
 	"main": "dist/index.js",
 	"license": "MIT",
 	"scripts": {
-		"start": "doppler run -- ts-node --transpile-only src/index.ts",
+		"start": "ts-node --transpile-only src/index.ts",
 		"dev": "doppler run -- nodemon src/index.ts",
 		"build": "rm -rf build && tsc"
 	},
