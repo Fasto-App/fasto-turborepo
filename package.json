@@ -13,8 +13,6 @@
 		"build:client": "turbo run build --filter=client",
 		"build:api": "turbo run build --filter=server",
 		"start:client": "turbo run start --filter=client",
-		"start:api": "turbo run start --filter=server",
-		"start": "turbo run start --filter=server",
 		"prod-frontend": "yarn run build:client",
 		"prod-backend": "yarn run build:api",
 		"deploy": "git add . && git commit -m Heroku && git push heroku main",
