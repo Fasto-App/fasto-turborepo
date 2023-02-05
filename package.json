@@ -18,7 +18,7 @@
 		"start": "turbo run start",
 		"prod-frontend": "yarn run build:client",
 		"prod-backend": "yarn run build:api",
-		"heroku-postbuild": "start:api",
+		"heroku-postbuild": "yarn start:api",
 		"deploy": "git add . && git commit -m Heroku && git push heroku main",
 		"deploy:client": "heroku git:remote -a opentab-frontend && yarn run deploy",
 		"deploy:api": "heroku git:remote -a opentab-backend && yarn run deploy",
