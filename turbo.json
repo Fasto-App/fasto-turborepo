@@ -8,7 +8,6 @@
 		"start": {
 			"dependsOn": ["^build"]
 		},
-		"start:app": {},
 		"lint": {
 			"outputs": []
 		},
