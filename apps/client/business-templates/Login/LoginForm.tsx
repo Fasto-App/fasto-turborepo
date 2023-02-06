@@ -15,7 +15,7 @@ import { businessRoute } from '../../routes';
 const texts = {
 	welcomeToFasto: "Welcome to openTab",
 	theSmartestAndFastestWay: "The Smartest and Fastest Way to Order",
-	ImNewUser: "I'm a new user",
+	ImNewUser: "I'm a new user ",
 	loginHere: "Login Here",
 	login: "Login",
 	signup: "Sign Up",

@@ -18,6 +18,7 @@ const nextConfig = {
 	env: {
 		NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
 		NEXT_PUBLIC_API_KEY: process.env.NEXT_PUBLIC_API_KEY,
+		FRONTEND_URL: process.env.FRONTEND_URL,
 		BACKEND_URL: process.env.BACKEND_URL,
 	},
 	images: {
