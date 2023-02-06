@@ -1,51 +1,51 @@
 {
-  "short_name": "OpenTab",
-  "name": "OpenTab",
-  "icons": [
-    {
-      "src": "/icon-192x192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "/icon-256x256.png",
-      "type": "image/png",
-      "sizes": "256x256"
-    },
-    {
-      "src": "/icon-384x384.png",
-      "type": "image/png",
-      "sizes": "384x384"
-    },
-    {
-      "src": "/icon-512x512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": "/",
-  "background_color": "#FFC0CB",
-  "display_override": ["window-control-overlay", "minimal-ui"],
-  "display": "standalone",
-  "scope": "/",
-  "theme_color": "#FFC0CB",
-  "shortcuts": [
-    {
-      "name": "Products Listing",
-      "short_name": "Products Listing name",
-      "description": "Products Listing description",
-      "url": "productsListing/4072702673999819",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "This is a short cut name",
-      "short_name": "Go to page",
-      "description": "This is probably a shortcut for a important poart of the app",
-      "url": "/help_screen?source=pwa",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
-    }
-  ],
-  "orientation": "portrait-primary",
-  "description": "Weather forecast information",
-  "screenshots": []
+	"short_name": "Fasto",
+	"name": "Fasto",
+	"icons": [
+		{
+			"src": "/icon-192x192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/icon-256x256.png",
+			"type": "image/png",
+			"sizes": "256x256"
+		},
+		{
+			"src": "/icon-384x384.png",
+			"type": "image/png",
+			"sizes": "384x384"
+		},
+		{
+			"src": "/icon-512x512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	"start_url": "/",
+	"background_color": "#FFC0CB",
+	"display_override": ["window-control-overlay", "minimal-ui"],
+	"display": "standalone",
+	"scope": "/",
+	"theme_color": "#FFC0CB",
+	"shortcuts": [
+		{
+			"name": "Products Listing",
+			"short_name": "Products Listing name",
+			"description": "Products Listing description",
+			"url": "productsListing/4072702673999819",
+			"icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+		},
+		{
+			"name": "This is a short cut name",
+			"short_name": "Go to page",
+			"description": "This is probably a shortcut for a important poart of the app",
+			"url": "/help_screen?source=pwa",
+			"icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+		}
+	],
+	"orientation": "portrait-primary",
+	"description": "Weather forecast information",
+	"screenshots": []
 }

@@ -1,11 +1,10 @@
 import { CourierClient } from "@trycourier/courier";
-import { ABSOLUTE_URL } from "../graphql/resolvers/utils";
 
 const courier = CourierClient({ authorizationToken: "pk_prod_9AMCPRZA2MM1GKGAX8NPA99CKXPV" });
 
-const resetPassword = async ({ token, email, _id }: CourierTemplateArguments) => `${ABSOLUTE_URL}/business/reset-password?token=${token}&email=${email}&_id=${_id}`
+const resetPassword = async ({ token, email, _id }: CourierTemplateArguments) => `${process.env.FRONTEND_URL}/business/reset-password?token=${token}&email=${email}&_id=${_id}`
 
-const requestAccountCreation = ({ token, email }: CourierTemplateArguments) => `${ABSOLUTE_URL}/business/create-account?token=${token}&email=${email}`
+const requestAccountCreation = ({ token, email }: CourierTemplateArguments) => `${process.env.FRONTEND_URL}/business/create-account?token=${token}&email=${email}`
 
 const templates = {
   "add-new-emlployee": {

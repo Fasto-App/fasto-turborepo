@@ -1,34 +1,32 @@
 
 import bcrypt from "bcryptjs";
-import { CourierClient } from "@trycourier/courier";
 import { User, UserModel } from "../../../models/user";
 import { SessionModel } from "../../../models/session";
 import {
   tokenSigning,
   validateEmail,
   validatePassword,
-  IS_DEVELOPMENT_SERVER,
 } from "../utils"
 import { Connection, Types } from "mongoose"
 import { Context } from "../types";
-import { UserInputError, ValidationError } from "apollo-server-express";
+import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
-import { CreateUserInput, RequestUserAccountCreationInput, UpdateUserInput } from "./types";
-import { PrivilegesType, typedKeys } from "app-helpers";
+import { CreateUserInput, UpdateUserInput } from "./types";
+import { PrivilegesType, typedKeys, SignUpSchemaInput } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
 import { sendCourierEmail } from "../../../courier";
 
 const hashPassword = (password: string) => {
   const salt = bcrypt.genSaltSync(10);
-  const hashedPassword = bcrypt.hashSync(password, salt);
+  return bcrypt.hashSync(password, salt);
 }
 
 export const requestUserAccountCreation = async (_parent: any,
-  { input }: { input: RequestUserAccountCreationInput },
+  { input }: { input: SignUpSchemaInput },
   { db }: Context) => {
 
-  if (input.email !== input.emailConfirmation || !validateEmail(input.email)) {
+  if (!validateEmail(input.email)) {
     throw new UserInputError("Invalid email");
   }
 
@@ -36,28 +34,35 @@ export const requestUserAccountCreation = async (_parent: any,
   const User = UserModel(db)
   const user = await User.findOne({ email: input.email })
 
-  if (user) throw new Error("An account with this email already exists")
+  if (user) throw new Error("An account with this email already exists");
 
-  const newSession = await Session.create({
-    email: input.email,
-  })
+  let newSession;
+
+  const existingSession = await Session.findOne({ email: input.email })
+
+  if (!existingSession) {
+    newSession = await Session.create({
+      email: input.email,
+    })
+  } else {
+    newSession = existingSession
+  }
 
   if (!newSession?.email) throw new Error("Could not create session");
 
   let token;
 
   try {
+
     token = await tokenSigning(newSession._id, newSession.email);
-  } catch (err) {
-    return { ok: false }
-  }
 
-  newSession.token = token;
-  newSession.save()
+    newSession.token = token;
+    newSession.save()
 
-  if (!token) throw new Error("Token not found");
+    if (!token) throw new Error("Token not found");
 
-  try {
+    console.log("FUCKING REQUESTING USER ACCOUNT CREATION")
+
     const courierResponse = await sendCourierEmail({
       template: "request-account-creation",
       email: input.email,
@@ -381,7 +386,7 @@ const getBusinessByUser = (user: User, input: any, context: Context) => {
 
   if (!business) return []
 
-  const mappedbusinesses = typedKeys(business).map((businessId) => {
+  const mappedbusinesses = typedKeys(business).map((businessId: string | number) => {
     return { business: businessId, privileges: business[businessId] }
   })
 

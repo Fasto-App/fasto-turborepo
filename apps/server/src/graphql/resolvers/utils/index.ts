@@ -53,4 +53,3 @@ export const validatePassword = (password: string) => {
 }
 
 export const IS_DEVELOPMENT_SERVER = process.env.ENVIRONMENT === "development"
-export const ABSOLUTE_URL = process.env.FRONTEND;

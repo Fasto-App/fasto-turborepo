@@ -6,23 +6,21 @@ import { businessRoute } from '../../routes';
 import { validateEmail } from '../../authUtilities/utils';
 import { useSignUpHook } from './hooks';
 import { useRequestUserAccountCreationMutation } from '../../gen/generated';
-import { signUpSchemaInput } from 'app-helpers';
+import { SignUpSchemaInput } from 'app-helpers';
 
 export const SignUpFormScreen = () => {
   const cancelRef = React.useRef(null);
   const { control, formState, handleSubmit, reset, } = useSignUpHook()
-  const isConfirmEmailValid = (emailConfirmation: string) => control._formValues.email === emailConfirmation;
 
   const [requestAccountCreation,
     { data, loading, error, reset: resetNetwork }
   ] = useRequestUserAccountCreationMutation()
 
-  const onSignUpSubmit = async (formData: signUpSchemaInput) => {
+  const onSignUpSubmit = async (formData: SignUpSchemaInput) => {
     await requestAccountCreation({
       variables: {
         input: {
           email: formData.email,
-          emailConfirmation: formData.emailConfirmation,
         }
       }
     })
@@ -66,16 +64,6 @@ export const SignUpFormScreen = () => {
             name="email"
             control={control}
             rules={{ required: true, validate: (value) => !!validateEmail(value) }}
-            render={({ field }) => {
-              const { ref, ...rest } = field;
-              return <Input {...rest} ref={ref} />
-            }}
-          />
-          <FormControl.Label>Email Confirmation</FormControl.Label>
-          <Controller
-            name="emailConfirmation"
-            control={control}
-            rules={{ required: true, validate: (value) => !!validateEmail(value) && isConfirmEmailValid(value) }}
             render={({ field }) => {
               const { ref, ...rest } = field;
               return <Input {...rest} ref={ref} />

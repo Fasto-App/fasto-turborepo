@@ -22,13 +22,13 @@ class MyDocument extends Document {
       <Html>
         <Head>
           {/* ADDED FROM NEXT-PWA  */}
-          <meta name="application-name" content="OpenTab" />
+          <meta name="application-name" content="Fasto" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content="black-translucent"
           />
-          <meta name="apple-mobile-web-app-title" content="OpenTab" />
+          <meta name="apple-mobile-web-app-title" content="Fasto" />
           <meta name="description" content="The Smartest and Fastest Way to Order" />
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />
@@ -89,7 +89,7 @@ class MyDocument extends Document {
           {/* ADDED FROM NEXT-PWA */}
           <meta name="twitter:card" content="summary" />
           <meta name="twitter:url" content={process.env.FRONTEND_URL} />
-          <meta name="twitter:title" content="OpenTab" />
+          <meta name="twitter:title" content="Fasto" />
           <meta
             name="twitter:description"
             content="The Smartest and Fastest Way to Order"
@@ -100,9 +100,9 @@ class MyDocument extends Document {
           />
           <meta name="twitter:creator" content="@DavidWShadow" />
           <meta property="og:type" content="website" />
-          <meta property="og:title" content="OpenTab" />
+          <meta property="og:title" content="Fasto" />
           <meta property="og:description" content="The Smartest and Fastest Way to Order" />
-          <meta property="og:site_name" content="OpenTab" />
+          <meta property="og:site_name" content="Fasto" />
           <meta property="og:url" content={process.env.FRONTEND_URL} />
           <meta
             property="og:image"

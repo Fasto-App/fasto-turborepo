@@ -75,7 +75,6 @@ export type resetPasswordSchemaInput = z.infer<typeof resetPasswordSchema>
 
 export const signUpSchema = z.object({
   email: z.string().email({ message: 'Invalid email' }),
-  emailConfirmation: z.string().email({ message: 'Invalid email' }),
 });
 
-export type signUpSchemaInput = z.infer<typeof signUpSchema>
+export type SignUpSchemaInput = z.infer<typeof signUpSchema>

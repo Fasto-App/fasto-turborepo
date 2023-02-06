@@ -545,7 +545,6 @@ export type RequestResponseOk = {
 
 export type RequestUserAccountInput = {
   email: Scalars['String'];
-  emailConfirmation: Scalars['String'];
 };
 
 export type Section = {

@@ -29,7 +29,7 @@ export default function Home() {
 						base: 300,
 						sm: 400
 					}} h="20" bg="secondary.800" rounded="md" shadow={3}>
-						<Text color={"white"} fontSize="lg">Business Dashboard</Text>
+						<Text color={"white"} fontSize="lg">Business Dashboard changes from development</Text>
 					</Center>
 				</Link>
 			</Pressable>
