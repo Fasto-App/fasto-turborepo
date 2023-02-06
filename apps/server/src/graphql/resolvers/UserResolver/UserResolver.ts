@@ -12,8 +12,8 @@ import { Context } from "../types";
 import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
-import { CreateUserInput, RequestUserAccountCreationInput, UpdateUserInput } from "./types";
-import { PrivilegesType, typedKeys } from "app-helpers";
+import { CreateUserInput, UpdateUserInput } from "./types";
+import { PrivilegesType, typedKeys, SignUpSchemaInput } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
 import { sendCourierEmail } from "../../../courier";
 
@@ -23,10 +23,10 @@ const hashPassword = (password: string) => {
 }
 
 export const requestUserAccountCreation = async (_parent: any,
-  { input }: { input: RequestUserAccountCreationInput },
+  { input }: { input: SignUpSchemaInput },
   { db }: Context) => {
 
-  if (input.email !== input.emailConfirmation || !validateEmail(input.email)) {
+  if (!validateEmail(input.email)) {
     throw new UserInputError("Invalid email");
   }
 

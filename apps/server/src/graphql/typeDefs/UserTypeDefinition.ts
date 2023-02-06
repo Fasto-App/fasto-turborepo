@@ -50,7 +50,6 @@ export const UserTypeDefinition = gql`
 
   input RequestUserAccountInput{
     email: String!
-    emailConfirmation: String!
   } 
 
   type User {

@@ -60,6 +60,9 @@ const server = new ApolloServer({
     const tokenSecret = process.env.TOKEN_SECRET;
     const bearerToken = req.headers.authorization || '';
 
+    console.log("process.env.ENVIRONMENT ", process.env.ENVIRONMENT)
+    console.log("FRONTEND_URL", process.env.FRONTEND_URL)
+
     if (!tokenSecret) throw new Error('Token secret or bearer token not found');
 
     if (req.headers["x-api-key"] !== process.env.API_KEY) {

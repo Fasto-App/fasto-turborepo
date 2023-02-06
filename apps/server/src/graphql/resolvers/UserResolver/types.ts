@@ -20,10 +20,3 @@ export const UpdateUser = z.object({
 });
 
 export type UpdateUserInput = z.infer<typeof UpdateUser>;
-
-export const RequestUserAccountCreation = z.object({
-  email: z.string(),
-  emailConfirmation: z.string(),
-});
-
-export type RequestUserAccountCreationInput = z.infer<typeof RequestUserAccountCreation>;
