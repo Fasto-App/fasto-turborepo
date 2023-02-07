@@ -15,7 +15,11 @@ import { Privileges } from "../../../models/types";
 import { CreateUserInput, UpdateUserInput } from "./types";
 import { PrivilegesType, typedKeys, SignUpSchemaInput } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
-import { sendCourierEmail } from "../../../courier";
+import {
+  sendWelcomeEmail,
+  sendResetPasswordEmail,
+  sendEployeeEmail,
+} from "../../../email-tool";
 
 const hashPassword = (password: string) => {
   const salt = bcrypt.genSaltSync(10);
@@ -61,17 +65,14 @@ export const requestUserAccountCreation = async (_parent: any,
 
     if (!token) throw new Error("Token not found");
 
-    console.log("FUCKING REQUESTING USER ACCOUNT CREATION")
-
-    const courierResponse = await sendCourierEmail({
-      template: "request-account-creation",
+    const courierResponse = await sendWelcomeEmail({
       email: input.email,
-      _id: newSession._id,
-      name: input.email,
       token,
     })
 
-    return courierResponse;
+    console.log("COURIER RESPONSE", courierResponse)
+
+    return courierResponse
   } catch (err) {
     throw new Error(`Could not send email ${err}`);
   }
@@ -286,8 +287,7 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
 
   try {
 
-    const courierResponse = await sendCourierEmail({
-      template: "reset-password",
+    const courierResponse = await sendResetPasswordEmail({
       email: user.email,
       token,
       name: user.name,
@@ -364,12 +364,10 @@ export const addEmployeeToBusiness = async (_parent: any, { input }: { input: Ad
 
     if (!token) throw new Error("Could not create token")
 
-    sendCourierEmail({
-      template: "reset-password",
-      email: newUser.email,
+    sendEployeeEmail({
       token,
+      email: newUser.email,
       name: newUser.name,
-      _id: newUser._id,
     })
 
     return newUser
