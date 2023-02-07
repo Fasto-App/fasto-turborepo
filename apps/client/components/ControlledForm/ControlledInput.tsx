@@ -38,6 +38,7 @@ export const ControlledInput = <T extends Record<string, string>>({
   formatValue,
   formatOnChange,
   handleOnChange,
+  type
 }: ControlledFormInput<T>) => {
   return (
     <>
@@ -55,22 +56,6 @@ export const ControlledInput = <T extends Record<string, string>>({
           render={({ field }) => {
 
             switch (inputType) {
-              case "Input":
-                return (
-                  <Input
-                    value={formatValue ? formatValue(field.value) : field.value ?? ""}
-                    placeholder={placeholder}
-                    InputRightElement={rightElement}
-                    onChangeText={(value) => {
-                      if (formatOnChange) {
-                        formatOnChange(value, field.onChange)
-                        return
-                      }
-
-                      field.onChange(value)
-                    }}
-                  />
-                )
               case "TextArea":
                 return (
                   <TextArea
@@ -167,6 +152,25 @@ export const ControlledInput = <T extends Record<string, string>>({
                       </span>
                     </Box>
                   </label>
+                )
+              case "Input":
+              default:
+                return (
+                  <Input
+                    {...field}
+                    type={type}
+                    value={formatValue ? formatValue(field.value) : field.value ?? ""}
+                    placeholder={placeholder}
+                    InputRightElement={rightElement}
+                    onChangeText={(value) => {
+                      if (formatOnChange) {
+                        formatOnChange(value, field.onChange)
+                        return
+                      }
+
+                      field.onChange(value)
+                    }}
+                  />
                 )
             }
           }}

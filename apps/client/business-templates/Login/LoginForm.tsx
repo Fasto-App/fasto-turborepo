@@ -1,16 +1,15 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Control, FieldErrors } from 'react-hook-form';
 import { LoginFormFields } from '../types';
-import { Center, Box, Heading, VStack, HStack, Link, Text, Button, } from "native-base"
-import { Pressable } from 'react-native';
-import { NextRouter, useRouter } from 'next/router';
-import { ApolloError } from '@apollo/client';
-import { ControlledForm } from '../../components/ControlledForm';
+import { Center, Box, Heading, VStack, HStack, Text, Button, } from "native-base"
+import { useRouter } from 'next/router';
+import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { LoginConfig, useLoginFormHook } from './hooks';
 import { usePostUserLoginMutation } from '../../gen/generated';
 import { setCookies } from '../../cookies/businessCookies';
 import { businessRoute } from '../../routes';
+import { PasswordIcon } from '../../components/atoms/PasswordIcon';
+import { Link } from '../../components/atoms/Link';
 
 const texts = {
 	welcomeToFasto: "Welcome to openTab",
@@ -63,26 +62,35 @@ export const LoginForm = () => {
 		}
 	};
 
+	const passwordInputProps: RegularInputConfig = {
+		...LoginConfig,
+		password: {
+			...LoginConfig.password,
+			type: showPass ? "text" : "password",
+			rightElement: (
+				<PasswordIcon
+					setShowPass={setShowPass}
+					showPassword={showPass}
+				/>
+			),
+		}
+	};
+
+
 	return (
 		<Center w="100%" height={"100vh"}>
 			<Box safeArea p="2" py="8" w="90%" maxW="600">
-				<Heading size="2xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{
-					color: "warmGray.50"
-				}}>
+				<Heading size="2xl" fontWeight="600" color="coolGray.800" textAlign={"center"}>
 					{texts.welcomeToFasto}
 				</Heading>
-				<Heading mt="2" _dark={{
-					color: "warmGray.200"
-				}} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
+				<Heading mt="2" color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
 					{texts.theSmartestAndFastestWay}
 				</Heading>
-
 				<VStack space={3} mt="5">
-
 					<ControlledForm
 						control={control}
 						formState={formState}
-						Config={LoginConfig}
+						Config={passwordInputProps}
 					/>
 					<Button
 						mt="2"
@@ -92,32 +100,21 @@ export const LoginForm = () => {
 					>
 						{texts.loginHere}
 					</Button>
-					<NextLink href={"/business/forgot-password"}>
-						<Link _text={{
-							fontSize: "sm",
-							fontWeight: "500",
-							color: "indigo.500"
-						}} alignSelf="flex-end" mt="2">
-							{texts.forgotPassword}
-						</Link>
-					</NextLink>
+					<Link href={businessRoute.forgotPassword}>
+						{texts.forgotPassword}
+					</Link>
 					<HStack mt="3" justifyContent="center">
-						<Text fontSize="sm" color="coolGray.600" _dark={{
-							color: "warmGray.200"
-						}}>
+						<Text
+							fontSize="sm"
+							color="coolGray.600"
+							_dark={{
+								color: "warmGray.200"
+							}}>
 							{texts.ImNewUser}
 						</Text>
-						<Pressable onPress={() => console.log("hello")}>
-							<NextLink href={"/business/signup"}>
-								<Link _text={{
-									fontSize: "sm",
-									fontWeight: "500",
-									color: "indigo.500"
-								}}>
-									{texts.signup}
-								</Link>
-							</NextLink>
-						</Pressable>
+						<Link href={businessRoute.signup}>
+							{texts.signup}
+						</Link>
 					</HStack>
 				</VStack>
 			</Box>

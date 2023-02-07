@@ -120,7 +120,7 @@ const NavigationButton = ({
       padding={"2"}
     >
       <Box justifyContent="center" alignItems="center" h={iconSize} w={iconSize}>
-        <Icon type={type} size={"100%"} />
+        <Icon type={type} size={"100%"} color={colors.blueboard} />
       </Box>
       <Box w={"2"} />
       <Text

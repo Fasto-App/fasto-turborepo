@@ -4,18 +4,20 @@ import { Head } from '@react-email/head';
 import { Hr } from '@react-email/hr';
 import { Html } from '@react-email/html';
 import { Img } from '@react-email/img';
+import { Link } from '@react-email/link';
 import { Preview } from '@react-email/preview';
 import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
 
 const texts = {
-  preview: "Reset your password and keep your account secure with this simple process.",
-  weGotYourBack: "We got yout back!",
-  weNoticed: "We noticed that you have requested to reset your password for your account. We're here to help!",
-  clickLinkBelow: "Please click on the link below to reset your password:",
-  cta: "Password Reset Link",
-  ifyouDidNot: "If you did not request a password reset, please ignore this email and your password will remain unchanged.",
+  preview: "You're one step away from helping innovate the food business industry!",
+  welcome: "Welcome to Fasto!",
+  weAreThilled: "We are thrilled to welcome you to our company! We are looking forward to the valuable contribution you will bring to our team.",
+  getStarted: "To get started, we need you to set up your new account by clicking on the button below.",
+  onceYouHave: "Once you have successfully set up your account, you will be able to access all the resources and tools you need to start working with us.",
+  thankYou: "Thank you again for joining our team and we are looking forward to a productive and successful collaboration!",
+  cta: "Setup Account Password",
 }
 
 export function ResetPasswordEmail({ url }: { url: string }) {
@@ -33,12 +35,12 @@ export function ResetPasswordEmail({ url }: { url: string }) {
               alt="Fasto"
             />
             <Hr style={hr} />
-            <Text style={h1}>{texts.weGotYourBack}</Text>
+            <Text style={h1}>{texts.welcome}</Text>
             <Text style={paragraph}>
-              {texts.weNoticed}
+              {texts.weAreThilled}
             </Text>
             <Text style={paragraph}>
-              {texts.clickLinkBelow}
+              {texts.getStarted}
             </Text>
             <Button
               pX={10}
@@ -50,7 +52,10 @@ export function ResetPasswordEmail({ url }: { url: string }) {
             </Button>
             <Hr style={hr} />
             <Text style={paragraph}>
-              {texts.ifyouDidNot}
+              {texts.onceYouHave}
+            </Text>
+            <Text style={paragraph}>
+              {texts.thankYou}
             </Text>
             <Text style={paragraph}>Cheers</Text>
             <Text style={paragraph}>— The Fasto team</Text>
