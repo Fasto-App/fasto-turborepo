@@ -10,7 +10,7 @@ import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
 
-export function VercelEmail({ url }: { url: string }) {
+export function VercelEmail() {
   return (
     <Html>
       <Head />
@@ -40,8 +40,11 @@ export function VercelEmail({ url }: { url: string }) {
           </Text>
           <table
             style={spacing}
+            // @ts-ignore
+            border={0}
             cellPadding="0"
             cellSpacing="10"
+            align="center"
           >
             <tr>
               <td style={center} align="left" valign="middle">
@@ -108,7 +111,7 @@ export function VercelEmail({ url }: { url: string }) {
   );
 }
 
-export default VercelEmail;
+export default VercelEmail
 
 const main = {
   backgroundColor: '#ffffff',
@@ -178,8 +181,6 @@ const btn = {
 
 const spacing = {
   marginBottom: '26px',
-  alig: "center",
-  border: 0
 };
 
 const hr = {
