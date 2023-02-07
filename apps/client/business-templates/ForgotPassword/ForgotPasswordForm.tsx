@@ -1,13 +1,11 @@
 import React from "react"
-import router from "next/router";
-import NextLink from "next/link";
-import { Center, Box, Heading, VStack, FormControl, Input, HStack, Link, Button, Text, Pressable, AlertDialog } from "native-base";
+import { Center, Box, Heading, VStack, HStack, Button, AlertDialog } from "native-base";
 import { businessRoute } from "../../routes";
-import { validateEmail } from "../../authUtilities/utils";
 import { ControlledForm } from "../../components/ControlledForm";
 import { ForgotPasswordConfig, useForgotPasswordHook } from "./hooks";
 import { forgotPasswordSchemaInput } from "app-helpers";
 import { useRecoverPasswordMutation } from "../../gen/generated";
+import { Link } from "../../components/atoms/Link";
 
 const texts = {
   body: "Enter the e-mail associated with your account and we'll send you an e-mail with a link to reset your password.",
@@ -28,7 +26,7 @@ export const ForgotPasswordForm = () => {
     reset,
   } = useForgotPasswordHook()
 
-  const [recoverPasswordMutation, { data: response, reset: resetNetwork }] = useRecoverPasswordMutation()
+  const [recoverPasswordMutation, { data: response, reset: resetNetwork, loading }] = useRecoverPasswordMutation()
 
   const handleResetPress = (data: forgotPasswordSchemaInput) => {
     recoverPasswordMutation({
@@ -39,8 +37,6 @@ export const ForgotPasswordForm = () => {
 
     reset()
   }
-
-
 
   const successfull = !!(response?.recoverPassword)
   const cancelRef = React.useRef(null);
@@ -64,7 +60,6 @@ export const ForgotPasswordForm = () => {
         </AlertDialog.Content>
       </AlertDialog>
       <Box safeArea p="2" py="8" w="90%" maxW="600">
-
         <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"}>
           {texts.forgotPassoword}
         </Heading>
@@ -73,27 +68,18 @@ export const ForgotPasswordForm = () => {
             {texts.body}
           </Heading>
         </Center>
-
         <VStack space={3} mt="5">
           <ControlledForm
             control={control}
             formState={formState}
             Config={ForgotPasswordConfig}
           />
-          <Button mt="2" bg="primary.500" onPress={handleSubmit(handleResetPress)}>
+          <Button isLoading={loading} mt="2" bg="primary.500" onPress={handleSubmit(handleResetPress)}>
             {texts.sendLink}
           </Button>
-          <Pressable>
-            <NextLink href={businessRoute.login}>
-              <Link alignSelf="flex-end" mt="2" _text={{
-                color: "indigo.500",
-                fontWeight: "medium",
-                fontSize: "sm"
-              }}>
-                {texts.login}
-              </Link>
-            </NextLink>
-          </Pressable>
+          <Link href={businessRoute.login}>
+            {texts.login}
+          </Link>
           <HStack mt="6" justifyContent="center">
           </HStack>
         </VStack>

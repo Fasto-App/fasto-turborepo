@@ -82,8 +82,17 @@ export type SignUpSchemaInput = z.infer<typeof signUpSchema>
 export type CreateAccountField = z.infer<typeof createAccountSchema>
 
 export const createAccountSchema = z.object({
-  name: z.string().min(3).max(50),
   email: z.string().email(),
-  password: z.string().min(8).max(50),
-  passwordConfirmation: z.string().min(8).max(50),
-});
+  name: z.string().min(3).max(50),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }).max(50),
+  passwordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }).max(50),
+}).superRefine((data, ctx) => {
+  if (data.password !== data.passwordConfirmation) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Passwords do not match',
+      path: ['passwordConfirmation'],
+    });
+  }
+  return data;
+})

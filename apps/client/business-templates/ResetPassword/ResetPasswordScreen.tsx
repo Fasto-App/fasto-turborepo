@@ -3,10 +3,10 @@ import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text } f
 import NextLink from "next/link";
 import { businessRoute } from '../../routes';
 import { useResetPasswordHook } from './hook';
-import { setCookies } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { useUpdateUserInformationMutation } from '../../gen/generated';
 import { resetPasswordSchemaInput } from 'app-helpers';
+import { setCookies } from '../../cookies/businessCookies';
 
 const texts = {
   resetPassword: "Reset Password",
@@ -33,9 +33,9 @@ export const ResetPasswordScreen = ({ _id, email }: {
   const [resetPassword, { data, loading, error: newtworkError }] = useUpdateUserInformationMutation({
     onCompleted: (data) => {
       console.log("Reset password completed")
-      setCookies("opentab-cookies-name", data.updateUserInformation.name);
-      setCookies("opentab-cookies-token", data.updateUserInformation.token);
-      setCookies("opentab-cookies-email", data.updateUserInformation.email);
+      setCookies("name", data.updateUserInformation.name);
+      setCookies("token", data.updateUserInformation.token);
+      setCookies("email", data.updateUserInformation.email);
       router.push(businessRoute.dashboard);
     }
   });

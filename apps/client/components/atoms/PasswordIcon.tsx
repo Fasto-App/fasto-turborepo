@@ -20,7 +20,8 @@ type PasswordIconProps = {
 }
 
 export const PasswordIcon = ({ setShowPass, showPassword }: PasswordIconProps) => {
-  return (<Pressable onPress={() => setShowPass(!showPassword)}
+  return (<Pressable
+    onPress={() => setShowPass(!showPassword)}
     style={{ right: 8, top: 2 }}
   >
     <HideAndShowIcon isHidden={showPassword} color={"gray"} size={"1.5em"} />

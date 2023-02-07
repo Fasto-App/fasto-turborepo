@@ -64,7 +64,7 @@ export async function sendResetPasswordEmail({
     const options = {
       from: '',
       to: email,
-      subject: 'Assunto da mensagem',
+      subject: "Don't worry, we will be reseting your password soon!",
       html: emailHtml,
     };
 

@@ -30,6 +30,7 @@ export const ManageLocationConfig: SideBySideInputConfig = {
       name: "state",
       label: "State",
       isRequired: true,
+      isDisabled: true,
     }
   }, {
     country: {

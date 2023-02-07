@@ -1,39 +1,15 @@
-import React from 'react'
-import { Center, Box, Heading, VStack, FormControl, Input, HStack, Button, Pressable, Text } from "native-base";
-import { Control, Controller, FieldErrors, useForm } from "react-hook-form";
+import React, { useEffect } from 'react'
+import { Center, Box, Heading, VStack, HStack, Button, Pressable, Text } from "native-base";
 import { businessRoute } from '../../routes';
-import { validateEmail, validatePassword } from '../../authUtilities/utils';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
-import { gql, useMutation } from '@apollo/client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { setCookies } from 'cookies-next';
+import { setCookies } from '../../cookies/businessCookies';
 import { useRouter } from 'next/router';
-import { z } from 'zod';
 import { Link } from '../../components/atoms/Link';
 import { CreateAccountConfig, useCreateAccountFormHook } from './hooks';
 import { CreateAccountField } from 'app-helpers';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
-
-const CreatUserMutation = gql`
-mutation CreateUser($input: UserInput) {
-  createUser(input: $input) {
-    _id
-    name
-    email
-    token
-  }
-}
-`
-interface CreateUserResponse {
-  _id: string,
-  name: string,
-  email: string,
-  token: string
-}
-
-interface CreateUserPayload {
-  createUser: CreateUserResponse
-}
+import { useCreateUserMutation } from '../../gen/generated';
+import { DevTool } from '@hookform/devtools';
 
 const texts = {
   login: "Login",
@@ -42,6 +18,7 @@ const texts = {
   username: "Username",
   createPassword: "Create Password",
   newPassword: "New Password",
+  invalidTokenOrEmail: "Invalid token or email",
   passwordConfirmation: "Password Confirmation",
   pleaseEnterAndConfirm: (email: string) => `Please, enter and confirm your new password for ${email}`,
 }
@@ -52,23 +29,29 @@ export const CreateAccountScreen = () => {
   const router = useRouter();
   const { token, email } = router.query;
 
-  const [createUser, { data, loading, error: newtworkError }] = useMutation<CreateUserPayload>(CreatUserMutation);
+  const [createUser, { loading }] = useCreateUserMutation({
+    onCompleted: (data) => {
+      setCookies("name", data.createUser.name);
+      setCookies("token", data.createUser.token);
+      setCookies("email", data.createUser.email);
+      router.push(businessRoute.dashboard);
+    }
+  })
 
   const {
     handleSubmit,
     control,
-    formState
-  } = useCreateAccountFormHook({ email: email as string })
+    formState,
+    setValue
+  } = useCreateAccountFormHook(email as string)
 
-  if (data?.createUser) {
-    setCookies("name", data.createUser.name);
-    setCookies("token", data.createUser.token);
-    setCookies("email", data.createUser.email);
-    router.push(businessRoute.dashboard);
-  }
-
+  useEffect(() => {
+    setValue("email", email as string)
+  }, [email, setValue])
 
   const onSignUpSubmit = (formData: CreateAccountField) => {
+
+    console.log(formData)
 
     createUser({
       variables: {
@@ -82,18 +65,9 @@ export const CreateAccountScreen = () => {
     })
   }
 
-  if (data) {
-    router.push(businessRoute.dashboard);
-    return null;
+  if (!token || !email) {
+    return <Text p={"4"} fontSize={"lg"}>{texts.invalidTokenOrEmail}</Text>
   }
-
-  if (!router?.query.token || !router?.query.email) {
-    return <Text p={"4"} fontSize={"lg"}>Invalid token or email</Text>
-  }
-
-
-
-  // const isConfirmAccountValid = (passwordConfirmation: string) => control._formValues.password === passwordConfirmation;
 
   const passwordInputConfig: RegularInputConfig = {
     ...CreateAccountConfig,
@@ -133,7 +107,7 @@ export const CreateAccountScreen = () => {
           {texts.pleaseEnterAndConfirm(email as string)}
         </Heading>
       </Center>
-
+      <DevTool control={control} />
       <ControlledForm
         control={control}
         formState={formState}
@@ -143,7 +117,9 @@ export const CreateAccountScreen = () => {
         <Button
           mt="2"
           bg="primary.500"
-          onPress={handleSubmit(onSignUpSubmit)}
+          onPress={handleSubmit(onSignUpSubmit, (data) => {
+            console.log(data)
+          })}
           isLoading={loading}
         >
           {texts.signup}

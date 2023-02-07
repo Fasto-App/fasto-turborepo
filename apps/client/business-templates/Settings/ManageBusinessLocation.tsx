@@ -27,7 +27,7 @@ export const ManageBusinessLocation = () => {
     }
   })
 
-  const [updateBusinessLocation] = useUpdateBusinessLocationMutation({
+  const [updateBusinessLocation, { loading }] = useUpdateBusinessLocationMutation({
     refetchQueries: ["GetBusinessLocation"]
   })
 
@@ -52,13 +52,21 @@ export const ManageBusinessLocation = () => {
         Config={ManageLocationConfig}
       />
       <HStack alignItems="center" space={2} justifyContent="end">
-        <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
+        <Button
+          w={"100"}
+          variant={"subtle"}
+          onPress={() => console.log("Cancel")}
+          isLoading={loading}
+        >
           {texts.cancel}
         </Button>
         <Button
           w={"100"}
           colorScheme="tertiary"
-          onPress={handleSubmit(handleSaveBusinessInfo)}>{texts.save}
+          onPress={handleSubmit(handleSaveBusinessInfo)}
+          isLoading={loading}
+        >{texts.save}
+
         </Button>
       </HStack>
     </VStack>

@@ -54,7 +54,7 @@ export const UserTypeDefinition = gql`
 
   type User {
     _id: ID!
-    name: String
+    name: String!
     email: String!
     token: String!
     business: [BusinessPrivileges]!

@@ -4,19 +4,16 @@ import { useForm } from "react-hook-form";
 import { RegularInputConfig } from "../../components/ControlledForm";
 
 export const CreateAccountConfig: RegularInputConfig = {
-  email: {
-    name: "email",
-    label: 'Email',
+  name: {
+    name: "name",
+    label: 'Username',
     type: 'text',
     isRequired: true,
-    placeholder: 'Email',
-    autoComplete: 'email',
     autoFocus: true,
   },
   password: {
     name: "password",
     label: 'Password',
-    type: 'password',
     isRequired: true,
     placeholder: 'Password',
     autoComplete: 'password',
@@ -25,7 +22,6 @@ export const CreateAccountConfig: RegularInputConfig = {
   passwordConfirmation: {
     name: "passwordConfirmation",
     label: 'Password Confirmation',
-    type: 'password',
     isRequired: true,
     placeholder: 'Password',
     autoComplete: 'password',
@@ -33,26 +29,26 @@ export const CreateAccountConfig: RegularInputConfig = {
   },
 }
 
-export const useCreateAccountFormHook = ({ email }: { email: string }) => {
+export const useCreateAccountFormHook = (email: string) => {
   const {
     control,
     handleSubmit,
     formState,
+    setValue,
   } = useForm({
-    mode: 'onSubmit',
-    reValidateMode: 'onSubmit',
+    resolver: zodResolver(createAccountSchema),
     defaultValues: {
       name: email as string,
       email: email as string,
       password: "",
       passwordConfirmation: ""
     },
-    resolver: zodResolver(createAccountSchema)
   });
 
   return {
     control,
     handleSubmit,
     formState,
+    setValue,
   }
 }

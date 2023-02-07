@@ -13,7 +13,7 @@ import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
 import { CreateUserInput, UpdateUserInput } from "./types";
-import { PrivilegesType, typedKeys, SignUpSchemaInput } from "app-helpers";
+import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
 import {
   sendWelcomeEmail,
@@ -78,40 +78,24 @@ export const requestUserAccountCreation = async (_parent: any,
   }
 }
 
-export const createUser = async (_parent: any, { input }: { input: CreateUserInput }, { db }: { db: Connection }) => {
-
-  // TODO: user needs a valid token
-  // find a session with the email id. 
-  // if we the email is the same as the one from the DB, then move forward
-  const Session = SessionModel(db)
-  const Business = BusinessModel(db)
-  const findSession = await Session.findOne({ email: input.email })
-
-  if (!findSession) throw new UserInputError('Session not found. Check you email again or request a new access token.');
-
-  if (input.name.length < 3) {
-    throw new UserInputError('Name must be at least 3 characters long.');
-  }
-
-  if (!validateEmail(input.email)) {
-    throw new Error("Please, provide a valid email");
-  }
-
-  if (input.password !== input.passwordConfirmation) {
-    throw new UserInputError('Please, provide a valid email.');
-  }
-
-  if (!validatePassword(input.password)) {
-    throw new UserInputError('Password must be at least 8 characters long and contain letters and numbers.');
-  }
-
-  const hashedPassword = hashPassword(input.password)
-  const User = UserModel(db)
+export const createUser = async (_parent: any, { input }: { input: CreateAccountField }, { db }: { db: Connection }) => {
 
   try {
+    const validInput = createAccountSchema.parse(input)
+
+    const Session = SessionModel(db)
+    const Business = BusinessModel(db)
+    const findSession = await Session.findOne({ email: validInput.email })
+
+    if (!findSession) throw new UserInputError('Session not found. Check you email again or request a new access token.');
+
+
+    const hashedPassword = hashPassword(validInput.password)
+    const User = UserModel(db)
+
     const user = await User.create({
-      name: input.name,
-      email: input.email.toLowerCase(),
+      name: validInput.name,
+      email: validInput.email.toLowerCase(),
       password: hashedPassword,
     })
 
@@ -139,7 +123,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateUserInp
     });
 
   } catch (err) {
-    throw new Error("An error occurred while creating the user");
+    throw new Error(`${err}`);
   }
 }
 
