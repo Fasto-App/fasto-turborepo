@@ -11,7 +11,8 @@ export const useManageBusinessFormHook = (data?: GetBusinessLocationQuery["getBu
     control,
     formState,
     handleSubmit,
-    reset
+    reset,
+    setValue
   } = useForm<businessLocationSchemaInput>({
     defaultValues: {
       streetAddress: data?.streetAddress ?? "",
@@ -28,7 +29,8 @@ export const useManageBusinessFormHook = (data?: GetBusinessLocationQuery["getBu
     control,
     formState,
     handleSubmit,
-    reset
+    reset,
+    setValue
   }
 }
 
