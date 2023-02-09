@@ -164,16 +164,20 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
   return loginResponse;
 }
 
-export const getUserByID = async (_parent: any, { userID }: { userID: string }, { db }: { db: Connection }) => {
-  const user = await UserModel(db).findById(userID);
+export const getUserInformation = async (_parent: any, _args: any, { db, user }: Context) => {
 
-  if (!user) return null
-  const token = tokenSigning(user._id, user.email as string);
+  console.log("getUserInformation", user)
+  const foundUser = await UserModel(db).findById(user);
+
+  if (!foundUser) return null
+  const token = tokenSigning(foundUser._id, foundUser.email as string);
 
   return ({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
+    _id: foundUser._id,
+    name: foundUser.name,
+    email: foundUser.email,
+    picture: foundUser.picture,
+    businesses: foundUser.businesses,
     token,
   });
 }
@@ -386,7 +390,7 @@ const UserResolverMutation = {
   addEmployeeToBusiness,
 }
 const UserResolverQuery = {
-  getUserByID,
+  getUserInformation,
   getAllUsers,
   getToken,
 }

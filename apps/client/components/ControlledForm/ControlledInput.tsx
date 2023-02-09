@@ -15,6 +15,7 @@ type CustomInputProps = {
   formatValue?: (value: string) => string;
   formatOnChange?: (value: string, cb: (num: number) => void) => void;
   handleOnChange?: (e: SyntheticEvent) => void;
+  isDisabled?: boolean;
 }
 
 type InputType = "Input" | "TextArea" | "Select" | "File" | "Date"
@@ -38,7 +39,9 @@ export const ControlledInput = <T extends Record<string, string>>({
   formatValue,
   formatOnChange,
   handleOnChange,
-  type
+  type,
+  isDisabled
+
 }: ControlledFormInput<T>) => {
   return (
     <>
@@ -142,7 +145,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                             :
                             <Image
                               src={src}
-                              alt="Next.js logo"
+                              alt="alt"
                               layout={'fill'}
                               objectFit={'cover'}
                               style={{ borderRadius: "10", borderWidth: 1 }}

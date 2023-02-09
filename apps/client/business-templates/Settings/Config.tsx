@@ -45,18 +45,31 @@ export const ManageAccountConfig: RegularInputConfig = {
   name: {
     name: "name",
     label: "Name",
+    placeholder: "Enter Name",
   },
   email: {
     name: "email",
     label: "Email",
+    isDisabled: true,
   },
-  password: {
-    name: "password",
-    label: "Password",
+  oldPassword: {
+    name: "oldPassword",
+    label: "Old Password",
+    type: "password",
+    placeholder: "Old Password",
+    autoComplete: "off",
   },
-  confirmPassword: {
-    name: "confirm_password",
+  newPassword: {
+    name: "newPassword",
+    label: "New Password",
+    type: "password",
+    placeholder: "New Password",
+  },
+  newPasswordConfirmation: {
+    name: "newPasswordConfirmation",
     label: "Confirm Password",
+    type: "password",
+    placeholder: "New Password Confirmation",
   },
 }
 

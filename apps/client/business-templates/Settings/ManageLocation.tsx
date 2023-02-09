@@ -2,7 +2,7 @@ import React from "react";
 import { VStack, HStack, Button, } from "native-base"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { ManageLocationConfig } from "./Config"
-import { useManageBusinessFormHook, } from "./hooks"
+import { useManageLocationFormHook, } from "./hooks"
 import { texts } from "./texts"
 import { businessLocationSchemaInput } from "app-helpers";
 import { useGetBusinessLocationQuery, useUpdateBusinessLocationMutation } from "../../gen/generated";
@@ -25,7 +25,7 @@ export const ManageBusinessLocation = () => {
     formState,
     handleSubmit,
     setValue,
-  } = useManageBusinessFormHook(data?.getBusinessLocation)
+  } = useManageLocationFormHook(data?.getBusinessLocation)
 
   const [updateBusinessLocation, { loading }] = useUpdateBusinessLocationMutation({
     refetchQueries: ["GetBusinessLocation"]

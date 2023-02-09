@@ -495,7 +495,7 @@ export type Query = {
   getTabByID?: Maybe<Tab>;
   /** Returns a user based on the Bearer token */
   getToken?: Maybe<User>;
-  getUserByID?: Maybe<User>;
+  getUserInformation?: Maybe<User>;
 };
 
 
@@ -531,11 +531,6 @@ export type QueryGetProductByIdArgs = {
 
 export type QueryGetTabByIdArgs = {
   input: GetById;
-};
-
-
-export type QueryGetUserByIdArgs = {
-  userID?: InputMaybe<Scalars['ID']>;
 };
 
 export type RequestResponseOk = {
@@ -679,9 +674,10 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
-  business: Array<Maybe<BusinessPrivileges>>;
+  businesses: Array<BusinessPrivileges>;
   email: Scalars['String'];
   name: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
   token: Scalars['String'];
 };
 
@@ -904,6 +900,11 @@ export type UpdateUserInformationMutationVariables = Exact<{
 
 
 export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', token: string, email: string, name: string, _id: string } };
+
+export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privileges: Array<UserPrivileges | null> }> } | null };
 
 
 export const GetBusinessLocationDocument = gql`
@@ -1993,3 +1994,44 @@ export function useUpdateUserInformationMutation(baseOptions?: Apollo.MutationHo
 export type UpdateUserInformationMutationHookResult = ReturnType<typeof useUpdateUserInformationMutation>;
 export type UpdateUserInformationMutationResult = Apollo.MutationResult<UpdateUserInformationMutation>;
 export type UpdateUserInformationMutationOptions = Apollo.BaseMutationOptions<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>;
+export const GetUserInformationDocument = gql`
+    query GetUserInformation {
+  getUserInformation {
+    _id
+    email
+    name
+    picture
+    businesses {
+      business
+      privileges
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserInformationQuery__
+ *
+ * To run a query within a React component, call `useGetUserInformationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserInformationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserInformationQuery(baseOptions?: Apollo.QueryHookOptions<GetUserInformationQuery, GetUserInformationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserInformationQuery, GetUserInformationQueryVariables>(GetUserInformationDocument, options);
+      }
+export function useGetUserInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserInformationQuery, GetUserInformationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserInformationQuery, GetUserInformationQueryVariables>(GetUserInformationDocument, options);
+        }
+export type GetUserInformationQueryHookResult = ReturnType<typeof useGetUserInformationQuery>;
+export type GetUserInformationLazyQueryHookResult = ReturnType<typeof useGetUserInformationLazyQuery>;
+export type GetUserInformationQueryResult = Apollo.QueryResult<GetUserInformationQuery, GetUserInformationQueryVariables>;

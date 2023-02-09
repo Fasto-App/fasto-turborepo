@@ -2,12 +2,13 @@ import React from "react"
 import { HStack, Box, Button } from "native-base"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { ManageBusinessConfig, uploadPicture } from "./Config"
-import { useManageAccountFormHook, AccountInfo } from "./hooks"
+import { useManageLocationFormHook } from "./hooks"
 import { texts } from "./texts"
 import { useUploadFileHook } from "../../hooks"
 import { useUploadFileMutation } from "../../gen/generated"
 import { ControlledInput } from "../../components/ControlledForm/ControlledInput"
 import { WeeklySchedule } from "../../components/WeeklySchedule/WeeklySchedule"
+import { AccountInformation } from "app-helpers"
 
 export const ManageBusiness = () => {
 
@@ -26,10 +27,10 @@ export const ManageBusiness = () => {
     control,
     formState,
     handleSubmit
-  } = useManageAccountFormHook()
+  } = useManageLocationFormHook()
   const { imageFile, imageSrc, handleFileOnChange } = useUploadFileHook()
 
-  const handleSaveAccountInfo = async (values: AccountInfo) => {
+  const handleSaveAccountInfo = async (values: AccountInformation) => {
     console.log("values", values)
     alert(JSON.stringify(values))
 
@@ -72,7 +73,7 @@ export const ManageBusiness = () => {
           <Button
             w={"100"}
             colorScheme="tertiary"
-            onPress={handleSubmit(handleSaveAccountInfo)}
+          // onPress={handleSubmit(handleSaveAccountInfo)}
           >
             {texts.save}
           </Button>

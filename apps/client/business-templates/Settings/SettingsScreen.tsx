@@ -3,7 +3,7 @@ import { Box, Button, FlatList, Heading, VStack } from 'native-base'
 import React, { useState } from 'react'
 import { ManageAccount } from './ManageAccount'
 import { ManageBusiness } from './ManageBusiness'
-import { ManageBusinessLocation } from './ManageBusinessLocation'
+import { ManageBusinessLocation } from './ManageLocation'
 import { ManageEmployee } from './ManageEmployee'
 import { texts } from './texts'
 
@@ -32,7 +32,7 @@ type ManageTabKeys = keyof typeof manageTabs
 const tabs = typedKeys(manageTabs)
 
 export const SettingsScreen = () => {
-  const [selectedTab, setSelectedTab] = useState<ManageTabKeys>("manage_business")
+  const [selectedTab, setSelectedTab] = useState<ManageTabKeys>("manage_account")
 
   const renderCategories = ({ item }: { item: ManageTab }) => {
     const selected = selectedTab === item

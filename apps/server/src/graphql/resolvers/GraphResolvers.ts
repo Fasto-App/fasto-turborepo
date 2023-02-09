@@ -91,7 +91,7 @@ export const resolvers = {
     users: TabResolver.getUsersByTabID,
   },
   User: {
-    business: UserResolver.getBusinessByUser,
+    businesses: UserResolver.getBusinessByUser,
     // orders: getAllOpenOrdersByTabID,
   },
   Menu: {

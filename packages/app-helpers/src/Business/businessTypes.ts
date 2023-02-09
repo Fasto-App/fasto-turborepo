@@ -96,3 +96,41 @@ export const createAccountSchema = z.object({
   }
   return data;
 })
+
+
+export const accountInformationFormSchema = z.object({
+  name: z.string().trim().min(3, { message: 'Name Required' })
+    .max(50, { message: 'Name too long' }),
+  email: z.string().trim().min(4, { message: 'Email Required' }),
+  oldPassword: z.string().optional(),
+  newPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional().or(z.literal('')),
+  newPasswordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+  if (data.newPassword !== data.newPasswordConfirmation) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Passwords do not match',
+      path: ['newPasswordConfirmation'],
+    });
+  }
+
+  if (data.oldPassword && !data.newPassword) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'New password required',
+      path: ['newPassword'],
+    });
+  }
+
+  if (data.newPassword && !data.oldPassword) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Old password required',
+      path: ['oldPassword'],
+    });
+  }
+
+  return data;
+})
+
+export type AccountInformation = z.infer<typeof accountInformationFormSchema>

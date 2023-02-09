@@ -7,13 +7,14 @@ export async function tokenSigning(id: string, email: string, business?: string)
   return await new jose.SignJWT({ _id: id, email, business })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('1h')
+    .setExpirationTime('24h')
     .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 
 export const getUserFromToken = async (token: string, tokenSecret: string) => {
   // TODO token should be loaded here, not passed as a function
   if (!token || !tokenSecret) {
+    console.log("🚯 No Token: Limited Access");
     return null
   }
 
@@ -30,8 +31,8 @@ export const getUserFromToken = async (token: string, tokenSecret: string) => {
 
   } catch (error) {
 
-    console.log("🚯 Token error: User Token INVALID");
-    return null
+    console.log("🚯 Token error: INVALID Token");
+    throw new Error("🚯 Token error: INVALID Token");
   }
 }
 const emailSchema = z.string().email();
