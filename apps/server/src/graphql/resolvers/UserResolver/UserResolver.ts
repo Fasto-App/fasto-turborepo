@@ -12,14 +12,14 @@ import { Context } from "../types";
 import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
-import { CreateUserInput, UpdateUserInput } from "./types";
-import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema } from "app-helpers";
+import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
 import {
   sendWelcomeEmail,
   sendResetPasswordEmail,
   sendEployeeEmail,
 } from "../../../email-tool";
+import { uploadFileS3Bucket } from "../../../s3/s3";
 
 const hashPassword = (password: string) => {
   const salt = bcrypt.genSaltSync(10);
@@ -218,41 +218,32 @@ export const deleteUser = async (_parent: any, { input }: { input: string }, { d
 
 //TODO: when a new email is created, a new token should be generated
 export const updateUserInformation = async (_parent: any,
-  { input }: { input: UpdateUserInput },
+  { input }: { input: AccountInformation & { picture: any } },
   { db, user }: Context) => {
-
-  if (input?._id && input.password) {
-
-    const hashedPassword = hashPassword(input.password)
-
-    const updatedUser = await UserModel(db).findByIdAndUpdate(input._id, {
-      password: hashedPassword
-    }, { new: true, runValidators: true })
-
-    if (!updatedUser) throw new Error("Error finding user");
-
-    const allBusiness = typedKeys(updatedUser.businesses)
-    const businessId = allBusiness.length ? allBusiness[0] : undefined;
-
-    const token = await tokenSigning(updatedUser._id, updatedUser.email as string, businessId);
-
-    return ({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      token,
-    });
-  }
 
   if (!user) throw new Error("User not found.");
 
-  const updatedUser = await UserModel(db).findByIdAndUpdate(user._id, {
-    name: input.name,
-    email: input.email,
-    // password: input.password
-  }, { new: true, runValidators: true })
+  const User = UserModel(db)
+  const foundUser = await User.findById(user._id);
 
-  return updatedUser
+  if (input.picture) {
+    const file = await uploadFileS3Bucket(input.picture)
+
+    foundUser?.set({ picture: file.Location })
+  }
+
+  if (input.newPassword && input.oldPassword) {
+    const isPasswordMatch = await bcrypt.compare(input.oldPassword, foundUser?.password as string);
+    const hashedPassword = hashPassword(input.newPassword)
+
+    if (!isPasswordMatch) throw new Error("User not found")
+
+    foundUser?.set({ password: hashedPassword })
+  }
+
+  return await foundUser?.set({
+    name: input.name,
+  }).save()
 }
 
 // recover password

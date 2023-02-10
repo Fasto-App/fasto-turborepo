@@ -5,7 +5,7 @@ import { AiOutlineCloudDownload } from 'react-icons/ai';
 import Image from 'next/image'
 
 type CustomInputProps = {
-  src?: string;
+  src?: string | null;
   name: string;
   label: string;
   errorMessage?: string;
@@ -162,6 +162,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                   <Input
                     {...field}
                     type={type}
+                    isDisabled={isDisabled}
                     value={formatValue ? formatValue(field.value) : field.value ?? ""}
                     placeholder={placeholder}
                     InputRightElement={rightElement}

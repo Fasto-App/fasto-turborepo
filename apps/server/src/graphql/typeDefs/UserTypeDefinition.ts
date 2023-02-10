@@ -40,12 +40,12 @@ export const UserTypeDefinition = gql`
   }
 
   input UpdateUserInput {
-    name: String
-    email: String
-    password: String
-    privileges: UserPrivileges
-    passwordConfirmation: String
-    _id: ID
+    name: String!
+    email: String!
+    picture: Upload
+    oldPassword: String
+    newPassword: String
+    newPasswordConfirmation: String
   }
 
   input RequestUserAccountInput{

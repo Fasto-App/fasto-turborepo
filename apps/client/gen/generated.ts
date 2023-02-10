@@ -663,12 +663,12 @@ export type UpdateTabInput = {
 };
 
 export type UpdateUserInput = {
-  _id?: InputMaybe<Scalars['ID']>;
-  email?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  password?: InputMaybe<Scalars['String']>;
-  passwordConfirmation?: InputMaybe<Scalars['String']>;
-  privileges?: InputMaybe<UserPrivileges>;
+  email: Scalars['String'];
+  name: Scalars['String'];
+  newPassword?: InputMaybe<Scalars['String']>;
+  newPasswordConfirmation?: InputMaybe<Scalars['String']>;
+  oldPassword?: InputMaybe<Scalars['String']>;
+  picture?: InputMaybe<Scalars['Upload']>;
 };
 
 export type User = {
@@ -899,7 +899,7 @@ export type UpdateUserInformationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', token: string, email: string, name: string, _id: string } };
+export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privileges: Array<UserPrivileges | null> }> } };
 
 export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1961,10 +1961,14 @@ export type RequestUserAccountCreationMutationOptions = Apollo.BaseMutationOptio
 export const UpdateUserInformationDocument = gql`
     mutation UpdateUserInformation($input: UpdateUserInput!) {
   updateUserInformation(input: $input) {
-    token
+    _id
     email
     name
-    _id
+    picture
+    businesses {
+      business
+      privileges
+    }
   }
 }
     `;

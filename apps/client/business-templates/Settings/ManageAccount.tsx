@@ -7,16 +7,12 @@ import { useManageAccountFormHook } from "./hooks"
 import { useUploadFileHook } from "../../hooks"
 import { ControlledInput } from "../../components/ControlledForm"
 import { DevTool } from "@hookform/devtools"
-import { useGetUserInformationQuery } from "../../gen/generated"
+import { useGetUserInformationQuery, useUpdateUserInformationMutation } from "../../gen/generated"
 import { AccountInformation } from "app-helpers"
 
 export const ManageAccount = () => {
-  // All users have names, get the name from the user object
-  // QUERY: Get the user's name, email, and password
-
   const { data } = useGetUserInformationQuery({
     onCompleted: (data) => {
-      console.log("data", data)
       setValue("name", data?.getUserInformation?.name || "")
       setValue("email", data?.getUserInformation?.email || "")
     }
@@ -30,12 +26,21 @@ export const ManageAccount = () => {
   } = useManageAccountFormHook(data?.getUserInformation)
 
   const { imageFile, imageSrc, handleFileOnChange } = useUploadFileHook()
+  const [updateUserInformation, { loading }] = useUpdateUserInformationMutation()
 
-  const handleSaveAccountInfo = (values: AccountInformation) => {
-
-    console.log("imageFile", imageFile)
-    console.log("values", values)
-    alert(JSON.stringify(values))
+  const handleSaveAccountInfo = async (values: AccountInformation) => {
+    await updateUserInformation({
+      variables: {
+        input: {
+          name: values.name,
+          email: values.email,
+          oldPassword: values.oldPassword,
+          newPassword: values.newPassword,
+          newPasswordConfirmation: values.newPasswordConfirmation,
+          picture: imageFile
+        }
+      }
+    })
   }
 
   return (
@@ -49,18 +54,25 @@ export const ManageAccount = () => {
       <ControlledInput
         {...uploadPicture}
         handleOnChange={handleFileOnChange}
-        src={imageSrc}
+        src={imageSrc || data?.getUserInformation?.picture}
         control={control}
       />
       <Box>
         <HStack alignItems="center" space={2} justifyContent="end">
-          <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
+          <Button
+            w={"100"}
+            variant={"subtle"}
+            onPress={() => console.log("Cancel")}
+            isLoading={loading}
+          >
             {texts.cancel}
           </Button>
           <Button
             w={"100"}
             colorScheme="tertiary"
-            onPress={handleSubmit(handleSaveAccountInfo)}>{texts.save}
+            onPress={handleSubmit(handleSaveAccountInfo)}
+            isLoading={loading}
+          >{texts.save}
           </Button>
         </HStack>
       </Box>

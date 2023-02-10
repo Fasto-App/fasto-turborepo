@@ -10,13 +10,3 @@ export const CreateUser = z.object({
 });
 
 export type CreateUserInput = z.infer<typeof CreateUser>;
-
-export const UpdateUser = z.object({
-  _id: z.string().optional(),
-  name: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  passwordConfirmation: z.string().optional(),
-});
-
-export type UpdateUserInput = z.infer<typeof UpdateUser>;

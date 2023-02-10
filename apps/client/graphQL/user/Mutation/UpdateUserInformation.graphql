@@ -1,8 +1,12 @@
 mutation UpdateUserInformation($input: UpdateUserInput!) {
 	updateUserInformation(input: $input) {
-		token
+		_id
 		email
 		name
-		_id
+		picture
+		businesses {
+			business
+			privileges
+		}
 	}
 }
