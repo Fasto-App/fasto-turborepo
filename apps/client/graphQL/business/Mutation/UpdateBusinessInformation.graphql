@@ -1,0 +1,8 @@
+mutation UpdateBusinessInformation($input: UpdateBusinessInfoInput!) {
+	updateBusinessInformation(input: $input) {
+		name
+		picture
+		description
+		_id
+	}
+}

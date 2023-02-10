@@ -2,18 +2,18 @@ import { gql } from "apollo-server-express";
 
 export const BusinessTypeDefinition = gql`
   extend type Query {
-    getBusiness: Business!
+    getBusinessInformation: Business!
     getAllBusinessByUser: [Business]
     getAllBusiness: [Business]
     getBusinessLocation: Address
   }
 
   extend type Mutation {
-    createBusiness(input: BusinessInput): CreateBusinessPayload
-    updateBusiness(input: UpdateBusinessInput): Business
+    createBusiness(input: BusinessInput!): CreateBusinessPayload
+    updateBusinessInformation(input: UpdateBusinessInfoInput): Business!
     deleteBusiness(businessID: ID!): DeleteBusinessPayload
     updateBusinessToken(input: String): String
-    updateBusinessLocation(input: AddressInput): Business
+    updateBusinessLocation(input: AddressInput!): Business
   }
 
   input BusinessInput {
@@ -57,6 +57,7 @@ export const BusinessTypeDefinition = gql`
     _id: ID!
     user: ID
     name: String!
+    description: String
     email: String!
     website: String!
     price_range: String
@@ -66,7 +67,7 @@ export const BusinessTypeDefinition = gql`
     categories: [Category!]!
     products: [Product!]!
     employees: [String]!
-    hoursOfOperation: HoursOfOperation
+    picture: String
   }
 
   type HoursOfOperation {
@@ -88,9 +89,10 @@ export const BusinessTypeDefinition = gql`
     message: String
   }
 
-  input UpdateBusinessInput {
-  _id: ID!
-  business: BusinessInput!
-}
+  input UpdateBusinessInfoInput {
+    name: String!
+    description: String
+    picture: Upload
+  }
 
 `

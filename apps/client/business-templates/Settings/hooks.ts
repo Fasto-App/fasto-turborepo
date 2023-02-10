@@ -1,8 +1,37 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AccountInformation, accountInformationFormSchema, businessLocationSchema, businessLocationSchemaInput } from 'app-helpers';
+import { AccountInformation, accountInformationFormSchema, businessInformationSchema, businessLocationSchema, businessLocationSchemaInput, employeeFormSchema, EmployeeInfo } from 'app-helpers';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { GetBusinessLocationQuery, GetUserInformationQuery } from '../../gen/generated';
+import { GetBusinessLocationQuery, GetUserInformationQuery, GetBusinessInformationQuery } from '../../gen/generated';
+
+export const useManageBusinessFormHook = (data?: GetBusinessInformationQuery["getBusinessInformation"] | null) => {
+
+  const {
+    control,
+    formState,
+    handleSubmit,
+    reset,
+    setValue
+  } = useForm({
+    resolver: zodResolver(businessInformationSchema),
+    defaultValues: {
+      name: data?.name ?? "",
+      description: data?.description ?? "",
+      // website: data?.website ?? "",
+      // phone: data?.phone ?? "",
+      picture: data?.picture ?? "",
+    },
+  })
+
+  return {
+    control,
+    formState,
+    handleSubmit,
+    reset,
+    setValue
+  }
+
+}
 
 export const useManageLocationFormHook = (data?: GetBusinessLocationQuery["getBusinessLocation"] | null) => {
   const {
@@ -58,16 +87,7 @@ export const useManageAccountFormHook = (data?: GetUserInformationQuery["getUser
 }
 
 
-const employeeFormSchema = z.object({
-  name: z.string().trim().min(3, { message: 'Name Required' })
-    .max(50, { message: 'Name too long' }),
-  role: z.string().trim().min(4, { message: 'Role Required' }),
-  email: z.string().email().min(4, { message: 'Email Required' }),
-  phone: z.string().optional(),
-  picture: z.string().optional(),
-})
 
-export type EmployeeInfo = z.infer<typeof employeeFormSchema>
 
 export const useManageEmployeeFormHook = () => {
   const {

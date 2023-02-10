@@ -30,7 +30,6 @@ export const ManageLocationConfig: SideBySideInputConfig = {
       name: "state",
       label: "State",
       isRequired: true,
-      isDisabled: true,
     }
   }, {
     country: {
@@ -74,15 +73,17 @@ export const ManageAccountConfig: RegularInputConfig = {
 }
 
 export const ManageBusinessConfig: RegularInputConfig = {
-  businessName: {
-    name: "businessName",
+  name: {
+    name: "name",
     label: "Business Name",
     isRequired: true,
+    placeholder: "Enter Business Name",
   },
   description: {
     name: "description",
     label: "Description",
     inputType: "TextArea",
+    placeholder: "Enter Description",
   },
 }
 

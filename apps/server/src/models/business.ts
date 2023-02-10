@@ -14,6 +14,12 @@ export class Business {
     @prop({ required: true })
     public name!: string;
 
+    @prop()
+    public description?: string;
+
+    @prop()
+    public picture?: string;
+
     @prop({ required: true })
     public email!: string;
 
@@ -26,12 +32,14 @@ export class Business {
     @prop({ ref: Address })
     public address?: Ref<Address>;
 
+    //TODO: How are we representing this?
     // @prop()
     // public hoursOfOperation?: HousOfOperationType;
 
     @prop({ ref: () => Product, default: [] })
     public products!: Ref<Product>[];
 
+    // FIX: Next time add documentation if you dont understand what this is
     @prop({
         ref: Category,
         default: [],
