@@ -1,6 +1,6 @@
 import { Connection } from "mongoose";
 import { MenuModel, ProductModel, CategoryModel, Section, Product } from "../../../models";
-import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMenuInput, UpdateMenuInput } from "./types";
 
@@ -22,7 +22,7 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
         }))
 
     } catch {
-        throw new ApolloExtendedError('Error creating menu', 500);
+        throw ApolloError('InternalServerError');
     }
 }
 
@@ -60,7 +60,7 @@ const updateMenuInfo = async (_parent: any, args: { input: UpdateMenuInfo }, { d
 
         return menu
     } catch {
-        throw new ApolloExtendedError('Error updating menu. Item was not found.', 500);
+        throw ApolloError('InternalServerError');
     }
 }
 
@@ -88,13 +88,13 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
         if (!section.category) throw Error('Section category is required');
         // find if category exists
         const category = await Category.findOne({ _id: section.category });
-        if (!category?._id) throw new ApolloExtendedError('BAD USER DATA: Category not found when updating menu', 403);
+        if (!category?._id) throw ApolloError('BadRequest', "BAD USER DATA: Category not found when updating menu");
 
         // looks for an array of products and see if they all exist
         if (section.products?.length) {
             const products = await Product.find({ _id: { $in: section.products } })
             if (products.length !== section.products.length) {
-                throw new ApolloExtendedError('BAD USER DATA: Product not found when updating menu', 403)
+                throw ApolloError("BadRequest", 'BAD USER DATA: Product not found when updating menu')
             };
 
             return ({
@@ -133,13 +133,13 @@ const deleteMenu = async (_parent: any, args: { id: string }, { db, user, busine
     try {
         const menu = await Menu.findOne({ _id: args.id });
         if (!menu) {
-            throw new ApolloExtendedError('Menu not found. Make sure the id is correct.', 403)
+            throw ApolloError('BadRequest', "Menu not found. Make sure the id is correct.")
         };
 
         await menu.remove();
         return menu;
     } catch {
-        throw new ApolloExtendedError('Menu not found. Make sure the id is correct.', 403)
+        throw ApolloError("BadRequest", "Menu not found. Make sure the id is correct.")
     }
 }
 

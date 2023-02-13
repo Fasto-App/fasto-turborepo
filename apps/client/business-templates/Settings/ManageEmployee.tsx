@@ -2,11 +2,12 @@ import React, { useMemo, useState, } from "react"
 import { Box, Button, Heading, ScrollView, Text, VStack } from "native-base"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
-import { EmployeeInfo, useManageEmployeeFormHook } from "./hooks"
+import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
 import { texts } from "./texts"
 import { AddMoreButton, SmallAddMoreButton } from "../../components/atoms/AddMoreButton"
 import { ProductTile } from "../../components/Product/Product"
+import { EmployeeInfo } from "app-helpers"
 
 const ManageEmployeeModal = ({
   isModalOpen, setIsModalOpen }:

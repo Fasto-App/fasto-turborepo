@@ -1,10 +1,11 @@
 import { Table, TableModel } from "../../../models/table";
 import { BusinessModel } from "../../../models/business";
 import { Connection } from "mongoose";
-import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { SpaceModel } from "../../../models/space";
 import { TabModel } from "../../../models/tab";
 import { TabStatus } from "../../../models/types";
+import { Context } from "../types";
 
 const createTable = async (
   parent: any,
@@ -22,10 +23,10 @@ const createTable = async (
   const spaceByID = await SpaceModel(db).findById(input.space)
   const allTables = await Table.find({ space: spaceByID?._id })
 
-  if (!businessByID) throw new ApolloExtendedError('Business not found.')
+  if (!businessByID) throw ApolloError('NotFound')
 
   if (!spaceByID) {
-    throw new ApolloExtendedError('Please, add a Space first.', 401)
+    throw ApolloError('BadRequest', "Space not found.")
   }
 
   const table = new Table({
@@ -46,11 +47,10 @@ export const getTablesFromSpace = async (
 }
 
 // delete table by id
-const deleteTable = async (parent: any, args: any, context: any) => {
+const deleteTable = async (parent: any, args: any, { db, business }: Context) => {
   // make sure the business exists and I woun it
-  const { db, business } = context;
   const businessByID = await BusinessModel(db).findById(business)
-  if (!businessByID) throw new ApolloExtendedError('Business not found.')
+  if (!businessByID) throw ApolloError('NotFound')
 
   // get the table by id and delete it
   // id will be passed as args.id

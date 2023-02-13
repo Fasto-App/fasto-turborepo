@@ -69,12 +69,90 @@ export type menuSchemaInput = z.infer<typeof menuSchema>
 export const resetPasswordSchema = z.object({
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
   passwordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  token: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.password !== data.passwordConfirmation) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Passwords do not match',
+      path: ['passwordConfirmation'],
+    });
+  }
+  return data;
 });
 
-export type resetPasswordSchemaInput = z.infer<typeof resetPasswordSchema>
+export type ResetPasswordSchemaInput = z.infer<typeof resetPasswordSchema>
 
 export const signUpSchema = z.object({
   email: z.string().email({ message: 'Invalid email' }),
 });
 
 export type SignUpSchemaInput = z.infer<typeof signUpSchema>
+
+export type CreateAccountField = z.infer<typeof createAccountSchema>
+
+export const createAccountSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(3).max(50),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }).max(50),
+  passwordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }).max(50),
+}).superRefine((data, ctx) => {
+  if (data.password !== data.passwordConfirmation) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Passwords do not match',
+      path: ['passwordConfirmation'],
+    });
+  }
+  return data;
+})
+
+
+export const accountInformationFormSchema = z.object({
+  name: z.string().trim().min(3, { message: 'Name Required' })
+    .max(50, { message: 'Name too long' }),
+  email: z.string().trim().min(4, { message: 'Email Required' }),
+  oldPassword: z.string().optional(),
+  newPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional().or(z.literal('')),
+  newPasswordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+  if (data.newPassword !== data.newPasswordConfirmation) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Passwords do not match',
+      path: ['newPasswordConfirmation'],
+    });
+  }
+
+  if (data.oldPassword && !data.newPassword) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'New password required',
+      path: ['newPassword'],
+    });
+  }
+
+  if (data.newPassword && !data.oldPassword) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Old password required',
+      path: ['oldPassword'],
+    });
+  }
+
+  return data;
+})
+
+export type AccountInformation = z.infer<typeof accountInformationFormSchema>
+
+export const employeeFormSchema = z.object({
+  name: z.string().trim().min(3, { message: 'Name Required' })
+    .max(50, { message: 'Name too long' }),
+  role: z.string().trim().min(4, { message: 'Role Required' }),
+  email: z.string().email().min(4, { message: 'Email Required' }),
+  phone: z.string().optional(),
+  picture: z.string().optional(),
+})
+
+export type EmployeeInfo = z.infer<typeof employeeFormSchema>
+

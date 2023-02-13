@@ -13,11 +13,12 @@ export const UserTypeDefinition = gql`
   extend type Mutation {
     requestUserAccountCreation(input: RequestUserAccountInput): AccountCreationResponse!
     createUser(input: UserInput): User!
-    postUserLogin(input: loginInput!): User!
+    postUserLogin(input: LoginInput!): User!
     updateUserInformation(input: UpdateUserInput!): User!
     recoverPassword(input: String!): RequestResponseOK
     deleteUser: RequestResponseOK!
     addEmployeeToBusiness(input: AddEmployeeInput!): User!
+    resetPassword(input: ResetPasswordInput!): User!
   }
 
   type AccountCreationResponse {
@@ -60,10 +61,17 @@ export const UserTypeDefinition = gql`
     business: [BusinessPrivileges]!
   }
 
-  input loginInput {
+  input LoginInput {
     email: String!
     password: String!
   }
+
+  input ResetPasswordInput {
+    password: String!
+    passwordConfirmation: String!
+    token: String!
+  }
+  
 
   enum UserPrivileges {
     ADMIN

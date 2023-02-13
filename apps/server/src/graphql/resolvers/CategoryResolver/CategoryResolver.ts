@@ -1,7 +1,7 @@
 import { Ref } from "@typegoose/typegoose";
 import { Connection } from "mongoose"
 import { CategoryModel, Category, BusinessModel, ProductModel, IUserModel } from "../../../models";
-import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateCategoryInput, UpdateCategoryInput } from "./types";
 
@@ -23,37 +23,34 @@ const isCategoryNameUnique = (categories: Ref<Category>[], uniqueNameToCompare: 
 }
 
 const createCategory = async (_parent: any, { input }: { input: CreateCategoryInput }, { db, user, business }: Context) => {
-
-
-    if (!user?._id) throw new ApolloExtendedError('User not found')
+    if (!business) throw ApolloError('Unauthorized')
 
     const Category = CategoryModel(db);
     const Business = BusinessModel(db)
     const businessByID = await Business.findById(business)
 
-    console.log('businessByID', businessByID)
+    if (!businessByID) throw ApolloError('NotFound')
 
-
-    if (!businessByID) throw new ApolloExtendedError('Business not found when creating a category')
     const categories = (await businessByID.populate('categories')).categories
 
     console.log('categories', categories)
 
     if (!isCategoryNameUnique(categories, input.name)) {
-        throw new ApolloExtendedError('Category already exists! Please, Try a different one.', 400)
+        throw ApolloError('BadRequest', "Category already exists! Please, Try a different one.")
     }
+
     let parentCategory;
     let subCategories;
 
     // if parentCategory is not null, I need to check if the parentCategory is in the businessByID
     if (input.parentCategory) {
         parentCategory = await Category.findById(input.parentCategory)
-        if (!parentCategory) throw new ApolloExtendedError('Parent category not found')
+        if (!parentCategory) throw ApolloError('NotFound', 'Parent category not found')
     }
 
     if (input.subCategories) {
         subCategories = await Category.find({ _id: { $in: input.subCategories } })
-        if (subCategories.length !== input.subCategories.length) throw new ApolloExtendedError('Subcategories not found')
+        if (subCategories.length !== input.subCategories.length) throw ApolloError('NotFound', 'One or more subcategories not found')
     }
 
     try {
@@ -76,7 +73,7 @@ const createCategory = async (_parent: any, { input }: { input: CreateCategoryIn
         }
 
         subCategories?.forEach(async subCategory => {
-            if (subCategory.parentCategory) throw new ApolloExtendedError('Subcategory already has a parent category')
+            if (subCategory.parentCategory) throw ApolloError('BadRequest')
             subCategory.parentCategory = savedCategory.id
             await subCategory.save()
         })
@@ -85,7 +82,7 @@ const createCategory = async (_parent: any, { input }: { input: CreateCategoryIn
         return savedCategory;
 
     } catch (err) {
-        throw new ApolloExtendedError(`Error creating category: ${err}`)
+        throw ApolloError(`InternalServerError`, `${err}`)
     }
 }
 
@@ -123,18 +120,16 @@ const getCategoryByID = async (_parent: any, { id }: { id: string }, { db }: Con
 // update category
 const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryInput }, { db, user, business }: Context) => {
 
-
-
-    if (!user?._id) throw new ApolloExtendedError('User Not Found.', 401)
+    if (!user?._id) throw ApolloError('Unauthorized')
 
     //  Find the categort first
     const Category = CategoryModel(db);
     const category = await Category.findOne({ _id: input._id });
-    if (!category) throw new ApolloExtendedError('Category not found')
+    if (!category) throw ApolloError('NotFound')
 
     // Find the business
     const businessByID = await BusinessModel(db).findById(business)
-    if (!businessByID) throw new ApolloExtendedError('Business not found when updating a category')
+    if (!businessByID) throw ApolloError('NotFound')
 
     let parentCategory;
     let subCategories;
@@ -144,7 +139,7 @@ const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryIn
     // then don't update it
     if (input.name) {
         const categories = (await businessByID.populate('categories')).categories
-        if (!isCategoryNameUnique(categories, input.name)) throw new ApolloExtendedError('Category already exists. Please, Try a different one.')
+        if (!isCategoryNameUnique(categories, input.name)) throw ApolloError('BadRequest')
     }
 
 
@@ -152,7 +147,7 @@ const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryIn
     // Check if this is working properly
     if (input.parentCategory) {
         const parentCategoryFound = await Category.findById(input.parentCategory)
-        if (!parentCategoryFound) throw new ApolloExtendedError('Parent category not found')
+        if (!parentCategoryFound) throw ApolloError('NotFound')
         parentCategory = parentCategoryFound
     }
 
@@ -160,13 +155,13 @@ const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryIn
     // Check if this is working properly
     if (input.subCategories) {
         const subCategoriesFound = await Category.find({ _id: { $in: input.subCategories } })
-        if (subCategoriesFound.length !== input.subCategories.length) throw new ApolloExtendedError('Subcategories not found')
+        if (subCategoriesFound.length !== input.subCategories.length) throw ApolloError('NotFound')
         subCategories = subCategoriesFound
     }
     // v2
     // Check if this is working properly
     subCategories?.forEach(async subCategory => {
-        if (subCategory.parentCategory) throw new ApolloExtendedError('Subcategory already has a parent category')
+        if (subCategory.parentCategory) throw ApolloError('BadRequest')
         subCategory.parentCategory = (input._id)
         await subCategory.save()
     })
@@ -179,7 +174,7 @@ const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryIn
         const savedCategory = await category.save();
         return savedCategory;
     } catch (err) {
-        throw new ApolloExtendedError(`Error updating category: ${err}`)
+        throw ApolloError("InternalServerError", `Error updating category: ${err}`)
     }
 }
 
@@ -188,11 +183,11 @@ const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryIn
 // delete category
 const deleteCategory = async (_parent: any, args: { id: string }, { db, business }: Context) => {
 
-    if (!business) throw new ApolloExtendedError('Business not found')
+    if (!business) throw ApolloError("NotFound")
     const Category = CategoryModel(db);
     const category = await Category.findById(args.id);
 
-    if (!category) throw new ApolloExtendedError('Category not found')
+    if (!category) throw ApolloError('NotFound')
 
     // if the category has products, delete them. or at least set them to null
     const products = await ProductModel(db).find({ category: category._id })
@@ -203,7 +198,7 @@ const deleteCategory = async (_parent: any, args: { id: string }, { db, business
         })
     }
 
-    if (category.parentCategory) throw new ApolloExtendedError('Category has a parent category')
+    if (category.parentCategory) throw ApolloError('BadRequest')
 
 
     await category.remove();
@@ -215,7 +210,7 @@ const linkCategoryToProducts = async (_parent: any,
     { input }: { input: LinkCategoryToProductInput },
     { db, user }: Context) => {
 
-    if (!user?._id) throw new ApolloExtendedError('User not found')
+    if (!user?._id) throw ApolloError('Unauthorized')
     // Get both the category and the product Models
     const Category = CategoryModel(db);
     const Product = ProductModel(db);
@@ -223,7 +218,7 @@ const linkCategoryToProducts = async (_parent: any,
 
     const { category, products } = input;
     const categoryByID = await Category.findById(category)
-    if (!categoryByID) throw new ApolloExtendedError('Category not found')
+    if (!categoryByID) throw ApolloError('NotFound')
 
     // loop through the croducts and create the array to prepare manupulation
     const productsToLink = products.map(async product => {
@@ -233,9 +228,9 @@ const linkCategoryToProducts = async (_parent: any,
 
     try {
         const productsToLinkArray = await Promise.all(productsToLink)
-        if (productsToLinkArray.length !== products.length) throw new ApolloExtendedError('ONE OR MORE PRODUCTS WERE NOT FOUND');
+        if (productsToLinkArray.length !== products.length) throw ApolloError('NotFound');
         productsToLinkArray.forEach(async product => {
-            if (!product) throw new ApolloExtendedError('Product not found WHEN LINKING TO CATEGORY')
+            if (!product) throw ApolloError('NotFound')
 
             categoryByID.products?.push(product._id)
             product.category = categoryByID._id

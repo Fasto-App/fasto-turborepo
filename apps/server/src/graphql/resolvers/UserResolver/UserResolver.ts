@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { User, UserModel } from "../../../models/user";
 import { SessionModel } from "../../../models/session";
 import {
+  getUserFromToken,
   tokenSigning,
   validateEmail,
   validatePassword,
@@ -12,10 +13,15 @@ import { Context } from "../types";
 import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
-import { CreateUserInput, UpdateUserInput } from "./types";
-import { PrivilegesType, typedKeys, SignUpSchemaInput } from "app-helpers";
+import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
-import { sendCourierEmail } from "../../../courier";
+import {
+  sendWelcomeEmail,
+  sendResetPasswordEmail,
+  sendEployeeEmail,
+} from "../../../email-tool";
+import { uploadFileS3Bucket } from "../../../s3/s3";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 
 const hashPassword = (password: string) => {
   const salt = bcrypt.genSaltSync(10);
@@ -142,17 +148,39 @@ export const createUser = async (_parent: any, { input }: { input: CreateUserInp
   }
 }
 
+export const resetPassword = async (_parent: any, { input: { password, token } }: { input: ResetPasswordSchemaInput }, { db }: { db: Connection }) => {
+
+  if (!token) throw ApolloError('BadRequest')
+
+  try {
+    const decodedToken = await getUserFromToken(token)
+    if (!decodedToken) throw new Error("Token not found");
+
+    const User = UserModel(db)
+    const user = await User.findOne({ email: decodedToken.email })
+
+    if (!user) throw new Error("User not found");
+
+    const hashedPassword = hashPassword(password)
+
+    user.password = hashedPassword
+
+    return await user.save()
+
+  } catch {
+    throw ApolloError('BadRequest')
+  }
+}
+
+
+
 // Enter credentials to get existing user
+// TODO: Add email verification from ZOD
 export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: Connection }) => {
-
-  console.log("postUserLogin", input)
-
-
-
   const { email, password } = input
 
   if (!validateEmail(email)) {
-    throw new Error("User not found");
+    throw ApolloError('BadRequest', 'Invalid email bitchass')
   }
 
   const User = UserModel(db)
@@ -166,29 +194,30 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] : undefined;
 
-  const token = tokenSigning(user._id, email, businessId);
-  const loginResponse = {
+  const token = await tokenSigning(user._id, email, businessId);
+
+  return ({
     _id: user._id,
     name: user.name,
-    email: user.email,
     token,
-  }
-
-  console.log("loginResponse", loginResponse)
-
-  return loginResponse;
+    email,
+  })
 }
 
 export const getUserByID = async (_parent: any, { userID }: { userID: string }, { db }: { db: Connection }) => {
   const user = await UserModel(db).findById(userID);
 
-  if (!user) return null
-  const token = tokenSigning(user._id, user.email as string);
+  console.log("getUserInformation", user)
+  const foundUser = await UserModel(db).findById(user);
+
+  if (!foundUser) return null
+
+  const token = tokenSigning(foundUser._id, foundUser.email as string);
 
   return ({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
+    _id: foundUser._id,
+    name: foundUser.name,
+    email: foundUser.email,
     token,
   });
 }
@@ -217,12 +246,10 @@ export const getAllUsers = async (_parent: any, _args: any, { db }: Context) => 
   return await User.find({})
 }
 
-// 
 export const deleteUser = async (_parent: any, { input }: { input: string }, { db, user }: Context) => {
   if (!user) throw new Error("User not found");
 
   const User = await UserModel(db).findOneAndDelete({ _id: user._id })
-
 
   return { ok: !!User }
 }
@@ -270,19 +297,19 @@ export const updateUserInformation = async (_parent: any,
 export const recoverPassword = async (_parent: any, { input }: { input: string }, { db }: Context) => {
 
   if (!validateEmail(input)) {
-    return { ok: false };
+    throw ApolloError('BadRequest')
   }
 
   const User = UserModel(db)
   const user = await User.findOne({ email: input })
 
-  if (!user) return { ok: false }
+  if (!user) throw ApolloError('NotFound')
 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] : undefined;
   const token = await tokenSigning(user._id, user.email as string, businessId);
 
-  if (!token) return { ok: false }
+  if (!token) throw ApolloError('InternalServerError')
 
   try {
 
