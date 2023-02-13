@@ -1,41 +1,37 @@
 import React from "react";
-import { VStack, HStack, Button } from "native-base"
+import { VStack, HStack, Button, } from "native-base"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { ManageLocationConfig } from "./Config"
-import { useManageBusinessFormHook, } from "./hooks"
+import { useManageLocationFormHook, } from "./hooks"
 import { texts } from "./texts"
 import { businessLocationSchemaInput } from "app-helpers";
 import { useGetBusinessLocationQuery, useUpdateBusinessLocationMutation } from "../../gen/generated";
 import { DevTool } from "@hookform/devtools";
 
 export const ManageBusinessLocation = () => {
+  const { data } = useGetBusinessLocationQuery({
+    onCompleted: (data) => {
+      setValue("streetAddress", data.getBusinessLocation?.streetAddress || "")
+      setValue("city", data.getBusinessLocation?.city || "")
+      setValue("stateOrProvince", data.getBusinessLocation?.stateOrProvince || "")
+      setValue("postalCode", data.getBusinessLocation?.postalCode || "")
+      setValue("country", data.getBusinessLocation?.country || "")
+      setValue("complement", data.getBusinessLocation?.complement || "")
+    }
+  })
+
   const {
     control,
     formState,
     handleSubmit,
-    reset
-  } = useManageBusinessFormHook()
+    setValue,
+  } = useManageLocationFormHook(data?.getBusinessLocation)
 
-  const { data } = useGetBusinessLocationQuery({
-    onCompleted: (data) => {
-
-      const locationData = data.getBusinessLocation
-      reset({
-        ...locationData,
-        complement: locationData?.complement ?? "",
-      })
-    }
-  })
-
-  const [updateBusinessLocation] = useUpdateBusinessLocationMutation({
+  const [updateBusinessLocation, { loading }] = useUpdateBusinessLocationMutation({
     refetchQueries: ["GetBusinessLocation"]
   })
 
-  console.log("Location Data", data)
-
   const handleSaveBusinessInfo = async (values: businessLocationSchemaInput) => {
-    console.log(values, "values")
-
     await updateBusinessLocation({
       variables: {
         input: values
@@ -51,14 +47,21 @@ export const ManageBusinessLocation = () => {
         formState={formState}
         Config={ManageLocationConfig}
       />
-      <HStack alignItems="center" space={2} justifyContent="end">
-        <Button w={"100"} variant={"subtle"} onPress={() => console.log("Cancel")}>
+      <HStack pt={4} alignItems="center" space={4} justifyContent="end">
+        <Button
+          w={"30%"}
+          variant={"subtle"}
+          onPress={() => console.log("Cancel")}
+          isLoading={loading}
+        >
           {texts.cancel}
         </Button>
         <Button
-          w={"100"}
+          w={"30%"}
           colorScheme="tertiary"
-          onPress={handleSubmit(handleSaveBusinessInfo)}>{texts.save}
+          onPress={handleSubmit(handleSaveBusinessInfo)}
+          isLoading={loading}
+        >{texts.save}
         </Button>
       </HStack>
     </VStack>

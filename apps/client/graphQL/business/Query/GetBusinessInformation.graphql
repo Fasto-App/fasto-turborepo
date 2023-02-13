@@ -1,0 +1,8 @@
+query GetBusinessInformation {
+	getBusinessInformation {
+		_id
+		name
+		description
+		picture
+	}
+}

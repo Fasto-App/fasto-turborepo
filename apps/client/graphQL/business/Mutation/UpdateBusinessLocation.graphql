@@ -1,4 +1,4 @@
-mutation UpdateBusinessLocation($input: AddressInput) {
+mutation UpdateBusinessLocation($input: AddressInput!) {
 	updateBusinessLocation(input: $input) {
 		address {
 			streetAddress

@@ -54,11 +54,12 @@ export type Business = {
   address?: Maybe<Address>;
   categories: Array<Category>;
   cuisine?: Maybe<Array<Scalars['String']>>;
+  description?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   employees: Array<Maybe<Scalars['String']>>;
-  hoursOfOperation?: Maybe<HoursOfOperation>;
   menus?: Maybe<Array<Menu>>;
   name: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
   price_range?: Maybe<Scalars['String']>;
   products: Array<Product>;
   user?: Maybe<Scalars['ID']>;
@@ -242,7 +243,7 @@ export type Mutation = {
   requestUserAccountCreation: AccountCreationResponse;
   resetPassword: User;
   updateAddress?: Maybe<Address>;
-  updateBusiness?: Maybe<Business>;
+  updateBusinessInformation: Business;
   updateBusinessLocation?: Maybe<Business>;
   updateBusinessToken?: Maybe<Scalars['String']>;
   updateCategory?: Maybe<Category>;
@@ -268,7 +269,7 @@ export type MutationCreateAddressArgs = {
 
 
 export type MutationCreateBusinessArgs = {
-  input?: InputMaybe<BusinessInput>;
+  input: BusinessInput;
 };
 
 
@@ -387,13 +388,13 @@ export type MutationUpdateAddressArgs = {
 };
 
 
-export type MutationUpdateBusinessArgs = {
-  input?: InputMaybe<UpdateBusinessInput>;
+export type MutationUpdateBusinessInformationArgs = {
+  input?: InputMaybe<UpdateBusinessInfoInput>;
 };
 
 
 export type MutationUpdateBusinessLocationArgs = {
-  input?: InputMaybe<AddressInput>;
+  input: AddressInput;
 };
 
 
@@ -496,7 +497,7 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
-  getBusiness: Business;
+  getBusinessInformation: Business;
   getBusinessLocation?: Maybe<Address>;
   getCategoryByID?: Maybe<Category>;
   getMenuByID: Menu;
@@ -506,7 +507,7 @@ export type Query = {
   getTabByID?: Maybe<Tab>;
   /** Returns a user based on the Bearer token */
   getToken?: Maybe<User>;
-  getUserByID?: Maybe<User>;
+  getUserInformation?: Maybe<User>;
 };
 
 
@@ -542,11 +543,6 @@ export type QueryGetProductByIdArgs = {
 
 export type QueryGetTabByIdArgs = {
   input: GetById;
-};
-
-
-export type QueryGetUserByIdArgs = {
-  userID?: InputMaybe<Scalars['ID']>;
 };
 
 export type RequestResponseOk = {
@@ -626,9 +622,10 @@ export type UpdateAddressInput = {
   streetAddress: Scalars['String'];
 };
 
-export type UpdateBusinessInput = {
-  _id: Scalars['ID'];
-  business: BusinessInput;
+export type UpdateBusinessInfoInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  picture?: InputMaybe<Scalars['Upload']>;
 };
 
 export type UpdateCategoryInput = {
@@ -685,20 +682,21 @@ export type UpdateTabInput = {
 };
 
 export type UpdateUserInput = {
-  _id?: InputMaybe<Scalars['ID']>;
-  email?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  password?: InputMaybe<Scalars['String']>;
-  passwordConfirmation?: InputMaybe<Scalars['String']>;
-  privileges?: InputMaybe<UserPrivileges>;
+  email: Scalars['String'];
+  name: Scalars['String'];
+  newPassword?: InputMaybe<Scalars['String']>;
+  newPasswordConfirmation?: InputMaybe<Scalars['String']>;
+  oldPassword?: InputMaybe<Scalars['String']>;
+  picture?: InputMaybe<Scalars['Upload']>;
 };
 
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
-  business: Array<Maybe<BusinessPrivileges>>;
+  businesses: Array<BusinessPrivileges>;
   email: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
   token: Scalars['String'];
 };
 
@@ -732,14 +730,24 @@ export type WorkingHoursInput = {
 };
 
 
-export type GetBusinessLocationQuery = { __typename?: 'Query', getBusinessLocation?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null };
+export type UpdateBusinessInformationMutation = { __typename?: 'Mutation', updateBusinessInformation: { __typename?: 'Business', name: string, picture?: string | null, description?: string | null, _id: string } };
 
 export type UpdateBusinessLocationMutationVariables = Exact<{
-  input?: InputMaybe<AddressInput>;
+  input: AddressInput;
 }>;
 
 
 export type UpdateBusinessLocationMutation = { __typename?: 'Mutation', updateBusinessLocation?: { __typename?: 'Business', address?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null } | null };
+
+export type GetBusinessInformationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null } };
+
+export type GetBusinessLocationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBusinessLocationQuery = { __typename?: 'Query', getBusinessLocation?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null };
 
 export type CreateCategoryMutationVariables = Exact<{
   input: CategoryInput;
@@ -880,12 +888,19 @@ export type CreateTableMutationVariables = Exact<{
 
 export type CreateTableMutation = { __typename?: 'Mutation', createTable: { __typename?: 'Table', space: string, _id: string } };
 
+export type CreateUserMutationVariables = Exact<{
+  input?: InputMaybe<UserInput>;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', _id: string, name: string, email: string, token: string } };
+
 export type PostUserLoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
 
 
-export type PostUserLoginMutation = { __typename?: 'Mutation', postUserLogin: { __typename?: 'User', name?: string | null, email: string, token: string } };
+export type PostUserLoginMutation = { __typename?: 'Mutation', postUserLogin: { __typename?: 'User', name: string, email: string, token: string } };
 
 export type RecoverPasswordMutationVariables = Exact<{
   input: Scalars['String'];
@@ -913,9 +928,132 @@ export type UpdateUserInformationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', token: string, email: string, name?: string | null, _id: string } };
+export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privileges: Array<UserPrivileges | null> }> } };
+
+export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
+export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privileges: Array<UserPrivileges | null> }> } | null };
+
+
+export const UpdateBusinessInformationDocument = gql`
+    mutation UpdateBusinessInformation($input: UpdateBusinessInfoInput!) {
+  updateBusinessInformation(input: $input) {
+    name
+    picture
+    description
+    _id
+  }
+}
+    `;
+export type UpdateBusinessInformationMutationFn = Apollo.MutationFunction<UpdateBusinessInformationMutation, UpdateBusinessInformationMutationVariables>;
+
+/**
+ * __useUpdateBusinessInformationMutation__
+ *
+ * To run a mutation, you first call `useUpdateBusinessInformationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBusinessInformationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBusinessInformationMutation, { data, loading, error }] = useUpdateBusinessInformationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetBusinessLocationQuery(baseOptions?: Apollo.QueryHookOptions<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>(GetBusinessLocationDocument, options);
+}
+export function useGetBusinessLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>(GetBusinessLocationDocument, options);
+}
+export type GetBusinessLocationQueryHookResult = ReturnType<typeof useGetBusinessLocationQuery>;
+export type GetBusinessLocationLazyQueryHookResult = ReturnType<typeof useGetBusinessLocationLazyQuery>;
+export type GetBusinessLocationQueryResult = Apollo.QueryResult<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>;
+export const UpdateBusinessLocationDocument = gql`
+    mutation UpdateBusinessLocation($input: AddressInput!) {
+  updateBusinessLocation(input: $input) {
+    address {
+      streetAddress
+      stateOrProvince
+      postalCode
+      country
+      complement
+      city
+      _id
+    }
+  }
+}
+    `;
+export type UpdateBusinessLocationMutationFn = Apollo.MutationFunction<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
+
+/**
+ * __useUpdateBusinessLocationMutation__
+ *
+ * To run a mutation, you first call `useUpdateBusinessLocationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBusinessLocationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBusinessLocationMutation, { data, loading, error }] = useUpdateBusinessLocationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateBusinessLocationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>(UpdateBusinessLocationDocument, options);
+}
+export type UpdateBusinessLocationMutationHookResult = ReturnType<typeof useUpdateBusinessLocationMutation>;
+export type UpdateBusinessLocationMutationResult = Apollo.MutationResult<UpdateBusinessLocationMutation>;
+export type UpdateBusinessLocationMutationOptions = Apollo.BaseMutationOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
+export const GetBusinessInformationDocument = gql`
+    query GetBusinessInformation {
+  getBusinessInformation {
+    _id
+    name
+    description
+    picture
+  }
+}
+    `;
+
+/**
+ * __useGetBusinessInformationQuery__
+ *
+ * To run a query within a React component, call `useGetBusinessInformationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBusinessInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBusinessInformationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBusinessInformationQuery(baseOptions?: Apollo.QueryHookOptions<GetBusinessInformationQuery, GetBusinessInformationQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetBusinessInformationQuery, GetBusinessInformationQueryVariables>(GetBusinessInformationDocument, options);
+}
+export function useGetBusinessInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBusinessInformationQuery, GetBusinessInformationQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetBusinessInformationQuery, GetBusinessInformationQueryVariables>(GetBusinessInformationDocument, options);
+}
+export type GetBusinessInformationQueryHookResult = ReturnType<typeof useGetBusinessInformationQuery>;
+export type GetBusinessInformationLazyQueryHookResult = ReturnType<typeof useGetBusinessInformationLazyQuery>;
+export type GetBusinessInformationQueryResult = Apollo.QueryResult<GetBusinessInformationQuery, GetBusinessInformationQueryVariables>;
 export const GetBusinessLocationDocument = gql`
     query GetBusinessLocation {
   getBusinessLocation {
@@ -956,47 +1094,6 @@ export function useGetBusinessLocationLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetBusinessLocationQueryHookResult = ReturnType<typeof useGetBusinessLocationQuery>;
 export type GetBusinessLocationLazyQueryHookResult = ReturnType<typeof useGetBusinessLocationLazyQuery>;
 export type GetBusinessLocationQueryResult = Apollo.QueryResult<GetBusinessLocationQuery, GetBusinessLocationQueryVariables>;
-export const UpdateBusinessLocationDocument = gql`
-    mutation UpdateBusinessLocation($input: AddressInput) {
-  updateBusinessLocation(input: $input) {
-    address {
-      streetAddress
-      stateOrProvince
-      postalCode
-      country
-      complement
-      city
-      _id
-    }
-  }
-}
-    `;
-export type UpdateBusinessLocationMutationFn = Apollo.MutationFunction<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
-
-/**
- * __useUpdateBusinessLocationMutation__
- *
- * To run a mutation, you first call `useUpdateBusinessLocationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateBusinessLocationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateBusinessLocationMutation, { data, loading, error }] = useUpdateBusinessLocationMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateBusinessLocationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>(UpdateBusinessLocationDocument, options);
-}
-export type UpdateBusinessLocationMutationHookResult = ReturnType<typeof useUpdateBusinessLocationMutation>;
-export type UpdateBusinessLocationMutationResult = Apollo.MutationResult<UpdateBusinessLocationMutation>;
-export type UpdateBusinessLocationMutationOptions = Apollo.BaseMutationOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
 export const CreateCategoryDocument = gql`
     mutation CreateCategory($input: CategoryInput!) {
   createCategory(input: $input) {
@@ -1829,6 +1926,42 @@ export function useCreateTableMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateTableMutationHookResult = ReturnType<typeof useCreateTableMutation>;
 export type CreateTableMutationResult = Apollo.MutationResult<CreateTableMutation>;
 export type CreateTableMutationOptions = Apollo.BaseMutationOptions<CreateTableMutation, CreateTableMutationVariables>;
+export const CreateUserDocument = gql`
+    mutation CreateUser($input: UserInput) {
+  createUser(input: $input) {
+    _id
+    name
+    email
+    token
+  }
+}
+    `;
+export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
+
+/**
+ * __useCreateUserMutation__
+ *
+ * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, options);
+}
+export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
+export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const PostUserLoginDocument = gql`
     mutation PostUserLogin($input: LoginInput!) {
   postUserLogin(input: $input) {
@@ -1969,10 +2102,14 @@ export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPassw
 export const UpdateUserInformationDocument = gql`
     mutation UpdateUserInformation($input: UpdateUserInput!) {
   updateUserInformation(input: $input) {
-    token
+    _id
     email
     name
-    _id
+    picture
+    businesses {
+      business
+      privileges
+    }
   }
 }
     `;
@@ -2002,3 +2139,44 @@ export function useUpdateUserInformationMutation(baseOptions?: Apollo.MutationHo
 export type UpdateUserInformationMutationHookResult = ReturnType<typeof useUpdateUserInformationMutation>;
 export type UpdateUserInformationMutationResult = Apollo.MutationResult<UpdateUserInformationMutation>;
 export type UpdateUserInformationMutationOptions = Apollo.BaseMutationOptions<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>;
+export const GetUserInformationDocument = gql`
+    query GetUserInformation {
+  getUserInformation {
+    _id
+    email
+    name
+    picture
+    businesses {
+      business
+      privileges
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserInformationQuery__
+ *
+ * To run a query within a React component, call `useGetUserInformationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserInformationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserInformationQuery(baseOptions?: Apollo.QueryHookOptions<GetUserInformationQuery, GetUserInformationQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetUserInformationQuery, GetUserInformationQueryVariables>(GetUserInformationDocument, options);
+}
+export function useGetUserInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserInformationQuery, GetUserInformationQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetUserInformationQuery, GetUserInformationQueryVariables>(GetUserInformationDocument, options);
+}
+export type GetUserInformationQueryHookResult = ReturnType<typeof useGetUserInformationQuery>;
+export type GetUserInformationLazyQueryHookResult = ReturnType<typeof useGetUserInformationLazyQuery>;
+export type GetUserInformationQueryResult = Apollo.QueryResult<GetUserInformationQuery, GetUserInformationQueryVariables>;

@@ -1,0 +1,12 @@
+query GetUserInformation {
+	getUserInformation {
+		_id
+		email
+		name
+		picture
+		businesses {
+			business
+			privileges
+		}
+	}
+}

@@ -8,10 +8,11 @@ import { ProductModel } from '../../../models/product';
 import { Context } from '../types';
 import { Privileges } from '../../../models/types';
 import {
+  businessInformationSchemaInput,
   businessLocationSchema,
   businessLocationSchemaInput,
-  typedKeys
 } from 'app-helpers';
+import { uploadFileS3Bucket } from '../../../s3/s3';
 
 
 //FIX: this should be a validation of the token, not the business id
@@ -36,7 +37,7 @@ const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection
   return await BusinessModel(db).find({})
 }
 
-const getBusiness = async (
+const getBusinessInformation = async (
   _parent: any,
   args: any,
   { db, business }: Context,
@@ -49,7 +50,6 @@ const createBusiness = async (_parent: any,
   { input }: { input: Business & { address?: Address } },
   context: { db: Connection, user: IUserModel }) => {
   const { db, user } = context;
-
 
   const Business = BusinessModel(db)
   const Address = AddressModel(db)
@@ -78,7 +78,6 @@ const createBusiness = async (_parent: any,
     })
 
     await savedBusiness.save();
-    const allBusiness = typedKeys(userContext.businesses)
     userContext.businesses = {
       ...userContext.businesses,
       [savedBusiness._id.toString()]: [Privileges.ADMIN]
@@ -115,22 +114,27 @@ const createBusiness = async (_parent: any,
   }
 };
 
-const updateBusiness = async (_parent: any, { input }: { input: Business & { id: string; address: Address } }, { db }: { db: Connection }) => {
-  // get the id, find the business and update its information
+const updateBusinessInformation = async (
+  _parent: any,
+  { input }: { input: businessInformationSchemaInput },
+  { db, business }: Context) => {
   const Business = BusinessModel(db)
-  const Address = AddressModel(db)
+  const foundBusines = await Business.findById(business)
 
-  const { id: businessID } = input
-  const updateBusiness = await Business.findByIdAndUpdate(businessID, {
+  if (!foundBusines) throw Error('Business not found')
+
+  if (input.picture) {
+    const file = await uploadFileS3Bucket(input.picture)
+
+    foundBusines.set({ picture: file.Location })
+  }
+
+  foundBusines.set({
     name: input.name,
-    phone: input.phone,
-    website: input.website,
-    email: input.email,
+    ...(input.description && { description: input.description }),
   })
 
-  if (!updateBusiness) throw Error('Business not found')
-
-  return updateBusiness
+  return await foundBusines.save()
 }
 
 const updateBusinessLocation = async (
@@ -227,14 +231,14 @@ const BusinessResolverMutation = {
   createBusiness,
   updateBusinessToken,
   deleteBusiness,
-  updateBusiness,
+  updateBusinessInformation,
   updateBusinessLocation,
 }
 const BusinessResolverQuery = {
   getBusinessLocation,
   getAllBusiness,
   getAllBusinessByUser,
-  getBusiness
+  getBusinessInformation
 }
 
 const BusinessResolver = {

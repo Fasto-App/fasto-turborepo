@@ -83,7 +83,7 @@ const WeeklySchedule = () => {
               <Switch
                 size="lg"
                 isChecked={daysOfTheWeek[day].isOpen}
-                onValueChange={(value) => togggleDay(day)}
+                onValueChange={() => togggleDay(day)}
               />
               <Text>
                 {daysOfTheWeek[day].isOpen ? texts.open : texts.close}

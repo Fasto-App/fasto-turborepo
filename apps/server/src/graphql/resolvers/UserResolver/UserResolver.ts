@@ -13,7 +13,7 @@ import { Context } from "../types";
 import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
-import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation } from "app-helpers";
+import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation, ResetPasswordSchemaInput } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
 import {
   sendWelcomeEmail,
@@ -67,56 +67,37 @@ export const requestUserAccountCreation = async (_parent: any,
 
     if (!token) throw new Error("Token not found");
 
-    console.log("FUCKING REQUESTING USER ACCOUNT CREATION")
-
-    const courierResponse = await sendCourierEmail({
-      template: "request-account-creation",
+    const courierResponse = await sendWelcomeEmail({
       email: input.email,
-      _id: newSession._id,
-      name: input.email,
       token,
     })
 
-    return courierResponse;
+    console.log("COURIER RESPONSE", courierResponse)
+
+    return courierResponse
   } catch (err) {
     throw new Error(`Could not send email ${err}`);
   }
 }
 
-export const createUser = async (_parent: any, { input }: { input: CreateUserInput }, { db }: { db: Connection }) => {
-
-  // TODO: user needs a valid token
-  // find a session with the email id. 
-  // if we the email is the same as the one from the DB, then move forward
-  const Session = SessionModel(db)
-  const Business = BusinessModel(db)
-  const findSession = await Session.findOne({ email: input.email })
-
-  if (!findSession) throw new UserInputError('Session not found. Check you email again or request a new access token.');
-
-  if (input.name.length < 3) {
-    throw new UserInputError('Name must be at least 3 characters long.');
-  }
-
-  if (!validateEmail(input.email)) {
-    throw new Error("Please, provide a valid email");
-  }
-
-  if (input.password !== input.passwordConfirmation) {
-    throw new UserInputError('Please, provide a valid email.');
-  }
-
-  if (!validatePassword(input.password)) {
-    throw new UserInputError('Password must be at least 8 characters long and contain letters and numbers.');
-  }
-
-  const hashedPassword = hashPassword(input.password)
-  const User = UserModel(db)
+export const createUser = async (_parent: any, { input }: { input: CreateAccountField }, { db }: { db: Connection }) => {
 
   try {
+    const validInput = createAccountSchema.parse(input)
+
+    const Session = SessionModel(db)
+    const Business = BusinessModel(db)
+    const findSession = await Session.findOne({ email: validInput.email })
+
+    if (!findSession) throw new UserInputError('Session not found. Check you email again or request a new access token.');
+
+
+    const hashedPassword = hashPassword(validInput.password)
+    const User = UserModel(db)
+
     const user = await User.create({
-      name: input.name,
-      email: input.email.toLowerCase(),
+      name: validInput.name,
+      email: validInput.email.toLowerCase(),
       password: hashedPassword,
     })
 
@@ -144,7 +125,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateUserInp
     });
 
   } catch (err) {
-    throw new Error("An error occurred while creating the user");
+    throw new Error(`${err}`);
   }
 }
 
@@ -204,8 +185,7 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
   })
 }
 
-export const getUserByID = async (_parent: any, { userID }: { userID: string }, { db }: { db: Connection }) => {
-  const user = await UserModel(db).findById(userID);
+export const getUserInformation = async (_parent: any, _args: any, { db, user }: Context) => {
 
   console.log("getUserInformation", user)
   const foundUser = await UserModel(db).findById(user);
@@ -218,6 +198,7 @@ export const getUserByID = async (_parent: any, { userID }: { userID: string }, 
     _id: foundUser._id,
     name: foundUser.name,
     email: foundUser.email,
+    picture: foundUser.picture,
     token,
   });
 }
@@ -256,41 +237,32 @@ export const deleteUser = async (_parent: any, { input }: { input: string }, { d
 
 //TODO: when a new email is created, a new token should be generated
 export const updateUserInformation = async (_parent: any,
-  { input }: { input: UpdateUserInput },
+  { input }: { input: AccountInformation & { picture: any } },
   { db, user }: Context) => {
-
-  if (input?._id && input.password) {
-
-    const hashedPassword = hashPassword(input.password)
-
-    const updatedUser = await UserModel(db).findByIdAndUpdate(input._id, {
-      password: hashedPassword
-    }, { new: true, runValidators: true })
-
-    if (!updatedUser) throw new Error("Error finding user");
-
-    const allBusiness = typedKeys(updatedUser.businesses)
-    const businessId = allBusiness.length ? allBusiness[0] : undefined;
-
-    const token = await tokenSigning(updatedUser._id, updatedUser.email as string, businessId);
-
-    return ({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      token,
-    });
-  }
 
   if (!user) throw new Error("User not found.");
 
-  const updatedUser = await UserModel(db).findByIdAndUpdate(user._id, {
-    name: input.name,
-    email: input.email,
-    // password: input.password
-  }, { new: true, runValidators: true })
+  const User = UserModel(db)
+  const foundUser = await User.findById(user._id);
 
-  return updatedUser
+  if (input.picture) {
+    const file = await uploadFileS3Bucket(input.picture)
+
+    foundUser?.set({ picture: file.Location })
+  }
+
+  if (input.newPassword && input.oldPassword) {
+    const isPasswordMatch = await bcrypt.compare(input.oldPassword, foundUser?.password as string);
+    const hashedPassword = hashPassword(input.newPassword)
+
+    if (!isPasswordMatch) throw new Error("User not found")
+
+    foundUser?.set({ password: hashedPassword })
+  }
+
+  return await foundUser?.set({
+    name: input.name,
+  }).save()
 }
 
 // recover password
@@ -313,8 +285,7 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
 
   try {
 
-    const courierResponse = await sendCourierEmail({
-      template: "reset-password",
+    const courierResponse = await sendResetPasswordEmail({
       email: user.email,
       token,
       name: user.name,
@@ -391,12 +362,10 @@ export const addEmployeeToBusiness = async (_parent: any, { input }: { input: Ad
 
     if (!token) throw new Error("Could not create token")
 
-    sendCourierEmail({
-      template: "reset-password",
-      email: newUser.email,
+    sendEployeeEmail({
       token,
+      email: newUser.email,
       name: newUser.name,
-      _id: newUser._id,
     })
 
     return newUser
@@ -431,7 +400,7 @@ const UserResolverMutation = {
   addEmployeeToBusiness,
 }
 const UserResolverQuery = {
-  getUserByID,
+  getUserInformation,
   getAllUsers,
   getToken,
 }

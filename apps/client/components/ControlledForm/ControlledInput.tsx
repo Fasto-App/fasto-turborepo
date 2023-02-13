@@ -5,7 +5,7 @@ import { AiOutlineCloudDownload } from 'react-icons/ai';
 import Image from 'next/image'
 
 type CustomInputProps = {
-  src?: string;
+  src?: string | null;
   name: string;
   label: string;
   errorMessage?: string;
@@ -15,6 +15,7 @@ type CustomInputProps = {
   formatValue?: (value: string) => string;
   formatOnChange?: (value: string, cb: (num: number) => void) => void;
   handleOnChange?: (e: SyntheticEvent) => void;
+  isDisabled?: boolean;
 }
 
 type InputType = "Input" | "TextArea" | "Select" | "File" | "Date"
@@ -38,6 +39,9 @@ export const ControlledInput = <T extends Record<string, string>>({
   formatValue,
   formatOnChange,
   handleOnChange,
+  type,
+  isDisabled
+
 }: ControlledFormInput<T>) => {
   return (
     <>
@@ -55,22 +59,6 @@ export const ControlledInput = <T extends Record<string, string>>({
           render={({ field }) => {
 
             switch (inputType) {
-              case "Input":
-                return (
-                  <Input
-                    value={formatValue ? formatValue(field.value) : field.value ?? ""}
-                    placeholder={placeholder}
-                    InputRightElement={rightElement}
-                    onChangeText={(value) => {
-                      if (formatOnChange) {
-                        formatOnChange(value, field.onChange)
-                        return
-                      }
-
-                      field.onChange(value)
-                    }}
-                  />
-                )
               case "TextArea":
                 return (
                   <TextArea
@@ -157,7 +145,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                             :
                             <Image
                               src={src}
-                              alt="Next.js logo"
+                              alt="alt"
                               layout={'fill'}
                               objectFit={'cover'}
                               style={{ borderRadius: "10", borderWidth: 1 }}
@@ -167,6 +155,26 @@ export const ControlledInput = <T extends Record<string, string>>({
                       </span>
                     </Box>
                   </label>
+                )
+              case "Input":
+              default:
+                return (
+                  <Input
+                    {...field}
+                    type={type}
+                    isDisabled={isDisabled}
+                    value={formatValue ? formatValue(field.value) : field.value ?? ""}
+                    placeholder={placeholder}
+                    InputRightElement={rightElement}
+                    onChangeText={(value) => {
+                      if (formatOnChange) {
+                        formatOnChange(value, field.onChange)
+                        return
+                      }
+
+                      field.onChange(value)
+                    }}
+                  />
                 )
             }
           }}

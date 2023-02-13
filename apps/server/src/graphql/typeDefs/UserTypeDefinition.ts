@@ -7,7 +7,7 @@ export const UserTypeDefinition = gql`
       """
     getToken: User
     getAllUsers: [User!]!
-    getUserByID(userID: ID): User
+    getUserInformation: User
   }
 
   extend type Mutation {
@@ -41,12 +41,12 @@ export const UserTypeDefinition = gql`
   }
 
   input UpdateUserInput {
-    name: String
-    email: String
-    password: String
-    privileges: UserPrivileges
-    passwordConfirmation: String
-    _id: ID
+    name: String!
+    email: String!
+    picture: Upload
+    oldPassword: String
+    newPassword: String
+    newPasswordConfirmation: String
   }
 
   input RequestUserAccountInput{
@@ -55,10 +55,11 @@ export const UserTypeDefinition = gql`
 
   type User {
     _id: ID!
-    name: String
+    name: String!
     email: String!
     token: String!
-    business: [BusinessPrivileges]!
+    picture: String
+    businesses: [BusinessPrivileges!]!
   }
 
   input LoginInput {

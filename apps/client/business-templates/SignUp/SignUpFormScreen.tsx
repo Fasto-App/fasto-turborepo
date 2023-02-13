@@ -72,7 +72,7 @@ export const SignUpFormScreen = () => {
         </FormControl>
         {formState.errors.email ? <Text color={"red.500"}>{"Provide a valid email."}</Text> :
           formState.errors.emailConfirmation ? <Text color={"red.500"}>{"Make sure both emails match."}</Text>
-            : error ? <Text color={"red.500"}>{"Something went wrong!."}</Text> : null}
+            : error ? <Text color={"red.500"}>{"Something went wrong!"}</Text> : null}
 
         <Button
           mt="2"
