@@ -129,39 +129,6 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
   }
 }
 
-export const resetPassword = (_parent: any, { input: { password, token } }: { input: ResetPasswordSchemaInput }, { db }: { db: Connection }) => {
-
-  // console.log("RESET PASSWORD", password, token)
-
-  // if (!token) throw ApolloError('BadRequest')
-
-  // try {
-  //   const decodedToken = await getUserFromToken(token)
-  //   if (!decodedToken) throw ApolloError("BadRequest", "Token Invalid");
-
-  //   const User = UserModel(db)
-  //   const user = await User.findOne({ email: decodedToken.email })
-
-  //   if (!user) throw new Error("User not found");
-
-  //   const hashedPassword = hashPassword(password)
-
-  //   user.password = hashedPassword
-  //   await user.save()
-
-  return ({
-    _id: "user._id,",
-    name: "user.name,",
-    email: "user.email,",
-    token,
-  })
-
-
-  // } catch {
-  //   throw ApolloError('BadRequest')
-  // // }
-}
-
 
 // Enter credentials to get existing user
 // TODO: Add email verification from ZOD
