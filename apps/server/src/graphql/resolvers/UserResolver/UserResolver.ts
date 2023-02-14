@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { User, UserModel } from "../../../models/user";
 import { SessionModel } from "../../../models/session";
 import {
+  getUserFromToken,
   tokenSigning,
   validateEmail,
   validatePassword,
@@ -12,7 +13,7 @@ import { Context } from "../types";
 import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { Privileges } from "../../../models/types";
-import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation } from "app-helpers";
+import { PrivilegesType, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation, ResetPasswordSchemaInput } from "app-helpers";
 import type { Ref } from '@typegoose/typegoose';
 import {
   sendWelcomeEmail,
@@ -20,6 +21,7 @@ import {
   sendEployeeEmail,
 } from "../../../email-tool";
 import { uploadFileS3Bucket } from "../../../s3/s3";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 
 const hashPassword = (password: string) => {
   const salt = bcrypt.genSaltSync(10);
@@ -127,17 +129,14 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
   }
 }
 
+
 // Enter credentials to get existing user
+// TODO: Add email verification from ZOD
 export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: Connection }) => {
-
-  console.log("postUserLogin", input)
-
-
-
   const { email, password } = input
 
   if (!validateEmail(email)) {
-    throw new Error("User not found");
+    throw ApolloError('BadRequest', 'Invalid email bitchass')
   }
 
   const User = UserModel(db)
@@ -151,17 +150,14 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] : undefined;
 
-  const token = tokenSigning(user._id, email, businessId);
-  const loginResponse = {
+  const token = await tokenSigning(user._id, email, businessId);
+
+  return ({
     _id: user._id,
     name: user.name,
-    email: user.email,
     token,
-  }
-
-  console.log("loginResponse", loginResponse)
-
-  return loginResponse;
+    email,
+  })
 }
 
 export const getUserInformation = async (_parent: any, _args: any, { db, user }: Context) => {
@@ -170,6 +166,7 @@ export const getUserInformation = async (_parent: any, _args: any, { db, user }:
   const foundUser = await UserModel(db).findById(user);
 
   if (!foundUser) return null
+
   const token = tokenSigning(foundUser._id, foundUser.email as string);
 
   return ({
@@ -177,7 +174,6 @@ export const getUserInformation = async (_parent: any, _args: any, { db, user }:
     name: foundUser.name,
     email: foundUser.email,
     picture: foundUser.picture,
-    businesses: foundUser.businesses,
     token,
   });
 }
@@ -206,12 +202,10 @@ export const getAllUsers = async (_parent: any, _args: any, { db }: Context) => 
   return await User.find({})
 }
 
-// 
 export const deleteUser = async (_parent: any, { input }: { input: string }, { db, user }: Context) => {
   if (!user) throw new Error("User not found");
 
   const User = await UserModel(db).findOneAndDelete({ _id: user._id })
-
 
   return { ok: !!User }
 }
@@ -250,19 +244,19 @@ export const updateUserInformation = async (_parent: any,
 export const recoverPassword = async (_parent: any, { input }: { input: string }, { db }: Context) => {
 
   if (!validateEmail(input)) {
-    return { ok: false };
+    throw ApolloError('BadRequest')
   }
 
   const User = UserModel(db)
   const user = await User.findOne({ email: input })
 
-  if (!user) return { ok: false }
+  if (!user) throw ApolloError('NotFound')
 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] : undefined;
-  const token = await tokenSigning(user._id, user.email as string, businessId);
+  const token = await tokenSigning(user._id, user.email, businessId);
 
-  if (!token) return { ok: false }
+  if (!token) throw ApolloError('InternalServerError')
 
   try {
 
@@ -270,7 +264,6 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
       email: user.email,
       token,
       name: user.name,
-      _id: user._id,
     })
 
     return courierResponse
@@ -370,6 +363,44 @@ const getBusinessByUser = (user: User, input: any, context: Context) => {
   return mappedbusinesses
 }
 
+const passwordReset = async (_parent: any,
+  { input: { password, token } }: { input: ResetPasswordSchemaInput },
+  { db }: Context) => {
+
+  console.log("RESET PASSWORD", password, token)
+
+  if (!token) throw ApolloError('BadRequest')
+
+  try {
+    const decodedToken = await getUserFromToken(token)
+
+    console.log("decodedToken", decodedToken)
+
+
+    if (!decodedToken) throw ApolloError("BadRequest", "Token Invalid");
+
+    const User = UserModel(db)
+    const user = await User.findOne({ email: decodedToken.email })
+
+    if (!user) throw new Error("User not found");
+
+    const hashedPassword = hashPassword(password)
+
+    user.password = hashedPassword
+    await user.save()
+
+    return ({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token,
+    })
+  } catch (error) {
+    throw ApolloError('BadRequest', "somehting with the token was not right")
+  }
+
+}
+
 
 const UserResolverMutation = {
   requestUserAccountCreation,
@@ -379,6 +410,7 @@ const UserResolverMutation = {
   recoverPassword,
   postUserLogin,
   addEmployeeToBusiness,
+  passwordReset
 }
 const UserResolverQuery = {
   getUserInformation,

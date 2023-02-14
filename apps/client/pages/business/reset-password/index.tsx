@@ -7,9 +7,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { email, token, _id } = context.query
   let jwtData: jose.JWTPayload;
 
-
-
-
   try {
 
     // TODO: validate token
@@ -18,7 +15,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     // )
 
     // 
-
 
     // // [TODO] check to see if email from URL matches email from JWT, or don't even send email
     // if (!payload._id) {
@@ -30,8 +26,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         private: true,
-        _id: _id,
-        email: email,
+        email,
+        token
       }
     }
 
@@ -43,9 +39,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   }
-
-
 }
-
 
 export default ResetPasswordScreen

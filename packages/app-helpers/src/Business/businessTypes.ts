@@ -67,9 +67,19 @@ export type menuSchemaInput = z.infer<typeof menuSchema>
 export const resetPasswordSchema = z.object({
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
   passwordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  token: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.password !== data.passwordConfirmation) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Passwords do not match',
+      path: ['passwordConfirmation'],
+    });
+  }
+  return data;
 });
 
-export type resetPasswordSchemaInput = z.infer<typeof resetPasswordSchema>
+export type ResetPasswordSchemaInput = z.infer<typeof resetPasswordSchema>
 
 export const signUpSchema = z.object({
   email: z.string().email({ message: 'Invalid email' }),
@@ -143,3 +153,4 @@ export const employeeFormSchema = z.object({
 })
 
 export type EmployeeInfo = z.infer<typeof employeeFormSchema>
+

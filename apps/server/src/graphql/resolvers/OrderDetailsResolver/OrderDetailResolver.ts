@@ -6,7 +6,7 @@ import {
     GuestUserModel,
     UserModel
 } from '../../../models';
-import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMultipleOrdersDetail, CreateMultipleOrdersDetailInput, CreateOrderDetail, CreateOrderDetailInput, UpdateOrderDetailInput } from "./types";
 
@@ -28,9 +28,9 @@ const createOrderDetail = async (_parent: any,
 
         const product = await Product.findOne({ _id: parsedInput.product });
 
-        if (!user && !guestUser) throw new ApolloExtendedError('User not found.', 404);
-        if (!product) throw new ApolloExtendedError('Product not found', 500);
-        if (!tab) throw new ApolloExtendedError('Tab not found', 500);
+        if (!user && !guestUser) throw ApolloError("NotFound");
+        if (!product) throw ApolloError("NotFound");
+        if (!tab) throw ApolloError("NotFound");
 
         return await OrderDetail.create({
             ...parsedInput,
@@ -38,7 +38,7 @@ const createOrderDetail = async (_parent: any,
         });
     } catch (err) {
         console.log({ err })
-        throw new ApolloExtendedError(`Error creating OrderDetail ${err}`, 500);
+        throw ApolloError("InternalServerError", `Error creating OrderDetail ${err}`);
     }
 }
 
@@ -63,9 +63,9 @@ const createMultipleOrderDetails = async (_parent: any,
             const guestUser = await GuestUser.findOne({ _id: parsedInput.user });
             const product = await Product.findOne({ _id: parsedInput.product });
 
-            if (!product) throw new ApolloExtendedError('Product not found', 500);
-            if (!tab) throw new ApolloExtendedError('Tab not found', 500);
-            if (tab.status !== 'OPEN') throw new ApolloExtendedError('Tab is not open', 500);
+            if (!product) throw ApolloError("NotFound");
+            if (!tab) throw ApolloError("NotFound");
+            if (tab.status !== 'OPEN') throw ApolloError("NotFound");
 
             return await OrderDetail.create({
                 ...parsedInput,
@@ -79,7 +79,7 @@ const createMultipleOrderDetails = async (_parent: any,
 
     } catch (err) {
         console.log({ err })
-        throw new ApolloExtendedError(`Error creating OrderDetail ${err}`, 500);
+        throw ApolloError("InternalServerError", `Error creating OrderDetail ${err}`);
     }
 }
 
@@ -93,10 +93,10 @@ const updateOrderDetail = async (_parent: any,
 
     try {
         const orderDetail = await OrderDetail.findOne({ _id: input._id });
-        if (!orderDetail) throw new ApolloExtendedError('OrderDetail not found.', 404);
+        if (!orderDetail) throw ApolloError("NotFound");
 
         const product = await Product.findOne({ _id: orderDetail.product });
-        if (!product) throw new ApolloExtendedError('Product not found', 500);
+        if (!product) throw ApolloError('NotFound');
 
         const subTotalUpdated = input.quantity ? (product?.price || 0) * input.quantity : orderDetail.subTotal
 
@@ -107,7 +107,7 @@ const updateOrderDetail = async (_parent: any,
 
     } catch (err) {
         console.log({ err })
-        throw new ApolloExtendedError(`Error updating OrderDetail ${err}`, 500);
+        throw ApolloError("InternalServerError", `Error updating OrderDetail ${err}`);
     }
 }
 
@@ -116,12 +116,12 @@ const deleteOrderDetail = async (_parent: any, { input }: { input: any }, { db }
 
     try {
         const orderDetail = await OrderDetail.findOne({ _id: input._id });
-        if (!orderDetail) throw new ApolloExtendedError('OrderDetail not found.', 404);
+        if (!orderDetail) throw ApolloError("NotFound");
 
         return await OrderDetail.findOneAndDelete({ _id: input._id });
     } catch (err) {
         console.log({ err })
-        throw new ApolloExtendedError(`Error deleting OrderDetail ${err}`, 500);
+        throw ApolloError("InternalServerError", `Error deleting OrderDetail ${err}`);
     }
 }
 

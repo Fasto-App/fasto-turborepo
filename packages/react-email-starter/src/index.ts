@@ -1,4 +1,4 @@
-import { VercelEmail } from "../emails/vercel-invite-user"
+import { ResetPasswordEmail } from "../emails/resetPassword"
 import { WelcomeEmail } from "../emails/welcome"
 
-export { VercelEmail, WelcomeEmail }
+export { ResetPasswordEmail, WelcomeEmail }

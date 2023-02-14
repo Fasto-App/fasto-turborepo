@@ -2,7 +2,7 @@ import { Product, ProductModel } from "../../../models/product";
 import { Connection } from "mongoose"
 import { BusinessModel } from "../../../models/business";
 import { CategoryModel } from "../../../models/category";
-import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { CreateProductInput } from "./types";
 import { uploadFileS3Bucket } from "../../../s3/s3";
 import { Context } from "../types";
@@ -15,24 +15,25 @@ const createProduct = async (_parent: any, { input }: { input: CreateProductInpu
     const businessByID = await BusinessModel(db).findById(business)
     const categoryByID = await Category.findById(input.category)
 
-    if (!businessByID) throw new ApolloExtendedError('Business not found.')
-    if (!categoryByID) throw new ApolloExtendedError('Category not found.')
+    if (!businessByID) throw ApolloError("NotFound", 'Business not found.')
+    if (!categoryByID) throw ApolloError("NotFound", 'Category not found.')
 
 
     if (categoryByID?.subCategories?.length) {
-        throw new ApolloExtendedError('Category already has subcategories, and should not be linked to a product')
+        throw ApolloError('BadRequest',
+            "Category already has subcategories, and should not be linked to a product")
     }
 
     const productByName = await Product.findOne({ name: input.name, business: business })
 
 
     if (productByName) {
-        throw new ApolloExtendedError('Product already exists.', 401)
+        throw ApolloError('BadRequest', "Product already exists.")
     }
 
 
     if (input.price < 0 || !Number.isInteger(input.price)) {
-        throw new ApolloExtendedError('Price must be an integer and greater than 0')
+        throw ApolloError('BadRequest', "Price must be an integer and greater than 0")
     }
 
     try {
@@ -102,15 +103,11 @@ const getProductByID = async (_parent: any,
 const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, business }: Context) => {
     const { input } = arg;
 
-    console.log({ input })
-
     // use the _id to find the product, make sure the name is unique, and update the product
     const Product = ProductModel(db);
     const product = await Product.findById(input._id);
 
-
-
-    if (!product) throw new ApolloExtendedError('Product not found. Please try it again.', 401)
+    if (!product) throw ApolloError('BadRequest', "Product not found. Please try it again.")
 
     // if the input has a photo, upload it to the s3 bucket
     if (input.file) {
@@ -123,7 +120,7 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 
 
         if (productByName && productByName._id.toString() !== input._id) {
-            throw new ApolloExtendedError('Product name already exists. Please try it again.', 401)
+            throw ApolloError('BadRequest', "Product name already exists. Please try it again.")
         }
 
         product.name = input.name;
@@ -132,7 +129,7 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
     // if theres a price, see if the price is valid
     if (input.price) {
         if (input.price < 0) {
-            throw new ApolloExtendedError('Price must be greater than 0. Please try it again.', 401)
+            throw ApolloError('BadRequest', "Product name already exists. Please try it again.")
         }
 
 
@@ -141,7 +138,8 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 
     // if theres a description, see if the description is valid
     if (input.description) {
-        if (input.description.length > 500) throw new ApolloExtendedError('Description must be less than 500 characters. Please try it again.', 401)
+        if (input.description.length > 500) throw ApolloError('BadRequest',
+            "Description must be less than 500 characters. Please try it again.")
 
         product.description = input.description;
     }
@@ -150,14 +148,14 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
     if (input.category) {
         const Category = CategoryModel(db);
         const category = await Category.findById(input.category)
-        if (!category) throw new ApolloExtendedError('Category not found. Please try it again.', 401)
+        if (!category) throw ApolloError('BadRequest', "Category not found. Please try it again.")
 
         product.category = input.category;
     }
 
     // if theres a addons, see if the addons are valid
     if (input.addons) {
-        if (input.addons.length > 10) throw new ApolloExtendedError('Addons must be less than 10. Please try it again.', 401)
+        if (input.addons.length > 10) throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
     }
 
     if (input.file) {
@@ -184,13 +182,12 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 const deleteProduct = async (_parent: any, args: { id: string }, { db, user, business }: Context) => {
     // INIATILY DELETING THE PRODUCT
 
-
-    if (!business) throw new ApolloExtendedError('Business not found. Please login again.', 401)
+    if (!business) throw ApolloError('Unauthorized', "Business not found. Please login again.")
 
     const Product = ProductModel(db);
     const product = await Product.findById(args.id);
 
-    if (!product) throw new ApolloExtendedError('Product not found. Please try it again.', 401)
+    if (!product) throw ApolloError('BadRequest', "Product not found. Please try it again.")
 
     await product.remove();
     return { ok: true }

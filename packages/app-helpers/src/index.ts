@@ -35,5 +35,6 @@ export const TabStatus = {
 export type TabStatusType = typeof TabStatus[keyof typeof TabStatus];
 
 export * from "./Business/businessTypes"
+export * from "./ErrorCodes/ErrorCodes"
 export * from "./utils"
 

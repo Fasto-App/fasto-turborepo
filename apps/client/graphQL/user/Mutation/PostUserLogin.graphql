@@ -1,4 +1,4 @@
-mutation PostUserLogin($input: loginInput!) {
+mutation PostUserLogin($input: LoginInput!) {
 	postUserLogin(input: $input) {
 		name
 		email
