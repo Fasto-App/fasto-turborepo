@@ -2,9 +2,6 @@ import { gql } from "apollo-server-express";
 
 export const UserTypeDefinition = gql`
   extend type Query {
-      """
-      Returns a user based on the Bearer token
-      """
     getToken: User
     getAllUsers: [User!]!
     getUserInformation: User
@@ -18,7 +15,7 @@ export const UserTypeDefinition = gql`
     recoverPassword(input: String!): RequestResponseOK
     deleteUser: RequestResponseOK!
     addEmployeeToBusiness(input: AddEmployeeInput!): User!
-    resetPassword(input: ResetPasswordInput!): User!
+    passwordReset(input: ResetPasswordInput!): User!
   }
 
   type AccountCreationResponse {

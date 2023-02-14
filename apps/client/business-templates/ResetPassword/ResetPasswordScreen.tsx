@@ -2,14 +2,17 @@ import React from 'react'
 import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text } from "native-base";
 import NextLink from "next/link";
 import { businessRoute } from '../../routes';
-import { useResetPasswordHook } from './hook';
+import { ResetPasswordConfig, useResetPasswordHook } from './hook';
 import { useRouter } from 'next/router';
-import { useResetPasswordMutation } from '../../gen/generated';
+import { usePasswordResetMutation } from '../../gen/generated';
 import { ResetPasswordSchemaInput } from 'app-helpers';
 import { setCookies } from '../../cookies/businessCookies';
+import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
+import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 
 const texts = {
   resetPassword: "Reset Password",
+  imAlreadyAUser: "I'm already a user ",
   pleaseEnterYourPassword: (email: string) => `${email}, Please enter and confirm your new password`,
   newPassword: "New Password",
   reset: "Reset",
@@ -17,6 +20,7 @@ const texts = {
   passwordConfirmationError: "Password Confirmation does not match",
   passwordError: "Password must be at least 8 characters long",
   goBack: "Go Back",
+  login: "Login",
 }
 
 export const ResetPasswordScreen = ({ token, email }: { token: string, email: string }) => {
@@ -24,18 +28,19 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
   const [showPass, setShowPass] = React.useState(false);
 
   const router = useRouter();
-  const [resetPassword] = useResetPasswordMutation({
+  const [resetPassword, { loading }] = usePasswordResetMutation({
     onCompleted: (data) => {
       console.log("Reset password completed")
-      setCookies("name", data.resetPassword.name);
-      setCookies("token", data.resetPassword.token);
-      setCookies("email", data.resetPassword.email);
+      setCookies("name", data.passwordReset.name);
+      setCookies("token", data.passwordReset.token);
+      setCookies("email", data.passwordReset.email);
       router.push(businessRoute.dashboard);
     }
   });
 
-  const onResetSubmit = (formData: ResetPasswordSchemaInput) => {
-    resetPassword({
+  const onResetSubmit = async (formData: ResetPasswordSchemaInput) => {
+
+    await resetPassword({
       variables: {
         input: {
           password: formData.password,
@@ -47,6 +52,30 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
 
     reset();
   }
+
+  const passwordInputProps: RegularInputConfig = {
+    ...ResetPasswordConfig,
+    password: {
+      ...ResetPasswordConfig.password,
+      type: showPass ? "text" : "password",
+      rightElement: (
+        <PasswordIcon
+          setShowPass={setShowPass}
+          showPassword={showPass}
+        />
+      ),
+    },
+    passwordConfirmation: {
+      ...ResetPasswordConfig.passwordConfirmation,
+      type: showPass ? "text" : "password",
+      rightElement: (
+        <PasswordIcon
+          setShowPass={setShowPass}
+          showPassword={showPass}
+        />
+      ),
+    }
+  };
 
 
   return (<Center w="100%" height={"100%"}>
@@ -63,16 +92,21 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
           {texts.pleaseEnterYourPassword(email)}
         </Heading>
       </Center>
+      <ControlledForm
+        control={control}
+        formState={formState}
+        Config={passwordInputProps}
+      />
 
       <VStack space={3} mt="5">
-        <Button mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
-          Reset
+        <Button isLoading={loading} mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
+          {texts.reset}
         </Button>
         <HStack mt="6" justifyContent="center">
           <Text fontSize="sm" color="coolGray.600" _dark={{
             color: "warmGray.200"
           }}>
-            I'm already a user.{" "}
+            {texts.imAlreadyAUser}
           </Text>
           <Pressable>
             <NextLink href={businessRoute.login}>
@@ -81,7 +115,7 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
                 fontWeight: "medium",
                 fontSize: "sm"
               }}>
-                Login In
+                {texts.login}
               </Link>
             </NextLink>
           </Pressable>

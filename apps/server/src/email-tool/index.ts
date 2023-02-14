@@ -1,17 +1,14 @@
-import { WelcomeEmail } from "emails";
+import { WelcomeEmail, ResetPasswordEmail } from "emails";
 import { render } from '@react-email/render';
 import nodemailer from 'nodemailer';
 
 type TemplateArguments = {
   email: string;
   token: string,
-  _id: string;
   name: string;
 }
 
-type AccountCreation = Pick<TemplateArguments, 'email' | 'token'>
-type ResetPassword = Pick<TemplateArguments, 'email' | 'token' | '_id'>
-type AddEmployee = Pick<TemplateArguments, 'email' | 'token' | 'name'>
+type RequestAccount = Pick<TemplateArguments, 'email' | 'token'>
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -22,14 +19,14 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const resetPassword = ({ token, email, _id }: ResetPassword) => `${process.env.FRONTEND_URL}/business/reset-password?token=${token}&email=${email}&_id=${_id}`
+const passwordReset = ({ token, email }: TemplateArguments) => `${process.env.FRONTEND_URL}/business/reset-password?token=${token}&email=${email}`
 
-const requestAccountCreation = ({ token, email }: AccountCreation) => `${process.env.FRONTEND_URL}/business/create-account?token=${token}&email=${email}`
+const requestAccountCreation = ({ token, email }: RequestAccount) => `${process.env.FRONTEND_URL}/business/create-account?token=${token}&email=${email}`
 
 export async function sendWelcomeEmail({
   email,
   token,
-}: AccountCreation) {
+}: RequestAccount) {
   const url = requestAccountCreation({ token, email })
 
   try {
@@ -54,17 +51,17 @@ export async function sendWelcomeEmail({
 export async function sendResetPasswordEmail({
   email,
   token,
-  _id
+  name,
 }: TemplateArguments) {
-  const url = resetPassword({ token, email, _id })
+  const url = passwordReset({ token, email, name })
 
   try {
     // create component with the url and name
-    const emailHtml = render(WelcomeEmail({ url }))
+    const emailHtml = render(ResetPasswordEmail({ url, name }))
     const options = {
       from: '',
       to: email,
-      subject: "Don't worry, we will be reseting your password soon!",
+      subject: "Password Reset Request",
       html: emailHtml,
     };
 
@@ -77,7 +74,7 @@ export async function sendResetPasswordEmail({
 }
 
 // TODO:
-export async function sendEployeeEmail({ token, email, name }: AddEmployee) {
+export async function sendEployeeEmail({ token, email }: TemplateArguments) {
 
   // if it's a new user, create a new account
 

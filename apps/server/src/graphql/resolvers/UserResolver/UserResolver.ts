@@ -129,30 +129,38 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
   }
 }
 
-export const resetPassword = async (_parent: any, { input: { password, token } }: { input: ResetPasswordSchemaInput }, { db }: { db: Connection }) => {
+export const resetPassword = (_parent: any, { input: { password, token } }: { input: ResetPasswordSchemaInput }, { db }: { db: Connection }) => {
 
-  if (!token) throw ApolloError('BadRequest')
+  // console.log("RESET PASSWORD", password, token)
 
-  try {
-    const decodedToken = await getUserFromToken(token)
-    if (!decodedToken) throw new Error("Token not found");
+  // if (!token) throw ApolloError('BadRequest')
 
-    const User = UserModel(db)
-    const user = await User.findOne({ email: decodedToken.email })
+  // try {
+  //   const decodedToken = await getUserFromToken(token)
+  //   if (!decodedToken) throw ApolloError("BadRequest", "Token Invalid");
 
-    if (!user) throw new Error("User not found");
+  //   const User = UserModel(db)
+  //   const user = await User.findOne({ email: decodedToken.email })
 
-    const hashedPassword = hashPassword(password)
+  //   if (!user) throw new Error("User not found");
 
-    user.password = hashedPassword
+  //   const hashedPassword = hashPassword(password)
 
-    return await user.save()
+  //   user.password = hashedPassword
+  //   await user.save()
 
-  } catch {
-    throw ApolloError('BadRequest')
-  }
+  return ({
+    _id: "user._id,",
+    name: "user.name,",
+    email: "user.email,",
+    token,
+  })
+
+
+  // } catch {
+  //   throw ApolloError('BadRequest')
+  // // }
 }
-
 
 
 // Enter credentials to get existing user
@@ -279,7 +287,7 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] : undefined;
-  const token = await tokenSigning(user._id, user.email as string, businessId);
+  const token = await tokenSigning(user._id, user.email, businessId);
 
   if (!token) throw ApolloError('InternalServerError')
 
@@ -289,7 +297,6 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
       email: user.email,
       token,
       name: user.name,
-      _id: user._id,
     })
 
     return courierResponse
@@ -389,6 +396,44 @@ const getBusinessByUser = (user: User, input: any, context: Context) => {
   return mappedbusinesses
 }
 
+const passwordReset = async (_parent: any,
+  { input: { password, token } }: { input: ResetPasswordSchemaInput },
+  { db }: Context) => {
+
+  console.log("RESET PASSWORD", password, token)
+
+  if (!token) throw ApolloError('BadRequest')
+
+  try {
+    const decodedToken = await getUserFromToken(token)
+
+    console.log("decodedToken", decodedToken)
+
+
+    if (!decodedToken) throw ApolloError("BadRequest", "Token Invalid");
+
+    const User = UserModel(db)
+    const user = await User.findOne({ email: decodedToken.email })
+
+    if (!user) throw new Error("User not found");
+
+    const hashedPassword = hashPassword(password)
+
+    user.password = hashedPassword
+    await user.save()
+
+    return ({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token,
+    })
+  } catch (error) {
+    throw ApolloError('BadRequest', "somehting with the token was not right")
+  }
+
+}
+
 
 const UserResolverMutation = {
   requestUserAccountCreation,
@@ -398,6 +443,7 @@ const UserResolverMutation = {
   recoverPassword,
   postUserLogin,
   addEmployeeToBusiness,
+  passwordReset
 }
 const UserResolverQuery = {
   getUserInformation,

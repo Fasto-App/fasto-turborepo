@@ -67,6 +67,8 @@ const server = new ApolloServer({
 
     const userFromToken = await getUserFromToken(bearerToken.split(' ')[1]);
 
+    console.log("TESTING RESET")
+
     if (!userFromToken?._id) return { db };
 
     logUserCredentialsValid(!!userFromToken?.business);
