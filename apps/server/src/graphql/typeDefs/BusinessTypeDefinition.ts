@@ -6,7 +6,7 @@ export const BusinessTypeDefinition = gql`
     getAllBusinessByUser: [Business]!
     getAllBusiness: [Business]!
     getBusinessLocation: Address
-    getAllEmployees: Employees
+    getAllEmployees: Employees!
   }
 
   extend type Mutation {
@@ -19,12 +19,12 @@ export const BusinessTypeDefinition = gql`
   }
 
   type Employees {
-    employees: [Employee]!
-    employeesPending: [Employee]!
+    employees: [Employee!]!
+    employeesPending: [Employee!]!
   }
 
   type Employee {
-    _id: ID
+    _id: ID!
     name: String!
     email: String!
     privilege: UserPrivileges!

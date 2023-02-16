@@ -9,7 +9,7 @@ import { AddMoreButton } from "../../components/atoms/AddMoreButton"
 import { ProductTile } from "../../components/Product/Product"
 import { EmployeeInformation, typedValues } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
-import { useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
+import { useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
 
 const ManageEmployeeModal = ({
   isModalOpen, setIsModalOpen }:
@@ -82,13 +82,31 @@ const mock = {
   _id: 1,
   name: "Alex Mendes",
   privilege: "Admin",
-  role: "Server",
-  imageUrl: "https://media.licdn.com/dms/image/C5603AQFFEa9a0Semfg/profile-displayphoto-shrink_800_800/0/1632369752400?e=1681948800&v=beta&t=55rO6SgLBvmKCjnh6Her5Tbk1VySLoebwbXD4YKC87U"
+  jobTitle: "Server",
+  picture: "https://media.licdn.com/dms/image/C5603AQFFEa9a0Semfg/profile-displayphoto-shrink_800_800/0/1632369752400?e=1681948800&v=beta&t=55rO6SgLBvmKCjnh6Her5Tbk1VySLoebwbXD4YKC87U"
 } as const;
 const employeesData: typeof mock[] = new Array(15).fill(mock)
 
 export const ManageEmployee = () => {
   const [isModalopen, setIsModalOpen] = useState(false)
+  const { data } = useGetAllEmployeesQuery();
+
+
+  const combinedData = useMemo(() => {
+    const employees = data?.getAllEmployees?.employees ?? []
+    const employeesPending = data?.getAllEmployees?.employeesPending ?? []
+
+    return [...employees, ...employeesPending]
+  }, [data?.getAllEmployees?.employees, data?.getAllEmployees?.employeesPending])
+
+  console.log({ combinedData })
+
+  // git picture of the first employee  
+  const firstEmployeePicture = useMemo(() => {
+    const firstEmployee = combinedData[0]
+    return firstEmployee?.picture
+  }, [combinedData])
+
 
   // add button to not empty array
   const employeesWithButton = useMemo(() => [{ name: "Button" } as const, ...employeesData], [])
@@ -127,7 +145,7 @@ export const ManageEmployee = () => {
                   ctaTitle="Edit"
                   key={employee._id + index}
                   name={employee.name}
-                  imageUrl={employee.imageUrl}
+                  imageUrl={employee.picture}
                   onPress={() => console.log("Hello")}
                 />
               )

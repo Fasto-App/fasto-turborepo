@@ -165,7 +165,7 @@ export type DeleteTableInput = {
 
 export type Employee = {
   __typename?: 'Employee';
-  _id?: Maybe<Scalars['ID']>;
+  _id: Scalars['ID'];
   email: Scalars['String'];
   name: Scalars['String'];
   picture?: Maybe<Scalars['String']>;
@@ -174,8 +174,8 @@ export type Employee = {
 
 export type Employees = {
   __typename?: 'Employees';
-  employees: Array<Maybe<Employee>>;
-  employeesPending: Array<Maybe<Employee>>;
+  employees: Array<Employee>;
+  employeesPending: Array<Employee>;
 };
 
 export type Geo = {
@@ -521,7 +521,7 @@ export type Query = {
   getAllBusiness: Array<Maybe<Business>>;
   getAllBusinessByUser: Array<Maybe<Business>>;
   getAllCategoriesByBusiness: Array<Category>;
-  getAllEmployees?: Maybe<Employees>;
+  getAllEmployees: Employees;
   getAllMenus: Array<Menu>;
   getAllMenusByBusinessID: Array<Maybe<Menu>>;
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
@@ -976,6 +976,11 @@ export type UpdateUserInformationMutationVariables = Exact<{
 
 
 export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } };
+
+export type GetAllEmployeesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllEmployeesQuery = { __typename?: 'Query', getAllEmployees: { __typename?: 'Employees', employees: Array<{ __typename?: 'Employee', email: string, name: string, picture?: string | null, privilege: UserPrivileges, _id: string }>, employeesPending: Array<{ __typename?: 'Employee', _id: string, email: string, name: string, privilege: UserPrivileges }> } };
 
 export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2257,6 +2262,52 @@ export function useUpdateUserInformationMutation(baseOptions?: Apollo.MutationHo
 export type UpdateUserInformationMutationHookResult = ReturnType<typeof useUpdateUserInformationMutation>;
 export type UpdateUserInformationMutationResult = Apollo.MutationResult<UpdateUserInformationMutation>;
 export type UpdateUserInformationMutationOptions = Apollo.BaseMutationOptions<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>;
+export const GetAllEmployeesDocument = gql`
+    query GetAllEmployees {
+  getAllEmployees {
+    employees {
+      email
+      name
+      picture
+      privilege
+      _id
+    }
+    employeesPending {
+      _id
+      email
+      name
+      privilege
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllEmployeesQuery__
+ *
+ * To run a query within a React component, call `useGetAllEmployeesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllEmployeesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllEmployeesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllEmployeesQuery(baseOptions?: Apollo.QueryHookOptions<GetAllEmployeesQuery, GetAllEmployeesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllEmployeesQuery, GetAllEmployeesQueryVariables>(GetAllEmployeesDocument, options);
+      }
+export function useGetAllEmployeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllEmployeesQuery, GetAllEmployeesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllEmployeesQuery, GetAllEmployeesQueryVariables>(GetAllEmployeesDocument, options);
+        }
+export type GetAllEmployeesQueryHookResult = ReturnType<typeof useGetAllEmployeesQuery>;
+export type GetAllEmployeesLazyQueryHookResult = ReturnType<typeof useGetAllEmployeesLazyQuery>;
+export type GetAllEmployeesQueryResult = Apollo.QueryResult<GetAllEmployeesQuery, GetAllEmployeesQueryVariables>;
 export const GetUserInformationDocument = gql`
     query GetUserInformation {
   getUserInformation {

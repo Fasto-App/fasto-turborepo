@@ -85,7 +85,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   // otherwise, navigate back to LOGIN
   if (request.nextUrl.pathname.startsWith(BUSINESS_ADMIN)) {
     if (requestCookiesToken) {
-      console.log("COOKIE", cookie)
+      console.log("token", requestCookiesToken)
+      console.log("email", requestCookiesEmail)
 
 
       try {

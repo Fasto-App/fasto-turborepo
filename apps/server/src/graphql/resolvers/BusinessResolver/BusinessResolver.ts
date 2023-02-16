@@ -254,9 +254,18 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
     })
   })
 
+  const pendingEmployeesWithPrivileges = employeesPending.map((employee) => {
+    return ({
+      _id: employee._id,
+      name: employee.name,
+      email: employee.email,
+      privilege: employee?.business?.privilege
+    })
+  })
+
   return {
     employees: employeesWithPrivileges,
-    employeesPending
+    employeesPending: pendingEmployeesWithPrivileges
   }
 }
 
@@ -334,6 +343,11 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
   }
 
   await newSession.save()
+
+  if (!foundBusiness.employeesPending?.includes(newSession._id)) {
+    foundBusiness.employeesPending?.push(newSession._id)
+    await foundBusiness.save()
+  }
 
   sendEployeeAccountCreation({
     email,

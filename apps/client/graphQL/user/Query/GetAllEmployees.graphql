@@ -1,0 +1,17 @@
+query GetAllEmployees {
+	getAllEmployees {
+		employees {
+			email
+			name
+			picture
+			privilege
+			_id
+		}
+		employeesPending {
+			_id
+			email
+			name
+			privilege
+		}
+	}
+}
