@@ -1,17 +1,19 @@
-import mongoose, { Document, Connection, Types } from 'mongoose'
-import { prop, getModelForClass, pre, Ref } from '@typegoose/typegoose';
+import { Document, Connection } from 'mongoose'
+import { prop, getModelForClass, pre } from '@typegoose/typegoose';
+import { PrivilegesKeys } from 'app-helpers';
 
-
-@pre<Session>('update', function () {
-
-})
 export class Session {
-
   @prop()
   public email?: string;
 
   @prop()
+  public name?: string;
+
+  @prop()
   public token?: string;
+
+  @prop()
+  public businesses?: Record<string, PrivilegesKeys[]>;
 
   @prop({ default: Date.now() })
   public createdAt!: Date

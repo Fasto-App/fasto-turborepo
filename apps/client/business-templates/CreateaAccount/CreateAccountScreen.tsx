@@ -27,7 +27,7 @@ export const CreateAccountScreen = () => {
   const [showPass, setShowPass] = React.useState(false);
 
   const router = useRouter();
-  const { token, email } = router.query;
+  const { token, email, business } = router.query;
 
   const [createUser, { loading }] = useCreateUserMutation({
     onCompleted: (data) => {
@@ -49,11 +49,15 @@ export const CreateAccountScreen = () => {
     setValue("email", email as string)
   }, [email, setValue])
 
-  const onSignUpSubmit = (formData: CreateAccountField) => {
+  const onSignUpSubmit = async (formData: CreateAccountField) => {
+    // will use the business id to select the correct operation
+    // create employee
+    if (business) {
 
-    console.log(formData)
+      return
+    }
 
-    createUser({
+    await createUser({
       variables: {
         input: {
           name: formData.name,
@@ -66,7 +70,12 @@ export const CreateAccountScreen = () => {
   }
 
   if (!token || !email) {
-    return <Text p={"4"} fontSize={"lg"}>{texts.invalidTokenOrEmail}</Text>
+    return <Text
+      p={"4"}
+      fontSize={"lg"}
+    >
+      {texts.invalidTokenOrEmail}
+    </Text>
   }
 
   const passwordInputConfig: RegularInputConfig = {
@@ -117,9 +126,7 @@ export const CreateAccountScreen = () => {
         <Button
           mt="2"
           bg="primary.500"
-          onPress={handleSubmit(onSignUpSubmit, (data) => {
-            console.log(data)
-          })}
+          onPress={handleSubmit(onSignUpSubmit)}
           isLoading={loading}
         >
           {texts.signup}
@@ -138,7 +145,7 @@ export const CreateAccountScreen = () => {
         </HStack>
       </VStack>
     </Box>
-  </Center >
+  </Center>
   )
 }
 

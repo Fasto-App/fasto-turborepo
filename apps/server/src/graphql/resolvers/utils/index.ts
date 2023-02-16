@@ -12,7 +12,13 @@ export async function tokenSigning(id: string, email: string, business?: string)
     .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 
-export const getUserFromToken = async (token: string) => {
+type UserToken = {
+  _id: string;
+  email: string;
+  business?: string;
+}
+
+export const getUserFromToken = async (token?: string): Promise<UserToken | null> => {
   const tokenSecret = process.env.TOKEN_SECRET;
 
   if (!tokenSecret) throw new Error('Token secret or bearer token not found');
@@ -24,13 +30,14 @@ export const getUserFromToken = async (token: string) => {
 
   try {
     const { payload } = await jose.jwtVerify(
-      token as string, new TextEncoder().encode(tokenSecret)
+      token as string,
+      new TextEncoder().encode(tokenSecret)
     )
 
     return {
-      _id: payload._id,
-      email: payload.email,
-      business: payload.business
+      _id: payload._id as string,
+      email: payload.email as string,
+      business: payload.business as string,
     };
 
   } catch (error) {

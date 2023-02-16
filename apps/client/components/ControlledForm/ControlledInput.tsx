@@ -16,6 +16,7 @@ type CustomInputProps = {
   formatOnChange?: (value: string, cb: (num: number) => void) => void;
   handleOnChange?: (e: SyntheticEvent) => void;
   isDisabled?: boolean;
+  accessibilityLabel?: string;
 }
 
 type InputType = "Input" | "TextArea" | "Select" | "File" | "Date"
@@ -40,17 +41,18 @@ export const ControlledInput = <T extends Record<string, string>>({
   formatOnChange,
   handleOnChange,
   type,
-  isDisabled
-
+  isDisabled,
+  accessibilityLabel
 }: ControlledFormInput<T>) => {
   return (
     <>
       <FormControl isInvalid={!!errorMessage}>
 
         {/* dont show for type Date */}
-        {inputType !== "Date" ? (<FormControl.Label isRequired={isRequired}>
-          {label}
-        </FormControl.Label>) : null}
+        {inputType !== "Date" ? (
+          <FormControl.Label isRequired={isRequired}>
+            {label}
+          </FormControl.Label>) : null}
 
         <Controller
           control={control}
@@ -67,13 +69,17 @@ export const ControlledInput = <T extends Record<string, string>>({
                     autoCompleteType={undefined}
                     placeholder={placeholder} />)
               case "Select":
+                console.log("value", field.value)
                 return (
-                  <Select selectedValue={field.value} minWidth="200" accessibilityLabel="Choose Category" placeholder="Choose Category" _selectedItem={{
-                    endIcon: <CheckIcon size="5" />
-                  }} mt={1} onValueChange={field.onChange}>
-
-                    {array?.map(category => (
-                      <Select.Item key={category._id} label={category.name} value={category._id} />))
+                  <Select
+                    selectedValue={field.value}
+                    minWidth="200"
+                    accessibilityLabel={accessibilityLabel}
+                    placeholder={placeholder}
+                    mt={1} onValueChange={field.onChange}
+                    _selectedItem={{ endIcon: <CheckIcon size="5" /> }}>
+                    {array?.map(item => (
+                      <Select.Item key={item._id} label={item.name} value={item._id} />))
                     }
                   </Select>
                 )

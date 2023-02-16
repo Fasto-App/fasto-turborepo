@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AccountInformation, accountInformationFormSchema, businessInformationSchema, businessLocationSchema, businessLocationSchemaInput, employeeFormSchema, EmployeeInfo } from 'app-helpers';
+import { AccountInformation, accountInformationFormSchema, businessInformationSchema, businessLocationSchema, businessLocationSchemaInput, employeeFormSchema, EmployeeInformation } from 'app-helpers';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { GetBusinessLocationQuery, GetUserInformationQuery, GetBusinessInformationQuery } from '../../gen/generated';
@@ -95,12 +95,12 @@ export const useManageEmployeeFormHook = () => {
     formState,
     handleSubmit,
     reset
-  } = useForm<EmployeeInfo>({
+  } = useForm<EmployeeInformation>({
     defaultValues: {
-      role: "",
+      jobTitle: "",
       email: "",
-      phone: "",
-      picture: ""
+      name: "",
+      privileges: undefined,
     },
     resolver: zodResolver(employeeFormSchema)
   })

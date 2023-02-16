@@ -102,6 +102,14 @@ export type CreateBusinessPayload = {
   token?: Maybe<Scalars['String']>;
 };
 
+export type CreateEmployeeAccountInput = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+  password: Scalars['String'];
+  passwordConfirmation: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type CreateMenuInput = {
   name: Scalars['String'];
 };
@@ -161,6 +169,21 @@ export type DeleteTableInput = {
   table: Scalars['ID'];
 };
 
+export type Employee = {
+  __typename?: 'Employee';
+  _id?: Maybe<Scalars['ID']>;
+  email: Scalars['String'];
+  name: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
+  privileges: Array<UserPrivileges>;
+};
+
+export type Employees = {
+  __typename?: 'Employees';
+  employees: Array<Maybe<Employee>>;
+  employeesPending: Array<Maybe<Employee>>;
+};
+
 export type Geo = {
   __typename?: 'Geo';
   lat: Scalars['Float'];
@@ -206,6 +229,14 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
+export type ManageBusinessEmployeesInput = {
+  _id?: InputMaybe<Scalars['ID']>;
+  email: Scalars['String'];
+  jobTitle: Scalars['String'];
+  name: Scalars['String'];
+  privileges: UserPrivileges;
+};
+
 export type Menu = {
   __typename?: 'Menu';
   _id: Scalars['ID'];
@@ -220,6 +251,7 @@ export type Mutation = {
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
+  createEmployeeAccount: User;
   createMenu: Menu;
   createMultipleOrderDetails?: Maybe<Array<OrderDetail>>;
   createOrderDetail?: Maybe<OrderDetail>;
@@ -238,6 +270,7 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   linkCategoryToProducts?: Maybe<Category>;
+  manageBusinessEmployees: Employee;
   passwordReset: User;
   postUserLogin: User;
   recoverPassword?: Maybe<RequestResponseOk>;
@@ -275,6 +308,11 @@ export type MutationCreateBusinessArgs = {
 
 export type MutationCreateCategoryArgs = {
   input?: InputMaybe<CategoryInput>;
+};
+
+
+export type MutationCreateEmployeeAccountArgs = {
+  input: CreateEmployeeAccountInput;
 };
 
 
@@ -360,6 +398,11 @@ export type MutationDeleteTableArgs = {
 
 export type MutationLinkCategoryToProductsArgs = {
   input: LinkCategoryToProductInput;
+};
+
+
+export type MutationManageBusinessEmployeesArgs = {
+  input: ManageBusinessEmployeesInput;
 };
 
 
@@ -487,9 +530,10 @@ export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
   getAddress: Address;
-  getAllBusiness?: Maybe<Array<Maybe<Business>>>;
-  getAllBusinessByUser?: Maybe<Array<Maybe<Business>>>;
+  getAllBusiness: Array<Maybe<Business>>;
+  getAllBusinessByUser: Array<Maybe<Business>>;
   getAllCategoriesByBusiness: Array<Category>;
+  getAllEmployees?: Maybe<Employees>;
   getAllMenus: Array<Menu>;
   getAllMenusByBusinessID: Array<Maybe<Menu>>;
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
@@ -709,12 +753,10 @@ export type UserInput = {
 
 export enum UserPrivileges {
   Admin = 'ADMIN',
-  Bar = 'BAR',
-  Bartender = 'BARTENDER',
-  Cook = 'COOK',
+  Customer = 'CUSTOMER',
   Manager = 'MANAGER',
-  User = 'USER',
-  Waiter = 'WAITER'
+  Staff = 'STAFF',
+  ViewOnly = 'VIEW_ONLY'
 }
 
 export type WorkingHours = {

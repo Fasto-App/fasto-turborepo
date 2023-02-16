@@ -11,8 +11,12 @@ import {
   businessInformationSchemaInput,
   businessLocationSchema,
   businessLocationSchemaInput,
+  EmployeeInformation,
 } from 'app-helpers';
 import { uploadFileS3Bucket } from '../../../s3/s3';
+import { ApolloError } from '../../ApolloErrorExtended/ApolloErrorExtended';
+import { SessionModel } from '../../../models/session';
+import { sendEployeeAccountCreation, sendExistingUserEployeeEmail } from '../../../email-tool';
 
 
 //FIX: this should be a validation of the token, not the business id
@@ -226,6 +230,121 @@ const getBusinessLocation = async (parent: null, args: null, { business, db }: C
   }
 }
 
+const getAllEmployees = async (parent: any, args: any, { business, db }: Context) => {
+  if (!business) throw ApolloError("Unauthorized")
+
+  const User = UserModel(db)
+  const Business = BusinessModel(db)
+  const Session = SessionModel(db)
+  // use the array of users to poupulate the employees
+  const foundBusiness = await Business.findById(business)
+  const employees = await User.find({ _id: { $in: foundBusiness?.employees } })
+  const employeesPending = await Session.find({ _id: { $in: foundBusiness?.employeesPending } })
+
+  const employeesWithPrivileges = employees.map((employee) => {
+    const privileges = employee?.businesses?.[business]
+    return ({
+      _id: employee._id,
+      name: employee.name,
+      email: employee.email,
+      picture: employee.picture,
+      privileges
+    })
+  })
+
+  return {
+    employees: employeesWithPrivileges,
+    employeesPending
+  }
+}
+
+const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInformation }, { business, db }: Context) => {
+  if (!business) throw ApolloError("Unauthorized")
+  const { email, privileges, _id, name } = args.input
+
+  const User = UserModel(db)
+  const Business = BusinessModel(db)
+  const Session = SessionModel(db)
+
+  const foundBusiness = await Business.findById(business)
+  const foundAsUser = await User.findOne({ email })
+  if (!foundBusiness) throw ApolloError("BadRequest")
+
+  if (_id) {
+    // if there's an _id, it means it's an already registered account
+    // and we are editing the privileges
+
+    return null
+  }
+
+
+  if (foundAsUser) {
+    if (foundBusiness.employees?.includes(foundAsUser._id)) {
+      throw ApolloError("BadRequest", "This user is already an employee")
+    }
+
+    foundBusiness.employees?.push(foundAsUser._id)
+
+    foundAsUser.businesses = {
+      ...foundAsUser.businesses,
+      [business]: [privileges]
+    }
+
+    await foundAsUser.save()
+    await foundBusiness.save()
+
+    sendExistingUserEployeeEmail({
+      email: foundAsUser.email,
+      name: foundAsUser.name,
+      businessName: foundBusiness.name,
+    })
+
+    return ({
+      _id: foundAsUser._id,
+      name: foundAsUser.name,
+      email: foundAsUser.email,
+      picture: foundAsUser.picture,
+      privileges: [privileges]
+    })
+  }
+
+  // create a new session and append that as the pending employee
+  let newSession;
+
+  newSession = await Session.findOne({ email })
+
+  if (!newSession) {
+    newSession = new Session({
+      email,
+    })
+  }
+
+  const token = await tokenSigning(newSession._id, email, business);
+
+  newSession.token = token
+  newSession.name = name
+  newSession.businesses = {
+    ...newSession.businesses,
+    [business]: [privileges]
+  }
+
+  await newSession.save()
+
+  sendEployeeAccountCreation({
+    email,
+    name,
+    businessName: foundBusiness.name,
+    token
+  })
+
+  return ({
+    _id: newSession._id,
+    email: newSession.email,
+    name: newSession.name,
+    privileges: [privileges]
+  })
+}
+
 
 const BusinessResolverMutation = {
   createBusiness,
@@ -233,12 +352,14 @@ const BusinessResolverMutation = {
   deleteBusiness,
   updateBusinessInformation,
   updateBusinessLocation,
+  manageBusinessEmployees
 }
 const BusinessResolverQuery = {
   getBusinessLocation,
   getAllBusiness,
   getAllBusinessByUser,
-  getBusinessInformation
+  getBusinessInformation,
+  getAllEmployees
 }
 
 const BusinessResolver = {

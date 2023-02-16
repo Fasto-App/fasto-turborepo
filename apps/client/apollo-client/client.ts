@@ -6,12 +6,22 @@ import { getCookies } from 'cookies-next';
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors)
-    graphQLErrors.forEach(({ message, locations, path }) =>
+  if (graphQLErrors) {
+
+    graphQLErrors.forEach(({ message, locations, path, originalError, }) => {
       console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+        `[GraphQL error] Message: ${message}, Location: ${locations}, Path: ${path}`
       )
-    );
+    });
+
+    for (let err of graphQLErrors) {
+      if (err.extensions?.code === 'UNAUTHENTICATED') { }
+
+      console.log("Error CODE", err.extensions?.code)
+    }
+
+
+  }
   if (networkError) console.log(`[Network error]: ${networkError}`);
 
   //TODO: if graphQL error has something about authentication, then logout

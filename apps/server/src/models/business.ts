@@ -6,6 +6,7 @@ import { Address } from './address';
 import { Product } from './product';
 import { Category } from './category';
 import { User } from './user';
+import { Session } from './session';
 // import type { HousOfOperationType } from 'app-helpers';
 export class Business {
     @prop({ required: true })
@@ -53,6 +54,9 @@ export class Business {
 
     @prop({ default: [] })
     public employees?: Ref<User>[];
+
+    @prop({ default: [] })
+    public employeesPending?: Ref<Session>[];
 
     @prop({ default: Date.now() })
     public created_date!: Date;

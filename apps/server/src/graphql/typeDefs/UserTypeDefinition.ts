@@ -14,19 +14,13 @@ export const UserTypeDefinition = gql`
     updateUserInformation(input: UpdateUserInput!): User!
     recoverPassword(input: String!): RequestResponseOK
     deleteUser: RequestResponseOK!
-    addEmployeeToBusiness(input: AddEmployeeInput!): User!
     passwordReset(input: ResetPasswordInput!): User!
+    createEmployeeAccount(input: CreateEmployeeAccountInput!): User!
   }
 
   type AccountCreationResponse {
     ok: Boolean!
     url: String
-  }
-
-  input AddEmployeeInput {
-    name: String!
-    email: String!
-    privileges: UserPrivileges!
   }
 
   input UserInput {
@@ -35,6 +29,14 @@ export const UserTypeDefinition = gql`
     password: String!
     passwordConfirmation: String!
     privileges: UserPrivileges
+  }
+
+  input CreateEmployeeAccountInput {
+    name: String!
+    email: String!
+    password: String!
+    passwordConfirmation: String!
+    token: String!
   }
 
   input UpdateUserInput {
@@ -73,12 +75,10 @@ export const UserTypeDefinition = gql`
 
   enum UserPrivileges {
     ADMIN
+    VIEW_ONLY
     MANAGER
-    USER
-    WAITER
-    COOK
-    BAR
-    BARTENDER
+    CUSTOMER
+    STAFF
   }
 
   type BusinessPrivileges {

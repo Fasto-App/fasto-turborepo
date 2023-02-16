@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PrivilegesKeysArray } from "./privileges";
 
 const DaysOfWeek = {
   Monday: "Monday",
@@ -144,13 +145,13 @@ export const accountInformationFormSchema = z.object({
 export type AccountInformation = z.infer<typeof accountInformationFormSchema>
 
 export const employeeFormSchema = z.object({
+  _id: z.string().optional(),
   name: z.string().trim().min(3, { message: 'Name Required' })
     .max(50, { message: 'Name too long' }),
-  role: z.string().trim().min(4, { message: 'Role Required' }),
+  jobTitle: z.string().trim().min(3, { message: 'Job Role Required' }),
+  privileges: z.enum(PrivilegesKeysArray),
   email: z.string().email().min(4, { message: 'Email Required' }),
-  phone: z.string().optional(),
-  picture: z.string().optional(),
 })
 
-export type EmployeeInfo = z.infer<typeof employeeFormSchema>
+export type EmployeeInformation = z.infer<typeof employeeFormSchema>
 

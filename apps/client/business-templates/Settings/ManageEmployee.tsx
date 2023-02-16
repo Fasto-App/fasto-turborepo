@@ -5,17 +5,24 @@ import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
 import { texts } from "./texts"
-import { AddMoreButton, SmallAddMoreButton } from "../../components/atoms/AddMoreButton"
+import { AddMoreButton } from "../../components/atoms/AddMoreButton"
 import { ProductTile } from "../../components/Product/Product"
-import { EmployeeInfo } from "app-helpers"
+import { EmployeeInformation } from "app-helpers"
+import { DevTool } from "@hookform/devtools"
 
 const ManageEmployeeModal = ({
   isModalOpen, setIsModalOpen }:
   { isModalOpen: boolean, setIsModalOpen: (isOpen: boolean) => void }) => {
   const { control, formState, handleSubmit, reset } = useManageEmployeeFormHook()
+  // TODO manage employee mutation
 
-  const onSubmit = (data: EmployeeInfo) => {
-    console.log("data", data)
+  const onSubmit = (data: EmployeeInformation) => {
+    console.log("employee information", data)
+
+    // send an email to the employee so they can go to the app and set their password
+    // if the employee is already registered, send an email to the employee letting them know they have been added to the business
+
+
     // post data to backend and refresh query to fetch all employees
   }
 
@@ -26,43 +33,47 @@ const ManageEmployeeModal = ({
   }
 
   return (
-    <CustomModal
-      isOpen={isModalOpen}
-      onClose={onCancel}
-      HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
-      ModalBody={
-        <ControlledForm
-          control={control}
-          formState={formState}
-          Config={ManageEmployeeConfig}
-        />}
-      ModalFooter={
-        <>
-          <Button
-            flex={1}
-            variant="outline"
-            colorScheme="tertiary"
-            onPress={onCancel}
-          >
-            {texts.cancel}
-          </Button>
-          <Button
-            flex={1}
-            onPress={handleSubmit(onSubmit)}
-          >
-            {texts.save}
-          </Button>
-        </>
-      }
-    />
+    <>
+      <DevTool control={control} />
+      <CustomModal
+        isOpen={isModalOpen}
+        onClose={onCancel}
+        HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
+        ModalBody={
+          <ControlledForm
+            control={control}
+            formState={formState}
+            Config={ManageEmployeeConfig}
+          />}
+        ModalFooter={
+          <>
+            <Button
+              flex={1}
+              variant="outline"
+              colorScheme="tertiary"
+              onPress={onCancel}
+            >
+              {texts.cancel}
+            </Button>
+            <Button
+              flex={1}
+              onPress={handleSubmit(onSubmit)}
+            >
+              {texts.save}
+            </Button>
+          </>
+        }
+      />
+    </>
   )
 }
 
 const mock = {
   _id: 1,
   name: "Alex Mendes",
+  privileges: "Admin",
   role: "Server",
-  imageUrl: "https://scontent.fcgh10-1.fna.fbcdn.net/v/t39.30808-6/313403685_956099322014600_7816717504008112381_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=jMIoTP12iRgAX8ac76I&_nc_oc=AQlACjg0K7cJ0KD_KXAjZZhNr7IhhlNIEOKxxCS-9NQfDqhesBzp2Vmud1YQwhbFL0tXHhUs_38L3gSgNgAjyQzx&tn=DyIDWBMfZAs-NAgt&_nc_ht=scontent.fcgh10-1.fna&oh=00_AfAaz4EPF63cK-XuUf-LUMztBxMcAb8ByrVbK6rggT_eeQ&oe=63CB537F"
+  imageUrl: "https://media.licdn.com/dms/image/C5603AQFFEa9a0Semfg/profile-displayphoto-shrink_800_800/0/1632369752400?e=1681948800&v=beta&t=55rO6SgLBvmKCjnh6Her5Tbk1VySLoebwbXD4YKC87U"
 } as const;
 const employeesData: typeof mock[] = new Array(5).fill(mock)
 
