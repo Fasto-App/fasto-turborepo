@@ -28,7 +28,7 @@ export const UserTypeDefinition = gql`
     email: String!
     password: String!
     passwordConfirmation: String!
-    privileges: UserPrivileges
+    privilege: UserPrivileges
   }
 
   input CreateEmployeeAccountInput {
@@ -74,16 +74,16 @@ export const UserTypeDefinition = gql`
   
 
   enum UserPrivileges {
-    ADMIN
-    VIEW_ONLY
-    MANAGER
-    CUSTOMER
-    STAFF
+    Admin
+    View
+    Manager
+    Customer
+    Staff
   }
 
   type BusinessPrivileges {
     business: String!
-    privileges: [UserPrivileges]!
+    privilege: UserPrivileges!
   }
 
 `

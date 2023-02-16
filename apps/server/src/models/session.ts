@@ -1,6 +1,6 @@
 import { Document, Connection } from 'mongoose'
-import { prop, getModelForClass, pre } from '@typegoose/typegoose';
-import { PrivilegesKeys } from 'app-helpers';
+import { prop, getModelForClass } from '@typegoose/typegoose';
+import type { BusinessRelationship } from './types';
 
 export class Session {
   @prop()
@@ -13,7 +13,7 @@ export class Session {
   public token?: string;
 
   @prop()
-  public businesses?: Record<string, PrivilegesKeys[]>;
+  public business?: BusinessRelationship;
 
   @prop({ default: Date.now() })
   public createdAt!: Date

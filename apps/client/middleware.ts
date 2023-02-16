@@ -38,8 +38,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   if (request.nextUrl.pathname.startsWith(businessRoute.login) ||
     request.nextUrl.pathname.startsWith(businessRoute.signup) ||
     request.nextUrl.pathname.startsWith(businessRoute.forgotPassword) ||
-    request.nextUrl.pathname.startsWith(businessRoute.resetPassword)
-  ) {
+    request.nextUrl.pathname.startsWith(businessRoute.resetPassword) ||
+    request.nextUrl.pathname.startsWith(businessRoute.createAccount)) {
     const { nextUrl: { search } } = request;
     const urlSearchParams = new URLSearchParams(search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -69,7 +69,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
 
 
         const response = NextResponse.next()
-        response.cookies.set("test", "test");
 
         return response;
       } else {

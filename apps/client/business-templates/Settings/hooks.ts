@@ -100,7 +100,7 @@ export const useManageEmployeeFormHook = () => {
       jobTitle: "",
       email: "",
       name: "",
-      privileges: undefined,
+      privilege: undefined,
     },
     resolver: zodResolver(employeeFormSchema)
   })

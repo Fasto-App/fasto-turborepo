@@ -6,7 +6,7 @@ mutation UpdateUserInformation($input: UpdateUserInput!) {
 		picture
 		businesses {
 			business
-			privileges
+			privilege
 		}
 	}
 }

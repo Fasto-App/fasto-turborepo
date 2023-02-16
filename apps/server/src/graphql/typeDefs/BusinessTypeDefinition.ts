@@ -27,7 +27,7 @@ export const BusinessTypeDefinition = gql`
     _id: ID
     name: String!
     email: String!
-    privileges: [UserPrivileges!]!
+    privilege: UserPrivileges!
     picture: String
   }
 
@@ -36,7 +36,7 @@ export const BusinessTypeDefinition = gql`
     name: String!
     email: String!
     jobTitle: String!
-    privileges: UserPrivileges!
+    privilege: UserPrivileges!
   }
 
   input BusinessInput {
@@ -62,13 +62,13 @@ export const BusinessTypeDefinition = gql`
   }
 
   enum DaysOfWeek {
-    MONDAY
-    TUESDAY
-    WEDNESDAY
-    THURSDAY
-    FRIDAY
-    SATURDAY
-    SUNDAY
+    Monday
+    Tuesday
+    Wednesday
+    Thursday
+    Friday
+    Saturday
+    Sunday
   }
 
     type CreateBusinessPayload {

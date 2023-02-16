@@ -1,4 +1,3 @@
-import { Privileges } from "../../../models/types";
 import { z } from "zod";
 
 export const CreateUser = z.object({
@@ -6,7 +5,6 @@ export const CreateUser = z.object({
   email: z.string(),
   password: z.string(),
   passwordConfirmation: z.string(),
-  privileges: z.nativeEnum(Privileges).optional(),
 });
 
 export type CreateUserInput = z.infer<typeof CreateUser>;

@@ -1,6 +1,7 @@
 import { Document, Connection } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
 import { PrivilegesKeys } from 'app-helpers';
+import type { Businesses } from './types';
 
 export class User {
     @prop({ unique: false, required: true })
@@ -13,7 +14,7 @@ export class User {
     public password!: string;
 
     @prop()
-    public businesses?: Record<string, PrivilegesKeys[]>;
+    public businesses?: Businesses;
 
     @prop()
     public JobTitles?: string[];

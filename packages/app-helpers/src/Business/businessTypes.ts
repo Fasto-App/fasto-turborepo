@@ -149,7 +149,7 @@ export const employeeFormSchema = z.object({
   name: z.string().trim().min(3, { message: 'Name Required' })
     .max(50, { message: 'Name too long' }),
   jobTitle: z.string().trim().min(3, { message: 'Job Role Required' }),
-  privileges: z.enum(PrivilegesKeysArray),
+  privilege: z.enum(PrivilegesKeysArray),
   email: z.string().email().min(4, { message: 'Email Required' }),
 })
 

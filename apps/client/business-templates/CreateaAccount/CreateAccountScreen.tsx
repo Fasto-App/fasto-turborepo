@@ -8,7 +8,7 @@ import { Link } from '../../components/atoms/Link';
 import { CreateAccountConfig, useCreateAccountFormHook } from './hooks';
 import { CreateAccountField } from 'app-helpers';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
-import { useCreateUserMutation } from '../../gen/generated';
+import { useCreateEmployeeAccountMutation, useCreateUserMutation } from '../../gen/generated';
 import { DevTool } from '@hookform/devtools';
 
 const texts = {
@@ -21,6 +21,7 @@ const texts = {
   invalidTokenOrEmail: "Invalid token or email",
   passwordConfirmation: "Password Confirmation",
   pleaseEnterAndConfirm: (email: string) => `Please, enter and confirm your new password for ${email}`,
+  yourBusiness: (businessName: string) => `Your Business ${businessName}© is waiting for you.`,
 }
 
 export const CreateAccountScreen = () => {
@@ -38,6 +39,15 @@ export const CreateAccountScreen = () => {
     }
   })
 
+  const [createEmployeeAccount, { loading: employeeLoading }] = useCreateEmployeeAccountMutation({
+    onCompleted: (data) => {
+      setCookies("name", data.createEmployeeAccount.name);
+      setCookies("token", data.createEmployeeAccount.token);
+      setCookies("email", data.createEmployeeAccount.email);
+      router.push(businessRoute.dashboard);
+    }
+  });
+
   const {
     handleSubmit,
     control,
@@ -50,11 +60,18 @@ export const CreateAccountScreen = () => {
   }, [email, setValue])
 
   const onSignUpSubmit = async (formData: CreateAccountField) => {
-    // will use the business id to select the correct operation
-    // create employee
     if (business) {
-
-      return
+      return await createEmployeeAccount({
+        variables: {
+          input: {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            passwordConfirmation: formData.passwordConfirmation,
+            token: token as string
+          }
+        }
+      })
     }
 
     await createUser({
@@ -115,6 +132,11 @@ export const CreateAccountScreen = () => {
         }} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
           {texts.pleaseEnterAndConfirm(email as string)}
         </Heading>
+        {business ? <Heading maxWidth={"400px"} mt="2" alignContent={"center"} _dark={{
+          color: "warmGray.200"
+        }} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
+          {texts.yourBusiness(business as string)}
+        </Heading> : null}
       </Center>
       <DevTool control={control} />
       <ControlledForm
@@ -127,7 +149,7 @@ export const CreateAccountScreen = () => {
           mt="2"
           bg="primary.500"
           onPress={handleSubmit(onSignUpSubmit)}
-          isLoading={loading}
+          isLoading={loading || employeeLoading}
         >
           {texts.signup}
         </Button>

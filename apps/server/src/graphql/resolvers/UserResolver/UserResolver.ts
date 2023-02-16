@@ -7,16 +7,14 @@ import {
   tokenSigning,
   validateEmail,
 } from "../utils"
-import { Connection, Types } from "mongoose"
+import { Connection } from "mongoose"
 import { Context } from "../types";
 import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
-import { PrivilegesKeys, typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation, ResetPasswordSchemaInput, CreateEmployeeAccountInput, createEmployeeAccountSchema } from "app-helpers";
-import type { Ref } from '@typegoose/typegoose';
+import { typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation, ResetPasswordSchemaInput, CreateEmployeeAccountInput, createEmployeeAccountSchema } from "app-helpers";
 import {
   sendWelcomeEmail,
   sendResetPasswordEmail,
-  sendExistingUserEployeeEmail,
 } from "../../../email-tool";
 import { uploadFileS3Bucket } from "../../../s3/s3";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
@@ -103,7 +101,12 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
 
     const businessToString = creatingBusiness._id.toString()
 
-    user.businesses = { [businessToString]: ["ADMIN"] }
+    user.businesses = {
+      [businessToString]: {
+        privilege: "Admin",
+        jobTitle: "Owner",
+      }
+    }
 
     const token = tokenSigning(user._id, input.email.toLowerCase(), creatingBusiness?._id);
     await user.save()
@@ -139,7 +142,7 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
   if (!isPasswordMatch) throw new Error("User not found")
 
   const allBusiness = typedKeys(user.businesses)
-  const businessId = allBusiness.length ? allBusiness[0] : undefined;
+  const businessId = allBusiness.length ? allBusiness[0] as string : undefined;
 
   const token = await tokenSigning(user._id, email, businessId);
 
@@ -176,7 +179,7 @@ export const getToken = async (_parent: any, _: any, { db, user }: Context) => {
   if (!userProfile) return null
 
   const allBusiness = typedKeys(userProfile.businesses)
-  const businessId = allBusiness.length ? allBusiness[0] : undefined;
+  const businessId = allBusiness.length ? allBusiness[0] as string : undefined;
 
   const token = await tokenSigning(userProfile._id, userProfile.email as string, businessId);
 
@@ -244,7 +247,7 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
   if (!user) throw ApolloError('NotFound')
 
   const allBusiness = typedKeys(user.businesses)
-  const businessId = allBusiness.length ? allBusiness[0] : undefined;
+  const businessId = allBusiness.length ? allBusiness[0] as string : undefined;
   const token = await tokenSigning(user._id, user.email, businessId);
 
   if (!token) throw ApolloError('InternalServerError')
@@ -263,13 +266,6 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
   }
 }
 
-type AddEmployeeInput = {
-  name: string;
-  privileges: PrivilegesKeys;
-  email: string;
-  phone: string;
-  picture: string;
-}
 
 const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmployeeAccountInput }, { db }: Context) => {
   try {
@@ -298,18 +294,22 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
     // make sure business exists  
     const businessFound = await BusinessModel(db).findById(business)
 
-    const privileges = foundSession?.businesses?.[business]
-    if (!businessFound || !privileges) {
+    const privilege = foundSession?.business?.privilege
+    const jobTitle = foundSession?.business?.jobTitle
+
+    if (!businessFound || !privilege || !jobTitle) {
       throw ApolloError("BadRequest", "Invalid Business or Privileges")
     }
-    // we saved this info in the session, so we can use it to create the user
 
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       businesses: {
-        [businessFound._id]: privileges
+        [businessFound._id]: {
+          privilege,
+          jobTitle
+        }
       },
     })
 
@@ -319,11 +319,10 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
 
     await businessFound.save()
 
-    const newToken = await foundSession.deleteOne()
-
-    // send email to new user with the new account
+    const newToken = await tokenSigning(user._id, user.email, businessFound._id)
 
     return {
+      _id: user._id,
       name: user.name,
       email: user.email,
       picture: user.picture,
@@ -337,13 +336,15 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
 }
 
 const getBusinessByUser = (user: User, input: any, context: Context) => {
-  console.log("user", user)
   const business = user.businesses
 
   if (!business) return []
 
   const mappedbusinesses = typedKeys(business).map((businessId: string | number) => {
-    return { business: businessId, privileges: business[businessId] }
+    return {
+      business: businessId,
+      privilege: business[businessId].privilege
+    }
   })
 
   return mappedbusinesses

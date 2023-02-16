@@ -22,12 +22,6 @@ export type AccountCreationResponse = {
   url?: Maybe<Scalars['String']>;
 };
 
-export type AddEmployeeInput = {
-  email: Scalars['String'];
-  name: Scalars['String'];
-  privileges: UserPrivileges;
-};
-
 export type Address = {
   __typename?: 'Address';
   _id: Scalars['ID'];
@@ -76,7 +70,7 @@ export type BusinessInput = {
 export type BusinessPrivileges = {
   __typename?: 'BusinessPrivileges';
   business: Scalars['String'];
-  privileges: Array<Maybe<UserPrivileges>>;
+  privilege: UserPrivileges;
 };
 
 export type Category = {
@@ -146,13 +140,13 @@ export type CreateTableInput = {
 };
 
 export enum DaysOfWeek {
-  Friday = 'FRIDAY',
-  Monday = 'MONDAY',
-  Saturday = 'SATURDAY',
-  Sunday = 'SUNDAY',
-  Thursday = 'THURSDAY',
-  Tuesday = 'TUESDAY',
-  Wednesday = 'WEDNESDAY'
+  Friday = 'Friday',
+  Monday = 'Monday',
+  Saturday = 'Saturday',
+  Sunday = 'Sunday',
+  Thursday = 'Thursday',
+  Tuesday = 'Tuesday',
+  Wednesday = 'Wednesday'
 }
 
 export type DeleteBusinessPayload = {
@@ -175,7 +169,7 @@ export type Employee = {
   email: Scalars['String'];
   name: Scalars['String'];
   picture?: Maybe<Scalars['String']>;
-  privileges: Array<UserPrivileges>;
+  privilege: UserPrivileges;
 };
 
 export type Employees = {
@@ -234,7 +228,7 @@ export type ManageBusinessEmployeesInput = {
   email: Scalars['String'];
   jobTitle: Scalars['String'];
   name: Scalars['String'];
-  privileges: UserPrivileges;
+  privilege: UserPrivileges;
 };
 
 export type Menu = {
@@ -247,7 +241,6 @@ export type Menu = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
-  addEmployeeToBusiness: User;
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
@@ -288,11 +281,6 @@ export type Mutation = {
   updateTab: Tab;
   updateUserInformation: User;
   uploadFile: Scalars['String'];
-};
-
-
-export type MutationAddEmployeeToBusinessArgs = {
-  input: AddEmployeeInput;
 };
 
 
@@ -748,15 +736,15 @@ export type UserInput = {
   name: Scalars['String'];
   password: Scalars['String'];
   passwordConfirmation: Scalars['String'];
-  privileges?: InputMaybe<UserPrivileges>;
+  privilege?: InputMaybe<UserPrivileges>;
 };
 
 export enum UserPrivileges {
-  Admin = 'ADMIN',
-  Customer = 'CUSTOMER',
-  Manager = 'MANAGER',
-  Staff = 'STAFF',
-  ViewOnly = 'VIEW_ONLY'
+  Admin = 'Admin',
+  Customer = 'Customer',
+  Manager = 'Manager',
+  Staff = 'Staff',
+  View = 'View'
 }
 
 export type WorkingHours = {
@@ -769,6 +757,13 @@ export type WorkingHoursInput = {
   close: Scalars['String'];
   open: Scalars['String'];
 };
+
+export type ManageBusinessEmployeesMutationVariables = Exact<{
+  input: ManageBusinessEmployeesInput;
+}>;
+
+
+export type ManageBusinessEmployeesMutation = { __typename?: 'Mutation', manageBusinessEmployees: { __typename?: 'Employee', email: string, name: string, picture?: string | null, privilege: UserPrivileges } };
 
 export type UpdateBusinessInformationMutationVariables = Exact<{
   input: UpdateBusinessInfoInput;
@@ -933,6 +928,13 @@ export type CreateTableMutationVariables = Exact<{
 
 export type CreateTableMutation = { __typename?: 'Mutation', createTable: { __typename?: 'Table', space: string, _id: string } };
 
+export type CreateEmployeeAccountMutationVariables = Exact<{
+  input: CreateEmployeeAccountInput;
+}>;
+
+
+export type CreateEmployeeAccountMutation = { __typename?: 'Mutation', createEmployeeAccount: { __typename?: 'User', token: string, name: string, email: string, _id: string, picture?: string | null } };
+
 export type CreateUserMutationVariables = Exact<{
   input?: InputMaybe<UserInput>;
 }>;
@@ -973,14 +975,50 @@ export type UpdateUserInformationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privileges: Array<UserPrivileges | null> }> } };
+export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } };
 
 export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privileges: Array<UserPrivileges | null> }> } | null };
+export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } | null };
 
 
+export const ManageBusinessEmployeesDocument = gql`
+    mutation ManageBusinessEmployees($input: ManageBusinessEmployeesInput!) {
+  manageBusinessEmployees(input: $input) {
+    email
+    name
+    picture
+    privilege
+  }
+}
+    `;
+export type ManageBusinessEmployeesMutationFn = Apollo.MutationFunction<ManageBusinessEmployeesMutation, ManageBusinessEmployeesMutationVariables>;
+
+/**
+ * __useManageBusinessEmployeesMutation__
+ *
+ * To run a mutation, you first call `useManageBusinessEmployeesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManageBusinessEmployeesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manageBusinessEmployeesMutation, { data, loading, error }] = useManageBusinessEmployeesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useManageBusinessEmployeesMutation(baseOptions?: Apollo.MutationHookOptions<ManageBusinessEmployeesMutation, ManageBusinessEmployeesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ManageBusinessEmployeesMutation, ManageBusinessEmployeesMutationVariables>(ManageBusinessEmployeesDocument, options);
+      }
+export type ManageBusinessEmployeesMutationHookResult = ReturnType<typeof useManageBusinessEmployeesMutation>;
+export type ManageBusinessEmployeesMutationResult = Apollo.MutationResult<ManageBusinessEmployeesMutation>;
+export type ManageBusinessEmployeesMutationOptions = Apollo.BaseMutationOptions<ManageBusinessEmployeesMutation, ManageBusinessEmployeesMutationVariables>;
 export const UpdateBusinessInformationDocument = gql`
     mutation UpdateBusinessInformation($input: UpdateBusinessInfoInput!) {
   updateBusinessInformation(input: $input) {
@@ -1967,6 +2005,43 @@ export function useCreateTableMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateTableMutationHookResult = ReturnType<typeof useCreateTableMutation>;
 export type CreateTableMutationResult = Apollo.MutationResult<CreateTableMutation>;
 export type CreateTableMutationOptions = Apollo.BaseMutationOptions<CreateTableMutation, CreateTableMutationVariables>;
+export const CreateEmployeeAccountDocument = gql`
+    mutation CreateEmployeeAccount($input: CreateEmployeeAccountInput!) {
+  createEmployeeAccount(input: $input) {
+    token
+    name
+    email
+    _id
+    picture
+  }
+}
+    `;
+export type CreateEmployeeAccountMutationFn = Apollo.MutationFunction<CreateEmployeeAccountMutation, CreateEmployeeAccountMutationVariables>;
+
+/**
+ * __useCreateEmployeeAccountMutation__
+ *
+ * To run a mutation, you first call `useCreateEmployeeAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEmployeeAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEmployeeAccountMutation, { data, loading, error }] = useCreateEmployeeAccountMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateEmployeeAccountMutation(baseOptions?: Apollo.MutationHookOptions<CreateEmployeeAccountMutation, CreateEmployeeAccountMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEmployeeAccountMutation, CreateEmployeeAccountMutationVariables>(CreateEmployeeAccountDocument, options);
+      }
+export type CreateEmployeeAccountMutationHookResult = ReturnType<typeof useCreateEmployeeAccountMutation>;
+export type CreateEmployeeAccountMutationResult = Apollo.MutationResult<CreateEmployeeAccountMutation>;
+export type CreateEmployeeAccountMutationOptions = Apollo.BaseMutationOptions<CreateEmployeeAccountMutation, CreateEmployeeAccountMutationVariables>;
 export const CreateUserDocument = gql`
     mutation CreateUser($input: UserInput) {
   createUser(input: $input) {
@@ -2151,7 +2226,7 @@ export const UpdateUserInformationDocument = gql`
     picture
     businesses {
       business
-      privileges
+      privilege
     }
   }
 }
@@ -2191,7 +2266,7 @@ export const GetUserInformationDocument = gql`
     picture
     businesses {
       business
-      privileges
+      privilege
     }
   }
 }

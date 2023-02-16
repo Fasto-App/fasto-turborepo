@@ -3,6 +3,9 @@ import { createUploadLink } from 'apollo-upload-client'
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { getCookies } from 'cookies-next';
+import { clearCookies } from '../cookies/businessCookies';
+import Router from 'next/router'
+import { businessRoute } from '../routes';
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -15,9 +18,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     });
 
     for (let err of graphQLErrors) {
-      if (err.extensions?.code === 'UNAUTHENTICATED') { }
+      if (err.extensions?.httpStatus === 'Unauthorized') {
+        clearCookies()
+        Router.push(businessRoute.login)
+      }
 
-      console.log("Error CODE", err.extensions?.code)
+      console.log("code", err.extensions?.code)
+      console.log("cause", err.extensions?.cause)
+      console.log("httpStatus", err.extensions?.httpStatus)
     }
 
 

@@ -1,0 +1,8 @@
+mutation ManageBusinessEmployees($input: ManageBusinessEmployeesInput!) {
+	manageBusinessEmployees(input: $input) {
+		email
+		name
+		picture
+		privilege
+	}
+}

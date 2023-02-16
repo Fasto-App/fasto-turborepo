@@ -105,7 +105,7 @@ export const uploadPicture: InputProps = {
 // the forms need better validation to garantee that the config types and the schema types are the same
 
 const privilegesArray = typedKeys(Privileges)
-  .filter(privilege => privilege !== "CUSTOMER")
+  .filter(privilege => privilege !== "Customer")
   .map(privilege => ({
     name: privilege,
     _id: privilege,
@@ -127,9 +127,9 @@ export const ManageEmployeeConfig: SideBySideInputConfig = {
         placeholder: "Enter Role",
       }
     }, {
-      privileges: {
-        name: "privileges",
-        label: "Privileges",
+      privilege: {
+        name: "privilege",
+        label: "Privilege",
         isRequired: true,
         placeholder: "Choose a privilege",
         inputType: "Select",

@@ -1,0 +1,9 @@
+mutation CreateEmployeeAccount($input: CreateEmployeeAccountInput!) {
+	createEmployeeAccount(input: $input) {
+		token
+		name
+		email
+		_id
+		picture
+	}
+}

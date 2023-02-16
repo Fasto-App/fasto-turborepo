@@ -22,6 +22,10 @@ export const HttpStatusMessage = {
   502: 'The server acting as a gateway or proxy received an invalid response from an upstream server.',
 } as const;
 
+export type HttpStatusCodeType = keyof typeof HttpStatusMessage;
+export type HttpStatusMessageType = typeof HttpStatusMessage[keyof typeof HttpStatusMessage];
+export type HttpStatusKeysType = keyof typeof HttpStatus;
+
 
 
 

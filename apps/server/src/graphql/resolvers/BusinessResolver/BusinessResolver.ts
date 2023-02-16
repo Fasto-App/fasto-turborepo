@@ -6,12 +6,12 @@ import { IUserModel, UserModel } from "../../../models/user";
 import { CategoryModel } from "../../../models/category";
 import { ProductModel } from '../../../models/product';
 import { Context } from '../types';
-import { Privileges } from '../../../models/types';
 import {
   businessInformationSchemaInput,
   businessLocationSchema,
   businessLocationSchemaInput,
   EmployeeInformation,
+  Privileges,
 } from 'app-helpers';
 import { uploadFileS3Bucket } from '../../../s3/s3';
 import { ApolloError } from '../../ApolloErrorExtended/ApolloErrorExtended';
@@ -84,7 +84,10 @@ const createBusiness = async (_parent: any,
     await savedBusiness.save();
     userContext.businesses = {
       ...userContext.businesses,
-      [savedBusiness._id.toString()]: [Privileges.ADMIN]
+      [`${savedBusiness._id.toString()}`]: {
+        privilege: "Admin",
+        jobTitle: 'Owner',
+      }
     }
 
     await userContext.save()
@@ -242,13 +245,12 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
   const employeesPending = await Session.find({ _id: { $in: foundBusiness?.employeesPending } })
 
   const employeesWithPrivileges = employees.map((employee) => {
-    const privileges = employee?.businesses?.[business]
     return ({
       _id: employee._id,
       name: employee.name,
       email: employee.email,
       picture: employee.picture,
-      privileges
+      privilege: employee?.businesses?.[business].privilege
     })
   })
 
@@ -260,7 +262,7 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
 
 const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInformation }, { business, db }: Context) => {
   if (!business) throw ApolloError("Unauthorized")
-  const { email, privileges, _id, name } = args.input
+  const { email, privilege, _id, name, jobTitle } = args.input
 
   const User = UserModel(db)
   const Business = BusinessModel(db)
@@ -272,7 +274,7 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
 
   if (_id) {
     // if there's an _id, it means it's an already registered account
-    // and we are editing the privileges
+    // and we are editing the privilege
 
     return null
   }
@@ -287,7 +289,10 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
 
     foundAsUser.businesses = {
       ...foundAsUser.businesses,
-      [business]: [privileges]
+      [business]: {
+        privilege,
+        jobTitle
+      }
     }
 
     await foundAsUser.save()
@@ -304,7 +309,7 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
       name: foundAsUser.name,
       email: foundAsUser.email,
       picture: foundAsUser.picture,
-      privileges: [privileges]
+      privilege
     })
   }
 
@@ -323,9 +328,9 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
 
   newSession.token = token
   newSession.name = name
-  newSession.businesses = {
-    ...newSession.businesses,
-    [business]: [privileges]
+  newSession.business = {
+    privilege,
+    jobTitle
   }
 
   await newSession.save()
@@ -341,7 +346,7 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
     _id: newSession._id,
     email: newSession.email,
     name: newSession.name,
-    privileges: [privileges]
+    privilege
   })
 }
 
