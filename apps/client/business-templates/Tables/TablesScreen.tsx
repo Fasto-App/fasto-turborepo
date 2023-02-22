@@ -13,6 +13,7 @@ import { TableModal } from "./TableModal"
 import { texts } from "./texts"
 import { useTableScreenStore } from "./tableScreenStore"
 import { shallow } from 'zustand/shallow'
+import { MoreButton } from "../../components/MoreButton"
 
 export const TablesScreen = () => {
 
@@ -111,16 +112,7 @@ export const TablesScreen = () => {
           </Heading>
 
           <HStack space={2} mt={2}>
-            <Button
-              maxH={"40px"}
-              borderWidth={1}
-              colorScheme="primary"
-              variant={"outline"}
-              onPress={() => setSpaceIsModalOpen(true)}>
-              <Box borderWidth={1} borderRadius={'full'} justifyContent="center" alignItems={"center"} >
-                <AiOutlinePlus size={"1em"} />
-              </Box>
-            </Button>
+            <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
             <FlatList
               horizontal
               data={allSpaces}

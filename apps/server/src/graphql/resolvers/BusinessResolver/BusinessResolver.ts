@@ -250,7 +250,9 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
       name: employee.name,
       email: employee.email,
       picture: employee.picture,
-      privilege: employee?.businesses?.[business].privilege
+      privilege: employee?.businesses?.[business].privilege,
+      jobTitle: employee?.businesses?.[business].jobTitle,
+      isPending: false
     })
   })
 
@@ -259,7 +261,9 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
       _id: employee._id,
       name: employee.name,
       email: employee.email,
-      privilege: employee?.business?.privilege
+      privilege: employee?.business?.privilege,
+      jobTitle: employee?.business?.jobTitle,
+      isPending: true
     })
   })
 

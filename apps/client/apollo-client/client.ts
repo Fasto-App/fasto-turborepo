@@ -3,7 +3,7 @@ import { createUploadLink } from 'apollo-upload-client'
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { getCookies } from 'cookies-next';
-import { clearCookies } from '../cookies/businessCookies';
+import { businessCookies, clearCookies } from '../cookies/businessCookies';
 import Router from 'next/router'
 import { businessRoute } from '../routes';
 
@@ -42,14 +42,12 @@ const httpLink = createUploadLink({
 
 const authLink = setContext((_: any, { headers }) => {
   const cookies = getCookies()
-  const token = cookies["opentab-cookies-token"]
-  const businessID = cookies["opentab-cookies-businessID"]
+  const token = cookies[businessCookies.token]
 
   return {
     headers: {
       ...headers,
       authorization: token ? `Bearer ${token}` : "",
-      business: businessID ?? "",
       'Apollo-Require-Preflight': 'true',
       "x-api-key": process.env.NEXT_PUBLIC_API_KEY
     }

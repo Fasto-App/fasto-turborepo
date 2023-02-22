@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState, } from "react"
-import { Box, Button, Heading, ScrollView, Text, VStack } from "native-base"
+import { Box, Button, Heading, HStack, ScrollView, Text, VStack } from "native-base"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { useManageEmployeeFormHook } from "./hooks"
@@ -10,6 +10,11 @@ import { ProductTile } from "../../components/Product/Product"
 import { EmployeeInformation, typedValues } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
 import { useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
+import { AiOutlinePlus } from "react-icons/ai"
+import { MoreButton } from "../../components/MoreButton"
+import { EmployeeTile } from "../../components/BorderTile"
+
+const DICE_BEAR_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
 const ManageEmployeeModal = ({
   isModalOpen, setIsModalOpen }:
@@ -101,15 +106,8 @@ export const ManageEmployee = () => {
 
   console.log({ combinedData })
 
-  // git picture of the first employee  
-  const firstEmployeePicture = useMemo(() => {
-    const firstEmployee = combinedData[0]
-    return firstEmployee?.picture
-  }, [combinedData])
-
-
   // add button to not empty array
-  const employeesWithButton = useMemo(() => [{ name: "Button" } as const, ...employeesData], [])
+  // const employeesWithButton = useMemo(() => [{ name: "Button" } as const, ...combinedData], [combinedData])
 
   // get all employees and it's data, 
   // for those who we don't have the picture we will show an pic with the initial letters of the name
@@ -121,6 +119,12 @@ export const ManageEmployee = () => {
         isModalOpen={isModalopen}
         setIsModalOpen={setIsModalOpen}
       />
+      <HStack alignItems={"center"} space={4}>
+        <Heading size={"lg"}>
+          {"Employees"}
+        </Heading>
+        <MoreButton onPress={() => setIsModalOpen(true)} />
+      </HStack>
       {!employeesData.length
         ?
         <VStack>
@@ -129,24 +133,20 @@ export const ManageEmployee = () => {
             onPress={() => setIsModalOpen(true)} empty={true} />
         </VStack>
         :
-        <ScrollView pt={4}>
+        <ScrollView pt={6}>
           <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-            {employeesWithButton.map((employee, index) => {
-              if (employee?.name === "Button") {
-                return <AddMoreButton
-                  horizontal
-                  key={"button"}
-                  onPress={() => setIsModalOpen(true)}
-                />
-              }
-
+            {combinedData.map((employee, index) => {
               return (
-                <ProductTile
-                  ctaTitle="Edit"
-                  key={employee._id + index}
+                <EmployeeTile
+                  key={employee._id}
+                  email={employee.email}
+                  jobTitle={employee.jobTitle}
                   name={employee.name}
-                  imageUrl={employee.picture}
-                  onPress={() => console.log("Hello")}
+                  privilege={employee.privilege}
+                  picture={employee.picture || DICE_BEAR_URL(employee.name)}
+                  onPress={() => setIsModalOpen(true)}
+                  ctaTitle={"Edit"}
+                  isPending={employee.isPending}
                 />
               )
             })}

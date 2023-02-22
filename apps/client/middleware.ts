@@ -1,4 +1,5 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { businessCookies } from "./cookies/businessCookies";
 import { businessRoute, BUSINESS_ADMIN } from "./routes";
 
 export const deleteCookie = (
@@ -20,8 +21,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   const LOGIN_URL = getLoginURL();
   const DASHBOARD_URL = getDashboardUrl()
 
-  const requestCookiesToken = request.cookies.get('opentab-cookies-token')
-  const requestCookiesEmail = request.cookies.get("opentab-cookies-email")
+  const requestCookiesToken = request.cookies.get(businessCookies.token)
+  const requestCookiesEmail = request.cookies.get(businessCookies.email)
 
   if (process.env.NEXT_PUBLIC_ENVIRONMENT !== "development" &&
     request.headers.get("x-forwarded-proto") !== "https") {

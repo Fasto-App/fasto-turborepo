@@ -29,6 +29,8 @@ export const BusinessTypeDefinition = gql`
     email: String!
     privilege: UserPrivileges!
     picture: String
+    isPending: Boolean!
+    jobTitle: String!
   }
 
   input ManageBusinessEmployeesInput {

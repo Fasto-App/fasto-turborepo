@@ -1,17 +1,22 @@
 query GetAllEmployees {
 	getAllEmployees {
 		employees {
-			email
+			jobTitle
+			isPending
 			name
+			email
 			picture
 			privilege
 			_id
 		}
 		employeesPending {
-			_id
+			jobTitle
+			isPending
 			email
 			name
+			picture
 			privilege
+			_id
 		}
 	}
 }

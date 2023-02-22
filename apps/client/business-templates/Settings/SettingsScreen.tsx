@@ -92,9 +92,6 @@ export const SettingsScreen = () => {
           backgroundColor={"white"}
           overflow={"scroll"}
         >
-          <Heading size={"md"}>
-            {manageTabs[selectedTab].title}
-          </Heading>
           <Box>
             {selectedTab === "manage_business_location" ? <ManageBusinessLocation /> :
               selectedTab === "manage_account" ? <ManageAccount /> :
