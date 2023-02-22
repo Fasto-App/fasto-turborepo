@@ -69,7 +69,6 @@ export const ControlledInput = <T extends Record<string, string>>({
                     autoCompleteType={undefined}
                     placeholder={placeholder} />)
               case "Select":
-                console.log("value", field.value)
                 return (
                   <Select
                     selectedValue={field.value}

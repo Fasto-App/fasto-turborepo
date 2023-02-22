@@ -6,20 +6,27 @@ import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
 import { texts } from "./texts"
 import { AddMoreButton } from "../../components/atoms/AddMoreButton"
-import { ProductTile } from "../../components/Product/Product"
-import { EmployeeInformation, typedValues } from "app-helpers"
+import { EmployeeInformation } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
 import { useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
-import { AiOutlinePlus } from "react-icons/ai"
 import { MoreButton } from "../../components/MoreButton"
 import { EmployeeTile } from "../../components/BorderTile"
 
 const DICE_BEAR_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
-const ManageEmployeeModal = ({
-  isModalOpen, setIsModalOpen }:
-  { isModalOpen: boolean, setIsModalOpen: (isOpen: boolean) => void }) => {
-  const { control, formState, handleSubmit, reset } = useManageEmployeeFormHook()
+export const ManageEmployee = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { data } = useGetAllEmployeesQuery();
+
+  const combinedData = useMemo(() => {
+    const employees = data?.getAllEmployees?.employees ?? []
+    const employeesPending = data?.getAllEmployees?.employeesPending ?? []
+
+    return [...employees, ...employeesPending]
+  }, [data?.getAllEmployees?.employees, data?.getAllEmployees?.employeesPending])
+
+  const { control, formState, handleSubmit, reset, setValue, getValues } = useManageEmployeeFormHook()
+
   const [manageEmployee, { loading }] = useManageBusinessEmployeesMutation()
 
   const onCancel = useCallback(() => {
@@ -28,7 +35,6 @@ const ManageEmployeeModal = ({
   }, [reset, setIsModalOpen])
 
   const onSubmit = useCallback(async (data: EmployeeInformation) => {
-    console.log("employee information", data)
 
     await manageEmployee({
       variables: {
@@ -45,8 +51,35 @@ const ManageEmployeeModal = ({
     onCancel()
   }, [manageEmployee, onCancel])
 
+  const onEditPressed = useCallback((employee: EmployeeInformation) => {
+    setValue("name", employee.name)
+    setValue("email", employee.email)
+    setValue("jobTitle", employee.jobTitle)
+    setValue("privilege", employee.privilege)
+    setValue("_id", employee._id)
+
+    setIsModalOpen(true)
+  }, [setValue])
+
+  const isEditingConfig = useMemo(() => {
+
+    return getValues("_id") ? ({
+      ...ManageEmployeeConfig,
+      name: {
+        ...ManageEmployeeConfig.name,
+        isDisabled: true
+      },
+      email: {
+        ...ManageEmployeeConfig.email,
+        isDisabled: true
+      }
+    }) : ManageEmployeeConfig
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getValues("_id")])
+
   return (
-    <>
+    <Box>
       <DevTool control={control} />
       <CustomModal
         isOpen={isModalOpen}
@@ -56,7 +89,7 @@ const ManageEmployeeModal = ({
           <ControlledForm
             control={control}
             formState={formState}
-            Config={ManageEmployeeConfig}
+            Config={isEditingConfig}
           />}
         ModalFooter={
           <>
@@ -79,53 +112,13 @@ const ManageEmployeeModal = ({
           </>
         }
       />
-    </>
-  )
-}
-
-const mock = {
-  _id: 1,
-  name: "Alex Mendes",
-  privilege: "Admin",
-  jobTitle: "Server",
-  picture: "https://media.licdn.com/dms/image/C5603AQFFEa9a0Semfg/profile-displayphoto-shrink_800_800/0/1632369752400?e=1681948800&v=beta&t=55rO6SgLBvmKCjnh6Her5Tbk1VySLoebwbXD4YKC87U"
-} as const;
-const employeesData: typeof mock[] = new Array(15).fill(mock)
-
-export const ManageEmployee = () => {
-  const [isModalopen, setIsModalOpen] = useState(false)
-  const { data } = useGetAllEmployeesQuery();
-
-
-  const combinedData = useMemo(() => {
-    const employees = data?.getAllEmployees?.employees ?? []
-    const employeesPending = data?.getAllEmployees?.employeesPending ?? []
-
-    return [...employees, ...employeesPending]
-  }, [data?.getAllEmployees?.employees, data?.getAllEmployees?.employeesPending])
-
-  console.log({ combinedData })
-
-  // add button to not empty array
-  // const employeesWithButton = useMemo(() => [{ name: "Button" } as const, ...combinedData], [combinedData])
-
-  // get all employees and it's data, 
-  // for those who we don't have the picture we will show an pic with the initial letters of the name
-
-
-  return (
-    <Box>
-      <ManageEmployeeModal
-        isModalOpen={isModalopen}
-        setIsModalOpen={setIsModalOpen}
-      />
       <HStack alignItems={"center"} space={4}>
         <Heading size={"lg"}>
           {"Employees"}
         </Heading>
         <MoreButton onPress={() => setIsModalOpen(true)} />
       </HStack>
-      {!employeesData.length
+      {!combinedData.length
         ?
         <VStack>
           <Text pt={5}>{texts.startAddingEmployees}</Text>
@@ -144,9 +137,9 @@ export const ManageEmployee = () => {
                   name={employee.name}
                   privilege={employee.privilege}
                   picture={employee.picture || DICE_BEAR_URL(employee.name)}
-                  onPress={() => setIsModalOpen(true)}
                   ctaTitle={"Edit"}
                   isPending={employee.isPending}
+                  onPress={() => onEditPressed(employee)}
                 />
               )
             })}

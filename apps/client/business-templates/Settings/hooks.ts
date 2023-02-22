@@ -94,9 +94,12 @@ export const useManageEmployeeFormHook = () => {
     control,
     formState,
     handleSubmit,
-    reset
+    reset,
+    setValue,
+    getValues
   } = useForm<EmployeeInformation>({
     defaultValues: {
+      _id: undefined,
       jobTitle: "",
       email: "",
       name: "",
@@ -109,6 +112,8 @@ export const useManageEmployeeFormHook = () => {
     control,
     formState,
     handleSubmit,
-    reset
+    reset,
+    setValue,
+    getValues
   }
 }
