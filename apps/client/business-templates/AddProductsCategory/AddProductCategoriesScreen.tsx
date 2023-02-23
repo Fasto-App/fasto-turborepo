@@ -27,8 +27,6 @@ export default function AddProductCategoriesScreen({ resetAll }: { resetAll: () 
     return product;
   });
 
-  console.log("BUG INTROUDUCED HERE");
-
   return (
     <Box flex={1}>
       <Box

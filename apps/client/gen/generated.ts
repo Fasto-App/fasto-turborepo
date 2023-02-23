@@ -155,6 +155,10 @@ export type DeleteBusinessPayload = {
   success: Scalars['Boolean'];
 };
 
+export type DeleteEmployee = {
+  _id: Scalars['ID'];
+};
+
 export type DeleteSpaceInput = {
   space: Scalars['ID'];
 };
@@ -256,6 +260,7 @@ export type Mutation = {
   createTable: Table;
   createUser: User;
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
+  deleteBusinessEmployee: Scalars['ID'];
   deleteCategory?: Maybe<RequestResponseOk>;
   deleteMenu: Menu;
   deleteOrderDetail?: Maybe<OrderDetail>;
@@ -351,6 +356,11 @@ export type MutationDeleteBusinessArgs = {
 };
 
 
+export type MutationDeleteBusinessEmployeeArgs = {
+  input: DeleteEmployee;
+};
+
+
 export type MutationDeleteCategoryArgs = {
   id: Scalars['ID'];
 };
@@ -422,7 +432,7 @@ export type MutationUpdateAddressArgs = {
 
 
 export type MutationUpdateBusinessInformationArgs = {
-  input?: InputMaybe<UpdateBusinessInfoInput>;
+  input: UpdateBusinessInfoInput;
 };
 
 
@@ -760,6 +770,13 @@ export type WorkingHoursInput = {
   open: Scalars['String'];
 };
 
+export type DeleteBusinessEmployeeMutationVariables = Exact<{
+  input: DeleteEmployee;
+}>;
+
+
+export type DeleteBusinessEmployeeMutation = { __typename?: 'Mutation', deleteBusinessEmployee: string };
+
 export type ManageBusinessEmployeesMutationVariables = Exact<{
   input: ManageBusinessEmployeesInput;
 }>;
@@ -990,6 +1007,37 @@ export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } | null };
 
 
+export const DeleteBusinessEmployeeDocument = gql`
+    mutation DeleteBusinessEmployee($input: DeleteEmployee!) {
+  deleteBusinessEmployee(input: $input)
+}
+    `;
+export type DeleteBusinessEmployeeMutationFn = Apollo.MutationFunction<DeleteBusinessEmployeeMutation, DeleteBusinessEmployeeMutationVariables>;
+
+/**
+ * __useDeleteBusinessEmployeeMutation__
+ *
+ * To run a mutation, you first call `useDeleteBusinessEmployeeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteBusinessEmployeeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteBusinessEmployeeMutation, { data, loading, error }] = useDeleteBusinessEmployeeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteBusinessEmployeeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteBusinessEmployeeMutation, DeleteBusinessEmployeeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteBusinessEmployeeMutation, DeleteBusinessEmployeeMutationVariables>(DeleteBusinessEmployeeDocument, options);
+      }
+export type DeleteBusinessEmployeeMutationHookResult = ReturnType<typeof useDeleteBusinessEmployeeMutation>;
+export type DeleteBusinessEmployeeMutationResult = Apollo.MutationResult<DeleteBusinessEmployeeMutation>;
+export type DeleteBusinessEmployeeMutationOptions = Apollo.BaseMutationOptions<DeleteBusinessEmployeeMutation, DeleteBusinessEmployeeMutationVariables>;
 export const ManageBusinessEmployeesDocument = gql`
     mutation ManageBusinessEmployees($input: ManageBusinessEmployeesInput!) {
   manageBusinessEmployees(input: $input) {

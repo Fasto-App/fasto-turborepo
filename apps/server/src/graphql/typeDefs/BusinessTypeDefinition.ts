@@ -11,11 +11,12 @@ export const BusinessTypeDefinition = gql`
 
   extend type Mutation {
     createBusiness(input: BusinessInput!): CreateBusinessPayload
-    updateBusinessInformation(input: UpdateBusinessInfoInput): Business!
+    updateBusinessInformation(input: UpdateBusinessInfoInput!): Business!
     deleteBusiness(businessID: ID!): DeleteBusinessPayload
     updateBusinessToken(input: String): String
     updateBusinessLocation(input: AddressInput!): Business
     manageBusinessEmployees(input: ManageBusinessEmployeesInput!): Employee!
+    deleteBusinessEmployee(input: DeleteEmployee!): ID!
   }
 
   type Employees {
@@ -46,6 +47,10 @@ export const BusinessTypeDefinition = gql`
     phone: String!
     website: String
     address: AddressInput
+  }
+
+  input DeleteEmployee {
+    _id: ID!
   }
 
   input WorkingHoursInput {

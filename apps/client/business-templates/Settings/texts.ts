@@ -4,6 +4,7 @@ export const texts = {
   title: "Change Account Information",
   startAddingEmployees: "Start adding employees by clicking in the button below.",
   save: "Save",
-  cancel: "Cancel"
+  cancel: "Cancel",
+  delete: "Delete Employee",
 }
 

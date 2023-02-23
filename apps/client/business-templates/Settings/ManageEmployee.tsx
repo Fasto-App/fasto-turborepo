@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState, } from "react"
-import { Box, Button, Heading, HStack, ScrollView, Text, VStack } from "native-base"
+import { Box, Button, Divider, Heading, HStack, ScrollView, Text, VStack } from "native-base"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { useManageEmployeeFormHook } from "./hooks"
@@ -8,9 +8,10 @@ import { texts } from "./texts"
 import { AddMoreButton } from "../../components/atoms/AddMoreButton"
 import { EmployeeInformation } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
-import { useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
+import { useDeleteBusinessEmployeeMutation, useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
 import { MoreButton } from "../../components/MoreButton"
 import { EmployeeTile } from "../../components/BorderTile"
+import { DeleteAlert } from "../../components/DeleteAlert"
 
 const DICE_BEAR_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
@@ -27,7 +28,9 @@ export const ManageEmployee = () => {
 
   const { control, formState, handleSubmit, reset, setValue, getValues } = useManageEmployeeFormHook()
 
-  const [manageEmployee, { loading }] = useManageBusinessEmployeesMutation()
+  const [manageEmployee, { loading }] = useManageBusinessEmployeesMutation({
+    refetchQueries: ["GetAllEmployees"]
+  })
 
   const onCancel = useCallback(() => {
     setIsModalOpen(false)
@@ -78,6 +81,28 @@ export const ManageEmployee = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValues("_id")])
 
+  const [deleteBusinessEmployee] = useDeleteBusinessEmployeeMutation({
+    refetchQueries: ["GetAllEmployees"]
+  })
+
+  const deleteEmployeeCB = useCallback(async () => {
+    const _id = getValues("_id")
+
+    if (!_id) throw new Error("No _id found")
+
+    await deleteBusinessEmployee({
+      variables: {
+        input: {
+          _id
+        }
+      }
+    })
+
+    onCancel()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getValues("_id")])
+
   return (
     <Box>
       <DevTool control={control} />
@@ -86,11 +111,19 @@ export const ManageEmployee = () => {
         onClose={onCancel}
         HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
         ModalBody={
-          <ControlledForm
-            control={control}
-            formState={formState}
-            Config={isEditingConfig}
-          />}
+          <>
+            <ControlledForm
+              control={control}
+              formState={formState}
+              Config={isEditingConfig}
+            />
+            {getValues("_id") ?
+              <Box pt={4}>
+                <DeleteAlert deleteItem={deleteEmployeeCB} title={texts.delete} />
+              </Box>
+              : null}
+          </>
+        }
         ModalFooter={
           <>
             <Button

@@ -368,6 +368,46 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
   })
 }
 
+const deleteBusinessEmployee = async (parent: any, args: { input: any }, { business, db }: Context) => {
+  if (!business) throw ApolloError("Unauthorized")
+  const { _id } = args.input
+  console.log("Delete Employee", args.input)
+
+  const Business = BusinessModel(db)
+  const User = UserModel(db)
+  const Session = SessionModel(db)
+
+  const foundBusiness = await Business.findById(business)
+
+  if (foundBusiness?.employees?.includes(_id) && foundBusiness?.user !== _id) {
+    foundBusiness.employees = foundBusiness.employees.filter((employee: any) => employee !== _id)
+    await foundBusiness.save()
+
+    const removeBusinessFromUser = await User.findById(_id)
+    if (removeBusinessFromUser) {
+
+      delete removeBusinessFromUser?.businesses?.[business]
+      await removeBusinessFromUser.save()
+
+      return removeBusinessFromUser._id
+    }
+  }
+
+  if (foundBusiness?.employeesPending?.includes(_id)) {
+    foundBusiness.employeesPending = foundBusiness.employeesPending.filter((employee: any) => employee !== _id)
+    await foundBusiness.save()
+
+    const foundSession = await Session.findById(_id)
+
+    if (foundSession) {
+      await foundSession.remove()
+      return foundSession._id
+    }
+  }
+
+  throw ApolloError("BadRequest", "Employee not found or there was an error deleting the them.")
+}
+
 
 const BusinessResolverMutation = {
   createBusiness,
@@ -375,7 +415,8 @@ const BusinessResolverMutation = {
   deleteBusiness,
   updateBusinessInformation,
   updateBusinessLocation,
-  manageBusinessEmployees
+  manageBusinessEmployees,
+  deleteBusinessEmployee
 }
 const BusinessResolverQuery = {
   getBusinessLocation,
