@@ -53,9 +53,14 @@ export const BusinessTypeDefinition = gql`
     _id: ID!
   }
 
-  input WorkingHoursInput {
+  input HoursInput {
     open: String!
     close: String!
+  }
+
+  input WorkingHoursInput {
+    isOpen: Boolean!
+    hours: HoursInput
   }
 
   input HoursOfOperationInput {
@@ -78,7 +83,7 @@ export const BusinessTypeDefinition = gql`
     Sunday
   }
 
-    type CreateBusinessPayload {
+  type CreateBusinessPayload {
     business: Business!
     token: String
   }
@@ -98,6 +103,17 @@ export const BusinessTypeDefinition = gql`
     products: [Product!]!
     employees: [String]!
     picture: String
+    hoursOfOperation: HoursOfOperation
+  }
+
+  type Hours {
+    open: String!
+    close: String!
+  }
+
+  type WorkingHours {
+    isOpen: Boolean!
+    hours: Hours
   }
 
   type HoursOfOperation {
@@ -109,10 +125,6 @@ export const BusinessTypeDefinition = gql`
     Saturday: WorkingHours
     Sunday: WorkingHours
   }
-  type WorkingHours {
-    open: String!
-    close: String!
-  }
 
   type DeleteBusinessPayload {
     success: Boolean!
@@ -123,6 +135,7 @@ export const BusinessTypeDefinition = gql`
     name: String!
     description: String
     picture: Upload
+    hoursOfOperation: HoursOfOperationInput
   }
 
 `

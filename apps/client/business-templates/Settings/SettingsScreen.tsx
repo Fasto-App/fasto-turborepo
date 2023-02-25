@@ -32,7 +32,7 @@ type ManageTabKeys = keyof typeof manageTabs
 const tabs = typedKeys(manageTabs)
 
 export const SettingsScreen = () => {
-  const [selectedTab, setSelectedTab] = useState<ManageTabKeys>("manage_employee")
+  const [selectedTab, setSelectedTab] = useState<ManageTabKeys>("manage_business")
 
   const renderCategories = ({ item }: { item: ManageTab }) => {
     const selected = selectedTab === item

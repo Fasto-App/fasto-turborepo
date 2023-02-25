@@ -7,7 +7,7 @@ import { Product } from './product';
 import { Category } from './category';
 import { User } from './user';
 import { Session } from './session';
-// import type { HousOfOperationType } from 'app-helpers';
+import type { HoursOfOperationType } from 'app-helpers';
 export class Business {
     @prop({ required: true })
     public user!: Types.ObjectId;
@@ -34,8 +34,8 @@ export class Business {
     public address?: Ref<Address>;
 
     //TODO: How are we representing this?
-    // @prop()
-    // public hoursOfOperation?: HousOfOperationType;
+    @prop()
+    public hoursOfOperation?: HoursOfOperationType;
 
     @prop({ ref: () => Product, default: [] })
     public products!: Ref<Product>[];

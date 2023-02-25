@@ -51,6 +51,7 @@ export type Business = {
   description?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   employees: Array<Maybe<Scalars['String']>>;
+  hoursOfOperation?: Maybe<HoursOfOperation>;
   menus?: Maybe<Array<Menu>>;
   name: Scalars['String'];
   picture?: Maybe<Scalars['String']>;
@@ -196,6 +197,17 @@ export type GetById = {
 
 export type GetMenuById = {
   id: Scalars['ID'];
+};
+
+export type Hours = {
+  __typename?: 'Hours';
+  close: Scalars['String'];
+  open: Scalars['String'];
+};
+
+export type HoursInput = {
+  close: Scalars['String'];
+  open: Scalars['String'];
 };
 
 export type HoursOfOperation = {
@@ -667,6 +679,7 @@ export type UpdateAddressInput = {
 
 export type UpdateBusinessInfoInput = {
   description?: InputMaybe<Scalars['String']>;
+  hoursOfOperation?: InputMaybe<HoursOfOperationInput>;
   name: Scalars['String'];
   picture?: InputMaybe<Scalars['Upload']>;
 };
@@ -761,13 +774,13 @@ export enum UserPrivileges {
 
 export type WorkingHours = {
   __typename?: 'WorkingHours';
-  close: Scalars['String'];
-  open: Scalars['String'];
+  hours?: Maybe<Hours>;
+  isOpen: Scalars['Boolean'];
 };
 
 export type WorkingHoursInput = {
-  close: Scalars['String'];
-  open: Scalars['String'];
+  hours?: InputMaybe<HoursInput>;
+  isOpen: Scalars['Boolean'];
 };
 
 export type DeleteBusinessEmployeeMutationVariables = Exact<{
@@ -806,7 +819,7 @@ export type GetAllEmployeesQuery = { __typename?: 'Query', getAllEmployees: { __
 export type GetBusinessInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null } };
+export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null, hoursOfOperation?: { __typename?: 'HoursOfOperation', Friday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Monday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Saturday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Sunday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Thursday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Tuesday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Wednesday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null } | null } };
 
 export type GetBusinessLocationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1209,6 +1222,57 @@ export const GetBusinessInformationDocument = gql`
     name
     description
     picture
+    hoursOfOperation {
+      Friday {
+        isOpen
+        hours {
+          close
+          open
+        }
+      }
+      Monday {
+        isOpen
+        hours {
+          close
+          open
+        }
+      }
+      Saturday {
+        isOpen
+        hours {
+          close
+          open
+        }
+      }
+      Sunday {
+        isOpen
+        hours {
+          close
+          open
+        }
+      }
+      Thursday {
+        isOpen
+        hours {
+          close
+          open
+        }
+      }
+      Tuesday {
+        isOpen
+        hours {
+          close
+          open
+        }
+      }
+      Wednesday {
+        isOpen
+        hours {
+          close
+          open
+        }
+      }
+    }
   }
 }
     `;

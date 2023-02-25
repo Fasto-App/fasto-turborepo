@@ -9,7 +9,7 @@ const texts = {
 interface ModalFeedbackProps {
   isWarning?: boolean;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export const ModalFeedback = ({ isOpen, onClose, isWarning }: ModalFeedbackProps) => {

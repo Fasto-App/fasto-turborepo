@@ -8,12 +8,11 @@ import { useScheduleStore } from './scheduleStore'
 const texts = {
   open: "Open",
   close: "Close",
-  setStandardHours: "Set Standard string",
+  setStandardHours: "Set Standard Time",
   configureStandardHours: "Configure the standard hours of operation for this location.",
   to: "To"
 }
 
-// Copy code
 const start = new Date();
 start.setHours(0, 0, 0, 0);
 const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
@@ -21,12 +20,9 @@ const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
 const hourArray: string[] = [];
 let current = start;
 while (current < end) {
-  hourArray.push(current.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
+  hourArray.push(current.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }));
   current = new Date(current.getTime() + 60 * 60 * 1000);
 }
-
-const getHour = (time?: string) => time?.split(":")?.[0] ?? "09"
-const getMinute = (time?: string) => time?.split(":")?.[1] ?? "00"
 
 const WeeklySchedule = () => {
   const { daysOfTheWeek, setOpenHour, setCloseHour, togggleDay } = useScheduleStore(state => ({
@@ -37,23 +33,6 @@ const WeeklySchedule = () => {
   }),
     shallow
   )
-
-  console.log("daysOfTheWeek", daysOfTheWeek)
-
-  const updateOpenHour = (day: DaysOfWeekType, hour: string) => {
-    console.log("updateOpenHour", day, hour)
-    const currentCloseHour = daysOfTheWeek[day].openHour
-    const currentCloseHourMinutes = getMinute(currentCloseHour) as string
-    setOpenHour(day, `${hour}:${currentCloseHourMinutes}`)
-  }
-
-  const updateCloseHour = (day: DaysOfWeekType, hour: string) => {
-    const currentCloseHour = daysOfTheWeek[day].closeHour
-    const currentCloseHourMinutes = getMinute(currentCloseHour)
-    setCloseHour(day, `${hour}:${currentCloseHourMinutes}`)
-  }
-
-  console.log(getHour(daysOfTheWeek["Monday"].openHour))
 
   return (
     <Box py={"4"} px={"2"}>
@@ -75,36 +54,39 @@ const WeeklySchedule = () => {
               space={"4"}
               flex={1}
             >
-              <FormControl.Label isRequired={daysOfTheWeek[day].isOpen} flex={1}>
+              <FormControl.Label isRequired={daysOfTheWeek[day]?.isOpen} flex={1}>
                 {day}
               </FormControl.Label>
             </HStack>
             <HStack flex={1} space={"4"} alignItems={"center"}>
               <Switch
                 size="lg"
-                isChecked={daysOfTheWeek[day].isOpen}
+                colorScheme={"green"}
+                isChecked={daysOfTheWeek[day]?.isOpen}
                 onValueChange={() => togggleDay(day)}
               />
               <Text>
-                {daysOfTheWeek[day].isOpen ? texts.open : texts.close}
+                {daysOfTheWeek[day]?.isOpen ? texts.open : texts.close}
               </Text>
             </HStack>
-            <Transition isVisible={daysOfTheWeek[day].isOpen}>
+            <Transition isVisible={!!daysOfTheWeek[day]?.isOpen}>
               <HStack
                 alignItems={"center"}
                 space={"2"}
                 flex={1}
                 justifyContent={"flex-end"}>
                 <HoursInput
-                  valueHours={getHour(daysOfTheWeek[day].openHour)}
-                  onChangeHours={(value) => updateOpenHour(day, value)}
+                  valueHours={daysOfTheWeek[day]?.hours?.open}
+                  onChangeHours={(value) => setOpenHour(day, value)}
+                  placeholder={"Open"}
                 />
                 <Text alignSelf={"center"}>
                   {texts.to}
                 </Text>
                 <HoursInput
-                  valueHours={getHour(daysOfTheWeek[day].closeHour)}
-                  onChangeHours={(value) => updateCloseHour(day, value)}
+                  valueHours={daysOfTheWeek[day]?.hours?.close}
+                  onChangeHours={(value) => setCloseHour(day, value)}
+                  placeholder={"Close"}
                 />
               </HStack>
             </Transition>
@@ -117,12 +99,14 @@ const WeeklySchedule = () => {
 
 type HoursInputProps = {
   onChangeHours: (value: string) => void
-  valueHours: string
+  valueHours?: string
+  placeholder?: string
 }
 
 const HoursInput = ({
   onChangeHours,
   valueHours,
+  placeholder
 }: HoursInputProps) => {
 
   return (
@@ -132,7 +116,7 @@ const HoursInput = ({
         onValueChange={onChangeHours}
         selectedValue={valueHours}
         accessibilityLabel="time"
-        placeholder="09:00 AM"
+        placeholder={placeholder}
         _selectedItem={{
           endIcon: <CheckIcon />
         }}

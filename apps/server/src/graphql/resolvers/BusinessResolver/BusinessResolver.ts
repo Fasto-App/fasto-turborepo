@@ -11,6 +11,8 @@ import {
   businessLocationSchema,
   businessLocationSchemaInput,
   EmployeeInformation,
+  hoursOfOperationSchema,
+  HoursOfOperationType,
   Privileges,
 } from 'app-helpers';
 import { uploadFileS3Bucket } from '../../../s3/s3';
@@ -123,25 +125,36 @@ const createBusiness = async (_parent: any,
 
 const updateBusinessInformation = async (
   _parent: any,
-  { input }: { input: businessInformationSchemaInput },
+  { input }: {
+    input: businessInformationSchemaInput &
+    { hoursOfOperation: HoursOfOperationType }
+  },
   { db, business }: Context) => {
   const Business = BusinessModel(db)
   const foundBusines = await Business.findById(business)
 
   if (!foundBusines) throw Error('Business not found')
 
-  if (input.picture) {
-    const file = await uploadFileS3Bucket(input.picture)
+  try {
+    const validateDaysOfTheWeek = await hoursOfOperationSchema.parseAsync(input.hoursOfOperation)
 
-    foundBusines.set({ picture: file.Location })
+    if (input.picture) {
+      const file = await uploadFileS3Bucket(input.picture)
+
+      foundBusines.set({ picture: file.Location })
+    }
+
+    foundBusines.set({
+      name: input.name,
+      hoursOfOperation: validateDaysOfTheWeek,
+      ...(input.description && { description: input.description }),
+    })
+
+    return await foundBusines.save()
+
+  } catch {
+    throw ApolloError("BadRequest");
   }
-
-  foundBusines.set({
-    name: input.name,
-    ...(input.description && { description: input.description }),
-  })
-
-  return await foundBusines.save()
 }
 
 const updateBusinessLocation = async (

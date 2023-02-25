@@ -24,6 +24,7 @@ const texts = {
 export const LoginForm = () => {
 	const router = useRouter();
 	const [showPass, setShowPass] = React.useState(false);
+	const [error, setError] = React.useState<string | undefined>(undefined);
 
 	const {
 		control,
@@ -43,10 +44,15 @@ export const LoginForm = () => {
 			setCookies("token", token);
 			setCookies("email", email);
 			router.push(businessRoute.dashboard);
+		},
+		onError: (error) => {
+			console.log("ERROR", error.cause)
+			setError(error.cause as string || "Something went wrong!")
 		}
 	})
 
 	const onSubmit = async (formData: LoginFormFields) => {
+		setError(undefined);
 
 		try {
 			await postUserLogin({
@@ -100,25 +106,34 @@ export const LoginForm = () => {
 					>
 						{texts.loginHere}
 					</Button>
+
 					<Link href={businessRoute.forgotPassword}>
 						{texts.forgotPassword}
 					</Link>
+					{error ?
+						<Text
+							mt="2"
+							fontSize="sm"
+							color="red.500"
+							textAlign={"center"}
+						>
+							{error}
+						</Text> : null}
 					<HStack mt="3" justifyContent="center">
 						<Text
 							fontSize="sm"
 							color="coolGray.600"
-							_dark={{
-								color: "warmGray.200"
-							}}>
+						>
 							{texts.ImNewUser}
 						</Text>
 						<Link href={businessRoute.signup}>
 							{texts.signup}
 						</Link>
+
 					</HStack>
 				</VStack>
 			</Box>
-		</Center >
+		</Center>
 	);
 };
 

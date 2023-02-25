@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { typedKeys } from "../utils";
 import { PrivilegesKeysArray } from "./privileges";
 
 const DaysOfWeek = {
@@ -10,6 +11,8 @@ const DaysOfWeek = {
   Saturday: "Saturday",
   Sunday: "Sunday",
 } as const;
+
+export const DaysOfTheWeekArray = typedKeys(DaysOfWeek);
 
 export type DaysOfWeekType = typeof DaysOfWeek[keyof typeof DaysOfWeek];
 
@@ -28,17 +31,28 @@ export type businessLocationSchemaInputKeys = keyof businessLocationSchemaInput
 export const businessInformationSchema = z.object({
   name: z.string().trim().min(3, { message: 'Name Required' }),
   description: z.string().trim().optional(),
-  // hoursOfOperation: z.record(z.nativeEnum(DaysOfWeek), z.object({
-  //   open: z.string().regex(/^\d{2}:\d{2}$/, { message: 'Invalid time format' }),
-  //   close: z.string().regex(/^\d{2}:\d{2}$/, { message: 'Invalid time format' }),
-  // })),
   picture: z.string().optional(),
 });
 
 export type businessInformationSchemaInput = z.infer<typeof businessInformationSchema>
 
-// type HoursOfOperationObject = Pick<businessInformationSchemaInput, "hoursOfOperation">
-// export type HoursOfOperationType = HoursOfOperationObject["hoursOfOperation"]
+export const hoursOfOperationSchema = z.record(z.nativeEnum(DaysOfWeek), z.object({
+  isOpen: z.boolean(),
+  hours: z.object({
+    open: z.string(),
+    close: z.string(),
+  }).optional(),
+})).refine((data) => {
+  const invalidDays = Object.entries(data).filter(([day, hours]) => {
+    return hours.isOpen && (!hours.hours || !hours.hours.open || !hours.hours.close)
+  })
+
+  return invalidDays.length === 0
+}, { message: 'Hours of operation must have opening and close time.' });
+
+
+
+export type HoursOfOperationType = z.infer<typeof hoursOfOperationSchema>
 
 
 export const forgotPasswordSchema = z.object({
