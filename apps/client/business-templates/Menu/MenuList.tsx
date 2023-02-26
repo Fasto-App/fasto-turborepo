@@ -42,7 +42,7 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
 
         <VStack space={4}>
           <HStack space={2}>
-            <SmallAddMoreButton onPress={() => console.log("Hello")} />
+            <SmallAddMoreButton onPress={() => setShowModal(true)} />
             <ScrollView horizontal={true} pb={2}>
               <HStack space={2}>
                 {menusData?.map((item) => (
@@ -60,11 +60,13 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
               </HStack>
             </ScrollView>
           </HStack>
-          <AllAndEditButtons
+          {/* <AllAndEditButtons
+            // FIX: should probably only have one button here
+            // edit will open the modal to edit the menu name
             allAction={() => console.log("Hello")}
             editAction={() => console.log("Hello")}
             categoryId={"true"}
-          />
+          /> */}
         </VStack>
       </Box>
 

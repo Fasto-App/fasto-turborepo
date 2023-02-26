@@ -20,7 +20,7 @@ const MenuScreen = () => {
     <Box flex={1}>
       <Box
         backgroundColor={"primary.500"}
-        h={150}
+        h={100}
         w={"100%"}
         position={"absolute"}
         zIndex={-1}

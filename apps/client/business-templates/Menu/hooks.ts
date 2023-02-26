@@ -6,9 +6,9 @@ import { RegularInputConfig } from "../../components/ControlledForm";
 export const MenuConfig: RegularInputConfig = {
   name: {
     name: "name",
-    label: "Name",
+    label: "Menu Name",
     type: "text",
-    placeholder: "Name",
+    placeholder: "Weekends",
     isRequired: true,
   },
 

@@ -2,13 +2,12 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text, VStack } from 'native-base'
 import { ProductCard, ProductTile } from '../../components/Product/Product'
 import { useNumOfColumns } from '../../hooks'
-import { useCategoryMutationHook } from '../../graphQL/CategoryQL'
 import { useProductMutationHook } from '../../graphQL/ProductQL'
 import { DeleteAlert } from '../../components/DeleteAlert'
 import { useAppStore } from '../UseAppStore'
 import { BsPencilSquare } from 'react-icons/bs';
-import { useMenuMutationHook } from '../../graphQL/MenuQL'
 import { AllMenusbyBusiness, Product } from './types'
+import { GetAllMenusByBusinessIdDocument, useDeleteMenuMutation, useGetAllCategoriesByBusinessQuery, useUpdateMenuMutation } from '../../gen/generated'
 
 const texts = {
   editMenu: "Edit Menu",
@@ -18,9 +17,44 @@ const texts = {
 }
 
 function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
-  const { allCategories } = useCategoryMutationHook()
+  const { data } = useGetAllCategoriesByBusinessQuery();
+  const allCategories = useMemo(() => data?.getAllCategoriesByBusiness ?? [], [data?.getAllCategoriesByBusiness])
+
+  const [updateMenu, { loading: loadingUpdate }] = useUpdateMenuMutation({
+    onCompleted: (data) => {
+      // console.log("Update Menu", data)
+    },
+    updateQueries: {
+      getAllMenusByBusinessID: (prev, { mutationResult }) => {
+        return Object.assign({}, prev, {
+          getAllMenusByBusinessID: mutationResult?.data?.updateMenu
+        });
+      }
+    }
+  });
+
+  const [deleteMenu, { loading: loadingDelete }] = useDeleteMenuMutation({
+    onCompleted: (data) => {
+
+    },
+    update: (cache, { data }) => {
+      // @ts-ignore
+      const { getAllMenusByBusinessID } = cache.readQuery({
+        query: GetAllMenusByBusinessIdDocument
+      });
+      cache.writeQuery({
+        query: GetAllMenusByBusinessIdDocument,
+        data: {
+          getAllMenusByBusinessID: getAllMenusByBusinessID.filter((menu: { _id: string | undefined; }) => menu._id !== data?.deleteMenu._id)
+        }
+      });
+    }
+  });
+
+
   const { allProducts } = useProductMutationHook()
-  const { deleteMenu, updateMenu } = useMenuMutationHook()
+
+
   const [inputValue, setInputValue] = useState(``)
 
   const isEditingMenu = useAppStore(state => state.isEditingMenu)
@@ -65,7 +99,7 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
 
 
   const productsFiltereByCategory = useMemo(() => {
-    return allProducts.filter(product => product?.category?._id === categoryId)
+    return allProducts.filter(product => categoryId ? product?.category?._id === categoryId : true)
   }, [allProducts, categoryId])
 
   console.log("Products Filtered by Category", productsFiltereByCategory)
@@ -138,6 +172,7 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
         imageUrl={item.imageUrl ?? ""}
         isChecked={isSelected}
         onCheckboxClick={(selected) => setProductCheckbox(selected, item._id)}
+        description={item.description}
       />)
   }, [categoryId, sectionMap, setProductCheckbox])
 
@@ -213,9 +248,6 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
             </Heading>
           }
         </Box>
-
-
-
         {!isEditingMenu ? <Button
           colorScheme={"tertiary"}
           px={4}
@@ -262,8 +294,6 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
           :
           renderListCard()}
       </Box>
-
-
       {isEditingMenu ?
         <HStack justifyContent="space-between">
           <HStack alignItems="center" space={2} py={4}>
@@ -284,6 +314,7 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
             <Button
               w={"100"}
               colorScheme="tertiary"
+              isLoading={loadingDelete || loadingUpdate}
               onPress={async () => {
                 console.log(sectionMap)
                 const newSections: { category: string, products: string[] }[] = []

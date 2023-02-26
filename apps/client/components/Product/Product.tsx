@@ -15,12 +15,13 @@ import { BorderTile } from '../BorderTile';
 
 type ProductTileProps = {
 	onPress?: () => void;
+	onCheckboxClick?: (selected: boolean) => void;
 	singleButton?: boolean;
 	isChecked?: boolean;
-	onCheckboxClick?: (selected: boolean) => void;
 	ctaTitle: string;
 	name: string;
 	imageUrl?: string;
+	description?: string | null;
 };
 
 type ProductCardProps = ProductTileProps & {
@@ -86,7 +87,10 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 		</Box>)
 };
 
-const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle }: ProductTileProps) => {
+const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle, description }: ProductTileProps) => {
+
+	const formattedDescriptions = description && description.length > maxLength ?
+		(description.substring(0, maxLength) + "...") : description
 
 	return <BorderTile width={"96"}>
 		<HStack alignItems="center" space={3} flex={1}>
@@ -98,7 +102,7 @@ const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaT
 					{name}
 				</Text>
 				<Text color="coolGray.600" fontSize={"xs"}>
-					{"Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
+					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
 				</Text>
 			</VStack>
 			<HStack alignItems="center" space={2} justifyContent="space-between" py={4}>
