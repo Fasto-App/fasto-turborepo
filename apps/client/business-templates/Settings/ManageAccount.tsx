@@ -9,12 +9,19 @@ import { ControlledInput } from "../../components/ControlledForm"
 import { DevTool } from "@hookform/devtools"
 import { useGetUserInformationQuery, useUpdateUserInformationMutation } from "../../gen/generated"
 import { AccountInformation } from "app-helpers"
+import { Loading } from "../../components/Loading"
+import { useAppStore } from "../UseAppStore"
 
 export const ManageAccount = () => {
-  const { data } = useGetUserInformationQuery({
+  const setNetworkState = useAppStore(state => state.setNetworkState)
+
+  const { data, loading: loadingQuery } = useGetUserInformationQuery({
     onCompleted: (data) => {
       setValue("name", data?.getUserInformation?.name || "")
       setValue("email", data?.getUserInformation?.email || "")
+    },
+    onError: () => {
+      setNetworkState("error")
     }
   })
 
@@ -26,7 +33,14 @@ export const ManageAccount = () => {
   } = useManageAccountFormHook(data?.getUserInformation)
 
   const { imageFile, imageSrc, handleFileOnChange } = useUploadFileHook()
-  const [updateUserInformation, { loading }] = useUpdateUserInformationMutation()
+  const [updateUserInformation, { loading }] = useUpdateUserInformationMutation({
+    onCompleted: () => {
+      setNetworkState("success")
+    },
+    onError: () => {
+      setNetworkState("error")
+    }
+  })
 
   const handleSaveAccountInfo = async (values: AccountInformation) => {
     await updateUserInformation({
@@ -76,6 +90,7 @@ export const ManageAccount = () => {
           </Button>
         </HStack>
       </Box>
+      <Loading isLoading={loadingQuery || loading} />
     </HStack>
   )
 }

@@ -12,12 +12,20 @@ import { useDeleteBusinessEmployeeMutation, useGetAllEmployeesQuery, useManageBu
 import { MoreButton } from "../../components/MoreButton"
 import { EmployeeTile } from "../../components/BorderTile"
 import { DeleteAlert } from "../../components/DeleteAlert"
+import { Loading } from "../../components/Loading"
+import { useAppStore } from "../UseAppStore"
 
 const DICE_BEAR_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
 export const ManageEmployee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { data } = useGetAllEmployeesQuery();
+  const setNetworkState = useAppStore(state => state.setNetworkState)
+
+  const { data, loading: loadingQuery } = useGetAllEmployeesQuery({
+    onError: () => {
+      setNetworkState("error")
+    }
+  });
 
   const combinedData = useMemo(() => {
     const employees = data?.getAllEmployees?.employees ?? []
@@ -29,7 +37,13 @@ export const ManageEmployee = () => {
   const { control, formState, handleSubmit, reset, setValue, getValues } = useManageEmployeeFormHook()
 
   const [manageEmployee, { loading }] = useManageBusinessEmployeesMutation({
-    refetchQueries: ["GetAllEmployees"]
+    refetchQueries: ["GetAllEmployees"],
+    onCompleted: () => {
+      setNetworkState("success")
+    },
+    onError: () => {
+      setNetworkState("error")
+    }
   })
 
   const onCancel = useCallback(() => {
@@ -179,6 +193,7 @@ export const ManageEmployee = () => {
           </VStack>
         </ScrollView>
       }
+      <Loading isLoading={loadingQuery || loading} />
     </Box>
   )
 }

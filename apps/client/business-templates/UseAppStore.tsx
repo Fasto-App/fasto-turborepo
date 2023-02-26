@@ -1,14 +1,15 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
+type NetworkState = 'idle' | 'error' | 'success'
 interface AppState {
-  networkState: "idle" | "error" | "success";
+  networkState: NetworkState;
   category: null | string;
   product: null | string;
   menu: null | string;
   sectionMap: Map<any, any>;
   isEditingMenu: boolean;
-  setNetworkState: (state: "idle" | "error" | "success") => void;
+  setNetworkState: (state: NetworkState) => void;
   setCategory: (category: null | string) => void;
   setProduct: (product: null | string) => void;
   setMenu: (menu: undefined | string) => void;
@@ -26,14 +27,12 @@ const useAppStore = create<AppState>()(
       menu: null,
       isEditingMenu: false,
       sectionMap: new Map(),
-      setNetworkState: (string) => set(() => ({ networkState: string })),
+      setNetworkState: (networkState) => set(() => ({ networkState })),
       setCategory: (category) => set(() => ({ category })),
       setProduct: (product) => set(() => ({ product })),
       setSectionMap: (newSectionMap) => set(() => ({ sectionMap: newSectionMap })),
       setMenu: (menu) => set(() => ({ menu })),
-      seIsEditingMenu: (isEditingMenu) => {
-        return set(() => ({ isEditingMenu }))
-      },
+      seIsEditingMenu: (isEditingMenu) => set(() => ({ isEditingMenu })),
       resetEditingAndSectionMap: () => set(() => ({
         sectionMap: new Map(),
         isEditingMenu: false

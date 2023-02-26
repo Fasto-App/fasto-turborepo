@@ -12,8 +12,12 @@ import { businessInformationSchemaInput, DaysOfTheWeekArray, hoursOfOperationSch
 import { shallow } from "zustand/shallow"
 import { useScheduleStore } from "../../components/WeeklySchedule/scheduleStore"
 import { DevTool } from "@hookform/devtools"
+import { Loading } from "../../components/Loading"
+import { useAppStore } from "../UseAppStore"
 
 export const ManageBusiness = () => {
+  const setNetworkState = useAppStore(state => state.setNetworkState)
+
   const { daysOfTheWeek, setCloseHour, setOpenHour, toggleDay } = useScheduleStore(state => ({
     daysOfTheWeek: state.daysOfTheWeek,
     setOpenHour: state.setOpenHour,
@@ -22,7 +26,7 @@ export const ManageBusiness = () => {
   }), shallow)
 
 
-  const { data } = useGetBusinessInformationQuery({
+  const { data, loading: loadingQuery } = useGetBusinessInformationQuery({
     onCompleted: (data) => {
       setValue("name", data.getBusinessInformation.name)
       setValue("description", data.getBusinessInformation.description || "")
@@ -41,10 +45,19 @@ export const ManageBusiness = () => {
         }
       })
     },
+    onError: () => {
+      setNetworkState("error")
+    }
   })
 
   const [updateBusinessInformationMutation, { loading }] = useUpdateBusinessInformationMutation({
     refetchQueries: ["GetBusinessInformation"],
+    onCompleted: () => {
+      setNetworkState("success")
+    },
+    onError: () => {
+      setNetworkState("error")
+    }
   })
 
   const {
@@ -96,6 +109,7 @@ export const ManageBusiness = () => {
         src={imageSrc || data?.getBusinessInformation?.picture}
         control={control}
       />
+      {/* Data should populate the component, but zustand should override locally */}
       <WeeklySchedule />
       {scheduleError ? <Text color={"red.500"}>{scheduleError}</Text> : null}
       <Box pt={4}>
@@ -118,6 +132,7 @@ export const ManageBusiness = () => {
           </Button>
         </HStack>
       </Box>
+      <Loading isLoading={loadingQuery || loading} />
     </HStack>
   )
 }

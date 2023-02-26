@@ -5,9 +5,16 @@ import MenuProducts from './MenuProducts'
 import { ModalFeedback } from '../../components/ModalFeedback/ModalFeedback'
 import { Box } from 'native-base';
 import { useGetAllMenusByBusinessIdQuery } from '../../gen/generated'
+import { useAppStore } from '../UseAppStore'
+import { Loading } from '../../components/Loading'
 
 const MenuScreen = () => {
-  const { data } = useGetAllMenusByBusinessIdQuery();
+  const setNetworkState = useAppStore(state => state.setNetworkState)
+  const { data, loading: loadingQuery } = useGetAllMenusByBusinessIdQuery({
+    onError: () => {
+      setNetworkState("error")
+    }
+  });
 
   return (
     <Box flex={1}>
@@ -26,11 +33,7 @@ const MenuScreen = () => {
           />
         ) : null}
       </VStack>
-      <ModalFeedback
-        isWarning={false}
-        isOpen={false}
-        onClose={() => console.log("closing Success")}
-      />
+      <Loading isLoading={loadingQuery} />
     </Box>
   )
 }

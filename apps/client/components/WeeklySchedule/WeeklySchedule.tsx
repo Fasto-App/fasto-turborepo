@@ -34,6 +34,8 @@ const WeeklySchedule = () => {
     shallow
   )
 
+  console.log("daysOfTheWeek", daysOfTheWeek)
+
   return (
     <Box py={"4"} px={"2"}>
       <Heading size={"md"}>

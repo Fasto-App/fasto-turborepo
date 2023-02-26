@@ -79,11 +79,6 @@ export const TablesScreen = () => {
 
   return (
     <Box flex={1}>
-      <ModalFeedback
-        isWarning={false}
-        isOpen={false}
-        onClose={() => console.log("close")}
-      />
       <AddTableModal
         isModalOpen={isNewTableModalOpen}
         setIsModalOpen={setIsNewTableModalOpen}

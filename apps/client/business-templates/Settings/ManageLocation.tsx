@@ -7,9 +7,13 @@ import { texts } from "./texts"
 import { businessLocationSchemaInput } from "app-helpers";
 import { useGetBusinessLocationQuery, useUpdateBusinessLocationMutation } from "../../gen/generated";
 import { DevTool } from "@hookform/devtools";
+import { Loading } from "../../components/Loading";
+import { useAppStore } from "../UseAppStore";
 
 export const ManageBusinessLocation = () => {
-  const { data } = useGetBusinessLocationQuery({
+  const setNetworkState = useAppStore(state => state.setNetworkState)
+
+  const { data, loading: loadingQuery } = useGetBusinessLocationQuery({
     onCompleted: (data) => {
       setValue("streetAddress", data.getBusinessLocation?.streetAddress || "")
       setValue("city", data.getBusinessLocation?.city || "")
@@ -17,6 +21,9 @@ export const ManageBusinessLocation = () => {
       setValue("postalCode", data.getBusinessLocation?.postalCode || "")
       setValue("country", data.getBusinessLocation?.country || "")
       setValue("complement", data.getBusinessLocation?.complement || "")
+    },
+    onError: () => {
+      setNetworkState("error")
     }
   })
 
@@ -28,7 +35,13 @@ export const ManageBusinessLocation = () => {
   } = useManageLocationFormHook(data?.getBusinessLocation)
 
   const [updateBusinessLocation, { loading }] = useUpdateBusinessLocationMutation({
-    refetchQueries: ["GetBusinessLocation"]
+    refetchQueries: ["GetBusinessLocation"],
+    onCompleted: () => {
+      setNetworkState("success")
+    },
+    onError: () => {
+      setNetworkState("error")
+    }
   })
 
   const handleSaveBusinessInfo = async (values: businessLocationSchemaInput) => {
@@ -64,6 +77,7 @@ export const ManageBusinessLocation = () => {
         >{texts.save}
         </Button>
       </HStack>
+      <Loading isLoading={loadingQuery || loading} />
     </VStack>
   )
 }
