@@ -165,6 +165,7 @@ export const employeeFormSchema = z.object({
   jobTitle: z.string().trim().min(3, { message: 'Job Role Required' }),
   privilege: z.enum(PrivilegesKeysArray),
   email: z.string().email().min(4, { message: 'Email Required' }),
+  isPending: z.boolean().optional(),
 })
 
 export type EmployeeInformation = z.infer<typeof employeeFormSchema>

@@ -60,6 +60,7 @@ export const ManageEmployee = () => {
           name: data.name,
           jobTitle: data.jobTitle,
           privilege: UserPrivileges[data.privilege as keyof typeof UserPrivileges],
+          isPending: data.isPending,
           _id: data._id
         }
       }
@@ -74,6 +75,7 @@ export const ManageEmployee = () => {
     setValue("jobTitle", employee.jobTitle)
     setValue("privilege", employee.privilege)
     setValue("_id", employee._id)
+    setValue("isPending", employee.isPending)
 
     setIsModalOpen(true)
   }, [setValue])
@@ -95,7 +97,7 @@ export const ManageEmployee = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValues("_id")])
 
-  const [deleteBusinessEmployee] = useDeleteBusinessEmployeeMutation({
+  const [deleteBusinessEmployee, { loading: loadingDelete }] = useDeleteBusinessEmployeeMutation({
     refetchQueries: ["GetAllEmployees"]
   })
 
@@ -127,7 +129,9 @@ export const ManageEmployee = () => {
         ModalBody={
           <>
             <ControlledForm
+              // @ts-ignore
               control={control}
+              // @ts-ignore
               formState={formState}
               Config={isEditingConfig}
             />
@@ -193,7 +197,7 @@ export const ManageEmployee = () => {
           </VStack>
         </ScrollView>
       }
-      <Loading isLoading={loadingQuery || loading} />
+      <Loading isLoading={loadingQuery || loading || loadingDelete} />
     </Box>
   )
 }

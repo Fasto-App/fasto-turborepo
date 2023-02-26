@@ -32,8 +32,9 @@ export const ManageBusiness = () => {
       setValue("description", data.getBusinessInformation.description || "")
 
       const hoursOfOperation = data.getBusinessInformation.hoursOfOperation
-
-      // this loop is blocking the UI thread
+      // FIX: This loop is blocking the UI thread
+      // 01 find a way to just transfer this data to the store whitout looping through it
+      // 02 or manage everything in the store and just pass the data to the form
       DaysOfTheWeekArray.forEach(day => {
         const open = hoursOfOperation?.[day]?.hours?.open
         const close = hoursOfOperation?.[day]?.hours?.close

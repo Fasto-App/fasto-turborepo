@@ -104,6 +104,7 @@ export const useManageEmployeeFormHook = () => {
       email: "",
       name: "",
       privilege: undefined,
+      isPending: undefined
     },
     resolver: zodResolver(employeeFormSchema)
   })

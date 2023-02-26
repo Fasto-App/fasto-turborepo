@@ -212,13 +212,13 @@ export type HoursInput = {
 
 export type HoursOfOperation = {
   __typename?: 'HoursOfOperation';
-  Friday?: Maybe<WorkingHours>;
-  Monday?: Maybe<WorkingHours>;
-  Saturday?: Maybe<WorkingHours>;
-  Sunday?: Maybe<WorkingHours>;
-  Thursday?: Maybe<WorkingHours>;
-  Tuesday?: Maybe<WorkingHours>;
-  Wednesday?: Maybe<WorkingHours>;
+  Friday: WorkingHours;
+  Monday: WorkingHours;
+  Saturday: WorkingHours;
+  Sunday: WorkingHours;
+  Thursday: WorkingHours;
+  Tuesday: WorkingHours;
+  Wednesday: WorkingHours;
 };
 
 export type HoursOfOperationInput = {
@@ -244,6 +244,7 @@ export type LoginInput = {
 export type ManageBusinessEmployeesInput = {
   _id?: InputMaybe<Scalars['ID']>;
   email: Scalars['String'];
+  isPending?: InputMaybe<Scalars['Boolean']>;
   jobTitle: Scalars['String'];
   name: Scalars['String'];
   privilege: UserPrivileges;
@@ -819,7 +820,7 @@ export type GetAllEmployeesQuery = { __typename?: 'Query', getAllEmployees: { __
 export type GetBusinessInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null, hoursOfOperation?: { __typename?: 'HoursOfOperation', Friday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Monday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Saturday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Sunday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Thursday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Tuesday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null, Wednesday?: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } | null } | null } };
+export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null, hoursOfOperation?: { __typename?: 'HoursOfOperation', Friday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Monday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Saturday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Sunday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Thursday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Tuesday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Wednesday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } } | null } };
 
 export type GetBusinessLocationQueryVariables = Exact<{ [key: string]: never; }>;
 

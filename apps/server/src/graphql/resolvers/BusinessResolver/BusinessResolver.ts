@@ -288,7 +288,7 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
 
 const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInformation }, { business, db }: Context) => {
   if (!business) throw ApolloError("Unauthorized")
-  const { email, privilege, _id, name, jobTitle } = args.input
+  const { email, privilege, _id, name, jobTitle, isPending } = args.input
 
   const User = UserModel(db)
   const Business = BusinessModel(db)
@@ -299,10 +299,50 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
   if (!foundBusiness) throw ApolloError("BadRequest")
 
   if (_id) {
-    // if there's an _id, it means it's an already registered account
-    // and we are editing the privilege
+    if (isPending) {
+      const foundSession = await Session.findById(_id)
+      if (!foundSession) throw ApolloError("BadRequest")
 
-    return null
+      foundSession.business = {
+        privilege,
+        jobTitle
+      }
+
+      await foundSession.save()
+
+      return ({
+        _id: foundSession._id,
+        name: foundSession.name,
+        email: foundSession.email,
+        privilege,
+        jobTitle,
+        isPending: true
+      })
+    }
+
+    const foundUser = await User.findById(_id)
+
+    if (!foundUser) throw ApolloError("BadRequest")
+
+    foundUser.businesses = {
+      ...foundUser.businesses,
+      [business]: {
+        privilege,
+        jobTitle
+      }
+    }
+
+    await foundUser.save()
+
+    return ({
+      _id: foundUser._id,
+      name: foundUser.name,
+      email: foundUser.email,
+      picture: foundUser.picture,
+      privilege,
+      jobTitle,
+      isPending: false
+    })
   }
 
 

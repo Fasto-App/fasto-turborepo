@@ -40,6 +40,7 @@ export const BusinessTypeDefinition = gql`
     email: String!
     jobTitle: String!
     privilege: UserPrivileges!
+    isPending: Boolean
   }
 
   input BusinessInput {
@@ -117,13 +118,13 @@ export const BusinessTypeDefinition = gql`
   }
 
   type HoursOfOperation {
-    Monday: WorkingHours
-    Tuesday: WorkingHours
-    Wednesday: WorkingHours
-    Thursday: WorkingHours
-    Friday: WorkingHours
-    Saturday: WorkingHours
-    Sunday: WorkingHours
+    Monday: WorkingHours!
+    Tuesday: WorkingHours!
+    Wednesday: WorkingHours!
+    Thursday: WorkingHours!
+    Friday: WorkingHours!
+    Saturday: WorkingHours!
+    Sunday: WorkingHours!
   }
 
   type DeleteBusinessPayload {

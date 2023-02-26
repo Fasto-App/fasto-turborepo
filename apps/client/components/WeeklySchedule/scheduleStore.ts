@@ -1,5 +1,6 @@
 import { DaysOfWeekType, HoursOfOperationType } from 'app-helpers'
 import { create } from 'zustand'
+import { HoursOfOperation } from '../../gen/generated'
 
 export interface ScheduleStore {
   daysOfTheWeek: HoursOfOperationType
@@ -77,5 +78,13 @@ export const useScheduleStore = create<ScheduleStoreActions>((set) => ({
         }
       }
     }
-  })
+  }),
+  // TODO: add a function to set the hours of operation
+  setHoursOfOperation: (hoursOfOperation: HoursOfOperation) => {
+    // remove the __typename field from the hoursOfOperation object
+    // because it is not a valid field for the HoursOfOperationType
+    const { __typename, ...workingHours } = hoursOfOperation
+    // either perform the fetch here and keep the data on the store
+
+  }
 }))
