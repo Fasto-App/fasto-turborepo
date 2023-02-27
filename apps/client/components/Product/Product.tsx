@@ -11,15 +11,17 @@ import {
 	VStack,
 	Spacer, Checkbox
 } from 'native-base';
+import { BorderTile } from '../BorderTile';
 
 type ProductTileProps = {
 	onPress?: () => void;
+	onCheckboxClick?: (selected: boolean) => void;
 	singleButton?: boolean;
 	isChecked?: boolean;
-	onCheckboxClick?: (selected: boolean) => void;
 	ctaTitle: string;
 	name: string;
 	imageUrl?: string;
+	description?: string | null;
 };
 
 type ProductCardProps = ProductTileProps & {
@@ -33,6 +35,8 @@ const texts = {
 }
 
 const maxLength = 115;
+
+const IMAGE_PLACEHOLDER = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJtmXoCwCBNSm0w3SLD1aWW9m6kpRUoCFp2qmT7i5TTKE_KMRIfZUNReWEyJ6QWtx3Iww&usqp=CAU"
 
 const Price = ({ price }: { price: number }) => (
 	<Text fontWeight="400" fontSize={"lg"} mx={"4"}>
@@ -60,19 +64,17 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 			<Box alignItems="center" backgroundColor={"secondary.300"}>
 				<AspectRatio w="60%" ratio={16 / 9} top={5}>
 					<Image source={{
-						uri: imageUrl
+						uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER
 					}} alt="image" borderRadius={"sm"} />
 				</AspectRatio>
 			</Box>
 			<Stack p="3" space={2}>
-
 				<Heading size="md" textAlign={"center"}>
 					{name}
 				</Heading>
 				<Text fontWeight="400" h={"75"} overflow="hidden" textAlign={"center"}>
-					{formattedDescriptions}
+					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
 				</Text>
-
 				<VStack alignItems="center" space={2} justifyContent="space-between">
 					{singleButton ?? <Price price={price} />}
 					<HStack alignItems="center" space={2} justifyContent="space-between">
@@ -85,34 +87,24 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 		</Box>)
 };
 
-const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle }: ProductTileProps) => {
+const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle, description }: ProductTileProps) => {
 
-	return <Box mr={"4"}
-		shadow="4"
-		w={'80'}
-		backgroundColor={"white"}
-		justifyContent={"center"}
-		p={"1"}
-		px={"4"}
-		borderRadius={"md"}
-		mb={4}
-	>
+	const formattedDescriptions = description && description.length > maxLength ?
+		(description.substring(0, maxLength) + "...") : description
 
-		<HStack alignItems="center" space={3}>
+	return <BorderTile width={"96"}>
+		<HStack alignItems="center" space={3} flex={1}>
 			<Avatar size="48px" source={{
-				uri: imageUrl
+				uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER
 			}} />
-			<VStack>
+			<VStack flex={1}>
 				<Text color="coolGray.800" bold>
 					{name}
 				</Text>
-				<Text color="coolGray.600">
-					{"Server"}
+				<Text color="coolGray.600" fontSize={"xs"}>
+					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
 				</Text>
 			</VStack>
-			<Spacer />
-
-
 			<HStack alignItems="center" space={2} justifyContent="space-between" py={4}>
 				{isChecked !== undefined ?
 					<Checkbox
@@ -130,8 +122,7 @@ const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaT
 				}
 			</HStack>
 		</HStack>
-
-	</Box>
+	</BorderTile>
 }
 
 

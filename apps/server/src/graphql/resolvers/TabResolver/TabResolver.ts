@@ -1,4 +1,4 @@
-import { ApolloExtendedError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { TabModel } from "../../../models/tab";
 import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
@@ -12,8 +12,6 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
     const Table = TableModel(db);
     const User = UserModel(db);
     const GuestUser = GuestUserModel(db);
-
-    console.log('createTab', input)
 
     if (!input.totalUsers) throw Error('Specify total users for this tab.')
     if (!business) throw Error('Business not found!')
@@ -37,7 +35,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             return tab
 
         } catch (err) {
-            throw new ApolloExtendedError('User not found, Please add a valid user', 500);
+            throw ApolloError("BadRequest", "User not found, Please add a valid user");
         }
     }
 
@@ -55,7 +53,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
         return tab
 
     } catch (error) {
-        throw new ApolloExtendedError('Error creating tab', 500);
+        throw ApolloError("InternalServerError", "Error creating Tab");
     }
 }
 
@@ -88,15 +86,15 @@ const updateTab = async (_parent: any, { input }: updateTabInput, { db, business
         const parsedInput = updateTabObject.parse(input);
         const tab = await Tab.findById(parsedInput._id);
 
-        if (!tab) throw new ApolloExtendedError('Tab not found!')
+        if (!tab) throw ApolloError('NotFound')
         if (!parsedInput.status) {
-            throw new ApolloExtendedError('Tab not found!')
+            throw ApolloError('NotFound')
         }
 
         return await Tab.findByIdAndUpdate(parsedInput._id, parsedInput, { new: true });
 
     } catch (err) {
-        throw new ApolloExtendedError('Error updating tab: ' + err, 500);
+        throw ApolloError("InternalServerError", 'Error updating tab: ' + err);
     }
 }
 
@@ -108,7 +106,7 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
     try {
         const tab = await Tab.findByIdAndDelete(input._id);
 
-        if (!tab) throw new ApolloExtendedError('Tab not found!')
+        if (!tab) throw ApolloError('NotFound')
 
         // if the tab has open orders, we need to close them
         // if (tab.orders.length > 0) {
@@ -125,7 +123,7 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
 
         return tab;
     } catch (err) {
-        throw new ApolloExtendedError('Error deleting tab: ' + err, 500);
+        throw ApolloError("InternalServerError", 'Error deleting tab: ' + err);
     }
 }
 
@@ -135,7 +133,7 @@ const getUsersByTabID = async (parent: any, _args: any, { db }: Context) => {
     const Tab = TabModel(db);
     const tab = await Tab.findById(parent._id);
 
-    if (!tab) throw new ApolloExtendedError('Tab not found!')
+    if (!tab) throw ApolloError('NotFound')
 
     return tab.users;
 }

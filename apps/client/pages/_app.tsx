@@ -11,6 +11,7 @@ import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
 import { Box, useTheme } from 'native-base';
+import { ModalFeedback } from '../components/ModalFeedback';
 
 
 const LandingWrapper: React.FC = ({ children }) => (
@@ -61,6 +62,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 					</AppProvider>
 				</AppApolloProvider>
 			</Box>
+			<ModalFeedback />
 		</ThemeProvider>
 	);
 }

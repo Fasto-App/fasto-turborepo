@@ -1,37 +1,49 @@
 import * as jose from "jose"
 import * as z from "zod"
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended"
 
 export async function tokenSigning(id: string, email: string, business?: string) {
-  if (!process.env.TOKEN_SECRET) return
+  if (!process.env.TOKEN_SECRET) throw ApolloError('InternalServerError')
 
   return await new jose.SignJWT({ _id: id, email, business })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('1h')
+    .setExpirationTime('24h')
     .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 
-export const getUserFromToken = async (token: string, tokenSecret: string) => {
-  // TODO token should be loaded here, not passed as a function
-  if (!token || !tokenSecret) {
+type UserToken = {
+  _id: string;
+  email: string;
+  business?: string;
+}
+
+export const getUserFromToken = async (token?: string): Promise<UserToken | null> => {
+  const tokenSecret = process.env.TOKEN_SECRET;
+
+  if (!tokenSecret) throw new Error('Token secret or bearer token not found');
+
+  if (!token) {
+    console.log("🚯 No Token: Limited Access");
     return null
   }
 
   try {
     const { payload } = await jose.jwtVerify(
-      token as string, new TextEncoder().encode(tokenSecret)
+      token as string,
+      new TextEncoder().encode(tokenSecret)
     )
 
     return {
-      _id: payload._id,
-      email: payload.email,
-      business: payload.business
+      _id: payload._id as string,
+      email: payload.email as string,
+      business: payload.business as string,
     };
 
   } catch (error) {
 
-    console.log("🚯 Token error: User Token INVALID");
-    return null
+    console.log("🚯 Token error: INVALID Token");
+    throw ApolloError("Unauthorized");
   }
 }
 const emailSchema = z.string().email();

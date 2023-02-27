@@ -3,7 +3,7 @@ import { VStack } from "native-base";
 import { CategoryList } from "./CategoryList";
 import { ProductList } from "./ProductList";
 import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback";
-import Loading from "../../components/Loading/Loading";
+import { Loading } from "../../components/Loading";
 import { useProductMutationHook } from "../../graphQL/ProductQL";
 import { useCategoryMutationHook } from "../../graphQL/CategoryQL";
 import { useAppStore } from "../UseAppStore";
@@ -12,22 +12,11 @@ import { Box } from "native-base";
 export default function AddProductCategoriesScreen({ resetAll }: { resetAll: () => void }) {
   const { allCategories, loadingCategory } = useCategoryMutationHook();
   const { allProducts, loadingProduct } = useProductMutationHook();
-
-  const networkStatus = useAppStore((state) => state.networkState);
-  const setNetworkState = useAppStore((state) => state.setNetworkState);
   const categoryId = useAppStore((state) => state.category);
 
-  const isSuccess = networkStatus === "success";
-  const isError = networkStatus === "error";
-
-  const filteredProducts = allProducts?.filter((product) => {
-    if (categoryId) {
-      return product?.category?._id === categoryId;
-    }
-    return product;
-  });
-
-  console.log("BUG INTROUDUCED HERE");
+  const filteredProducts = allProducts?.filter((product) => categoryId ?
+    product?.category?._id === categoryId
+    : true)
 
   return (
     <Box flex={1}>
@@ -39,12 +28,6 @@ export default function AddProductCategoriesScreen({ resetAll }: { resetAll: () 
         zIndex={-1}
       />
       <Loading isLoading={loadingProduct || loadingCategory} />
-
-      <ModalFeedback
-        isWarning={isError}
-        isOpen={isSuccess || isError}
-        onClose={() => setNetworkState("idle")}
-      />
       <VStack flex={1} p={"4"} space={"4"}>
         <CategoryList resetAll={resetAll} categories={allCategories} />
         {allCategories?.length > 0 ? (

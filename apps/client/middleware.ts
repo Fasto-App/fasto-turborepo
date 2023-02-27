@@ -1,4 +1,5 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { businessCookies } from "./cookies/businessCookies";
 import { businessRoute, BUSINESS_ADMIN } from "./routes";
 
 export const deleteCookie = (
@@ -20,8 +21,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   const LOGIN_URL = getLoginURL();
   const DASHBOARD_URL = getDashboardUrl()
 
-  const requestCookiesToken = request.cookies.get('opentab-cookies-token')
-  const requestCookiesEmail = request.cookies.get("opentab-cookies-email")
+  const requestCookiesToken = request.cookies.get(businessCookies.token)
+  const requestCookiesEmail = request.cookies.get(businessCookies.email)
 
   if (process.env.NEXT_PUBLIC_ENVIRONMENT !== "development" &&
     request.headers.get("x-forwarded-proto") !== "https") {
@@ -38,8 +39,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   if (request.nextUrl.pathname.startsWith(businessRoute.login) ||
     request.nextUrl.pathname.startsWith(businessRoute.signup) ||
     request.nextUrl.pathname.startsWith(businessRoute.forgotPassword) ||
-    request.nextUrl.pathname.startsWith(businessRoute.resetPassword)
-  ) {
+    request.nextUrl.pathname.startsWith(businessRoute.resetPassword) ||
+    request.nextUrl.pathname.startsWith(businessRoute.createAccount)) {
     const { nextUrl: { search } } = request;
     const urlSearchParams = new URLSearchParams(search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -69,7 +70,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
 
 
         const response = NextResponse.next()
-        response.cookies.set("test", "test");
 
         return response;
       } else {
@@ -86,7 +86,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   // otherwise, navigate back to LOGIN
   if (request.nextUrl.pathname.startsWith(BUSINESS_ADMIN)) {
     if (requestCookiesToken) {
-      console.log("COOKIE", cookie)
+      console.log("token", requestCookiesToken)
+      console.log("email", requestCookiesEmail)
 
 
       try {

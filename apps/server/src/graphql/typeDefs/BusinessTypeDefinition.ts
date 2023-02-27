@@ -2,18 +2,45 @@ import { gql } from "apollo-server-express";
 
 export const BusinessTypeDefinition = gql`
   extend type Query {
-    getBusiness: Business!
-    getAllBusinessByUser: [Business]
-    getAllBusiness: [Business]
+    getBusinessInformation: Business!
+    getAllBusinessByUser: [Business]!
+    getAllBusiness: [Business]!
     getBusinessLocation: Address
+    getAllEmployees: Employees!
   }
 
   extend type Mutation {
-    createBusiness(input: BusinessInput): CreateBusinessPayload
-    updateBusiness(input: UpdateBusinessInput): Business
+    createBusiness(input: BusinessInput!): CreateBusinessPayload
+    updateBusinessInformation(input: UpdateBusinessInfoInput!): Business!
     deleteBusiness(businessID: ID!): DeleteBusinessPayload
     updateBusinessToken(input: String): String
-    updateBusinessLocation(input: AddressInput): Business
+    updateBusinessLocation(input: AddressInput!): Business
+    manageBusinessEmployees(input: ManageBusinessEmployeesInput!): Employee!
+    deleteBusinessEmployee(input: DeleteEmployee!): ID!
+  }
+
+  type Employees {
+    employees: [Employee!]!
+    employeesPending: [Employee!]!
+  }
+
+  type Employee {
+    _id: ID!
+    name: String!
+    email: String!
+    privilege: UserPrivileges!
+    picture: String
+    isPending: Boolean!
+    jobTitle: String!
+  }
+
+  input ManageBusinessEmployeesInput {
+    _id: ID
+    name: String!
+    email: String!
+    jobTitle: String!
+    privilege: UserPrivileges!
+    isPending: Boolean
   }
 
   input BusinessInput {
@@ -23,9 +50,18 @@ export const BusinessTypeDefinition = gql`
     address: AddressInput
   }
 
-  input WorkingHoursInput {
+  input DeleteEmployee {
+    _id: ID!
+  }
+
+  input HoursInput {
     open: String!
     close: String!
+  }
+
+  input WorkingHoursInput {
+    isOpen: Boolean!
+    hours: HoursInput
   }
 
   input HoursOfOperationInput {
@@ -39,16 +75,16 @@ export const BusinessTypeDefinition = gql`
   }
 
   enum DaysOfWeek {
-    MONDAY
-    TUESDAY
-    WEDNESDAY
-    THURSDAY
-    FRIDAY
-    SATURDAY
-    SUNDAY
+    Monday
+    Tuesday
+    Wednesday
+    Thursday
+    Friday
+    Saturday
+    Sunday
   }
 
-    type CreateBusinessPayload {
+  type CreateBusinessPayload {
     business: Business!
     token: String
   }
@@ -57,6 +93,7 @@ export const BusinessTypeDefinition = gql`
     _id: ID!
     user: ID
     name: String!
+    description: String
     email: String!
     website: String!
     price_range: String
@@ -66,21 +103,28 @@ export const BusinessTypeDefinition = gql`
     categories: [Category!]!
     products: [Product!]!
     employees: [String]!
+    picture: String
     hoursOfOperation: HoursOfOperation
   }
 
-  type HoursOfOperation {
-    Monday: WorkingHours
-    Tuesday: WorkingHours
-    Wednesday: WorkingHours
-    Thursday: WorkingHours
-    Friday: WorkingHours
-    Saturday: WorkingHours
-    Sunday: WorkingHours
-  }
-  type WorkingHours {
+  type Hours {
     open: String!
     close: String!
+  }
+
+  type WorkingHours {
+    isOpen: Boolean!
+    hours: Hours
+  }
+
+  type HoursOfOperation {
+    Monday: WorkingHours!
+    Tuesday: WorkingHours!
+    Wednesday: WorkingHours!
+    Thursday: WorkingHours!
+    Friday: WorkingHours!
+    Saturday: WorkingHours!
+    Sunday: WorkingHours!
   }
 
   type DeleteBusinessPayload {
@@ -88,9 +132,11 @@ export const BusinessTypeDefinition = gql`
     message: String
   }
 
-  input UpdateBusinessInput {
-  _id: ID!
-  business: BusinessInput!
-}
+  input UpdateBusinessInfoInput {
+    name: String!
+    description: String
+    picture: Upload
+    hoursOfOperation: HoursOfOperationInput
+  }
 
 `

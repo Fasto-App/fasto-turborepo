@@ -1,13 +1,17 @@
-import { NotNumberTypeError } from '@typegoose/typegoose/lib/internal/errors';
-import { ApolloError } from 'apollo-server-errors';
+import { HttpStatusMessage, HttpStatus, HttpStatusKeysType } from 'app-helpers';
+import { GraphQLError } from 'graphql';
 import { Bugsnag } from '../../bugsnag/bugsnag';
 
-export class ApolloExtendedError extends ApolloError {
-  constructor(message: string, errorCode?: number) {
-    super(message, `OpenTab Message: ${errorCode}`);
+export const ApolloError = (httpStatus: HttpStatusKeysType, cause?: string) => {
+  const code = HttpStatus[httpStatus];
 
-    Object.defineProperty(this, 'name', { value: errorCode });
-    Bugsnag.notify(new Error(`OpenTab Message: ${message}`))
-  }
+  Bugsnag.notify(new Error(`${httpStatus}: ${HttpStatusMessage[code]}`))
 
+  throw new GraphQLError(HttpStatusMessage[code], {
+    extensions: {
+      code,
+      cause,
+      httpStatus,
+    },
+  });
 }

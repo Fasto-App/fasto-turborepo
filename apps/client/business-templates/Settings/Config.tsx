@@ -44,31 +44,46 @@ export const ManageAccountConfig: RegularInputConfig = {
   name: {
     name: "name",
     label: "Name",
+    placeholder: "Enter Name",
   },
   email: {
     name: "email",
     label: "Email",
+    isDisabled: true,
   },
-  password: {
-    name: "password",
-    label: "Password",
+  oldPassword: {
+    name: "oldPassword",
+    label: "Old Password",
+    type: "password",
+    placeholder: "Old Password",
+    autoComplete: "off",
   },
-  confirmPassword: {
-    name: "confirm_password",
+  newPassword: {
+    name: "newPassword",
+    label: "New Password",
+    type: "password",
+    placeholder: "New Password",
+  },
+  newPasswordConfirmation: {
+    name: "newPasswordConfirmation",
     label: "Confirm Password",
+    type: "password",
+    placeholder: "New Password Confirmation",
   },
 }
 
 export const ManageBusinessConfig: RegularInputConfig = {
-  businessName: {
-    name: "businessName",
+  name: {
+    name: "name",
     label: "Business Name",
     isRequired: true,
+    placeholder: "Enter Business Name",
   },
   description: {
     name: "description",
     label: "Description",
     inputType: "TextArea",
+    placeholder: "Enter Description",
   },
 }
 
@@ -89,10 +104,12 @@ export const uploadPicture: InputProps = {
 // create a new config for the new form
 // the forms need better validation to garantee that the config types and the schema types are the same
 
-const privilegesArray = typedKeys(Privileges).map(privilege => ({
-  name: privilege,
-  _id: privilege,
-}))
+const privilegesArray = typedKeys(Privileges)
+  .filter(privilege => privilege !== "Customer")
+  .map(privilege => ({
+    name: privilege,
+    _id: privilege,
+  }))
 
 export const ManageEmployeeConfig: SideBySideInputConfig = {
   name: {
@@ -101,29 +118,29 @@ export const ManageEmployeeConfig: SideBySideInputConfig = {
     label: "Name",
     placeholder: "Enter Name"
   },
-  role: {
-    isRequired: true,
-    name: "role",
-    label: "Job Role",
-    placeholder: "Enter Role",
-    inputType: "Select",
-    array: privilegesArray,
-  },
+  rolePrivileges: [
+    {
+      jobTitle: {
+        name: "jobTitle",
+        label: "Job Title",
+        isRequired: true,
+        placeholder: "Enter Role",
+      }
+    }, {
+      privilege: {
+        name: "privilege",
+        label: "Privilege",
+        isRequired: true,
+        placeholder: "Choose a privilege",
+        inputType: "Select",
+        array: privilegesArray,
+      }
+    }
+  ],
   email: {
+    isRequired: true,
     name: "email",
     label: "Email",
     placeholder: "example@email.com",
   },
-  phonePic: [{
-    phone: {
-      name: "phone",
-      label: "Phone",
-      placeholder: "Enter Phone"
-    },
-  }, {
-    picture: {
-      name: "picture",
-      label: "Picture",
-    },
-  }]
 }

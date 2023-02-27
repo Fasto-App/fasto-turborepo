@@ -1,18 +1,47 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { businessLocationSchema, businessLocationSchemaInput } from 'app-helpers';
+import { AccountInformation, accountInformationFormSchema, businessInformationSchema, businessLocationSchema, businessLocationSchemaInput, employeeFormSchema, EmployeeInformation } from 'app-helpers';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { GetBusinessLocationQuery, UpdateBusinessLocationMutation } from '../../gen/generated';
+import { GetBusinessLocationQuery, GetUserInformationQuery, GetBusinessInformationQuery } from '../../gen/generated';
 
-type R = NonNullable<UpdateBusinessLocationMutation["updateBusinessLocation"]>["address"]
+export const useManageBusinessFormHook = (data?: GetBusinessInformationQuery["getBusinessInformation"] | null) => {
 
-export const useManageBusinessFormHook = (data?: GetBusinessLocationQuery["getBusinessLocation"] | null) => {
   const {
     control,
     formState,
     handleSubmit,
-    reset
+    reset,
+    setValue
+  } = useForm({
+    resolver: zodResolver(businessInformationSchema),
+    defaultValues: {
+      name: data?.name ?? "",
+      description: data?.description ?? "",
+      // website: data?.website ?? "",
+      // phone: data?.phone ?? "",
+      picture: data?.picture ?? "",
+    },
+  })
+
+  return {
+    control,
+    formState,
+    handleSubmit,
+    reset,
+    setValue
+  }
+
+}
+
+export const useManageLocationFormHook = (data?: GetBusinessLocationQuery["getBusinessLocation"] | null) => {
+  const {
+    control,
+    formState,
+    handleSubmit,
+    reset,
+    setValue
   } = useForm<businessLocationSchemaInput>({
+    resolver: zodResolver(businessLocationSchema),
     defaultValues: {
       streetAddress: data?.streetAddress ?? "",
       complement: data?.complement ?? "",
@@ -21,69 +50,61 @@ export const useManageBusinessFormHook = (data?: GetBusinessLocationQuery["getBu
       stateOrProvince: data?.stateOrProvince ?? "",
       country: data?.country ?? "",
     },
-    resolver: zodResolver(businessLocationSchema)
   })
 
   return {
     control,
     formState,
     handleSubmit,
-    reset
+    reset,
+    setValue
   }
 }
 
-const accountFormSchema = z.object({
-  name: z.string().trim().min(3, { message: 'Name Required' })
-    .max(50, { message: 'Name too long' }),
-  email: z.string().trim().min(4, { message: 'Email Required' }),
-})
-
-export type AccountInfo = z.infer<typeof accountFormSchema>
-
-export const useManageAccountFormHook = () => {
+export const useManageAccountFormHook = (data?: GetUserInformationQuery["getUserInformation"] | null) => {
   const {
     control,
     formState,
-    handleSubmit
-  } = useForm<AccountInfo>({
+    handleSubmit,
+    setValue
+  } = useForm<AccountInformation>({
+    resolver: zodResolver(accountInformationFormSchema),
     defaultValues: {
-      name: "",
-      email: "",
+      name: data?.name ?? "",
+      email: data?.name ?? "",
+      newPassword: "",
+      newPasswordConfirmation: "",
+      oldPassword: "",
     },
-    resolver: zodResolver(accountFormSchema)
   })
 
   return {
     control,
     formState,
-    handleSubmit
+    handleSubmit,
+    setValue
   }
 }
 
 
-const employeeFormSchema = z.object({
-  name: z.string().trim().min(3, { message: 'Name Required' })
-    .max(50, { message: 'Name too long' }),
-  role: z.string().trim().min(4, { message: 'Role Required' }),
-  email: z.string().email().min(4, { message: 'Email Required' }),
-  phone: z.string().optional(),
-  picture: z.string().optional(),
-})
 
-export type EmployeeInfo = z.infer<typeof employeeFormSchema>
 
 export const useManageEmployeeFormHook = () => {
   const {
     control,
     formState,
     handleSubmit,
-    reset
-  } = useForm<EmployeeInfo>({
+    reset,
+    setValue,
+    getValues
+  } = useForm<EmployeeInformation>({
     defaultValues: {
-      role: "",
+      _id: undefined,
+      jobTitle: "",
       email: "",
-      phone: "",
-      picture: ""
+      name: "",
+      privilege: undefined,
+      isPending: undefined
     },
     resolver: zodResolver(employeeFormSchema)
   })
@@ -92,6 +113,8 @@ export const useManageEmployeeFormHook = () => {
     control,
     formState,
     handleSubmit,
-    reset
+    reset,
+    setValue,
+    getValues
   }
 }

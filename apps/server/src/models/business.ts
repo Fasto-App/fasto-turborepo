@@ -6,13 +6,20 @@ import { Address } from './address';
 import { Product } from './product';
 import { Category } from './category';
 import { User } from './user';
-// import type { HousOfOperationType } from 'app-helpers';
+import { Session } from './session';
+import type { HoursOfOperationType } from 'app-helpers';
 export class Business {
     @prop({ required: true })
     public user!: Types.ObjectId;
 
     @prop({ required: true })
     public name!: string;
+
+    @prop()
+    public description?: string;
+
+    @prop()
+    public picture?: string;
 
     @prop({ required: true })
     public email!: string;
@@ -26,12 +33,14 @@ export class Business {
     @prop({ ref: Address })
     public address?: Ref<Address>;
 
-    // @prop()
-    // public hoursOfOperation?: HousOfOperationType;
+    //TODO: How are we representing this?
+    @prop()
+    public hoursOfOperation?: HoursOfOperationType;
 
     @prop({ ref: () => Product, default: [] })
     public products!: Ref<Product>[];
 
+    // FIX: Next time add documentation if you dont understand what this is
     @prop({
         ref: Category,
         default: [],
@@ -45,6 +54,9 @@ export class Business {
 
     @prop({ default: [] })
     public employees?: Ref<User>[];
+
+    @prop({ default: [] })
+    public employeesPending?: Ref<Session>[];
 
     @prop({ default: Date.now() })
     public created_date!: Date;

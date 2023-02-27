@@ -1,0 +1,3 @@
+mutation DeleteBusinessEmployee($input: DeleteEmployee!) {
+	deleteBusinessEmployee(input: $input)
+}

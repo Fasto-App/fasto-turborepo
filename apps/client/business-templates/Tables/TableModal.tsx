@@ -6,7 +6,7 @@ import { Badge, Button, Modal, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { OrderDetail, Table, useGetTabByIdQuery, User } from "../../gen/generated";
+import { OrderDetail, Table, useGetAllMenusByBusinessIdQuery, useGetTabByIdQuery, User } from "../../gen/generated";
 import { useTabMutationHook } from "../../graphQL/TabQL";
 import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
@@ -66,6 +66,10 @@ export const TableModal = () => {
   const isAvailableTable = tableChoosen?.status === "AVAILABLE"
   const isReservedTable = tableChoosen?.status === "RESERVED"
 
+  const { data: menusData, loading: loadingGetMenus } = useGetAllMenusByBusinessIdQuery();
+
+  // get all the menus from a business
+
   // store the id and go through the array of orders
   // fetch information for an specific TAB 
   const { data } = useGetTabByIdQuery({
@@ -76,8 +80,6 @@ export const TableModal = () => {
     },
     skip: !tableChoosen?.tab
   })
-
-  console.log({ data })
 
   const {
     control,
@@ -94,6 +96,9 @@ export const TableModal = () => {
   })
 
   const onSubmit = useCallback(async (data: any) => {
+    const menuId = menusData?.getAllMenusByBusinessID[0]._id
+
+    if (!menuId) throw ("Menu id is undefined")
 
     switch (tableChoosen?.status) {
       case "AVAILABLE":
@@ -111,17 +116,17 @@ export const TableModal = () => {
             }
           })
 
-          router.push(businessRoute.add_to_order(`${result.data?.createTab._id}`, "635c687451cb178c2e214465"),)
+          router.push(businessRoute.add_to_order(`${result.data?.createTab._id}`, menuId))
         } catch { }
         break;
 
       case "OCCUPIED":
         console.log(tableChoosen)
-        router.push(businessRoute.add_to_order(`${tableChoosen?.tab}`, "635c687451cb178c2e214465"))
+        router.push(businessRoute.add_to_order(`${tableChoosen?.tab}`, menuId))
         break;
     }
 
-  }, [createTab, router, tableChoosen])
+  }, [createTab, menusData?.getAllMenusByBusinessID, router, tableChoosen])
 
   const onCancel = () => {
     setTableChoosen(undefined)
@@ -161,7 +166,9 @@ export const TableModal = () => {
             {texts.cancel}
           </Button>
           <Button w={"200px"}
-            onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}>
+            onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}
+            isLoading={loadingGetMenus}
+          >
             {isOcuppiedTable ? texts.addNewItem : texts.openTab}
           </Button>
         </Button.Group>

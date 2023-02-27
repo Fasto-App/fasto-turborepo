@@ -23,6 +23,7 @@ const texts = {
 	descriptionHelperText: "Max 5 lines",
 	photo: "Photo",
 	price: "Price",
+	pricePlaceholder: "$12.99",
 	create: "Create",
 	delete: "Delete Product",
 	cancel: "Cancel",
@@ -153,7 +154,7 @@ const ProductModal = ({
 			isRequired: true,
 			name: 'price',
 			label: texts.price,
-			placeholder: texts.price,
+			placeholder: texts.pricePlaceholder,
 			helperText: texts.productsHelperText,
 			formatValue: (value: string) => {
 				return value ?

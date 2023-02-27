@@ -1,8 +1,0 @@
-mutation UpdateUserInformation($input: UpdateUserInput!) {
-	updateUserInformation(input: $input) {
-		token
-		email
-		name
-		_id
-	}
-}

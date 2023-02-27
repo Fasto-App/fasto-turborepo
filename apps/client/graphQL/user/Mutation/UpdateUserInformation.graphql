@@ -1,0 +1,12 @@
+mutation UpdateUserInformation($input: UpdateUserInput!) {
+	updateUserInformation(input: $input) {
+		_id
+		email
+		name
+		picture
+		businesses {
+			business
+			privilege
+		}
+	}
+}

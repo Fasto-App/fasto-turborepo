@@ -4,7 +4,8 @@
 		"emitDecoratorMetadata": true,
 		"outDir": "dist",
 		"rootDir": "src",
-		"target": "es6"
+		"target": "es6",
+		"jsx": "react"
 	},
 	"extends": "tsconfig/base.json",
 	"exclude": ["node_modules"]

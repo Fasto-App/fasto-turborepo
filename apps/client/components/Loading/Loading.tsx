@@ -2,7 +2,7 @@ import React from 'react'
 import { Center, Modal, Spinner } from 'native-base'
 
 
-function Loading({ isLoading }: { isLoading: boolean }) {
+export function Loading({ isLoading }: { isLoading: boolean }) {
   return (
     <Modal isOpen={isLoading} >
       <Center justifyContent="center" alignItems="center">
@@ -10,6 +10,4 @@ function Loading({ isLoading }: { isLoading: boolean }) {
       </Center>
     </Modal>
   )
-}
-
-export default Loading
+};

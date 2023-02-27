@@ -1,13 +1,4 @@
-export const Privileges = {
-  ADMIN: 'ADMIN',
-  MANAGER: 'MANAGER',
-  SERVER: 'SERVER',
-  COOK: 'COOK',
-  BARTENDER: 'BARTENDER',
-  BUSSER: 'BUSSER'
-} as const;
-
-export type PrivilegesType = typeof Privileges[keyof typeof Privileges];
+import { PrivilegesKeys } from "app-helpers";
 
 export const TableStatus = {
   AVAILABLE: 'AVAILABLE',
@@ -33,4 +24,13 @@ export const TabStatus = {
 } as const
 
 export type TabStatusType = typeof TabStatus[keyof typeof TabStatus];
+
+export type BusinessRelationship = {
+  privilege: PrivilegesKeys,
+  jobTitle: string
+}
+
+export type Businesses = {
+  [key: string]: BusinessRelationship
+}
 

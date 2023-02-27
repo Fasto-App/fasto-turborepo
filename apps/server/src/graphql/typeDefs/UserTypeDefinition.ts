@@ -2,22 +2,20 @@ import { gql } from "apollo-server-express";
 
 export const UserTypeDefinition = gql`
   extend type Query {
-      """
-      Returns a user based on the Bearer token
-      """
     getToken: User
     getAllUsers: [User!]!
-    getUserByID(userID: ID): User
+    getUserInformation: User
   }
 
   extend type Mutation {
     requestUserAccountCreation(input: RequestUserAccountInput): AccountCreationResponse!
     createUser(input: UserInput): User!
-    postUserLogin(input: loginInput!): User!
+    postUserLogin(input: LoginInput!): User!
     updateUserInformation(input: UpdateUserInput!): User!
     recoverPassword(input: String!): RequestResponseOK
     deleteUser: RequestResponseOK!
-    addEmployeeToBusiness(input: AddEmployeeInput!): User!
+    passwordReset(input: ResetPasswordInput!): User!
+    createEmployeeAccount(input: CreateEmployeeAccountInput!): User!
   }
 
   type AccountCreationResponse {
@@ -25,27 +23,29 @@ export const UserTypeDefinition = gql`
     url: String
   }
 
-  input AddEmployeeInput {
-    name: String!
-    email: String!
-    privileges: UserPrivileges!
-  }
-
   input UserInput {
     name: String!
     email: String!
     password: String!
     passwordConfirmation: String!
-    privileges: UserPrivileges
+    privilege: UserPrivileges
+  }
+
+  input CreateEmployeeAccountInput {
+    name: String!
+    email: String!
+    password: String!
+    passwordConfirmation: String!
+    token: String!
   }
 
   input UpdateUserInput {
-    name: String
-    email: String
-    password: String
-    privileges: UserPrivileges
-    passwordConfirmation: String
-    _id: ID
+    name: String!
+    email: String!
+    picture: Upload
+    oldPassword: String
+    newPassword: String
+    newPasswordConfirmation: String
   }
 
   input RequestUserAccountInput{
@@ -54,30 +54,36 @@ export const UserTypeDefinition = gql`
 
   type User {
     _id: ID!
-    name: String
+    name: String!
     email: String!
     token: String!
-    business: [BusinessPrivileges]!
+    picture: String
+    businesses: [BusinessPrivileges!]!
   }
 
-  input loginInput {
+  input LoginInput {
     email: String!
     password: String!
   }
 
+  input ResetPasswordInput {
+    password: String!
+    passwordConfirmation: String!
+    token: String!
+  }
+  
+
   enum UserPrivileges {
-    ADMIN
-    MANAGER
-    USER
-    WAITER
-    COOK
-    BAR
-    BARTENDER
+    Admin
+    View
+    Manager
+    Customer
+    Staff
   }
 
   type BusinessPrivileges {
     business: String!
-    privileges: [UserPrivileges]!
+    privilege: UserPrivileges!
   }
 
 `

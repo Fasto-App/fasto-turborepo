@@ -1,83 +1,175 @@
-import React, { useMemo, useState, } from "react"
-import { Box, Button, Heading, ScrollView, Text, VStack } from "native-base"
+import React, { useCallback, useMemo, useState, } from "react"
+import { Box, Button, Divider, Heading, HStack, ScrollView, Text, VStack } from "native-base"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
-import { EmployeeInfo, useManageEmployeeFormHook } from "./hooks"
+import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
 import { texts } from "./texts"
-import { AddMoreButton, SmallAddMoreButton } from "../../components/atoms/AddMoreButton"
-import { ProductTile } from "../../components/Product/Product"
+import { AddMoreButton } from "../../components/atoms/AddMoreButton"
+import { EmployeeInformation } from "app-helpers"
+import { DevTool } from "@hookform/devtools"
+import { useDeleteBusinessEmployeeMutation, useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
+import { MoreButton } from "../../components/MoreButton"
+import { EmployeeTile } from "../../components/BorderTile"
+import { DeleteAlert } from "../../components/DeleteAlert"
+import { Loading } from "../../components/Loading"
+import { useAppStore } from "../UseAppStore"
 
-const ManageEmployeeModal = ({
-  isModalOpen, setIsModalOpen }:
-  { isModalOpen: boolean, setIsModalOpen: (isOpen: boolean) => void }) => {
-  const { control, formState, handleSubmit, reset } = useManageEmployeeFormHook()
-
-  const onSubmit = (data: EmployeeInfo) => {
-    console.log("data", data)
-    // post data to backend and refresh query to fetch all employees
-  }
-
-  const onCancel = () => {
-    // clear input values
-    setIsModalOpen(false)
-    reset()
-  }
-
-  return (
-    <CustomModal
-      isOpen={isModalOpen}
-      onClose={onCancel}
-      HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
-      ModalBody={
-        <ControlledForm
-          control={control}
-          formState={formState}
-          Config={ManageEmployeeConfig}
-        />}
-      ModalFooter={
-        <>
-          <Button
-            flex={1}
-            variant="outline"
-            colorScheme="tertiary"
-            onPress={onCancel}
-          >
-            {texts.cancel}
-          </Button>
-          <Button
-            flex={1}
-            onPress={handleSubmit(onSubmit)}
-          >
-            {texts.save}
-          </Button>
-        </>
-      }
-    />
-  )
-}
-
-const mock = {
-  _id: 1,
-  name: "Alex Mendes",
-  role: "Server",
-  imageUrl: "https://scontent.fcgh10-1.fna.fbcdn.net/v/t39.30808-6/313403685_956099322014600_7816717504008112381_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=jMIoTP12iRgAX8ac76I&_nc_oc=AQlACjg0K7cJ0KD_KXAjZZhNr7IhhlNIEOKxxCS-9NQfDqhesBzp2Vmud1YQwhbFL0tXHhUs_38L3gSgNgAjyQzx&tn=DyIDWBMfZAs-NAgt&_nc_ht=scontent.fcgh10-1.fna&oh=00_AfAaz4EPF63cK-XuUf-LUMztBxMcAb8ByrVbK6rggT_eeQ&oe=63CB537F"
-} as const;
-const employeesData: typeof mock[] = new Array(5).fill(mock)
+const DICE_BEAR_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
 export const ManageEmployee = () => {
-  const [isModalopen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const setNetworkState = useAppStore(state => state.setNetworkState)
 
-  // add button to not empty array
-  const employeesWithButton = useMemo(() => [{ name: "Button" } as const, ...employeesData], [])
+  const { data, loading: loadingQuery } = useGetAllEmployeesQuery({
+    onError: () => {
+      setNetworkState("error")
+    }
+  });
+
+  const combinedData = useMemo(() => {
+    const employees = data?.getAllEmployees?.employees ?? []
+    const employeesPending = data?.getAllEmployees?.employeesPending ?? []
+
+    return [...employees, ...employeesPending]
+  }, [data?.getAllEmployees?.employees, data?.getAllEmployees?.employeesPending])
+
+  const { control, formState, handleSubmit, reset, setValue, getValues } = useManageEmployeeFormHook()
+
+  const [manageEmployee, { loading }] = useManageBusinessEmployeesMutation({
+    refetchQueries: ["GetAllEmployees"],
+    onCompleted: () => {
+      setNetworkState("success")
+    },
+    onError: () => {
+      setNetworkState("error")
+    }
+  })
+
+  const onCancel = useCallback(() => {
+    setIsModalOpen(false)
+    reset()
+  }, [reset, setIsModalOpen])
+
+  const onSubmit = useCallback(async (data: EmployeeInformation) => {
+
+    await manageEmployee({
+      variables: {
+        input: {
+          email: data.email,
+          name: data.name,
+          jobTitle: data.jobTitle,
+          privilege: UserPrivileges[data.privilege as keyof typeof UserPrivileges],
+          isPending: data.isPending,
+          _id: data._id
+        }
+      }
+    })
+
+    onCancel()
+  }, [manageEmployee, onCancel])
+
+  const onEditPressed = useCallback((employee: EmployeeInformation) => {
+    setValue("name", employee.name)
+    setValue("email", employee.email)
+    setValue("jobTitle", employee.jobTitle)
+    setValue("privilege", employee.privilege)
+    setValue("_id", employee._id)
+    setValue("isPending", employee.isPending)
+
+    setIsModalOpen(true)
+  }, [setValue])
+
+  const isEditingConfig = useMemo(() => {
+
+    return getValues("_id") ? ({
+      ...ManageEmployeeConfig,
+      name: {
+        ...ManageEmployeeConfig.name,
+        isDisabled: true
+      },
+      email: {
+        ...ManageEmployeeConfig.email,
+        isDisabled: true
+      }
+    }) : ManageEmployeeConfig
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getValues("_id")])
+
+  const [deleteBusinessEmployee, { loading: loadingDelete }] = useDeleteBusinessEmployeeMutation({
+    refetchQueries: ["GetAllEmployees"]
+  })
+
+  const deleteEmployeeCB = useCallback(async () => {
+    const _id = getValues("_id")
+
+    if (!_id) throw new Error("No _id found")
+
+    await deleteBusinessEmployee({
+      variables: {
+        input: {
+          _id
+        }
+      }
+    })
+
+    onCancel()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getValues("_id")])
 
   return (
     <Box>
-      <ManageEmployeeModal
-        isModalOpen={isModalopen}
-        setIsModalOpen={setIsModalOpen}
+      <DevTool control={control} />
+      <CustomModal
+        isOpen={isModalOpen}
+        onClose={onCancel}
+        HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
+        ModalBody={
+          <>
+            <ControlledForm
+              // @ts-ignore
+              control={control}
+              // @ts-ignore
+              formState={formState}
+              Config={isEditingConfig}
+            />
+            {getValues("_id") ?
+              <Box pt={4}>
+                <DeleteAlert deleteItem={deleteEmployeeCB} title={texts.delete} />
+              </Box>
+              : null}
+          </>
+        }
+        ModalFooter={
+          <>
+            <Button
+              flex={1}
+              variant="outline"
+              colorScheme="tertiary"
+              onPress={onCancel}
+              isLoading={loading}
+            >
+              {texts.cancel}
+            </Button>
+            <Button
+              flex={1}
+              onPress={handleSubmit(onSubmit)}
+              isLoading={loading}
+            >
+              {texts.save}
+            </Button>
+          </>
+        }
       />
-      {!employeesData.length
+      <HStack alignItems={"center"} space={4}>
+        <Heading size={"lg"}>
+          {"Employees"}
+        </Heading>
+        <MoreButton onPress={() => setIsModalOpen(true)} />
+      </HStack>
+      {!combinedData.length
         ?
         <VStack>
           <Text pt={5}>{texts.startAddingEmployees}</Text>
@@ -85,30 +177,27 @@ export const ManageEmployee = () => {
             onPress={() => setIsModalOpen(true)} empty={true} />
         </VStack>
         :
-        <ScrollView pt={4}>
+        <ScrollView pt={6}>
           <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-            {employeesWithButton.map((employee, index) => {
-              if (employee?.name === "Button") {
-                return <AddMoreButton
-                  horizontal
-                  key={"button"}
-                  onPress={() => setIsModalOpen(true)}
-                />
-              }
-
+            {combinedData.map((employee, index) => {
               return (
-                <ProductTile
-                  ctaTitle="Edit"
-                  key={employee._id + index}
+                <EmployeeTile
+                  key={employee._id}
+                  email={employee.email}
+                  jobTitle={employee.jobTitle}
                   name={employee.name}
-                  imageUrl={employee.imageUrl}
-                  onPress={() => console.log("Hello")}
+                  privilege={employee.privilege}
+                  picture={employee.picture || DICE_BEAR_URL(employee.name)}
+                  ctaTitle={"Edit"}
+                  isPending={employee.isPending}
+                  onPress={() => onEditPressed(employee)}
                 />
               )
             })}
           </VStack>
         </ScrollView>
       }
+      <Loading isLoading={loadingQuery || loading || loadingDelete} />
     </Box>
   )
 }

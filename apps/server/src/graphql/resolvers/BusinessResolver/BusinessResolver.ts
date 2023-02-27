@@ -6,12 +6,19 @@ import { IUserModel, UserModel } from "../../../models/user";
 import { CategoryModel } from "../../../models/category";
 import { ProductModel } from '../../../models/product';
 import { Context } from '../types';
-import { Privileges } from '../../../models/types';
 import {
+  businessInformationSchemaInput,
   businessLocationSchema,
   businessLocationSchemaInput,
-  typedKeys
+  EmployeeInformation,
+  hoursOfOperationSchema,
+  HoursOfOperationType,
+  Privileges,
 } from 'app-helpers';
+import { uploadFileS3Bucket } from '../../../s3/s3';
+import { ApolloError } from '../../ApolloErrorExtended/ApolloErrorExtended';
+import { SessionModel } from '../../../models/session';
+import { sendEployeeAccountCreation, sendExistingUserEployeeEmail } from '../../../email-tool';
 
 
 //FIX: this should be a validation of the token, not the business id
@@ -36,7 +43,7 @@ const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection
   return await BusinessModel(db).find({})
 }
 
-const getBusiness = async (
+const getBusinessInformation = async (
   _parent: any,
   args: any,
   { db, business }: Context,
@@ -49,7 +56,6 @@ const createBusiness = async (_parent: any,
   { input }: { input: Business & { address?: Address } },
   context: { db: Connection, user: IUserModel }) => {
   const { db, user } = context;
-
 
   const Business = BusinessModel(db)
   const Address = AddressModel(db)
@@ -78,10 +84,12 @@ const createBusiness = async (_parent: any,
     })
 
     await savedBusiness.save();
-    const allBusiness = typedKeys(userContext.businesses)
     userContext.businesses = {
       ...userContext.businesses,
-      [savedBusiness._id.toString()]: [Privileges.ADMIN]
+      [`${savedBusiness._id.toString()}`]: {
+        privilege: "Admin",
+        jobTitle: 'Owner',
+      }
     }
 
     await userContext.save()
@@ -115,22 +123,38 @@ const createBusiness = async (_parent: any,
   }
 };
 
-const updateBusiness = async (_parent: any, { input }: { input: Business & { id: string; address: Address } }, { db }: { db: Connection }) => {
-  // get the id, find the business and update its information
+const updateBusinessInformation = async (
+  _parent: any,
+  { input }: {
+    input: businessInformationSchemaInput &
+    { hoursOfOperation: HoursOfOperationType }
+  },
+  { db, business }: Context) => {
   const Business = BusinessModel(db)
-  const Address = AddressModel(db)
+  const foundBusines = await Business.findById(business)
 
-  const { id: businessID } = input
-  const updateBusiness = await Business.findByIdAndUpdate(businessID, {
-    name: input.name,
-    phone: input.phone,
-    website: input.website,
-    email: input.email,
-  })
+  if (!foundBusines) throw Error('Business not found')
 
-  if (!updateBusiness) throw Error('Business not found')
+  try {
+    const validateDaysOfTheWeek = await hoursOfOperationSchema.parseAsync(input.hoursOfOperation)
 
-  return updateBusiness
+    if (input.picture) {
+      const file = await uploadFileS3Bucket(input.picture)
+
+      foundBusines.set({ picture: file.Location })
+    }
+
+    foundBusines.set({
+      name: input.name,
+      hoursOfOperation: validateDaysOfTheWeek,
+      ...(input.description && { description: input.description }),
+    })
+
+    return await foundBusines.save()
+
+  } catch {
+    throw ApolloError("BadRequest");
+  }
 }
 
 const updateBusinessLocation = async (
@@ -222,19 +246,237 @@ const getBusinessLocation = async (parent: null, args: null, { business, db }: C
   }
 }
 
+const getAllEmployees = async (parent: any, args: any, { business, db }: Context) => {
+  if (!business) throw ApolloError("Unauthorized")
+
+  const User = UserModel(db)
+  const Business = BusinessModel(db)
+  const Session = SessionModel(db)
+  // use the array of users to poupulate the employees
+  const foundBusiness = await Business.findById(business)
+  const employees = await User.find({ _id: { $in: foundBusiness?.employees } })
+  const employeesPending = await Session.find({ _id: { $in: foundBusiness?.employeesPending } })
+
+  const employeesWithPrivileges = employees.map((employee) => {
+    return ({
+      _id: employee._id,
+      name: employee.name,
+      email: employee.email,
+      picture: employee.picture,
+      privilege: employee?.businesses?.[business].privilege,
+      jobTitle: employee?.businesses?.[business].jobTitle,
+      isPending: false
+    })
+  })
+
+  const pendingEmployeesWithPrivileges = employeesPending.map((employee) => {
+    return ({
+      _id: employee._id,
+      name: employee.name,
+      email: employee.email,
+      privilege: employee?.business?.privilege,
+      jobTitle: employee?.business?.jobTitle,
+      isPending: true
+    })
+  })
+
+  return {
+    employees: employeesWithPrivileges,
+    employeesPending: pendingEmployeesWithPrivileges
+  }
+}
+
+const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInformation }, { business, db }: Context) => {
+  if (!business) throw ApolloError("Unauthorized")
+  const { email, privilege, _id, name, jobTitle, isPending } = args.input
+
+  const User = UserModel(db)
+  const Business = BusinessModel(db)
+  const Session = SessionModel(db)
+
+  const foundBusiness = await Business.findById(business)
+  const foundAsUser = await User.findOne({ email })
+  if (!foundBusiness) throw ApolloError("BadRequest")
+
+  if (_id) {
+    if (isPending) {
+      const foundSession = await Session.findById(_id)
+      if (!foundSession) throw ApolloError("BadRequest")
+
+      foundSession.business = {
+        privilege,
+        jobTitle
+      }
+
+      await foundSession.save()
+
+      return ({
+        _id: foundSession._id,
+        name: foundSession.name,
+        email: foundSession.email,
+        privilege,
+        jobTitle,
+        isPending: true
+      })
+    }
+
+    const foundUser = await User.findById(_id)
+
+    if (!foundUser) throw ApolloError("BadRequest")
+
+    foundUser.businesses = {
+      ...foundUser.businesses,
+      [business]: {
+        privilege,
+        jobTitle
+      }
+    }
+
+    await foundUser.save()
+
+    return ({
+      _id: foundUser._id,
+      name: foundUser.name,
+      email: foundUser.email,
+      picture: foundUser.picture,
+      privilege,
+      jobTitle,
+      isPending: false
+    })
+  }
+
+
+  if (foundAsUser) {
+    if (foundBusiness.employees?.includes(foundAsUser._id)) {
+      throw ApolloError("BadRequest", "This user is already an employee")
+    }
+
+    foundBusiness.employees?.push(foundAsUser._id)
+
+    foundAsUser.businesses = {
+      ...foundAsUser.businesses,
+      [business]: {
+        privilege,
+        jobTitle
+      }
+    }
+
+    await foundAsUser.save()
+    await foundBusiness.save()
+
+    sendExistingUserEployeeEmail({
+      email: foundAsUser.email,
+      name: foundAsUser.name,
+      businessName: foundBusiness.name,
+    })
+
+    return ({
+      _id: foundAsUser._id,
+      name: foundAsUser.name,
+      email: foundAsUser.email,
+      picture: foundAsUser.picture,
+      privilege
+    })
+  }
+
+  // create a new session and append that as the pending employee
+  let newSession;
+
+  newSession = await Session.findOne({ email })
+
+  if (!newSession) {
+    newSession = new Session({
+      email,
+    })
+  }
+
+  const token = await tokenSigning(newSession._id, email, business);
+
+  newSession.token = token
+  newSession.name = name
+  newSession.business = {
+    privilege,
+    jobTitle
+  }
+
+  await newSession.save()
+
+  if (!foundBusiness.employeesPending?.includes(newSession._id)) {
+    foundBusiness.employeesPending?.push(newSession._id)
+    await foundBusiness.save()
+  }
+
+  sendEployeeAccountCreation({
+    email,
+    name,
+    businessName: foundBusiness.name,
+    token
+  })
+
+  return ({
+    _id: newSession._id,
+    email: newSession.email,
+    name: newSession.name,
+    privilege
+  })
+}
+
+const deleteBusinessEmployee = async (parent: any, args: { input: any }, { business, db }: Context) => {
+  if (!business) throw ApolloError("Unauthorized")
+  const { _id } = args.input
+  console.log("Delete Employee", args.input)
+
+  const Business = BusinessModel(db)
+  const User = UserModel(db)
+  const Session = SessionModel(db)
+
+  const foundBusiness = await Business.findById(business)
+
+  if (foundBusiness?.employees?.includes(_id) && foundBusiness?.user !== _id) {
+    foundBusiness.employees = foundBusiness.employees.filter((employee: any) => employee !== _id)
+    await foundBusiness.save()
+
+    const removeBusinessFromUser = await User.findById(_id)
+    if (removeBusinessFromUser) {
+
+      delete removeBusinessFromUser?.businesses?.[business]
+      await removeBusinessFromUser.save()
+
+      return removeBusinessFromUser._id
+    }
+  }
+
+  if (foundBusiness?.employeesPending?.includes(_id)) {
+    foundBusiness.employeesPending = foundBusiness.employeesPending.filter((employee: any) => employee !== _id)
+    await foundBusiness.save()
+
+    const foundSession = await Session.findById(_id)
+
+    if (foundSession) {
+      await foundSession.remove()
+      return foundSession._id
+    }
+  }
+
+  throw ApolloError("BadRequest", "Employee not found or there was an error deleting the them.")
+}
+
 
 const BusinessResolverMutation = {
   createBusiness,
   updateBusinessToken,
   deleteBusiness,
-  updateBusiness,
+  updateBusinessInformation,
   updateBusinessLocation,
+  manageBusinessEmployees,
+  deleteBusinessEmployee
 }
 const BusinessResolverQuery = {
   getBusinessLocation,
   getAllBusiness,
   getAllBusinessByUser,
-  getBusiness
+  getBusinessInformation,
+  getAllEmployees
 }
 
 const BusinessResolver = {

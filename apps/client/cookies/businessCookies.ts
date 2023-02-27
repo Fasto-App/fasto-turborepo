@@ -1,9 +1,9 @@
 import { removeCookies, setCookie } from "cookies-next";
 
 export const businessCookies = {
-  token: "opentab-cookies-token",
-  email: "opentab-cookies-email",
-  name: "opentab-cookies-name"
+  token: "fasto-cookies-token",
+  email: "fasto-cookies-email",
+  name: "fasto-cookies-name"
 } as const;
 
 export const clearCookies = () => {
