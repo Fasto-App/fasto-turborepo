@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export const MenuTypeDefinition = gql`
 
   extend type Query {
-    getAllMenusByBusinessID: [Menu]!
+    getAllMenusByBusinessID: [Menu!]!
     getMenuByID(input: GetMenuById): Menu!
     getAllMenus: [Menu!]!
   }

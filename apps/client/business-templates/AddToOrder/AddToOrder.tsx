@@ -21,7 +21,6 @@ import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
 import { Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery } from "../../gen/generated";
-import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback";
 import { useAppStore } from "../UseAppStore";
 
 const texts = {

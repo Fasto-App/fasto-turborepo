@@ -1,0 +1,6 @@
+query GetAllMenusByBusinessID {
+	getAllMenusByBusinessID {
+		_id
+		name
+	}
+}
