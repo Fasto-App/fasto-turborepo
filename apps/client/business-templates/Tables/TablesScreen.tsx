@@ -118,12 +118,6 @@ export const TablesScreen = () => {
             <Divider orientation="vertical" />
             <Stats />
           </HStack>
-          <Box>
-            <AllAndEditButtons
-              allAction={() => console.log("All")}
-              editAction={() => console.log("Edit")}
-              categoryId={selectedSpaceId} />
-          </Box>
         </VStack>
         {selectedSpaceId ? <Box
           p={"4"}

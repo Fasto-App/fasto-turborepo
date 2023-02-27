@@ -42,6 +42,12 @@ const CategoryList = ({ resetAll, categories }:
 		resetCategoryForm,
 	} = useCategoryFormHook()
 
+	const removeQueryParams = useCallback(() => {
+		setCategory(null)
+		setCategoryValue("_id", "")
+		setCategoryValue("categoryName", "")
+	}, [setCategory, setCategoryValue])
+
 	const addQueryParams = useCallback((id, categoryName, categoryDescription) => {
 		setCategory(id)
 		setCategoryValue("_id", id)
@@ -104,7 +110,10 @@ const CategoryList = ({ resetAll, categories }:
 					{categories.length ? <AddMoreButton
 						widthProps={200}
 						horizontal
-						onPress={() => setShowCategoryModal(true)}
+						onPress={() => {
+							removeQueryParams()
+							setShowCategoryModal(true)
+						}}
 					/> : null}
 					<HStack flex={1} space={1}>
 						<FlatList
