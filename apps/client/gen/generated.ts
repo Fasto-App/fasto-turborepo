@@ -870,7 +870,7 @@ export type DeleteMenuMutation = { __typename?: 'Mutation', deleteMenu: { __type
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> | null }> | null }> };
 
 export type GetMenuByIdQueryVariables = Exact<{
   input?: InputMaybe<GetMenuById>;
@@ -1564,6 +1564,19 @@ export const GetAllMenusByBusinessIdDocument = gql`
   getAllMenusByBusinessID {
     _id
     name
+    sections {
+      category {
+        _id
+        name
+      }
+      products {
+        _id
+        name
+        description
+        imageUrl
+        price
+      }
+    }
   }
 }
     `;

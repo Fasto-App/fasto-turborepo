@@ -69,6 +69,7 @@ export const AddToOrder = () => {
     refetchQueries: ["GetSpacesFromBusiness"],
     onCompleted: () => {
       setNetworkState("success")
+      route.back()
     },
     onError: () => {
       setNetworkState("error")

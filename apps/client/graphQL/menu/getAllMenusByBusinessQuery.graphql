@@ -2,5 +2,18 @@ query GetAllMenusByBusinessID {
 	getAllMenusByBusinessID {
 		_id
 		name
+		sections {
+			category {
+				_id
+				name
+			}
+			products {
+				_id
+				name
+				description
+				imageUrl
+				price
+			}
+		}
 	}
 }
