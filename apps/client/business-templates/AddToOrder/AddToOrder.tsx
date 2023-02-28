@@ -22,6 +22,7 @@ import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
 import { Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery } from "../../gen/generated";
 import { useAppStore } from "../UseAppStore";
+import { businessRoute } from "../../routes";
 
 const texts = {
   back: "Back",
@@ -211,7 +212,7 @@ export const AddToOrder = () => {
               </ScrollView>
             </HStack>
             <SideBySideButtons
-              leftAction={() => console.log("Close Tab")}
+              leftAction={() => route.push(businessRoute.checkout("123"))}
               rightAction={() => console.log("See Details")}
               leftText={"Close Tab"}
               rightText={"See Details"}
