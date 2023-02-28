@@ -21,15 +21,15 @@ export const PayInFull = () => {
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.discount}</Text>
           <HStack space={2}>
-            <Input value='0%' w={100} />
-            <Input value='$0.00' w={100} isDisabled={true} />
+            <Input h={"6"} value='0%' w={100} />
+            <Input h={"6"} value='$0.00' w={100} isDisabled={true} />
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.tip}</Text>
           <HStack space={2}>
-            <Input value='20%' w={100} />
-            <Input value='$20.00' w={100} isDisabled={true} />
+            <Input h={"6"} value='20%' w={100} />
+            <Input h={"6"} value='$20.00' w={100} isDisabled={true} />
           </HStack>
         </HStack>
         <Divider marginY={6} />

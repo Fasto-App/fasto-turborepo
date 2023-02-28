@@ -6,7 +6,9 @@ import { texts } from './texts'
 const splitTypes = {
   byPatron: "By Patron",
   equally: "Equally",
-}
+};
+
+type SplitType = keyof typeof splitTypes;
 
 
 const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
@@ -23,7 +25,7 @@ const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
   )
 }
 
-const Header = () => {
+const Header = ({ type }: { type: SplitType }) => {
   return (
     <HStack py={2}>
       <Cell bold>
@@ -32,9 +34,9 @@ const Header = () => {
       <Cell bold>
         {texts.subtotal}
       </Cell>
-      <Cell bold>
+      {type === "byPatron" ? <Cell bold>
         {texts.sharedByTable}
-      </Cell>
+      </Cell> : null}
       <Cell bold>
         {texts.feesAndTax}
       </Cell>
@@ -49,24 +51,24 @@ const Header = () => {
   )
 }
 
-const Row = () => {
+const Row = ({ type }: { type: SplitType }) => {
   return (<HStack>
-    <Cell>
+    <Cell key={"patron"}>
       Person 1
     </Cell >
-    <Cell>
+    <Cell key={"subtotal"}>
       $1000.00
     </Cell>
-    <Cell>
+    {type === "byPatron" ? <Cell key={"shared-by-table"}>
+      $10000.00
+    </Cell> : null}
+    <Cell key={"fees-and-taxes"}>
       $10000.00
     </Cell>
-    <Cell>
-      $10000.00
-    </Cell>
-    <Cell>
+    <Cell key={"tip"}>
       $100000.00
     </Cell>
-    <Cell bold>
+    <Cell bold key={"total"}>
       $1000000.00
     </Cell>
     <Box flex={1} justifyContent={"center"} alignItems={"center"} >
@@ -78,7 +80,7 @@ const Row = () => {
 }
 
 export const Split = () => {
-  const [selectedOption, setSelectedOption] = useState<keyof typeof splitTypes>("byPatron")
+  const [selectedOption, setSelectedOption] = useState<SplitType>("byPatron")
 
   return (
     <Box flex={1}>
@@ -105,18 +107,22 @@ export const Split = () => {
       </Center>
       <Box flex={1}>
         <Box flex={1} >
-          <Header />
-          <Row />
-          <Row />
-          <Row />
-          <Row />
+          <Header type={selectedOption} />
+          <Row type={selectedOption} />
+          <Row type={selectedOption} />
+          <Row type={selectedOption} />
+          <Row type={selectedOption} />
         </Box>
-
         <VStack w={"50%"} minW={"lg"} pt={8} space={4}>
-          {true ? <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{texts.AllByTable}</Text>
-            <Text fontSize={"lg"}>{"$80.00"}</Text>
-          </HStack> : null}
+          <HStack justifyContent={"space-between"} px={8}>
+            {selectedOption === "byPatron" ? <>
+              <Text fontSize={"lg"}>{texts.AllByTable}</Text>
+              <Text fontSize={"lg"}>{"$80.00"}</Text>
+            </> : <>
+              <Text fontSize={"lg"}>{texts.AllByTable}</Text>
+              <Input value='20%' w={100} h={"6"} />
+            </>}
+          </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.subtotal}</Text>
             <Text fontSize={"lg"}>{"$100.00"}</Text>
@@ -128,15 +134,15 @@ export const Split = () => {
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.discount}</Text>
             <HStack space={2}>
-              <Input value='0%' w={100} />
-              <Input value='$0.00' w={100} isDisabled={true} />
+              <Input h={"6"} value='0%' w={100} />
+              <Input h={"6"} value='$0.00' w={100} isDisabled={true} />
             </HStack>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.tip}</Text>
             <HStack space={2}>
-              <Input value='20%' w={100} />
-              <Input value='$20.00' w={100} isDisabled={true} />
+              <Input h={"6"} value='20%' w={100} />
+              <Input h={"6"} value='$20.00' w={100} isDisabled={true} />
             </HStack>
           </HStack>
           <Divider marginY={2} />
