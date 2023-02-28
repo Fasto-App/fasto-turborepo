@@ -165,7 +165,7 @@ export const AddToOrder = () => {
             </HStack>
             <VStack space={4}>
               <Button w={"full"} onPress={onSendToKitchen} isDisabled={orderItems.length <= 0} >
-                <Text color={"white"}>{texts.sendToKitchen}</Text>
+                {texts.sendToKitchen}
               </Button>
               <Button
                 flex={1}

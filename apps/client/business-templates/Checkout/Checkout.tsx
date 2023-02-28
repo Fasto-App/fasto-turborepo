@@ -1,0 +1,68 @@
+import { typedKeys } from 'app-helpers'
+import { Box, Flex, Heading, VStack, Text, ScrollView, HStack, Button } from 'native-base'
+import React from 'react'
+import { LeftSideBar } from '../../components'
+import { BottomSection } from '../../components/BottomSection'
+import { OrangeBox } from '../../components/OrangeBox'
+import { TileButton } from '../../components/TileButton'
+import { UpperSection } from '../../components/UpperSection'
+import { PayInFull } from './PayInFull'
+
+const texts = {
+  leftText: "Thank you for your order!\n You're almost there. Please review your items below and proceed to checkout when you're ready.",
+  table: (table: string) => `Table ${table}`,
+  viewSummary: "View Summary",
+}
+
+const checkoutOptions = {
+  payTable: "Pay in Full",
+  splitBill: "Split Bill"
+}
+
+export const Checkout = () => {
+  const [selectedOption, setSelectedOption] = React.useState<keyof typeof checkoutOptions>("payTable")
+
+  return (
+    <Flex flexDirection={"row"} flex={1}>
+      <LeftSideBar>
+        <Box flex={1} justifyContent={"center"}>
+          <Text textAlign={"center"}>
+            {texts.leftText}
+          </Text>
+        </Box>
+        <Button
+          w={"full"}
+          onPress={() => console.log("View Summary")}
+          mb={4}
+        >
+          {texts.viewSummary}
+        </Button>
+      </LeftSideBar>
+      <Box flex={1}>
+        <OrangeBox />
+        <VStack flex={1} p={4} space={4}>
+          <UpperSection>
+            <Heading>
+              {texts.table("3")}
+            </Heading>
+            <HStack space={"4"}>
+              {typedKeys(checkoutOptions).map((option) => (
+                <TileButton
+                  key={option}
+                  onPress={() => setSelectedOption(option)}
+                  selected={selectedOption === option}
+                >
+                  {checkoutOptions[option]}
+                </TileButton>
+              ))}
+            </HStack>
+          </UpperSection>
+          <BottomSection>
+            <PayInFull />
+
+          </BottomSection>
+        </VStack>
+      </Box>
+    </Flex>
+  )
+}
