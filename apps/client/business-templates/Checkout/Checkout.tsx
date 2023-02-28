@@ -7,6 +7,7 @@ import { OrangeBox } from '../../components/OrangeBox'
 import { TileButton } from '../../components/TileButton'
 import { UpperSection } from '../../components/UpperSection'
 import { PayInFull } from './PayInFull'
+import { Split } from './Split'
 
 const texts = {
   leftText: "Thank you for your order!\n You're almost there. Please review your items below and proceed to checkout when you're ready.",
@@ -40,7 +41,7 @@ export const Checkout = () => {
       </LeftSideBar>
       <Box flex={1}>
         <OrangeBox />
-        <VStack flex={1} p={4} space={4}>
+        <VStack flex={1} p={2} space={4}>
           <UpperSection>
             <Heading>
               {texts.table("3")}
@@ -58,8 +59,7 @@ export const Checkout = () => {
             </HStack>
           </UpperSection>
           <BottomSection>
-            <PayInFull />
-
+            {selectedOption === "payTable" ? <PayInFull /> : <Split />}
           </BottomSection>
         </VStack>
       </Box>

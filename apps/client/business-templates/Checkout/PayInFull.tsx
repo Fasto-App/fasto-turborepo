@@ -1,20 +1,11 @@
 import { Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
 import React from 'react'
-
-const texts = {
-  checkout: "Checkout",
-  feesAndTax: "Fees and Tax",
-  pay: "Pay",
-  subtotal: "Subtotal",
-  discount: "Discount",
-  tip: "Tip",
-  total: "Total",
-}
+import { texts } from './texts'
 
 export const PayInFull = () => {
   return (
     <Center>
-      <Heading size={"2xl"} p={10}>
+      <Heading size={"2xl"} p={4}>
         {texts.checkout}
       </Heading>
       <VStack w={"70%"} minW={"lg"} space={4}>
