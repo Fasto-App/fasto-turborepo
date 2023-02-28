@@ -119,8 +119,8 @@ export const Split = () => {
               <Text fontSize={"lg"}>{texts.AllByTable}</Text>
               <Text fontSize={"lg"}>{"$80.00"}</Text>
             </> : <>
-              <Text fontSize={"lg"}>{texts.AllByTable}</Text>
-              <Input value='20%' w={100} h={"6"} />
+              <Text fontSize={"lg"}>{texts.splitBy}</Text>
+              <Input value='4' w={100} h={"6"} />
             </>}
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>

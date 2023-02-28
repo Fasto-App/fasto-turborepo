@@ -9,4 +9,5 @@ export const texts = {
   patron: "Patron",
   sharedByTable: "Shared by Table",
   AllByTable: "Table only",
+  splitBy: "Split by",
 }
