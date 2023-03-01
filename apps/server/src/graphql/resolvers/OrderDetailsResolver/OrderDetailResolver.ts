@@ -65,7 +65,7 @@ const createMultipleOrderDetails = async (_parent: any,
 
             if (!product) throw ApolloError("NotFound");
             if (!tab) throw ApolloError("NotFound");
-            if (tab.status !== 'OPEN') throw ApolloError("NotFound");
+            if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
 
             return await OrderDetail.create({
                 ...parsedInput,

@@ -2,10 +2,10 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { TabModel } from "../../../models/tab";
 import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
-import { TableStatus } from "../../../models/types";
 import { GuestUserModel } from "../../../models/guestUser";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
+import { TableStatus, TabStatus } from "app-helpers";
 
 const createTab = async (_parent: any, { input }: createTabInput, { db, business }: Context) => {
     const Tab = TabModel(db);
@@ -30,7 +30,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
                 users: input.totalUsers,
             });
 
-            await table.updateOne({ status: TableStatus.OCCUPIED });
+            await table.updateOne({ status: TableStatus.Occupied });
 
             return tab
 
@@ -48,7 +48,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             users: allUsers.map(user => user._id),
         });
         // change the status table to occupied
-        await table.updateOne({ status: TableStatus.OCCUPIED });
+        await table.updateOne({ status: TableStatus.Occupied });
 
         return tab
 
@@ -118,7 +118,7 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
         // if the Tab is associated with a table, change the status of the table to available
         if (tab?.table) {
             const Table = TableModel(db);
-            await Table.findByIdAndUpdate(tab.table, { status: TableStatus.AVAILABLE });
+            await Table.findByIdAndUpdate(tab.table, { status: TableStatus.Available });
         }
 
         return tab;
@@ -141,6 +141,20 @@ const getUsersByTabID = async (parent: any, _args: any, { db }: Context) => {
 const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
     const Table = TableModel(db);
     return await Table.findById(parent.table);
+}
+
+
+const closeTab = async (_parent: any, { input }: { input: any }, { db, business }: Context) => {
+
+    // request to close a tab
+    // change the status of the Tab to Pending
+    // create a checkout object with information about the tab
+    const Tab = TabModel(db);
+    const foundTab = await Tab.findById(input._id);
+
+    if (!foundTab) throw ApolloError('NotFound')
+
+    const updatedTab = await Tab.findByIdAndUpdate(input._id, { status: TabStatus.Pendent }, { new: true });
 }
 
 

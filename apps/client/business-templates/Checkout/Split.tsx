@@ -6,6 +6,7 @@ import { texts } from './texts'
 const splitTypes = {
   byPatron: "By Patron",
   equally: "Equally",
+  custom: "Custom",
 };
 
 type SplitType = keyof typeof splitTypes;
@@ -56,12 +57,16 @@ const Row = ({ type }: { type: SplitType }) => {
     <Cell key={"patron"}>
       Person 1
     </Cell >
-    <Cell key={"subtotal"}>
-      $1000.00
-    </Cell>
-    {type === "byPatron" ? <Cell key={"shared-by-table"}>
-      $10000.00
-    </Cell> : null}
+    {type === "custom" ?
+      <Input textAlign={"center"} h={"6"} value='$100' w={140} /> :
+      <Cell key={"subtotal"}>
+        $1000.00
+      </Cell>}
+    {
+      type === "byPatron" ? <Cell key={"shared-by-table"}>
+        $10000.00
+      </Cell> : null
+    }
     <Cell key={"fees-and-taxes"}>
       $10000.00
     </Cell>
@@ -76,7 +81,7 @@ const Row = ({ type }: { type: SplitType }) => {
         Pay
       </Button>
     </Box>
-  </HStack>)
+  </HStack >)
 }
 
 export const Split = () => {
@@ -85,7 +90,7 @@ export const Split = () => {
   return (
     <Box flex={1}>
       <Center>
-        <HStack justifyContent={"space-around"} w={"70%"} pb={4} space={2}>
+        <HStack justifyContent={"space-around"} w={"90%"} pb={4} space={2}>
           {typedKeys(splitTypes).map((type) => (
             <Pressable
               key={type}

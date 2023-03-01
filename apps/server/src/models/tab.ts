@@ -4,15 +4,14 @@ import type { Ref } from '@typegoose/typegoose';
 import { User } from './user';
 import { Table } from './table';
 import { OrderDetail } from './orderDetail';
-import { TabStatus } from './types';
-import type { TabStatusType } from './types';
-
+import { TabStatus } from 'app-helpers';
+import type { TabStatusType } from 'app-helpers';
 
 export class Tab {
     @prop({ required: true })
     public admin!: Ref<User>;
 
-    @prop({ default: TabStatus.OPEN })
+    @prop({ default: TabStatus.Open })
     public status!: TabStatusType;
 
     @prop({ required: true })

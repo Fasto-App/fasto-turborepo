@@ -1,6 +1,6 @@
 import { Document, Connection } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import type { BusinessRelationship } from './types';
+import type { BusinessRelationship } from 'app-helpers';
 
 export class Session {
   @prop()

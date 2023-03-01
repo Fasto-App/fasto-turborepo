@@ -1,7 +1,6 @@
 import { Document, Connection } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import { PrivilegesKeys } from 'app-helpers';
-import type { Businesses } from './types';
+import type { Businesses } from 'app-helpers';
 
 export class User {
     @prop({ unique: false, required: true })

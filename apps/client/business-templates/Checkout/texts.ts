@@ -1,6 +1,6 @@
 export const texts = {
   checkout: "Checkout",
-  feesAndTax: "Fees and Taxes",
+  feesAndTax: "Taxes",
   pay: "Pay",
   subtotal: "Subtotal",
   discount: "Discount",

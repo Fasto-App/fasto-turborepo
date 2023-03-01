@@ -4,7 +4,7 @@ import { Connection } from "mongoose";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { SpaceModel } from "../../../models/space";
 import { TabModel } from "../../../models/tab";
-import { TabStatus } from "../../../models/types";
+import { TabStatus } from "app-helpers";
 import { Context } from "../types";
 
 const createTable = async (
@@ -62,7 +62,7 @@ const deleteTable = async (parent: any, args: any, { db, business }: Context) =>
 
 const getOpenTabByTable = async (table: any, _: any, { db }: { db: Connection }) => {
   // TODO: add a check to make sure the business owns the table
-  const tab = await TabModel(db).findOne({ status: TabStatus.OPEN, table: table._id.toString() })
+  const tab = await TabModel(db).findOne({ status: TabStatus.Open, table: table._id.toString() })
   return tab
 }
 
