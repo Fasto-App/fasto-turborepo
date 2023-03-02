@@ -24,10 +24,10 @@ export const TableTypeDefinition = gql`
   }
 
   enum TableStatus {
-    AVAILABLE
-    OCCUPIED
-    RESERVED
-    CLOSED 
+    Available
+    Occupied
+    Reserved
+    Closed
   }
 
 

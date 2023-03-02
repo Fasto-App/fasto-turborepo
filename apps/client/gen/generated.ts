@@ -91,6 +91,30 @@ export type CategoryInput = {
   subCategories?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
+export type Checkout = {
+  __typename?: 'Checkout';
+  _id: Scalars['ID'];
+  business: Scalars['ID'];
+  created_date: Scalars['String'];
+  orders: Array<Maybe<OrderDetail>>;
+  paid: Scalars['Boolean'];
+  payments: Array<Maybe<Payment>>;
+  status: CheckoutStatusKeys;
+  subTotal?: Maybe<Scalars['Float']>;
+  tab: Scalars['ID'];
+  tax?: Maybe<Scalars['Float']>;
+  tip?: Maybe<Scalars['Float']>;
+  total?: Maybe<Scalars['Float']>;
+  totalPaid: Scalars['Float'];
+};
+
+export enum CheckoutStatusKeys {
+  Canceled = 'Canceled',
+  Paid = 'Paid',
+  PartiallyPaid = 'PartiallyPaid',
+  Pending = 'Pending'
+}
+
 export type CreateBusinessPayload = {
   __typename?: 'CreateBusinessPayload';
   business: Business;
@@ -241,6 +265,14 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
+export type MakeCheckoutPaymentInput = {
+  _id: Scalars['ID'];
+  amount: Scalars['Float'];
+  patron?: InputMaybe<Scalars['ID']>;
+  splitType?: InputMaybe<SplitType>;
+  tip?: InputMaybe<Scalars['Float']>;
+};
+
 export type ManageBusinessEmployeesInput = {
   _id?: InputMaybe<Scalars['ID']>;
   email: Scalars['String'];
@@ -283,10 +315,12 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   linkCategoryToProducts?: Maybe<Category>;
+  makeCheckoutPayment: Checkout;
   manageBusinessEmployees: Employee;
   passwordReset: User;
   postUserLogin: User;
   recoverPassword?: Maybe<RequestResponseOk>;
+  requestCloseTab: Tab;
   requestUserAccountCreation: AccountCreationResponse;
   updateAddress?: Maybe<Address>;
   updateBusinessInformation: Business;
@@ -414,6 +448,11 @@ export type MutationLinkCategoryToProductsArgs = {
 };
 
 
+export type MutationMakeCheckoutPaymentArgs = {
+  input: MakeCheckoutPaymentInput;
+};
+
+
 export type MutationManageBusinessEmployeesArgs = {
   input: ManageBusinessEmployeesInput;
 };
@@ -431,6 +470,11 @@ export type MutationPostUserLoginArgs = {
 
 export type MutationRecoverPasswordArgs = {
   input: Scalars['String'];
+};
+
+
+export type MutationRequestCloseTabArgs = {
+  input: GetById;
 };
 
 
@@ -522,11 +566,20 @@ export type OrderDetailInput = {
 };
 
 export enum OrderStatus {
-  Closed = 'CLOSED',
-  Delivered = 'DELIVERED',
-  Open = 'OPEN',
-  Pendent = 'PENDENT'
+  Closed = 'Closed',
+  Delivered = 'Delivered',
+  Open = 'Open',
+  Pendent = 'Pendent'
 }
+
+export type Payment = {
+  __typename?: 'Payment';
+  _id: Scalars['ID'];
+  amount: Scalars['Float'];
+  patron?: Maybe<Scalars['ID']>;
+  splitType?: Maybe<SplitType>;
+  tip?: Maybe<Scalars['Float']>;
+};
 
 export type Product = {
   __typename?: 'Product';
@@ -557,6 +610,7 @@ export type Query = {
   getBusinessInformation: Business;
   getBusinessLocation?: Maybe<Address>;
   getCategoryByID?: Maybe<Category>;
+  getCheckoutByID: Checkout;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getProductByID?: Maybe<Product>;
@@ -579,6 +633,11 @@ export type QueryGetAllOrderDetailsByOrderIdArgs = {
 
 export type QueryGetCategoryByIdArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetCheckoutByIdArgs = {
+  input: GetById;
 };
 
 
@@ -635,10 +694,17 @@ export type Space = {
   tables?: Maybe<Array<Table>>;
 };
 
+export enum SplitType {
+  ByPatron = 'ByPatron',
+  Custom = 'Custom',
+  Equally = 'Equally'
+}
+
 export type Tab = {
   __typename?: 'Tab';
   _id: Scalars['ID'];
   admin: Scalars['ID'];
+  checkout?: Maybe<Scalars['ID']>;
   completed_at?: Maybe<Scalars['String']>;
   created_date: Scalars['String'];
   orders: Array<Maybe<OrderDetail>>;
@@ -648,8 +714,9 @@ export type Tab = {
 };
 
 export enum TabStatus {
-  Closed = 'CLOSED',
-  Open = 'OPEN'
+  Closed = 'Closed',
+  Open = 'Open',
+  Pendent = 'Pendent'
 }
 
 export type Table = {
@@ -662,10 +729,10 @@ export type Table = {
 };
 
 export enum TableStatus {
-  Available = 'AVAILABLE',
-  Closed = 'CLOSED',
-  Occupied = 'OCCUPIED',
-  Reserved = 'RESERVED'
+  Available = 'Available',
+  Closed = 'Closed',
+  Occupied = 'Occupied',
+  Reserved = 'Reserved'
 }
 
 export type UpdateAddressInput = {

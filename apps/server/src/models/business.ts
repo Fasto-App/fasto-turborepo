@@ -58,6 +58,9 @@ export class Business {
     @prop({ default: [] })
     public employeesPending?: Ref<Session>[];
 
+    @prop({ default: 0 })
+    public taxRate?: number;
+
     @prop({ default: Date.now() })
     public created_date!: Date;
 }

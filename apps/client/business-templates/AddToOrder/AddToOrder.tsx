@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback } from "react"
 import {
   Button,
   Box,
@@ -77,7 +77,7 @@ export const AddToOrder = () => {
     }
   })
 
-  const onSendToKitchen = async () => {
+  const onSendToKitchen = useCallback(async () => {
     const orderDetails = orderItems.map(order => ({
       ...(order?.selectedUser && { user: order?.selectedUser }),
       tab: tabId as string,
@@ -92,7 +92,16 @@ export const AddToOrder = () => {
         }
       })
     } catch { }
-  }
+  }, [createOrders, orderItems, tabId])
+
+  const requestCloseTab = useCallback(() => {
+    // make a request to close the tab
+    // wait for the response and navigate to the checkout page
+
+
+    route.push(businessRoute.checkout("123"))
+  }, [route])
+
 
   const sections = menuData?.getMenuByID?.sections || []
   const filteredSection = sections.find(section => section.category._id === selectedCategory)
@@ -212,7 +221,7 @@ export const AddToOrder = () => {
               </ScrollView>
             </HStack>
             <SideBySideButtons
-              leftAction={() => route.push(businessRoute.checkout("123"))}
+              leftAction={requestCloseTab}
               rightAction={() => console.log("See Details")}
               leftText={"Close Tab"}
               rightText={"See Details"}

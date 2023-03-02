@@ -1,10 +1,19 @@
 import { Connection, Types } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import type { CheckoutStatusKeys } from 'app-helpers';
+import type { CheckoutStatusKeys, SplitType } from 'app-helpers';
 
 export class Checkout {
+  @prop({ required: true })
+  public business!: Types.ObjectId;
+
+  @prop({ required: true })
+  public tab!: Types.ObjectId;
+
   @prop({ required: true, default: "Pending" })
   public status!: CheckoutStatusKeys;
+
+  @prop()
+  public splitType?: SplitType;
 
   @prop({ required: true, default: false })
   public paid!: boolean;
@@ -15,17 +24,17 @@ export class Checkout {
   @prop({ default: [] })
   public payments?: Types.ObjectId[];
 
-  @prop()
-  public subTotal?: number;
+  @prop({ default: 0 })
+  public subTotal!: number;
 
-  @prop()
+  @prop({ default: 0 })
   public tip?: number;
 
-  @prop()
+  @prop({ default: 0 })
   public tax?: number;
 
-  @prop()
-  public total?: number;
+  @prop({ required: true, default: 0 })
+  public total!: number;
 
   @prop({ required: true, default: 0 })
   public totalPaid!: number;

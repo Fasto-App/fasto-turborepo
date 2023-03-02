@@ -18,7 +18,9 @@ import {
   AddressTypeDefinition,
   OrderDetailsTypeDefinition,
   TableTypeDefinition,
-  SpaceTypeDefinition
+  SpaceTypeDefinition,
+  CheckoutTypeDefinition,
+  PaymentTypeDefinition
 } from "./typeDefs";
 
 
@@ -33,6 +35,8 @@ const schema = makeExecutableSchema({
   resolvers,
   typeDefs: [
     typeDefinitions,
+    CheckoutTypeDefinition,
+    PaymentTypeDefinition,
     TabTypeDefinition,
     UserTypeDefinition,
     BusinessTypeDefinition,

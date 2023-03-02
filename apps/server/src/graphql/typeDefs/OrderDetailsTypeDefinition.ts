@@ -46,10 +46,10 @@ export const OrderDetailsTypeDefinition = gql`
   }
 
   enum OrderStatus {
-    DELIVERED
-    PENDENT 
-    OPEN 
-    CLOSED
+    Delivered
+    Pendent
+    Open
+    Closed
   }
 
 `

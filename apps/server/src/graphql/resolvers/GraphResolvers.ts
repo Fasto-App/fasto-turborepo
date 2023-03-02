@@ -42,6 +42,7 @@ import {
   TableResolver
 } from './TableResolver';
 import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
+import { CheckoutResolverMutation, CheckoutResolverQuery } from './CheckoutResolver';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -55,6 +56,7 @@ export const resolvers = {
     ...SpaceResolverQuery,
     ...TabResolverQuery,
     ...UserResolverQuery,
+    ...CheckoutResolverQuery,
   },
   Mutation: {
     ...AddressResolverMutation,
@@ -67,6 +69,7 @@ export const resolvers = {
     ...TableResolverMutation,
     ...TabResolverMutation,
     ...UserResolverMutation,
+    ...CheckoutResolverMutation
   },
   Business: {
     address: AddressResolver.getAddressFromBusiness,

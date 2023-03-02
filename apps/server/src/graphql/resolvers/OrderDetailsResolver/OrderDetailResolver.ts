@@ -32,10 +32,15 @@ const createOrderDetail = async (_parent: any,
         if (!product) throw ApolloError("NotFound");
         if (!tab) throw ApolloError("NotFound");
 
-        return await OrderDetail.create({
+        const orderDetail = await OrderDetail.create({
             ...parsedInput,
             subTotal: (product?.price || 0) * parsedInput.quantity,
-        });
+        })
+
+        tab.orders.push(orderDetail._id);
+        await tab.save();
+
+        return orderDetail;
     } catch (err) {
         console.log({ err })
         throw ApolloError("InternalServerError", `Error creating OrderDetail ${err}`);
@@ -67,12 +72,17 @@ const createMultipleOrderDetails = async (_parent: any,
             if (!tab) throw ApolloError("NotFound");
             if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
 
-            return await OrderDetail.create({
+            const orderDetails = await OrderDetail.create({
                 ...parsedInput,
                 subTotal: (product?.price || 0) * parsedInput.quantity,
                 user: user?._id || guestUser?._id,
                 tab: tab._id,
             });
+
+            tab.orders.push(orderDetails._id);
+            await tab.save();
+
+            return orderDetails
         }));
 
         return orderDetails;

@@ -1,10 +1,6 @@
 import React, { useCallback, useMemo } from "react"
 import { Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
-import { AiOutlinePlus } from "react-icons/ai"
-import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
-import { AllAndEditButtons } from "../AllAndAddButons"
-import { useTableMutationHook } from "../../graphQL/TableQL"
 import { SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
@@ -14,6 +10,8 @@ import { texts } from "./texts"
 import { useTableScreenStore } from "./tableScreenStore"
 import { shallow } from 'zustand/shallow'
 import { MoreButton } from "../../components/MoreButton"
+import { useCreateTableMutation, GetSpacesFromBusinessDocument } from "../../gen/generated"
+import { useAppStore } from "../UseAppStore"
 
 export const TablesScreen = () => {
 
@@ -39,6 +37,8 @@ export const TablesScreen = () => {
     shallow
   )
 
+  const setNetworkState = useAppStore(state => state.setNetworkState)
+
   const {
     allSpaces,
   } = useSpacesMutationHook(setSelectedSpace);
@@ -46,7 +46,16 @@ export const TablesScreen = () => {
   const selectedSpace = useMemo(() => allSpaces.find(space => space?._id === selectedSpaceId), [allSpaces, selectedSpaceId])
   const allTablesFilteredBySpace = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
 
-  const { createTable } = useTableMutationHook();
+  const [createTable] = useCreateTableMutation({
+    refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
+    onCompleted: () => {
+      setNetworkState(("success"))
+    },
+    onError: (error) => {
+      setNetworkState(("error"))
+    }
+  });
+
   const postNewTable = async () => {
 
     if (!selectedSpaceId) return;

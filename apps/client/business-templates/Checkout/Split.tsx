@@ -1,15 +1,7 @@
-import { typedKeys } from 'app-helpers'
+import { SplitType, splitTypes, typedKeys } from 'app-helpers'
 import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Button } from 'native-base'
 import React, { FC, useState } from 'react'
 import { texts } from './texts'
-
-const splitTypes = {
-  byPatron: "By Patron",
-  equally: "Equally",
-  custom: "Custom",
-};
-
-type SplitType = keyof typeof splitTypes;
 
 
 const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
@@ -35,7 +27,7 @@ const Header = ({ type }: { type: SplitType }) => {
       <Cell bold>
         {texts.subtotal}
       </Cell>
-      {type === "byPatron" ? <Cell bold>
+      {type === "ByPatron" ? <Cell bold>
         {texts.sharedByTable}
       </Cell> : null}
       <Cell bold>
@@ -57,13 +49,13 @@ const Row = ({ type }: { type: SplitType }) => {
     <Cell key={"patron"}>
       Person 1
     </Cell >
-    {type === "custom" ?
+    {type === "Custom" ?
       <Input textAlign={"center"} h={"6"} value='$100' w={140} /> :
       <Cell key={"subtotal"}>
         $1000.00
       </Cell>}
     {
-      type === "byPatron" ? <Cell key={"shared-by-table"}>
+      type === "ByPatron" ? <Cell key={"shared-by-table"}>
         $10000.00
       </Cell> : null
     }
@@ -85,7 +77,7 @@ const Row = ({ type }: { type: SplitType }) => {
 }
 
 export const Split = () => {
-  const [selectedOption, setSelectedOption] = useState<SplitType>("byPatron")
+  const [selectedOption, setSelectedOption] = useState<SplitType>("ByPatron")
 
   return (
     <Box flex={1}>
@@ -120,12 +112,12 @@ export const Split = () => {
         </Box>
         <VStack w={"50%"} minW={"lg"} pt={8} space={4}>
           <HStack justifyContent={"space-between"} px={8}>
-            {selectedOption === "byPatron" ? <>
+            {selectedOption === "ByPatron" ? <>
               <Text fontSize={"lg"}>{texts.AllByTable}</Text>
               <Text fontSize={"lg"}>{"$80.00"}</Text>
             </> : <>
               <Text fontSize={"lg"}>{texts.splitBy}</Text>
-              <Input value='4' w={100} h={"6"} />
+              <Input value='4' w={100} h={"6"} textAlign={"right"} />
             </>}
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
@@ -139,15 +131,15 @@ export const Split = () => {
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.discount}</Text>
             <HStack space={2}>
-              <Input h={"6"} value='0%' w={100} />
-              <Input h={"6"} value='$0.00' w={100} isDisabled={true} />
+              <Input h={"6"} value='0%' w={100} textAlign={"right"} />
+              <Input h={"6"} value='$0.00' w={100} isDisabled={true} textAlign={"right"} />
             </HStack>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.tip}</Text>
             <HStack space={2}>
-              <Input h={"6"} value='20%' w={100} />
-              <Input h={"6"} value='$20.00' w={100} isDisabled={true} />
+              <Input h={"6"} value='20%' w={100} textAlign={"right"} />
+              <Input h={"6"} value='$20.00' w={100} isDisabled={true} textAlign={"right"} />
             </HStack>
           </HStack>
           <Divider marginY={2} />

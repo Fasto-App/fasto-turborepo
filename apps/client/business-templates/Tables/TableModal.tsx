@@ -62,9 +62,9 @@ export const TableModal = () => {
   const tableChoosen = useTableScreenStore(state => state.tableChoosen)
   const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
 
-  const isOcuppiedTable = tableChoosen?.status === "OCCUPIED"
-  const isAvailableTable = tableChoosen?.status === "AVAILABLE"
-  const isReservedTable = tableChoosen?.status === "RESERVED"
+  const isOcuppiedTable = tableChoosen?.status === "Occupied"
+  const isAvailableTable = tableChoosen?.status === "Available"
+  const isReservedTable = tableChoosen?.status === "Reserved"
 
   const { data: menusData, loading: loadingGetMenus } = useGetAllMenusByBusinessIdQuery();
 
@@ -101,7 +101,7 @@ export const TableModal = () => {
     if (!menuId) throw ("Menu id is undefined")
 
     switch (tableChoosen?.status) {
-      case "AVAILABLE":
+      case "Available":
         try {
 
           if (!tableChoosen?._id) throw ("Table id is undefined")
@@ -120,7 +120,7 @@ export const TableModal = () => {
         } catch { }
         break;
 
-      case "OCCUPIED":
+      case "Occupied":
         console.log(tableChoosen)
         router.push(businessRoute.add_to_order(`${tableChoosen?.tab}`, menuId))
         break;
