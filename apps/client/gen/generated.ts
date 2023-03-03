@@ -100,11 +100,11 @@ export type Checkout = {
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
   status: CheckoutStatusKeys;
-  subTotal?: Maybe<Scalars['Float']>;
+  subTotal: Scalars['Float'];
   tab: Scalars['ID'];
-  tax?: Maybe<Scalars['Float']>;
-  tip?: Maybe<Scalars['Float']>;
-  total?: Maybe<Scalars['Float']>;
+  tax: Scalars['Float'];
+  tip: Scalars['Float'];
+  total: Scalars['Float'];
   totalPaid: Scalars['Float'];
 };
 
@@ -920,6 +920,20 @@ export type UpdateCategoryMutationVariables = Exact<{
 
 export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory?: { __typename?: 'Category', _id: string, name: string, description?: string | null } | null };
 
+export type MakeCheckoutPaymentMutationVariables = Exact<{
+  input: MakeCheckoutPaymentInput;
+}>;
+
+
+export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, totalPaid: number, total: number, tip: number, tax: number, status: CheckoutStatusKeys, paid: boolean } };
+
+export type GetCheckoutByIdQueryVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip: number, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, splitType?: SplitType | null, patron?: string | null, tip?: number | null } | null> } };
+
 export type CreateMenuMutationVariables = Exact<{
   input: CreateMenuInput;
 }>;
@@ -1019,12 +1033,26 @@ export type CreateTabMutationVariables = Exact<{
 
 export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, status: TabStatus, table: { __typename?: 'Table', _id: string, tableNumber: string } } };
 
+export type RequestCloseTabMutationVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type RequestCloseTabMutation = { __typename?: 'Mutation', requestCloseTab: { __typename?: 'Tab', _id: string, checkout?: string | null, status: TabStatus, users?: Array<{ __typename?: 'User', _id: string }> | null } };
+
 export type GetTabByIdQueryVariables = Exact<{
   input: GetById;
 }>;
 
 
 export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null };
+
+export type GetTabCheckoutByIdQueryVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type GetTabCheckoutByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, status: TabStatus, users?: Array<{ __typename?: 'User', _id: string }> | null, orders: Array<{ __typename?: 'OrderDetail', user?: string | null, _id: string, subTotal: number } | null> } | null };
 
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
@@ -1550,6 +1578,96 @@ export function useUpdateCategoryMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateCategoryMutationHookResult = ReturnType<typeof useUpdateCategoryMutation>;
 export type UpdateCategoryMutationResult = Apollo.MutationResult<UpdateCategoryMutation>;
 export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
+export const MakeCheckoutPaymentDocument = gql`
+    mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
+  makeCheckoutPayment(input: $input) {
+    _id
+    totalPaid
+    total
+    tip
+    tax
+    status
+    paid
+  }
+}
+    `;
+export type MakeCheckoutPaymentMutationFn = Apollo.MutationFunction<MakeCheckoutPaymentMutation, MakeCheckoutPaymentMutationVariables>;
+
+/**
+ * __useMakeCheckoutPaymentMutation__
+ *
+ * To run a mutation, you first call `useMakeCheckoutPaymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMakeCheckoutPaymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [makeCheckoutPaymentMutation, { data, loading, error }] = useMakeCheckoutPaymentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useMakeCheckoutPaymentMutation(baseOptions?: Apollo.MutationHookOptions<MakeCheckoutPaymentMutation, MakeCheckoutPaymentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MakeCheckoutPaymentMutation, MakeCheckoutPaymentMutationVariables>(MakeCheckoutPaymentDocument, options);
+      }
+export type MakeCheckoutPaymentMutationHookResult = ReturnType<typeof useMakeCheckoutPaymentMutation>;
+export type MakeCheckoutPaymentMutationResult = Apollo.MutationResult<MakeCheckoutPaymentMutation>;
+export type MakeCheckoutPaymentMutationOptions = Apollo.BaseMutationOptions<MakeCheckoutPaymentMutation, MakeCheckoutPaymentMutationVariables>;
+export const GetCheckoutByIdDocument = gql`
+    query GetCheckoutByID($input: GetById!) {
+  getCheckoutByID(input: $input) {
+    _id
+    business
+    created_date
+    paid
+    subTotal
+    totalPaid
+    total
+    tip
+    tax
+    tab
+    status
+    payments {
+      _id
+      splitType
+      patron
+      tip
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCheckoutByIdQuery__
+ *
+ * To run a query within a React component, call `useGetCheckoutByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCheckoutByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCheckoutByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetCheckoutByIdQuery(baseOptions: Apollo.QueryHookOptions<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>(GetCheckoutByIdDocument, options);
+      }
+export function useGetCheckoutByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>(GetCheckoutByIdDocument, options);
+        }
+export type GetCheckoutByIdQueryHookResult = ReturnType<typeof useGetCheckoutByIdQuery>;
+export type GetCheckoutByIdLazyQueryHookResult = ReturnType<typeof useGetCheckoutByIdLazyQuery>;
+export type GetCheckoutByIdQueryResult = Apollo.QueryResult<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>;
 export const CreateMenuDocument = gql`
     mutation CreateMenu($input: CreateMenuInput!) {
   createMenu(input: $input) {
@@ -2154,6 +2272,44 @@ export function useCreateTabMutation(baseOptions?: Apollo.MutationHookOptions<Cr
 export type CreateTabMutationHookResult = ReturnType<typeof useCreateTabMutation>;
 export type CreateTabMutationResult = Apollo.MutationResult<CreateTabMutation>;
 export type CreateTabMutationOptions = Apollo.BaseMutationOptions<CreateTabMutation, CreateTabMutationVariables>;
+export const RequestCloseTabDocument = gql`
+    mutation RequestCloseTab($input: GetById!) {
+  requestCloseTab(input: $input) {
+    _id
+    checkout
+    status
+    users {
+      _id
+    }
+  }
+}
+    `;
+export type RequestCloseTabMutationFn = Apollo.MutationFunction<RequestCloseTabMutation, RequestCloseTabMutationVariables>;
+
+/**
+ * __useRequestCloseTabMutation__
+ *
+ * To run a mutation, you first call `useRequestCloseTabMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestCloseTabMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestCloseTabMutation, { data, loading, error }] = useRequestCloseTabMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRequestCloseTabMutation(baseOptions?: Apollo.MutationHookOptions<RequestCloseTabMutation, RequestCloseTabMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RequestCloseTabMutation, RequestCloseTabMutationVariables>(RequestCloseTabDocument, options);
+      }
+export type RequestCloseTabMutationHookResult = ReturnType<typeof useRequestCloseTabMutation>;
+export type RequestCloseTabMutationResult = Apollo.MutationResult<RequestCloseTabMutation>;
+export type RequestCloseTabMutationOptions = Apollo.BaseMutationOptions<RequestCloseTabMutation, RequestCloseTabMutationVariables>;
 export const GetTabByIdDocument = gql`
     query GetTabByID($input: GetById!) {
   getTabByID(input: $input) {
@@ -2209,6 +2365,50 @@ export function useGetTabByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetTabByIdQueryHookResult = ReturnType<typeof useGetTabByIdQuery>;
 export type GetTabByIdLazyQueryHookResult = ReturnType<typeof useGetTabByIdLazyQuery>;
 export type GetTabByIdQueryResult = Apollo.QueryResult<GetTabByIdQuery, GetTabByIdQueryVariables>;
+export const GetTabCheckoutByIdDocument = gql`
+    query GetTabCheckoutByID($input: GetById!) {
+  getTabByID(input: $input) {
+    _id
+    status
+    users {
+      _id
+    }
+    orders {
+      user
+      _id
+      subTotal
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTabCheckoutByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTabCheckoutByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTabCheckoutByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTabCheckoutByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetTabCheckoutByIdQuery(baseOptions: Apollo.QueryHookOptions<GetTabCheckoutByIdQuery, GetTabCheckoutByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTabCheckoutByIdQuery, GetTabCheckoutByIdQueryVariables>(GetTabCheckoutByIdDocument, options);
+      }
+export function useGetTabCheckoutByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTabCheckoutByIdQuery, GetTabCheckoutByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTabCheckoutByIdQuery, GetTabCheckoutByIdQueryVariables>(GetTabCheckoutByIdDocument, options);
+        }
+export type GetTabCheckoutByIdQueryHookResult = ReturnType<typeof useGetTabCheckoutByIdQuery>;
+export type GetTabCheckoutByIdLazyQueryHookResult = ReturnType<typeof useGetTabCheckoutByIdLazyQuery>;
+export type GetTabCheckoutByIdQueryResult = Apollo.QueryResult<GetTabCheckoutByIdQuery, GetTabCheckoutByIdQueryVariables>;
 export const CreateTableDocument = gql`
     mutation CreateTable($input: CreateTableInput) {
   createTable(input: $input) {

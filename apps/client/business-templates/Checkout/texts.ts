@@ -7,7 +7,7 @@ export const texts = {
   tip: "Tip",
   total: "Total",
   patron: "Patron",
-  sharedByTable: "Shared by Table",
+  sharedByTable: "Shared",
   AllByTable: "Table only",
   splitBy: "Split by",
 }

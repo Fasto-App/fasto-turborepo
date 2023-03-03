@@ -20,7 +20,7 @@ import { Tile } from "../../components/Tile";
 import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
-import { Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery } from "../../gen/generated";
+import { Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { useAppStore } from "../UseAppStore";
 import { businessRoute } from "../../routes";
 
@@ -45,7 +45,28 @@ export const AddToOrder = () => {
 
   const setNetworkState = useAppStore(state => state.setNetworkState)
 
+  const [requestCloseTabMutation, { loading: loadingCloseTab }] = useRequestCloseTabMutation({
+    refetchQueries: ["GetSpacesFromBusiness"],
+    onCompleted: (data) => {
+      setNetworkState("success")
+      const status = data?.requestCloseTab?.status
+      const checkoutId = data?.requestCloseTab?.checkout
+
+      switch (status) {
+        case "Pendent":
+          if (!checkoutId) throw new Error("Checkout id is missing")
+
+          route.push(businessRoute.checkout(checkoutId, tabId as string))
+          break;
+        default:
+          route.back()
+          break;
+      }
+    },
+  })
+
   const { data: menuData } = useGetMenuByIdQuery({
+    skip: !menuId,
     variables: {
       input: {
         id: menuId as string,
@@ -64,6 +85,12 @@ export const AddToOrder = () => {
         _id: tabId as string,
       }
     },
+    onCompleted: (data) => {
+      // if data has status of pending, send to 
+      // if (data?.getTabByID?. === "pending") {
+
+      // }
+    }
   })
 
   const [createOrders] = useCreateMultipleOrderDetailsMutation({
@@ -95,12 +122,14 @@ export const AddToOrder = () => {
   }, [createOrders, orderItems, tabId])
 
   const requestCloseTab = useCallback(() => {
-    // make a request to close the tab
-    // wait for the response and navigate to the checkout page
-
-
-    route.push(businessRoute.checkout("123"))
-  }, [route])
+    requestCloseTabMutation({
+      variables: {
+        input: {
+          _id: tabId as string,
+        }
+      }
+    })
+  }, [requestCloseTabMutation, tabId])
 
 
   const sections = menuData?.getMenuByID?.sections || []
@@ -223,6 +252,7 @@ export const AddToOrder = () => {
             <SideBySideButtons
               leftAction={requestCloseTab}
               rightAction={() => console.log("See Details")}
+              leftLoading={loadingCloseTab}
               leftText={"Close Tab"}
               rightText={"See Details"}
               leftDisabled={false}

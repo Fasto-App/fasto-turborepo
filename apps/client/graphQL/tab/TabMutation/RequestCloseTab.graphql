@@ -1,0 +1,10 @@
+mutation RequestCloseTab($input: GetById!) {
+	requestCloseTab(input: $input) {
+		_id
+		checkout
+		status
+		users {
+			_id
+		}
+	}
+}

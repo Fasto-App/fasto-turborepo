@@ -5,7 +5,9 @@ import { TableModel } from "../../../models/table";
 import { GuestUserModel } from "../../../models/guestUser";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
-import { TableStatus, TabStatus } from "app-helpers";
+import { OrderStatus, TableStatus, TabStatus } from "app-helpers";
+import { BusinessModel, OrderDetailModel } from "../../../models";
+import { CheckoutModel } from "../../../models/checkout";
 
 const createTab = async (_parent: any, { input }: createTabInput, { db, business }: Context) => {
     const Tab = TabModel(db);
@@ -144,22 +146,49 @@ const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
 }
 
 
-const closeTab = async (_parent: any, { input }: { input: any }, { db, business }: Context) => {
-
-    // request to close a tab
-    // change the status of the Tab to Pending
-    // create a checkout object with information about the tab
+const requestCloseTab = async (_parent: any, { input }: { input: { _id: string } }, { db, business }: Context) => {
     const Tab = TabModel(db);
+    const OrderDetail = OrderDetailModel(db);
+    const Checkout = CheckoutModel(db);
+    const foundBusiness = await BusinessModel(db).findById(business);
     const foundTab = await Tab.findById(input._id);
 
     if (!foundTab) throw ApolloError('NotFound')
 
-    const updatedTab = await Tab.findByIdAndUpdate(input._id, { status: TabStatus.Pendent }, { new: true });
+    if (foundTab.status === TabStatus.Closed ||
+        foundTab.status === TabStatus.Pendent) {
+        return foundTab;
+    }
+
+    const foundOrderDetails = await OrderDetail.find({ tab: foundTab._id });
+    // if there are no open orders, we can close the tab
+    if (foundOrderDetails.length === 0) {
+        foundTab.status = TabStatus.Closed;
+        await foundTab.save();
+        return foundTab;
+    }
+
+    const subTotal = foundOrderDetails.reduce((acc, orderDetail) => acc + orderDetail.subTotal, 0);
+
+    const checkout = await Checkout.create({
+        tab: foundTab._id,
+        business: foundBusiness?._id,
+        orders: foundOrderDetails.map(orderDetail => orderDetail._id),
+        total: subTotal + (subTotal * (foundBusiness?.taxRate ?? 0)),
+        tax: foundBusiness?.taxRate ?? 0,
+        tip: 0,
+        subTotal,
+    })
+
+    foundTab.checkout = checkout._id;
+    foundTab.status = TabStatus.Pendent;
+
+    return await foundTab.save();;
 }
 
 
 
-const TabResolverMutation = { createTab, updateTab, deleteTab }
+const TabResolverMutation = { createTab, updateTab, deleteTab, requestCloseTab }
 const TabResolverQuery = {
     getTabByID,
     getAllOpenTabsByBusinessID,

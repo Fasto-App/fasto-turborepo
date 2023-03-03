@@ -17,10 +17,10 @@ export const CheckoutTypeDefinition = gql`
     paid: Boolean!
     orders: [OrderDetail]!
     payments: [Payment]!
-    subTotal: Float
-    tip: Float
-    tax: Float
-    total: Float
+    subTotal: Float!
+    tip: Float!
+    tax: Float!
+    total: Float!
     totalPaid: Float!
     created_date: String!
   }

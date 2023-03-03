@@ -3,8 +3,8 @@ import { PrivilegesKeys } from "app-helpers";
 export const TableStatus = {
   Available: 'Available',
   Occupied: 'Occupied',
-  RESERVED: 'Reserved',
-  CLOSED: 'Closed'
+  Reserved: 'Reserved',
+  Closed: 'Closed'
 } as const;
 
 export type TableStatusType = typeof TableStatus[keyof typeof TableStatus];

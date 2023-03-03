@@ -19,7 +19,7 @@ interface AppState {
 }
 
 const useAppStore = create<AppState>()(
-  devtools(
+  (
     (set, get) => ({
       networkState: "idle",
       category: null,

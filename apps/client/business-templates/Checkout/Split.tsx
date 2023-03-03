@@ -1,13 +1,19 @@
-import { SplitType, splitTypes, typedKeys } from 'app-helpers'
-import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Button } from 'native-base'
-import React, { FC, useState } from 'react'
+import { formatAsPercentage, SplitType, splitTypes, typedKeys } from 'app-helpers'
+import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Button, Checkbox, Hidden, Select, CheckIcon } from 'native-base'
+import { useRouter } from 'next/router'
+import React, { FC, useMemo, useState } from 'react'
+import { FDSSelect } from '../../components/FDSSelect'
+import { useGetTabCheckoutByIdQuery } from '../../gen/generated'
+import { parseToCurrency } from '../../utils'
+import { percentages, useCheckoutStore } from './checkoutStore'
 import { texts } from './texts'
+import { Checkout } from './types'
 
 
 const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
   return (
     <Text
-      w={140}
+      w={100}
       alignSelf={"center"}
       textAlign={"center"}
       fontSize={"lg"}
@@ -21,6 +27,9 @@ const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
 const Header = ({ type }: { type: SplitType }) => {
   return (
     <HStack py={2}>
+      <Box justifyContent={"center"}>
+        <Checkbox colorScheme="green" value='user' onChange={value => console.log()} />
+      </Box>
       <Cell bold>
         {texts.patron}
       </Cell>
@@ -44,29 +53,48 @@ const Header = ({ type }: { type: SplitType }) => {
   )
 }
 
-const Row = ({ type }: { type: SplitType }) => {
+type RowProps = {
+  subTotal: string;
+  total: string;
+  tax: string;
+  tip: string;
+  sharedByTable: string;
+  type: SplitType;
+  user: string;
+}
+
+const Row = ({
+  type,
+  subTotal,
+  total,
+  tip,
+  sharedByTable,
+  tax,
+  user
+}: RowProps) => {
   return (<HStack>
+    <Box justifyContent={"center"}>
+      <Checkbox colorScheme="green" value='user' onChange={value => console.log()} />
+    </Box>
     <Cell key={"patron"}>
-      Person 1
+      {user}
     </Cell >
     {type === "Custom" ?
       <Input textAlign={"center"} h={"6"} value='$100' w={140} /> :
-      <Cell key={"subtotal"}>
-        $1000.00
-      </Cell>}
-    {
-      type === "ByPatron" ? <Cell key={"shared-by-table"}>
-        $10000.00
+      <Cell key={"subtotal"}>{subTotal}</Cell>}
+    {type === "ByPatron" ?
+      <Cell key={"shared-by-table"}>
+        {sharedByTable}
       </Cell> : null
     }
     <Cell key={"fees-and-taxes"}>
-      $10000.00
+      {tax}
     </Cell>
     <Cell key={"tip"}>
-      $100000.00
+      {tip}
     </Cell>
     <Cell bold key={"total"}>
-      $1000000.00
+      {total}
     </Cell>
     <Box flex={1} justifyContent={"center"} alignItems={"center"} >
       <Button w={"80%"} minW={"100"} fontSize={"2xl"} h={"80%"} colorScheme={"tertiary"}>
@@ -76,8 +104,73 @@ const Row = ({ type }: { type: SplitType }) => {
   </HStack >)
 }
 
-export const Split = () => {
+export const Split = ({
+  subTotal,
+  totalPaid,
+  // total,
+  tax,
+  // tip,
+}: Checkout) => {
+  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount } = useCheckoutStore(state => ({
+    tip: state.tip,
+    discount: state.discount,
+    setSelectedTip: state.setSelectedTip,
+    setSelectedDiscount: state.setSelectedDiscount,
+    selectedTip: state.selectedTip,
+    selectedDiscount: state.selectedDiscount,
+    customTip: state.customTip,
+    setCustomTip: state.setCustomTip,
+    setCustomDiscount: state.setCustomDiscount,
+  }))
+
   const [selectedOption, setSelectedOption] = useState<SplitType>("ByPatron")
+  const route = useRouter()
+  const { tabId } = route.query
+
+
+  console.log("subtotal", subTotal)
+  console.log("tip", tip)
+  console.log("total tip", tip * (subTotal ?? 0))
+
+  const { data } = useGetTabCheckoutByIdQuery({
+    skip: !tabId,
+    variables: {
+      input: {
+        _id: tabId as string
+      }
+    }
+  })
+  // we need more information to calculate the split
+  const formatedTip = selectedTip === "Custom" ? "Custom" : formatAsPercentage(tip)
+  const formatedDiscount = selectedDiscount === "Custom" ? "Custom" : formatAsPercentage(discount)
+  const tipFieldValue = selectedTip === "Custom" ? parseToCurrency(customTip) : parseToCurrency(tip * (subTotal ?? 0))
+  const total = useMemo(() => {
+    const discountAmount = (discount * (subTotal ?? 0))
+    const tipAmount = (tip * (subTotal ?? 0))
+    return parseToCurrency((subTotal ?? 0) - discountAmount + tipAmount)
+  }, [subTotal, tip, discount])
+
+  const split = data?.getTabByID?.orders.reduce((acc, order) => {
+    const subtotal = order?.subTotal ?? 0
+
+    if (!order?.user) {
+      return {
+        ...acc,
+        table: {
+          subTotal: (acc?.table?.subTotal ?? 0) + subtotal
+        }
+      }
+    }
+
+    return ({
+      ...acc,
+      [order?.user]: {
+        subTotal: (acc?.[order?.user]?.subTotal ?? 0) + subtotal
+      }
+    })
+  }, {} as { [key: string]: { subTotal: number }, table: { subTotal: number } })
+
+  console.log({ tipFieldValue })
 
   return (
     <Box flex={1}>
@@ -105,16 +198,31 @@ export const Split = () => {
       <Box flex={1}>
         <Box flex={1} >
           <Header type={selectedOption} />
-          <Row type={selectedOption} />
-          <Row type={selectedOption} />
-          <Row type={selectedOption} />
-          <Row type={selectedOption} />
+          {data?.getTabByID?.users?.map((user, index) => {
+            const userSubTotal = split?.[user._id]?.subTotal ?? 0
+            const tableSubTotal = split?.table.subTotal ?? 0
+            const sharedByTable = tableSubTotal / (data?.getTabByID?.users?.length ?? 1)
+            const userTip = true ? tip * (userSubTotal + sharedByTable) : 0
+            const total = userTip + userSubTotal + (tableSubTotal / (data?.getTabByID?.users?.length ?? 1))
+
+            return <Row
+              key={user._id}
+              user={`Person ${(index + 1).toString()}`}
+              type={selectedOption}
+              subTotal={parseToCurrency(userSubTotal)}
+              sharedByTable={parseToCurrency(sharedByTable)}
+              total={parseToCurrency(total)}
+              tip={parseToCurrency(userTip)}
+              tax={parseToCurrency((tax ?? 0) * total)}
+            />
+          }
+          )}
         </Box>
         <VStack w={"50%"} minW={"lg"} pt={8} space={4}>
           <HStack justifyContent={"space-between"} px={8}>
             {selectedOption === "ByPatron" ? <>
               <Text fontSize={"lg"}>{texts.AllByTable}</Text>
-              <Text fontSize={"lg"}>{"$80.00"}</Text>
+              <Text fontSize={"lg"}>{parseToCurrency(split?.table.subTotal)}</Text>
             </> : <>
               <Text fontSize={"lg"}>{texts.splitBy}</Text>
               <Input value='4' w={100} h={"6"} textAlign={"right"} />
@@ -122,30 +230,38 @@ export const Split = () => {
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.subtotal}</Text>
-            <Text fontSize={"lg"}>{"$100.00"}</Text>
+            <Text fontSize={"lg"}>{parseToCurrency(subTotal)}</Text>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.feesAndTax}</Text>
-            <Text fontSize={"lg"}>{"$8.30"}</Text>
+            <Text fontSize={"lg"}>{parseToCurrency((tax ?? 0) * (subTotal ?? 0))}</Text>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.discount}</Text>
-            <HStack space={2}>
-              <Input h={"6"} value='0%' w={100} textAlign={"right"} />
+            <HStack space={2} alignItems={"self-end"}>
+              <FDSSelect
+                array={percentages}
+                selectedValue={formatedDiscount}
+                setSelectedValue={setSelectedDiscount}
+              />
               <Input h={"6"} value='$0.00' w={100} isDisabled={true} textAlign={"right"} />
             </HStack>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.tip}</Text>
             <HStack space={2}>
-              <Input h={"6"} value='20%' w={100} textAlign={"right"} />
-              <Input h={"6"} value='$20.00' w={100} isDisabled={true} textAlign={"right"} />
+              <FDSSelect
+                array={percentages}
+                selectedValue={formatedTip}
+                setSelectedValue={setSelectedTip}
+              />
+              <Input h={"6"} value={tipFieldValue} w={100} isDisabled={true} textAlign={"right"} />
             </HStack>
           </HStack>
           <Divider marginY={2} />
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"xl"} bold>{texts.total}</Text>
-            <Text fontSize={"xl"} bold>{"$128.30"}</Text>
+            <Text fontSize={"xl"} bold>{total}</Text>
           </HStack>
         </VStack>
       </Box>

@@ -1,6 +1,6 @@
-export const parseToCurrency = (number: number) => {
+export const parseToCurrency = (number?: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-  }).format(number / 100);
+  }).format(Math.floor(number ?? 0) / 100);
 }

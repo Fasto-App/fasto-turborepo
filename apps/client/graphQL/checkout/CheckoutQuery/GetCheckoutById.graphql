@@ -1,0 +1,21 @@
+query GetCheckoutByID($input: GetById!) {
+	getCheckoutByID(input: $input) {
+		_id
+		business
+		created_date
+		paid
+		subTotal
+		totalPaid
+		total
+		tip
+		tax
+		tab
+		status
+		payments {
+			_id
+			splitType
+			patron
+			tip
+		}
+	}
+}
