@@ -2,7 +2,7 @@ import { AddIcon, Box, Button, Divider, HStack, Icon, IconButton, MinusIcon, Spa
 import React from "react"
 import { BsFillPersonFill } from "react-icons/bs";
 import { GiRoundTable } from "react-icons/gi";
-import { parseToCurrency } from "../../utils";
+import { parseToCurrency } from 'app-helpers';
 
 const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress?: () => void }) => {
   const Icon = type === "plus" ? AddIcon : MinusIcon

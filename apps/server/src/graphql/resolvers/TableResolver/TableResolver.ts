@@ -60,10 +60,13 @@ const deleteTable = async (parent: any, args: any, { db, business }: Context) =>
   return tableByID
 }
 
+// FIX: refactor this to return a tab by the ID
 const getOpenTabByTable = async (table: any, _: any, { db }: { db: Connection }) => {
   // TODO: add a check to make sure the business owns the table
-  const tab = await TabModel(db).findOne({ status: TabStatus.Open, table: table._id.toString() })
-  return tab
+  return await TabModel(db).findOne({
+    table: table._id.toString(),
+    status: { $in: [TabStatus.Pendent, TabStatus.Open] },
+  })
 }
 
 const TableResolverMutation = { deleteTable, createTable }

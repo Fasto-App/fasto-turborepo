@@ -1,13 +1,14 @@
-import { formatAsPercentage, SplitType, splitTypes, typedKeys } from 'app-helpers'
-import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Button, Checkbox, Switch } from 'native-base'
+import { formatAsPercentage, getPercentageOfValue, SplitType, splitTypes, typedKeys } from 'app-helpers'
+import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Button, Checkbox, Switch, Hidden } from 'native-base'
 import { useRouter } from 'next/router'
 import React, { FC, useMemo, useState } from 'react'
 import { FDSSelect } from '../../components/FDSSelect'
 import { useGetTabCheckoutByIdQuery } from '../../gen/generated'
-import { parseToCurrency } from '../../utils'
+import { parseToCurrency } from 'app-helpers'
 import { percentages, useCheckoutStore } from './checkoutStore'
 import { texts } from './texts'
 import { Checkout } from './types'
+import { Transition } from '../../components/Transition'
 
 
 const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
@@ -106,10 +107,7 @@ const Row = ({
 
 export const Split = ({
   subTotal,
-  totalPaid,
-  // total,
   tax,
-  // tip,
 }: Checkout) => {
   const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount } = useCheckoutStore(state => ({
     tip: state.tip,
@@ -136,17 +134,21 @@ export const Split = ({
     }
   })
   // we need more information to calculate the split
-  const tipAmount = tip * (subTotal ?? 0)
+  const tipAmount = getPercentageOfValue(subTotal, tip)
+  const discountAmount = getPercentageOfValue(subTotal, discount)
+  const totalAmount = (subTotal ?? 0) - discountAmount + tipAmount
   const formatedTip = selectedTip === "Custom" ? "Custom" : formatAsPercentage(tip)
   const formatedDiscount = selectedDiscount === "Custom" ? "Custom" : formatAsPercentage(discount)
   const tipFieldValue = selectedTip === "Custom" ? parseToCurrency(customTip) : parseToCurrency(tipAmount)
-  const discountFieldValue = selectedDiscount === "Custom" ? parseToCurrency(customTip) : parseToCurrency(discount * (subTotal ?? 0))
+  const discountFieldValue = selectedDiscount === "Custom" ? parseToCurrency(customTip) : parseToCurrency(discountAmount)
+
+  const totalAmountSharedEqually = totalAmount / (data?.getTabByID?.orders.length ?? 1)
 
   const total = useMemo(() => {
-    const discountAmount = (discount * (subTotal ?? 0))
-    return parseToCurrency((subTotal ?? 0) - discountAmount + tipAmount)
-  }, [discount, subTotal, tipAmount])
+    return parseToCurrency(totalAmount)
+  }, [totalAmount])
 
+  // memoize the split
   const split = data?.getTabByID?.orders.reduce((acc, order) => {
     const subtotal = order?.subTotal ?? 0
 
@@ -196,11 +198,25 @@ export const Split = ({
         <Box flex={1} >
           <Header type={selectedOption} />
           {data?.getTabByID?.users?.map((user, index) => {
-            const userSubTotal = split?.[user._id]?.subTotal ?? 0
+            // if the division is equally shared by the table
+            // then the user's subtotal is the total divided by the number of users
+            // get the subTotal
+
+            const userSubTotal = selectedOption === "Equally" ?
+              totalAmountSharedEqually :
+              split?.[user._id]?.subTotal ?? 0
+
             const tableSubTotal = split?.table.subTotal ?? 0
             const wSharedByTable = tableSubTotal / (data?.getTabByID?.users?.length ?? 1) + userSubTotal
             const numUsers = data?.getTabByID?.users?.length ?? 1
-            const userTip = !shareTip ? tip * (wSharedByTable) : (tipAmount / numUsers)
+
+            const tipEqually = tipAmount / numUsers
+            const userTip = selectedOption !== "ByPatron" ?
+              tipEqually :
+              !shareTip ?
+                getPercentageOfValue(wSharedByTable, tip)
+                : tipEqually
+
             const total = userTip + userSubTotal + (tableSubTotal / numUsers)
 
             return <Row
@@ -214,11 +230,12 @@ export const Split = ({
               tax={parseToCurrency((tax ?? 0) * total)}
             />
           })}
-
-          <HStack alignItems={"center"} space={"4"} pt={4}>
-            <Switch size="md" onValueChange={setShareTip} />
-            <Text fontSize={"lg"}>{"Share tip equally"}</Text>
-          </HStack>
+          <Transition isVisible={selectedOption === "ByPatron"} >
+            <HStack alignItems={"center"} space={"4"} pt={4}>
+              <Switch size="md" onValueChange={setShareTip} />
+              <Text fontSize={"lg"}>{"Share tip equally"}</Text>
+            </HStack>
+          </Transition>
         </Box>
         <VStack w={"50%"} minW={"lg"} pt={8} space={4}>
           <HStack justifyContent={"space-between"} px={8}>

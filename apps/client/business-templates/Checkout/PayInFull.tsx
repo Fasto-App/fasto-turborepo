@@ -1,8 +1,8 @@
-import { formatAsPercentage } from 'app-helpers'
+import { formatAsPercentage, getPercentageOfValue } from 'app-helpers'
 import { Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
 import React, { useMemo } from 'react'
 import { FDSSelect } from '../../components/FDSSelect'
-import { parseToCurrency } from '../../utils'
+import { parseToCurrency } from 'app-helpers'
 import { Percentages, percentages, useCheckoutStore } from './checkoutStore'
 import { texts } from './texts'
 import { Checkout } from './types'
@@ -13,7 +13,7 @@ export const PayInFull = ({
   totalPaid
 }: Checkout) => {
 
-  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount } = useCheckoutStore(state => ({
+  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
     setSelectedTip: state.setSelectedTip,
@@ -21,16 +21,28 @@ export const PayInFull = ({
     selectedTip: state.selectedTip,
     selectedDiscount: state.selectedDiscount,
     customTip: state.customTip,
+    customDiscount: state.customDiscount,
     setCustomTip: state.setCustomTip,
     setCustomDiscount: state.setCustomDiscount,
   }))
 
   const formatedTip = selectedTip === "Custom" ? "Custom" : formatAsPercentage(tip)
   const formatedDiscount = selectedDiscount === "Custom" ? "Custom" : formatAsPercentage(discount)
-  const tipFieldValue = selectedTip === "Custom" ? parseToCurrency(customTip) : parseToCurrency(tip * (subTotal ?? 0))
+  const tipFieldValue = selectedTip === "Custom" ?
+    parseToCurrency(customTip) :
+    parseToCurrency(getPercentageOfValue(subTotal, tip))
+  const discountValue = getPercentageOfValue(subTotal, discount)
+
+  console.log("discountValue", discountValue)
+  console.log("subTotal", subTotal)
+
+  const discountFieldValue = selectedDiscount === "Custom" ?
+    parseToCurrency(customDiscount) :
+    parseToCurrency(discountValue)
+
   const total = useMemo(() => {
-    const discountAmount = (discount * (subTotal ?? 0))
-    const tipAmount = (tip * (subTotal ?? 0))
+    const discountAmount = getPercentageOfValue(subTotal, discount)
+    const tipAmount = getPercentageOfValue(subTotal, tip)
     return parseToCurrency((subTotal ?? 0) - discountAmount + tipAmount)
   }, [subTotal, tip, discount])
 
@@ -76,7 +88,7 @@ export const PayInFull = ({
             <Input
               h={"6"}
               w={100}
-              value={parseToCurrency(discount * (subTotal ?? 0))}
+              value={discountFieldValue}
               isDisabled={selectedDiscount === "Custom" ? false : true}
               textAlign={"right"}
               onChangeText={handleDiscountChange}

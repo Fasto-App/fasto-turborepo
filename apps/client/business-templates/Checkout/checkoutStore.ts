@@ -1,13 +1,13 @@
-import { typedKeys } from 'app-helpers';
+import { getFixedPointPercentage, typedKeys } from 'app-helpers';
 import { create, StateCreator } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
 const percentagesAndValues = {
   "0%": 0,
-  "10%": 0.1,
-  "15%": 0.15,
-  "18%": 0.18,
-  "20%": 0.2,
+  "10%": 1000,
+  "15%": 1500,
+  "18%": 1800,
+  "20%": 2000,
   "Custom": 0,
 }
 
@@ -29,9 +29,10 @@ interface CheckoutStore {
   setCustomDiscount: (customDiscount: number, total?: number) => void;
 }
 
+// TODO: add getters https://github.com/pmndrs/zustand/discussions/1166
 // @ts-ignore
 export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
-  tip: 0.1,
+  tip: 1000,
   discount: 0,
   customTip: 0,
   customDiscount: 0,
@@ -39,14 +40,14 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
   selectedDiscount: "0%",
   setCustomTip: (customTip, total) => {
     if (total && customTip) {
-      const tip = customTip / total
+      const tip = getFixedPointPercentage(customTip / total)
       set({ customTip, tip })
     }
   },
   setCustomDiscount: (customDiscount, total) => {
     console.log("customDiscount", customDiscount)
     if (total && customDiscount) {
-      const discount = customDiscount / total
+      const discount = getFixedPointPercentage(customDiscount / total)
       set({ customDiscount, discount })
     }
   },

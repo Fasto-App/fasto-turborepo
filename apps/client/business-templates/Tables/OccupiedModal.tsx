@@ -16,7 +16,7 @@ import {
 } from "native-base"
 import { Tile } from "../../components/Tile"
 import { OrderDetail, OrderStatus, useGetTabByIdQuery } from "../../gen/generated"
-import { parseToCurrency } from "../../utils"
+import { parseToCurrency } from 'app-helpers'
 import { useTableScreenStore } from "./tableScreenStore"
 import { Transition } from "../../components/Transition"
 
