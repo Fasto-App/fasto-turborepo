@@ -25,11 +25,24 @@ const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
   )
 }
 
-const Header = ({ type }: { type: SplitType }) => {
+type HeaderProps = {
+  type: SplitType,
+  areAllUsersSelected: boolean,
+  isDisabled: boolean;
+  onCheckboxChange: (value: boolean) => void;
+}
+
+const Header = ({ type, areAllUsersSelected, isDisabled, onCheckboxChange }: HeaderProps) => {
   return (
     <HStack py={2}>
       <Box justifyContent={"center"}>
-        <Checkbox isDisabled={true} colorScheme="green" value='user' onChange={value => console.log()} />
+        <Checkbox
+          isChecked={areAllUsersSelected}
+          isDisabled={isDisabled}
+          colorScheme="green"
+          value='user'
+          onChange={onCheckboxChange}
+        />
       </Box>
       <Cell bold>
         {texts.patron}
@@ -62,6 +75,9 @@ type RowProps = {
   sharedByTable: string;
   type: SplitType;
   user: string;
+  isUserSelected: boolean;
+  isDisabled: boolean;
+  onCheckboxChange: (value: boolean) => void;
 }
 
 const Row = ({
@@ -71,11 +87,20 @@ const Row = ({
   tip,
   sharedByTable,
   tax,
-  user
+  user,
+  isUserSelected,
+  isDisabled,
+  onCheckboxChange
 }: RowProps) => {
   return (<HStack>
     <Box justifyContent={"center"}>
-      <Checkbox isDisabled={true} colorScheme="green" value='user' onChange={value => console.log()} />
+      <Checkbox
+        isChecked={isUserSelected}
+        isDisabled={isDisabled}
+        colorScheme="green"
+        value='user'
+        onChange={onCheckboxChange}
+      />
     </Box>
     <Cell key={"patron"}>
       {user}
@@ -109,7 +134,7 @@ export const Split = ({
   subTotal,
   tax,
 }: Checkout) => {
-  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount } = useCheckoutStore(state => ({
+  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
     setSelectedTip: state.setSelectedTip,
@@ -117,11 +142,15 @@ export const Split = ({
     selectedTip: state.selectedTip,
     selectedDiscount: state.selectedDiscount,
     customTip: state.customTip,
+    customDiscount: state.customDiscount,
     setCustomTip: state.setCustomTip,
     setCustomDiscount: state.setCustomDiscount,
   }))
 
-  const [selectedOption, setSelectedOption] = useState<SplitType>("ByPatron")
+  const [selectedOption, setSelectedOption] = useState<SplitType>("ByPatron");
+  const [areAllUsersSelected, setAreAllUsersSelected] = useState<boolean>(true);
+  const [selectedUsers, setSelectedUsers] = useState<{ [key: string]: boolean }>({});
+
   const route = useRouter()
   const { tabId } = route.query
 
@@ -134,15 +163,17 @@ export const Split = ({
     }
   })
   // we need more information to calculate the split
+  const isSelectedTipCustom = selectedTip === "Custom"
+  const isSelectedDiscountCustom = selectedDiscount === "Custom"
   const tipAmount = getPercentageOfValue(subTotal, tip)
   const discountAmount = getPercentageOfValue(subTotal, discount)
   const totalAmount = (subTotal ?? 0) - discountAmount + tipAmount
-  const formatedTip = selectedTip === "Custom" ? "Custom" : formatAsPercentage(tip)
-  const formatedDiscount = selectedDiscount === "Custom" ? "Custom" : formatAsPercentage(discount)
-  const tipFieldValue = selectedTip === "Custom" ? parseToCurrency(customTip) : parseToCurrency(tipAmount)
-  const discountFieldValue = selectedDiscount === "Custom" ? parseToCurrency(customTip) : parseToCurrency(discountAmount)
+  const formatedTip = isSelectedTipCustom ? "Custom" : formatAsPercentage(tip)
+  const formatedDiscount = isSelectedDiscountCustom ? "Custom" : formatAsPercentage(discount)
+  const tipFieldValue = isSelectedTipCustom ? parseToCurrency(customTip) : parseToCurrency(tipAmount)
+  const discountFieldValue = isSelectedDiscountCustom ? parseToCurrency(customDiscount) : parseToCurrency(discountAmount)
 
-  const totalAmountSharedEqually = totalAmount / (data?.getTabByID?.orders.length ?? 1)
+  const totalAmountSharedEqually = totalAmount / (data?.getTabByID?.users?.length ?? 1)
 
   const total = useMemo(() => {
     return parseToCurrency(totalAmount)
@@ -169,7 +200,23 @@ export const Split = ({
     })
   }, {} as { [key: string]: { subTotal: number }, table: { subTotal: number } })
 
-  const [shareTip, setShareTip] = useState(false)
+  const [shareTip, setShareTip] = useState(true)
+
+  const handleDiscountChange = (value: string) => {
+    const text = value.replace(/[$,.]/g, '')
+    const convertedValue = Number(text)
+    if (Number.isInteger(convertedValue)) {
+      setCustomDiscount(convertedValue, subTotal)
+    }
+  }
+
+  const handleTipChange = (value: string) => {
+    const text = value.replace(/[$,.]/g, '')
+    const convertedValue = Number(text)
+    if (Number.isInteger(convertedValue)) {
+      setCustomTip(convertedValue, subTotal)
+    }
+  }
 
   return (
     <Box flex={1}>
@@ -196,7 +243,12 @@ export const Split = ({
       </Center>
       <Box flex={1}>
         <Box flex={1} >
-          <Header type={selectedOption} />
+          <Header
+            type={selectedOption}
+            areAllUsersSelected={selectedOption === "ByPatron" || areAllUsersSelected}
+            isDisabled={selectedOption === "ByPatron"}
+            onCheckboxChange={(value) => setAreAllUsersSelected(value)}
+          />
           {data?.getTabByID?.users?.map((user, index) => {
             // if the division is equally shared by the table
             // then the user's subtotal is the total divided by the number of users
@@ -217,9 +269,17 @@ export const Split = ({
                 getPercentageOfValue(wSharedByTable, tip)
                 : tipEqually
 
-            const total = userTip + userSubTotal + (tableSubTotal / numUsers)
+            const total = userTip + userSubTotal + (selectedOption === "ByPatron" ? (tableSubTotal / numUsers) : 0)
 
             return <Row
+              onCheckboxChange={(value) => {
+                setSelectedUsers({ ...selectedUsers, [user._id]: value })
+                // if it's a false value, then we need to uncheck the all users checkbox
+                if (!value) {
+                  setAreAllUsersSelected(false)
+                }
+              }}
+              isUserSelected={selectedOption === "ByPatron" || areAllUsersSelected || !!selectedUsers[user._id]} // if all is selected or if the object state has the user id set to true
               key={user._id}
               user={`Person ${(index + 1).toString()}`}
               type={selectedOption}
@@ -228,11 +288,12 @@ export const Split = ({
               total={parseToCurrency(total)}
               tip={parseToCurrency(userTip)}
               tax={parseToCurrency((tax ?? 0) * total)}
+              isDisabled={selectedOption === "ByPatron"}
             />
           })}
           <Transition isVisible={selectedOption === "ByPatron"} >
             <HStack alignItems={"center"} space={"4"} pt={4}>
-              <Switch size="md" onValueChange={setShareTip} />
+              <Switch size="md" onValueChange={setShareTip} colorScheme={"green"} isChecked={shareTip} />
               <Text fontSize={"lg"}>{"Share tip equally"}</Text>
             </HStack>
           </Transition>
@@ -242,10 +303,7 @@ export const Split = ({
             {selectedOption === "ByPatron" ? <>
               <Text fontSize={"lg"}>{texts.AllByTable}</Text>
               <Text fontSize={"lg"}>{parseToCurrency(split?.table.subTotal)}</Text>
-            </> : <>
-              <Text fontSize={"lg"}>{texts.splitBy}</Text>
-              <Input value='4' w={100} h={"6"} textAlign={"right"} />
-            </>}
+            </> : null}
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"lg"}>{texts.subtotal}</Text>
@@ -263,7 +321,13 @@ export const Split = ({
                 selectedValue={formatedDiscount}
                 setSelectedValue={setSelectedDiscount}
               />
-              <Input h={"6"} value={discountFieldValue} w={100} isDisabled={true} textAlign={"right"} />
+              <Input
+                h={"6"}
+                value={discountFieldValue}
+                onChangeText={handleDiscountChange}
+                w={100}
+                isDisabled={!isSelectedDiscountCustom}
+                textAlign={"right"} />
             </HStack>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
@@ -274,7 +338,13 @@ export const Split = ({
                 selectedValue={formatedTip}
                 setSelectedValue={setSelectedTip}
               />
-              <Input h={"6"} value={tipFieldValue} w={100} isDisabled={true} textAlign={"right"} />
+              <Input
+                h={"6"}
+                value={tipFieldValue}
+                onChangeText={handleTipChange}
+                w={100} isDisabled={!isSelectedTipCustom}
+                textAlign={"right"}
+              />
             </HStack>
           </HStack>
           <Divider marginY={2} />

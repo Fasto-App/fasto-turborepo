@@ -9,7 +9,7 @@ export const parseToCurrency = (number?: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-  }).format((number ?? 0) / FIXED_POINT_FACTOR);
+  }).format(Math.floor(number ?? 0) / FIXED_POINT_FACTOR);
 }
 
 export function formatAsPercentage(num?: number | null) {
@@ -18,7 +18,7 @@ export function formatAsPercentage(num?: number | null) {
     style: 'percent',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format((num ?? 0) / FIXED_POINT_FACTOR_PERCENTAGE);
+  }).format(Math.floor(num ?? 0) / FIXED_POINT_FACTOR_PERCENTAGE);
 }
 
 // a function that takes the percentage value and returns the fixed-point value

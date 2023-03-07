@@ -33,9 +33,6 @@ export const PayInFull = ({
     parseToCurrency(getPercentageOfValue(subTotal, tip))
   const discountValue = getPercentageOfValue(subTotal, discount)
 
-  console.log("discountValue", discountValue)
-  console.log("subTotal", subTotal)
-
   const discountFieldValue = selectedDiscount === "Custom" ?
     parseToCurrency(customDiscount) :
     parseToCurrency(discountValue)
