@@ -1,7 +1,7 @@
 import { formatAsPercentage, getPercentageOfValue, SplitType, splitTypes, typedKeys } from 'app-helpers'
 import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Button, Checkbox, Switch, Hidden } from 'native-base'
 import { useRouter } from 'next/router'
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 import { FDSSelect } from '../../components/FDSSelect'
 import { useGetTabCheckoutByIdQuery } from '../../gen/generated'
 import { parseToCurrency } from 'app-helpers'
@@ -76,6 +76,8 @@ type RowProps = {
   user: string;
   isUserSelected: boolean;
   onCheckboxChange: (value: boolean) => void;
+  customSubTotal: string;
+  onCustominputChange: (value: string) => void;
 }
 
 const Row = ({
@@ -87,7 +89,9 @@ const Row = ({
   tax,
   user,
   isUserSelected,
-  onCheckboxChange
+  customSubTotal,
+  onCheckboxChange,
+  onCustominputChange
 }: RowProps) => {
   return (<HStack>
     <Box justifyContent={"center"}>
@@ -102,7 +106,13 @@ const Row = ({
       {user}
     </Cell >
     {type === "Custom" ?
-      <Input textAlign={"center"} h={"6"} value='$100' w={140} /> :
+      <Input
+        w={140}
+        h={"6"}
+        textAlign={"center"}
+        onChangeText={onCustominputChange}
+        value={isUserSelected ? customSubTotal : parseToCurrency(0)}
+      /> :
       <Cell isDisabled={!isUserSelected} key={"subtotal"}>{isUserSelected ? subTotal : parseToCurrency(0)}</Cell>}
     {type === "ByPatron" ?
       <Cell isDisabled={!isUserSelected} key={"shared-by-table"}>
@@ -130,7 +140,7 @@ export const Split = ({
   subTotal,
   tax,
 }: Checkout) => {
-  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
+  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount, customSubTotals, setCustomSubTotal } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
     setSelectedTip: state.setSelectedTip,
@@ -139,11 +149,13 @@ export const Split = ({
     selectedDiscount: state.selectedDiscount,
     customTip: state.customTip,
     customDiscount: state.customDiscount,
+    customSubTotals: state.customSubTotals,
     setCustomTip: state.setCustomTip,
     setCustomDiscount: state.setCustomDiscount,
+    setCustomSubTotal: state.setCustomSubTotal,
   }))
 
-  const [selectedOption, setSelectedOption] = useState<SplitType>("ByPatron");
+  const [selectedOption, setSelectedOption] = useState<SplitType>("Custom");
   const [areAllUsersSelected, setAreAllUsersSelected] = useState<boolean>(true);
   const [selectedUsers, setSelectedUsers] = useState<{ [key: string]: boolean }>({});
 
@@ -226,6 +238,27 @@ export const Split = ({
     }
   }
 
+  const splitCustomBill = useCallback(() => {
+    let customTotal = 0;
+    for (const userId in customSubTotals) {
+      if (customSubTotals[userId]) {
+        customTotal += customSubTotals[userId];
+      }
+    }
+
+    const remainingTotal = (subTotal ?? 0) - customTotal;
+    const equalShare = remainingTotal / totalNumberOfUsers;
+    const finalTotals: Record<string, number> = {};
+    for (const user of allUsersFromTab) {
+      if (customSubTotals.hasOwnProperty(user._id)) {
+        finalTotals[user._id] = customSubTotals[user._id];
+      } else {
+        finalTotals[user._id] = equalShare;
+      }
+    }
+    return finalTotals;
+  }, [allUsersFromTab, customSubTotals, subTotal, totalNumberOfUsers])
+
   return (
     <Box flex={1}>
       <Center>
@@ -284,6 +317,9 @@ export const Split = ({
             const total = userTip + userSubTotal + (selectedOption === "ByPatron" ?
               (tableSubTotal / totalNumberOfUsers) : 0)
 
+            const finalCustomTotal = splitCustomBill();
+
+
             return <Row
               onCheckboxChange={(value) => {
                 setSelectedUsers({ ...selectedUsers, [user._id]: value })
@@ -301,6 +337,10 @@ export const Split = ({
               total={parseToCurrency(total)}
               tip={parseToCurrency(userTip)}
               tax={parseToCurrency((tax ?? 0) * total)}
+              customSubTotal={parseToCurrency(finalCustomTotal[user._id])}
+              onCustominputChange={(value) => {
+                setCustomSubTotal(user._id, value)
+              }}
             />
           })}
           <Transition isVisible={selectedOption === "ByPatron"} >

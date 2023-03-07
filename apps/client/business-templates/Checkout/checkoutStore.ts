@@ -14,11 +14,16 @@ const percentagesAndValues = {
 export type Percentages = keyof typeof percentagesAndValues
 export const percentages = typedKeys(percentagesAndValues)
 
+// have an object with keys that point to custom subtotal values
+// at first these values are 0 or null, but at users onChange event
+// update the values in the object
+
 interface CheckoutStore {
   tip: number;
   discount: number;
   customTip: number;
   customDiscount: number;
+  customSubTotals: Record<string, number>;
   selectedTip: typeof percentages[number];
   selectedDiscount: typeof percentages[number];
   setTip: (tip: number) => void;
@@ -27,6 +32,7 @@ interface CheckoutStore {
   setSelectedDiscount: (selectedDiscount: typeof percentages[number]) => void;
   setCustomTip: (customTip: number, total?: number) => void;
   setCustomDiscount: (customDiscount: number, total?: number) => void;
+  setCustomSubTotal: (key: string, value: string) => void;
 }
 
 // TODO: add getters https://github.com/pmndrs/zustand/discussions/1166
@@ -36,6 +42,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
   discount: 0,
   customTip: 0,
   customDiscount: 0,
+  customSubTotals: {},
   selectedTip: "10%",
   selectedDiscount: "0%",
   setCustomTip: (customTip, total) => {
@@ -45,10 +52,22 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
     }
   },
   setCustomDiscount: (customDiscount, total) => {
-    console.log("customDiscount", customDiscount)
     if (total && customDiscount) {
       const discount = getFixedPointPercentage(customDiscount / total)
       set({ customDiscount, discount })
+    }
+  },
+  setCustomSubTotal: (key: string, value: string) => {
+    const text = value.replace(/[$,.]/g, '')
+    const convertedValue = Number(text)
+
+    if (Number.isInteger(convertedValue)) {
+      set(state => ({
+        customSubTotals: {
+          ...state.customSubTotals,
+          [key]: convertedValue
+        }
+      }))
     }
   },
   setTip: (tip: number) => set({ tip }),

@@ -24,7 +24,7 @@ const checkoutOptions = {
 }
 
 export const Checkout = () => {
-  const [selectedOption, setSelectedOption] = React.useState<keyof typeof checkoutOptions>("payFull")
+  const [selectedOption, setSelectedOption] = React.useState<keyof typeof checkoutOptions>("splitBill")
   const route = useRouter()
   const { checkoutId } = route.query
 
