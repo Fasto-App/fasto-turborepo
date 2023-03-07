@@ -29,17 +29,15 @@ const Cell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, is
 type HeaderProps = {
   type: SplitType,
   areAllUsersSelected: boolean,
-  isDisabled: boolean;
   onCheckboxChange: (value: boolean) => void;
 }
 
-const Header = ({ type, areAllUsersSelected, isDisabled, onCheckboxChange }: HeaderProps) => {
+const Header = ({ type, areAllUsersSelected, onCheckboxChange }: HeaderProps) => {
   return (
     <HStack py={2}>
       <Box justifyContent={"center"}>
         <Checkbox
           isChecked={areAllUsersSelected}
-          isDisabled={isDisabled}
           colorScheme="green"
           value='user'
           onChange={onCheckboxChange}
@@ -77,7 +75,6 @@ type RowProps = {
   type: SplitType;
   user: string;
   isUserSelected: boolean;
-  isDisabled: boolean;
   onCheckboxChange: (value: boolean) => void;
 }
 
@@ -90,14 +87,12 @@ const Row = ({
   tax,
   user,
   isUserSelected,
-  isDisabled,
   onCheckboxChange
 }: RowProps) => {
   return (<HStack>
     <Box justifyContent={"center"}>
       <Checkbox
         isChecked={isUserSelected}
-        isDisabled={isDisabled}
         colorScheme="green"
         value='user'
         onChange={onCheckboxChange}
@@ -179,7 +174,7 @@ export const Split = ({
   // calculate the split, but we need to check if the user is selected
   // this should never be less than 1, we should always have at least one user
   const allSelectedUsers = typedKeys(selectedUsers).filter(key => selectedUsers[key])
-  const totalNumberOfUsers = areAllUsersSelected || selectedOption === "ByPatron" ? allUsersFromTab.length ?? 0 : allSelectedUsers.length
+  const totalNumberOfUsers = areAllUsersSelected ? allUsersFromTab.length ?? 0 : allSelectedUsers.length
 
   const totalAmountSharedEqually = totalAmount / totalNumberOfUsers
 
@@ -188,25 +183,30 @@ export const Split = ({
   }, [totalAmount])
 
   // memoize the split
-  const split = data?.getTabByID?.orders.reduce((acc, order) => {
-    const subtotal = order?.subTotal ?? 0
+  // recalculate split based on the selected users
+  const split = useMemo(() => {
+    return data?.getTabByID?.orders.reduce((acc, order) => {
+      const subtotal = order?.subTotal ?? 0
+      const isUserSelected = areAllUsersSelected || selectedUsers[order?.user ?? ""]
 
-    if (!order?.user) {
-      return {
-        ...acc,
-        table: {
-          subTotal: (acc?.table?.subTotal ?? 0) + subtotal
+      // user is selected, should be included on their tab
+      if (!order?.user || !isUserSelected) {
+        return {
+          ...acc,
+          table: {
+            subTotal: (acc?.table?.subTotal ?? 0) + subtotal
+          }
         }
       }
-    }
 
-    return ({
-      ...acc,
-      [order?.user]: {
-        subTotal: (acc?.[order?.user]?.subTotal ?? 0) + subtotal
-      }
-    })
-  }, {} as { [key: string]: { subTotal: number }, table: { subTotal: number } })
+      return ({
+        ...acc,
+        [order?.user]: {
+          subTotal: (acc?.[order?.user]?.subTotal ?? 0) + subtotal
+        }
+      })
+    }, {} as { [key: string]: { subTotal: number }, table: { subTotal: number } })
+  }, [areAllUsersSelected, data?.getTabByID?.orders, selectedUsers])
 
   const [shareTip, setShareTip] = useState(true)
 
@@ -254,10 +254,7 @@ export const Split = ({
           <Header
             type={selectedOption}
             // if all users are selected, them this checkbox is enabled
-            areAllUsersSelected={selectedOption === "ByPatron" ||
-              areAllUsersSelected ||
-              allSelectedUsers.length === allUsersFromTab.length}
-            isDisabled={selectedOption === "ByPatron"}
+            areAllUsersSelected={areAllUsersSelected || allSelectedUsers.length === allUsersFromTab.length}
             onCheckboxChange={(value) => {
               // se o value for negativo, zerar todos os checkboxes selecionados
               if (!value) {
@@ -295,7 +292,7 @@ export const Split = ({
                   setAreAllUsersSelected(false)
                 }
               }}
-              isUserSelected={selectedOption === "ByPatron" || areAllUsersSelected || !!selectedUsers[user._id]} // if all is selected or if the object state has the user id set to true
+              isUserSelected={areAllUsersSelected || !!selectedUsers[user._id]} // if all is selected or if the object state has the user id set to true
               key={user._id}
               user={`Person ${(index + 1).toString()}`}
               type={selectedOption}
@@ -304,7 +301,6 @@ export const Split = ({
               total={parseToCurrency(total)}
               tip={parseToCurrency(userTip)}
               tax={parseToCurrency((tax ?? 0) * total)}
-              isDisabled={selectedOption === "ByPatron"}
             />
           })}
           <Transition isVisible={selectedOption === "ByPatron"} >
