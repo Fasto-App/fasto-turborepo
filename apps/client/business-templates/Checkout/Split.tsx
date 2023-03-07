@@ -78,6 +78,8 @@ type RowProps = {
   onCheckboxChange: (value: boolean) => void;
   customSubTotal: string;
   onCustominputChange: (value: string) => void;
+  ctaTitle: string;
+  onPress: () => void;
 }
 
 const Row = ({
@@ -90,6 +92,8 @@ const Row = ({
   user,
   isUserSelected,
   customSubTotal,
+  ctaTitle,
+  onPress,
   onCheckboxChange,
   onCustominputChange
 }: RowProps) => {
@@ -129,8 +133,16 @@ const Row = ({
       {isUserSelected ? total : parseToCurrency(0)}
     </Cell>
     <Box flex={1} justifyContent={"center"} alignItems={"center"} >
-      <Button isDisabled={!isUserSelected} w={"80%"} minW={"100"} fontSize={"2xl"} h={"80%"} colorScheme={"tertiary"}>
-        Pay
+      <Button
+        isDisabled={!isUserSelected}
+        w={"80%"}
+        minW={"100"}
+        fontSize={"2xl"}
+        h={"80%"}
+        colorScheme={"tertiary"}
+        onPress={onPress}
+      >
+        {ctaTitle}
       </Button>
     </Box>
   </HStack >)
@@ -140,7 +152,7 @@ export const Split = ({
   subTotal,
   tax,
 }: Checkout) => {
-  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount, customSubTotals, setCustomSubTotal } = useCheckoutStore(state => ({
+  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount, customSubTotals, setCustomSubTotal, clearCustomSubTotals } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
     setSelectedTip: state.setSelectedTip,
@@ -153,6 +165,7 @@ export const Split = ({
     setCustomTip: state.setCustomTip,
     setCustomDiscount: state.setCustomDiscount,
     setCustomSubTotal: state.setCustomSubTotal,
+    clearCustomSubTotals: state.clearCustomSubTotals,
   }))
 
   const [selectedOption, setSelectedOption] = useState<SplitType>("Custom");
@@ -171,7 +184,7 @@ export const Split = ({
     }
   })
 
-  const allUsersFromTab = data?.getTabByID?.users ?? []
+  const allUsersFromTab = useMemo(() => data?.getTabByID?.users ?? [], [data?.getTabByID?.users])
   // we need more information to calculate the split
   const isSelectedTipCustom = selectedTip === "Custom"
   const isSelectedDiscountCustom = selectedDiscount === "Custom"
@@ -238,22 +251,28 @@ export const Split = ({
     }
   }
 
-  const splitCustomBill = useCallback(() => {
+  const splitCustomBillComplete = useCallback(() => {
     let customTotal = 0;
+    //todo: make this an object for faster lookup
+    const customUsers: string[] = []; // keep track of which users have a custom subtotal
     for (const userId in customSubTotals) {
       if (customSubTotals[userId]) {
         customTotal += customSubTotals[userId];
+        customUsers.push(userId);
       }
     }
 
-    const remainingTotal = (subTotal ?? 0) - customTotal;
-    const equalShare = remainingTotal / totalNumberOfUsers;
+    let remainingTotal = (subTotal ?? 0) - customTotal;
+    const equalShare = remainingTotal / (totalNumberOfUsers - customUsers.length); // divide by the number of users without custom subtotals
     const finalTotals: Record<string, number> = {};
     for (const user of allUsersFromTab) {
-      if (customSubTotals.hasOwnProperty(user._id)) {
+      if (customSubTotals[user._id]) {
         finalTotals[user._id] = customSubTotals[user._id];
+      } else if (remainingTotal <= 0 || customUsers.includes(user._id)) {
+        finalTotals[user._id] = 0; // if there is no remaining total or the user has a custom subtotal, assign a subtotal of 0
       } else {
         finalTotals[user._id] = equalShare;
+        remainingTotal -= equalShare; // subtract the equal share from the remaining total
       }
     }
     return finalTotals;
@@ -283,7 +302,7 @@ export const Split = ({
         </HStack>
       </Center>
       <Box flex={1}>
-        <Box flex={1} >
+        <Box flex={1}>
           <Header
             type={selectedOption}
             // if all users are selected, them this checkbox is enabled
@@ -292,6 +311,7 @@ export const Split = ({
               // se o value for negativo, zerar todos os checkboxes selecionados
               if (!value) {
                 setSelectedUsers({})
+                clearCustomSubTotals()
               }
               setAreAllUsersSelected(value)
             }}
@@ -308,7 +328,7 @@ export const Split = ({
             const wSharedByTable = tableSubTotal / totalNumberOfUsers + userSubTotal
 
             const tipEqually = tipAmount / totalNumberOfUsers
-            const userTip = selectedOption !== "ByPatron" ?
+            const userTip = selectedOption === "Equally" ?
               tipEqually :
               !shareTip ?
                 getPercentageOfValue(wSharedByTable, tip)
@@ -317,10 +337,18 @@ export const Split = ({
             const total = userTip + userSubTotal + (selectedOption === "ByPatron" ?
               (tableSubTotal / totalNumberOfUsers) : 0)
 
-            const finalCustomTotal = splitCustomBill();
-
+            const finalCustomTotal = splitCustomBillComplete();
 
             return <Row
+              ctaTitle={texts.pay}
+              onPress={() => console.log({
+                user: user._id,
+                subTotal: userSubTotal,
+                total: finalCustomTotal[user._id] ?? total,
+                tip: userTip,
+                discount: valueOfDiscountPerUser,
+                splitType: selectedOption,
+              })}
               onCheckboxChange={(value) => {
                 setSelectedUsers({ ...selectedUsers, [user._id]: value })
                 // if it's a false value, then we need to uncheck the all users checkbox
@@ -343,7 +371,7 @@ export const Split = ({
               }}
             />
           })}
-          <Transition isVisible={selectedOption === "ByPatron"} >
+          <Transition isVisible={selectedOption !== "Equally"} >
             <HStack alignItems={"center"} space={"4"} pt={4}>
               <Switch size="md" onValueChange={setShareTip} colorScheme={"green"} isChecked={shareTip} />
               <Text fontSize={"lg"}>{"Share tip equally"}</Text>

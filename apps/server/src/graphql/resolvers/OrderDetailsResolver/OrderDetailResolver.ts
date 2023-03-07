@@ -25,16 +25,15 @@ const createOrderDetail = async (_parent: any,
         const tab = await Tab.findOne({ _id: parsedInput.tab });
         const guestUser = await GuestUser.findOne({ _id: parsedInput.user });
         const user = await User.findOne({ _id: parsedInput.user });
-
         const product = await Product.findOne({ _id: parsedInput.product });
 
-        if (!user && !guestUser) throw ApolloError("NotFound");
         if (!product) throw ApolloError("NotFound");
         if (!tab) throw ApolloError("NotFound");
 
         const orderDetail = await OrderDetail.create({
             ...parsedInput,
             subTotal: (product?.price || 0) * parsedInput.quantity,
+            user: user?._id || guestUser?._id,
         })
 
         tab.orders.push(orderDetail._id);

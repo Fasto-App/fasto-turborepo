@@ -33,6 +33,7 @@ interface CheckoutStore {
   setCustomTip: (customTip: number, total?: number) => void;
   setCustomDiscount: (customDiscount: number, total?: number) => void;
   setCustomSubTotal: (key: string, value: string) => void;
+  clearCustomSubTotals: () => void;
 }
 
 // TODO: add getters https://github.com/pmndrs/zustand/discussions/1166
@@ -70,6 +71,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
       }))
     }
   },
+  clearCustomSubTotals: () => set({ customSubTotals: {} }),
   setTip: (tip: number) => set({ tip }),
   setDiscount: (discount: number) => set({ discount }),
   setSelectedTip: (selectedTip: typeof percentages[number]) => {
