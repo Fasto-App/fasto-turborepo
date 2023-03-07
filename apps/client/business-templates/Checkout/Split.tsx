@@ -258,7 +258,13 @@ export const Split = ({
               areAllUsersSelected ||
               allSelectedUsers.length === allUsersFromTab.length}
             isDisabled={selectedOption === "ByPatron"}
-            onCheckboxChange={(value) => setAreAllUsersSelected(value)}
+            onCheckboxChange={(value) => {
+              // se o value for negativo, zerar todos os checkboxes selecionados
+              if (!value) {
+                setSelectedUsers({})
+              }
+              setAreAllUsersSelected(value)
+            }}
           />
           {allUsersFromTab.map((user, index) => {
             const valueOfDiscountPerUser = getPercentageOfValue(split?.[user._id]?.subTotal, discount)
