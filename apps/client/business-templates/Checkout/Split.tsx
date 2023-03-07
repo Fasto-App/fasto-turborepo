@@ -11,13 +11,14 @@ import { Checkout } from './types'
 import { Transition } from '../../components/Transition'
 
 
-const Cell: FC<{ bold?: boolean }> = ({ children, bold }) => {
+const Cell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
   return (
     <Text
       w={100}
       alignSelf={"center"}
       textAlign={"center"}
       fontSize={"lg"}
+      color={isDisabled ? "gray.300" : undefined}
       bold={bold}
     >
       {children}
@@ -102,28 +103,28 @@ const Row = ({
         onChange={onCheckboxChange}
       />
     </Box>
-    <Cell key={"patron"}>
+    <Cell isDisabled={!isUserSelected} key={"patron"}>
       {user}
     </Cell >
     {type === "Custom" ?
       <Input textAlign={"center"} h={"6"} value='$100' w={140} /> :
-      <Cell key={"subtotal"}>{subTotal}</Cell>}
+      <Cell isDisabled={!isUserSelected} key={"subtotal"}>{isUserSelected ? subTotal : parseToCurrency(0)}</Cell>}
     {type === "ByPatron" ?
-      <Cell key={"shared-by-table"}>
-        {sharedByTable}
+      <Cell isDisabled={!isUserSelected} key={"shared-by-table"}>
+        {isUserSelected ? sharedByTable : parseToCurrency(0)}
       </Cell> : null
     }
-    <Cell key={"fees-and-taxes"}>
-      {tax}
+    <Cell isDisabled={!isUserSelected} key={"fees-and-taxes"}>
+      {isUserSelected ? tax : parseToCurrency(0)}
     </Cell>
-    <Cell key={"tip"}>
-      {tip}
+    <Cell isDisabled={!isUserSelected} key={"tip"}>
+      {isUserSelected ? tip : parseToCurrency(0)}
     </Cell>
-    <Cell bold key={"total"}>
-      {total}
+    <Cell isDisabled={!isUserSelected} bold key={"total"}>
+      {isUserSelected ? total : parseToCurrency(0)}
     </Cell>
     <Box flex={1} justifyContent={"center"} alignItems={"center"} >
-      <Button w={"80%"} minW={"100"} fontSize={"2xl"} h={"80%"} colorScheme={"tertiary"}>
+      <Button isDisabled={!isUserSelected} w={"80%"} minW={"100"} fontSize={"2xl"} h={"80%"} colorScheme={"tertiary"}>
         Pay
       </Button>
     </Box>
@@ -162,6 +163,8 @@ export const Split = ({
       }
     }
   })
+
+  const allUsersFromTab = data?.getTabByID?.users ?? []
   // we need more information to calculate the split
   const isSelectedTipCustom = selectedTip === "Custom"
   const isSelectedDiscountCustom = selectedDiscount === "Custom"
@@ -173,7 +176,12 @@ export const Split = ({
   const tipFieldValue = isSelectedTipCustom ? parseToCurrency(customTip) : parseToCurrency(tipAmount)
   const discountFieldValue = isSelectedDiscountCustom ? parseToCurrency(customDiscount) : parseToCurrency(discountAmount)
 
-  const totalAmountSharedEqually = totalAmount / (data?.getTabByID?.users?.length ?? 1)
+  // calculate the split, but we need to check if the user is selected
+  // this should never be less than 1, we should always have at least one user
+  const allSelectedUsers = typedKeys(selectedUsers).filter(key => selectedUsers[key])
+  const totalNumberOfUsers = areAllUsersSelected || selectedOption === "ByPatron" ? allUsersFromTab.length ?? 0 : allSelectedUsers.length
+
+  const totalAmountSharedEqually = totalAmount / totalNumberOfUsers
 
   const total = useMemo(() => {
     return parseToCurrency(totalAmount)
@@ -245,31 +253,33 @@ export const Split = ({
         <Box flex={1} >
           <Header
             type={selectedOption}
-            areAllUsersSelected={selectedOption === "ByPatron" || areAllUsersSelected}
+            // if all users are selected, them this checkbox is enabled
+            areAllUsersSelected={selectedOption === "ByPatron" ||
+              areAllUsersSelected ||
+              allSelectedUsers.length === allUsersFromTab.length}
             isDisabled={selectedOption === "ByPatron"}
             onCheckboxChange={(value) => setAreAllUsersSelected(value)}
           />
-          {data?.getTabByID?.users?.map((user, index) => {
-            // if the division is equally shared by the table
-            // then the user's subtotal is the total divided by the number of users
-            // get the subTotal
+          {allUsersFromTab.map((user, index) => {
+            const valueOfDiscountPerUser = getPercentageOfValue(split?.[user._id]?.subTotal, discount)
+            const valueOfDiscount = getPercentageOfValue(split?.table.subTotal, discount)
+            const tableSubTotal = (split?.table.subTotal ?? 0) - valueOfDiscount
+            const totalPersonalAmount = (split?.[user._id]?.subTotal ?? 0) - valueOfDiscountPerUser
 
             const userSubTotal = selectedOption === "Equally" ?
-              totalAmountSharedEqually :
-              split?.[user._id]?.subTotal ?? 0
+              totalAmountSharedEqually : totalPersonalAmount
 
-            const tableSubTotal = split?.table.subTotal ?? 0
-            const wSharedByTable = tableSubTotal / (data?.getTabByID?.users?.length ?? 1) + userSubTotal
-            const numUsers = data?.getTabByID?.users?.length ?? 1
+            const wSharedByTable = tableSubTotal / totalNumberOfUsers + userSubTotal
 
-            const tipEqually = tipAmount / numUsers
+            const tipEqually = tipAmount / totalNumberOfUsers
             const userTip = selectedOption !== "ByPatron" ?
               tipEqually :
               !shareTip ?
                 getPercentageOfValue(wSharedByTable, tip)
                 : tipEqually
 
-            const total = userTip + userSubTotal + (selectedOption === "ByPatron" ? (tableSubTotal / numUsers) : 0)
+            const total = userTip + userSubTotal + (selectedOption === "ByPatron" ?
+              (tableSubTotal / totalNumberOfUsers) : 0)
 
             return <Row
               onCheckboxChange={(value) => {
