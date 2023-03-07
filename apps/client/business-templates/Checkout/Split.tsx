@@ -176,7 +176,7 @@ export const Split = ({
   const allSelectedUsers = typedKeys(selectedUsers).filter(key => selectedUsers[key])
   const totalNumberOfUsers = areAllUsersSelected ? allUsersFromTab.length ?? 0 : allSelectedUsers.length
 
-  const totalAmountSharedEqually = totalAmount / totalNumberOfUsers
+  const subTotalAmountSharedEqually = (subTotal ?? 0) / totalNumberOfUsers
 
   const total = useMemo(() => {
     return parseToCurrency(totalAmount)
@@ -270,7 +270,7 @@ export const Split = ({
             const totalPersonalAmount = (split?.[user._id]?.subTotal ?? 0) - valueOfDiscountPerUser
 
             const userSubTotal = selectedOption === "Equally" ?
-              totalAmountSharedEqually : totalPersonalAmount
+              subTotalAmountSharedEqually : totalPersonalAmount
 
             const wSharedByTable = tableSubTotal / totalNumberOfUsers + userSubTotal
 
