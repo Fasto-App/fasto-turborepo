@@ -12,10 +12,12 @@ query GetCheckoutByID($input: GetById!) {
 		tab
 		status
 		payments {
+			amount
 			_id
 			splitType
 			patron
 			tip
+			discount
 		}
 	}
 }

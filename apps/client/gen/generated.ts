@@ -578,9 +578,10 @@ export type Payment = {
   __typename?: 'Payment';
   _id: Scalars['ID'];
   amount: Scalars['Float'];
-  patron?: Maybe<Scalars['ID']>;
+  discount: Scalars['Float'];
+  patron: Scalars['ID'];
   splitType?: Maybe<SplitType>;
-  tip?: Maybe<Scalars['Float']>;
+  tip: Scalars['Float'];
 };
 
 export type Product = {
@@ -927,14 +928,14 @@ export type MakeCheckoutPaymentMutationVariables = Exact<{
 }>;
 
 
-export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, paid: boolean, totalPaid: number, total: number, tip: number, tax: number, tab: string, subTotal: number, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron?: string | null, splitType?: SplitType | null, tip?: number | null } | null> } };
+export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, paid: boolean, totalPaid: number, total: number, tip: number, tax: number, tab: string, subTotal: number, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron: string, splitType?: SplitType | null, tip: number } | null> } };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
 }>;
 
 
-export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip: number, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, splitType?: SplitType | null, patron?: string | null, tip?: number | null } | null> } };
+export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip: number, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount: number } | null> } };
 
 export type CreateMenuMutationVariables = Exact<{
   input: CreateMenuInput;
@@ -1643,10 +1644,12 @@ export const GetCheckoutByIdDocument = gql`
     tab
     status
     payments {
+      amount
       _id
       splitType
       patron
       tip
+      discount
     }
   }
 }

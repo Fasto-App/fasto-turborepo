@@ -42,7 +42,7 @@ import {
   TableResolver
 } from './TableResolver';
 import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
-import { CheckoutResolverMutation, CheckoutResolverQuery } from './CheckoutResolver';
+import { CheckoutResolverMutation, CheckoutResolverQuery, CheckoutResolver } from './CheckoutResolver';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -76,6 +76,9 @@ export const resolvers = {
     categories: BusinessResolver.getCategoriesByBusiness,
     products: BusinessResolver.getProductsByBusiness,
   },
+  Checkout: {
+    payments: CheckoutResolver.payments,
+  },
   Product: {
     category: ProductResolver.getCategoryByProduct,
   },
@@ -85,9 +88,13 @@ export const resolvers = {
   Space: {
     tables: TableResolver.getTablesFromSpace,
   },
+  // todo
+  // this is bad, a resolver for a resolver?
   Table: {
     tab: TableResolver.getOpenTabByTable,
   },
+  // todo
+  // This can be a problem, if we have a lot of tabs, we will have to make a lot of queries
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,
     table: TabResolver.getTableByTabID,

@@ -1,158 +1,35 @@
 import { formatAsPercentage, getPercentageOfValue, SplitType, splitTypes, typedKeys } from 'app-helpers'
-import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Button, Checkbox, Switch, Hidden } from 'native-base'
+import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Switch } from 'native-base'
 import { useRouter } from 'next/router'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { FDSSelect } from '../../components/FDSSelect'
-import { useGetTabCheckoutByIdQuery } from '../../gen/generated'
+import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation, SplitType as SplitTypeGen } from '../../gen/generated'
 import { parseToCurrency } from 'app-helpers'
 import { percentages, useCheckoutStore } from './checkoutStore'
 import { texts } from './texts'
 import { Checkout } from './types'
 import { Transition } from '../../components/Transition'
+import { Header, Row } from './TableComponents'
 
-
-const Cell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
-  return (
-    <Text
-      w={100}
-      alignSelf={"center"}
-      textAlign={"center"}
-      fontSize={"lg"}
-      color={isDisabled ? "gray.300" : undefined}
-      bold={bold}
-    >
-      {children}
-    </Text>
-  )
-}
-
-type HeaderProps = {
-  type: SplitType,
-  areAllUsersSelected: boolean,
-  onCheckboxChange: (value: boolean) => void;
-}
-
-const Header = ({ type, areAllUsersSelected, onCheckboxChange }: HeaderProps) => {
-  return (
-    <HStack py={2}>
-      <Box justifyContent={"center"}>
-        <Checkbox
-          isChecked={areAllUsersSelected}
-          colorScheme="green"
-          value='user'
-          onChange={onCheckboxChange}
-        />
-      </Box>
-      <Cell bold>
-        {texts.patron}
-      </Cell>
-      <Cell bold>
-        {texts.subtotal}
-      </Cell>
-      {type === "ByPatron" ? <Cell bold>
-        {texts.sharedByTable}
-      </Cell> : null}
-      <Cell bold>
-        {texts.feesAndTax}
-      </Cell>
-      <Cell bold>
-        {texts.tip}
-      </Cell>
-      <Cell bold>
-        {texts.total}
-      </Cell>
-      <Box flex={1} />
-    </HStack>
-  )
-}
-
-type RowProps = {
-  subTotal: string;
-  total: string;
-  tax: string;
-  tip: string;
-  sharedByTable: string;
-  type: SplitType;
-  user: string;
-  isUserSelected: boolean;
-  onCheckboxChange: (value: boolean) => void;
-  customSubTotal: string;
-  onCustominputChange: (value: string) => void;
-  ctaTitle: string;
-  onPress: () => void;
-}
-
-const Row = ({
-  type,
-  subTotal,
-  total,
-  tip,
-  sharedByTable,
-  tax,
-  user,
-  isUserSelected,
-  customSubTotal,
-  ctaTitle,
-  onPress,
-  onCheckboxChange,
-  onCustominputChange
-}: RowProps) => {
-  return (<HStack>
-    <Box justifyContent={"center"}>
-      <Checkbox
-        isChecked={isUserSelected}
-        colorScheme="green"
-        value='user'
-        onChange={onCheckboxChange}
-      />
-    </Box>
-    <Cell isDisabled={!isUserSelected} key={"patron"}>
-      {user}
-    </Cell >
-    {type === "Custom" ?
-      <Input
-        w={140}
-        h={"6"}
-        textAlign={"center"}
-        onChangeText={onCustominputChange}
-        value={isUserSelected ? customSubTotal : parseToCurrency(0)}
-      /> :
-      <Cell isDisabled={!isUserSelected} key={"subtotal"}>{isUserSelected ? subTotal : parseToCurrency(0)}</Cell>}
-    {type === "ByPatron" ?
-      <Cell isDisabled={!isUserSelected} key={"shared-by-table"}>
-        {isUserSelected ? sharedByTable : parseToCurrency(0)}
-      </Cell> : null
-    }
-    <Cell isDisabled={!isUserSelected} key={"fees-and-taxes"}>
-      {isUserSelected ? tax : parseToCurrency(0)}
-    </Cell>
-    <Cell isDisabled={!isUserSelected} key={"tip"}>
-      {isUserSelected ? tip : parseToCurrency(0)}
-    </Cell>
-    <Cell isDisabled={!isUserSelected} bold key={"total"}>
-      {isUserSelected ? total : parseToCurrency(0)}
-    </Cell>
-    <Box flex={1} justifyContent={"center"} alignItems={"center"} >
-      <Button
-        isDisabled={!isUserSelected}
-        w={"80%"}
-        minW={"100"}
-        maxW={"400"}
-        fontSize={"2xl"}
-        h={"80%"}
-        colorScheme={"tertiary"}
-        onPress={onPress}
-      >
-        {ctaTitle}
-      </Button>
-    </Box>
-  </HStack >)
+type SplitProps = {
+  subTotal?: number
+  tax?: number
+  payments: ({
+    __typename?: "Payment" | undefined;
+    amount: number;
+    _id: string;
+    splitType?: SplitType | null | undefined;
+    patron: string;
+    tip: number;
+    discount: number;
+  } | null)[]
 }
 
 export const Split = ({
   subTotal,
   tax,
-}: Checkout) => {
+  payments
+}: SplitProps) => {
   const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount, customSubTotals, setCustomSubTotal, clearCustomSubTotals } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
@@ -169,12 +46,12 @@ export const Split = ({
     clearCustomSubTotals: state.clearCustomSubTotals,
   }))
 
-  const [selectedOption, setSelectedOption] = useState<SplitType>("Custom");
+  const [selectedOption, setSelectedOption] = useState<SplitType>("ByPatron");
   const [areAllUsersSelected, setAreAllUsersSelected] = useState<boolean>(true);
   const [selectedUsers, setSelectedUsers] = useState<{ [key: string]: boolean }>({});
 
   const route = useRouter()
-  const { tabId } = route.query
+  const { tabId, checkoutId } = route.query
 
   const { data } = useGetTabCheckoutByIdQuery({
     skip: !tabId,
@@ -184,6 +61,36 @@ export const Split = ({
       }
     }
   })
+
+  // we will get information from the payments through the checkout
+  // we need to get the users from the payments
+
+  // make an object with the users and the payments for fast lookup
+  const paymentsByUser = payments.reduce((acc, payment) => {
+    const { patron, amount, splitType, tip, discount } = payment || {}
+
+    acc.totalPaid = (acc.totalPaid ?? 0) + (amount ?? 0)
+
+    if (!patron) {
+      return acc
+    }
+
+    return {
+      ...acc,
+      [patron]: {
+        amount: (acc?.[patron]?.amount ?? 0) + (amount ?? 0),
+        splitType,
+        tip: (acc?.[patron]?.tip ?? 0) + (tip ?? 0),
+        discount: (acc?.[patron]?.discount ?? 0) + (discount ?? 0),
+      }
+    }
+  }, {} as { [key: string]: { amount: number, splitType?: SplitType | null, tip: number, discount: number } } & {
+    totalPaid: number
+  })
+
+
+  console.log({ paymentsByUser })
+
 
   const allUsersFromTab = useMemo(() => data?.getTabByID?.users ?? [], [data?.getTabByID?.users])
   // we need more information to calculate the split
@@ -233,6 +140,17 @@ export const Split = ({
       })
     }, {} as { [key: string]: { subTotal: number }, table: { subTotal: number } })
   }, [areAllUsersSelected, data?.getTabByID?.orders, selectedUsers])
+
+  const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
+    refetchQueries: [{
+      query: GetCheckoutByIdDocument,
+      variables: {
+        input: {
+          _id: checkoutId as string
+        }
+      }
+    }],
+  })
 
   const [shareTip, setShareTip] = useState(true)
 
@@ -341,15 +259,30 @@ export const Split = ({
             const finalCustomTotal = splitCustomBillComplete();
 
             return <Row
-              ctaTitle={texts.pay}
-              onPress={() => console.log({
-                user: user._id,
-                subTotal: userSubTotal,
-                total: finalCustomTotal[user._id] ?? total,
-                tip: userTip,
-                discount: valueOfDiscountPerUser,
-                splitType: selectedOption,
-              })}
+              isLoading={loading}
+              onPress={async () => {
+                await makeCheckoutPayment({
+                  variables: {
+                    input: {
+                      checkout: checkoutId as string,
+                      amount: finalCustomTotal[user._id] ?? total,
+                      tip: userTip,
+                      discount: valueOfDiscountPerUser,
+                      splitType: SplitTypeGen[selectedOption],
+                      patron: user._id
+                    }
+                  }
+                })
+
+                console.log({
+                  user: user._id,
+                  subTotal: userSubTotal,
+                  total: finalCustomTotal[user._id] ?? total,
+                  tip: userTip,
+                  discount: valueOfDiscountPerUser,
+                  splitType: selectedOption,
+                })
+              }}
               onCheckboxChange={(value) => {
                 setSelectedUsers({ ...selectedUsers, [user._id]: value })
                 // if it's a false value, then we need to uncheck the all users checkbox
@@ -357,6 +290,7 @@ export const Split = ({
                   setAreAllUsersSelected(false)
                 }
               }}
+              hasUserPaid={!!paymentsByUser[user._id]}
               isUserSelected={areAllUsersSelected || !!selectedUsers[user._id]} // if all is selected or if the object state has the user id set to true
               key={user._id}
               user={`Person ${(index + 1).toString()}`}
@@ -432,6 +366,10 @@ export const Split = ({
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"xl"} bold>{texts.total}</Text>
             <Text fontSize={"xl"} bold>{total}</Text>
+          </HStack>
+          <HStack justifyContent={"space-between"} px={8}>
+            <Text fontSize={"xl"} bold>{texts.remaning}</Text>
+            <Text fontSize={"xl"} bold>{parseToCurrency(paymentsByUser.totalPaid)}</Text>
           </HStack>
         </VStack>
       </Box>

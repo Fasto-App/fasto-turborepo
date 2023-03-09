@@ -2,6 +2,7 @@ export const texts = {
   checkout: "Checkout",
   feesAndTax: "Taxes",
   pay: "Pay",
+  paid: "Paid",
   subtotal: "Subtotal",
   discount: "Discount",
   tip: "Tip",
@@ -16,4 +17,5 @@ export const texts = {
   leftText: "Thank you for your order!\n You're almost there. Please review your items below and proceed to checkout when you're ready.",
   table: (table: string) => `Table ${table}`,
   viewSummary: "View Summary",
+  remaning: "Remaning",
 }

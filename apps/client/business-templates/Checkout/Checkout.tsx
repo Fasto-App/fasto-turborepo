@@ -26,6 +26,7 @@ export const Checkout = () => {
   const route = useRouter()
   const { checkoutId } = route.query
 
+  // todo: get the table number from either the Checkout or the Tab
   const { data } = useGetCheckoutByIdQuery({
     skip: !checkoutId,
     variables: {
@@ -72,13 +73,13 @@ export const Checkout = () => {
         <VStack flex={1} p={2} space={4}>
           <UpperSection>
             <Heading>
-              {texts.table("3")}
+              {texts.table(checkoutId as string)}
             </Heading>
             <HStack space={"4"}>
               {typedKeys(checkoutOptions).filter((option) => option !== "success").map((option) => (
                 <TileButton
                   key={option}
-                  onPress={() => setSelectedOption(option)}
+                  onPress={() => selectedOption !== "success" && setSelectedOption(option)}
                   selected={selectedOption === option}
                 >
                   {checkoutOptions[option]}
@@ -87,7 +88,7 @@ export const Checkout = () => {
             </HStack>
           </UpperSection>
           <BottomSection>
-            {selectedOption === "payFull" ?
+            {selectedOption === "payFull" ? (
               <PayInFull
                 totalPaid={totalPaid}
                 status={status}
@@ -96,27 +97,25 @@ export const Checkout = () => {
                 subTotal={subTotal}
                 tip={tip}
                 total={total}
-              /> : selectedOption === "splitBill" ? <Split
-                totalPaid={totalPaid}
-                status={status}
-                paid={paid}
-                tax={tax}
-                subTotal={subTotal}
-                tip={tip}
-                total={total}
-              /> : selectedOption === "success" ?
-                <Center h={"full"}>
-                  <Box size={"32"} mb={12}>
-                    <SuccessAnimation />
-                  </Box>
-                  <Text fontSize={"2xl"}>
-                    {texts.sessionEnded}
-                    <Link fontSize={"2xl"} href={businessRoute.tables}>
-                      {texts.backToManageTables}
-                    </Link>
-                  </Text>
-                </Center>
-                : null}
+              />) : selectedOption === "splitBill" ? (
+                <Split
+                  tax={tax}
+                  subTotal={subTotal}
+                  payments={data?.getCheckoutByID?.payments || []}
+                />
+              ) : selectedOption === "success" ?
+              <Center h={"full"}>
+                <Box size={"32"} mb={12}>
+                  <SuccessAnimation />
+                </Box>
+                <Text fontSize={"2xl"}>
+                  {texts.sessionEnded}
+                  <Link fontSize={"2xl"} href={businessRoute.tables}>
+                    {texts.backToManageTables}
+                  </Link>
+                </Text>
+              </Center>
+              : null}
           </BottomSection>
         </VStack>
       </Box>

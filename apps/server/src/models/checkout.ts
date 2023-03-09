@@ -27,10 +27,10 @@ export class Checkout {
   @prop({ default: 0 })
   public subTotal!: number;
 
-  @prop({ default: 0 })
+  @prop()
   public tip?: number;
 
-  @prop({ default: 0 })
+  @prop()
   public discount?: number;
 
   @prop({ default: 0 })

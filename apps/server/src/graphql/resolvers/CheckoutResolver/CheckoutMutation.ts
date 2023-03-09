@@ -21,7 +21,6 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
   const foundCheckout = await Checkout.findById(checkout);
 
   if (!foundCheckout) throw ApolloError('BadRequest')
-  console.log("foundCheckout make payment", foundCheckout)
 
   if (foundCheckout?.discount == undefined) {
     foundCheckout.discount = discount
@@ -73,27 +72,21 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
           patron: typeof foundPatron === "string" ? foundPatron : foundPatron?._id,
         })
 
-        const upadatedCheckout = await foundCheckout.update({
-          totalPaid: foundCheckout?.totalPaid + amount,
-          status: "PartiallyPaid",
-          splitType,
-          payments: [...(foundCheckout?.payments ?? []), payment._id],
-        }, { new: true })
+        foundCheckout.totalPaid = foundCheckout?.totalPaid + amount
+        foundCheckout.status = "PartiallyPaid"
+        foundCheckout.splitType = splitType
+        foundCheckout.payments = [...(foundCheckout?.payments ?? []), payment._id]
 
-        if (upadatedCheckout?.totalPaid >= foundCheckout?.total) {
-          upadatedCheckout.status = "Paid"
-          upadatedCheckout.paid = true
+        if (foundCheckout?.totalPaid >= foundCheckout?.total) {
+          foundCheckout.status = "Paid"
+          foundCheckout.paid = true
 
           await updateTabAndTable()
         }
 
-        const updatedCheckout = await upadatedCheckout?.save();
-        const payments = await Payment.find({ _id: { $in: updatedCheckout?.payments } })
+        await foundCheckout?.save();
 
-        return ({
-          ...updatedCheckout,
-          payments,
-        })
+        return foundCheckout
       }
       // the payment is not a split of the check
       // so it will only be valid if the amount is equal to the total
@@ -103,24 +96,28 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
 
       const foundPatron = await verifiePatron(patron);
 
+      console.log("before creating Payment")
+
       const payment = await Payment.create({
         amount,
-        paymentMethod,
         tip,
+        discount,
         patron: typeof foundPatron === "string" ? foundPatron : foundPatron?._id,
+        paymentMethod,
       })
 
-      foundCheckout?.payments?.push(payment._id);
-      foundCheckout.update({
+      const savedCheckout = await foundCheckout.update({
         totalPaid: foundCheckout?.totalPaid + amount,
         totalTip: foundCheckout?.tip ?? 0 + (tip ?? 0),
         status: "Paid",
         paid: true,
-      })
+        payments: [...(foundCheckout?.payments ?? []), payment._id],
+      }, { new: true })
 
       await updateTabAndTable()
 
-      return await foundCheckout?.save();
+      return savedCheckout
+
 
     case "Paid":
     case "Cancelled":
