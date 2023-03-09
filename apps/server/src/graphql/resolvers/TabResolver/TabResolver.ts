@@ -2,10 +2,9 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { TabModel } from "../../../models/tab";
 import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
-import { GuestUserModel } from "../../../models/guestUser";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
-import { OrderStatus, TableStatus, TabStatus } from "app-helpers";
+import { getPercentageOfValue, TableStatus, TabStatus } from "app-helpers";
 import { BusinessModel, OrderDetailModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 
@@ -13,7 +12,6 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
     const Tab = TabModel(db);
     const Table = TableModel(db);
     const User = UserModel(db);
-    const GuestUser = GuestUserModel(db);
 
     if (!input.totalUsers) throw Error('Specify total users for this tab.')
     if (!business) throw Error('Business not found!')
@@ -22,14 +20,21 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
 
     if (!table) throw Error('Table not found!')
 
-    if (input.admin) {
+    const allUsers = await User.insertMany(new Array(input.totalUsers).fill({ isGuest: true }))
+
+    // if admin is specified, create a tab with admin
+    const SAVED_CLIENT_FEATURE_FLAG = false;
+
+    if (input.admin && SAVED_CLIENT_FEATURE_FLAG) {
         try {
             const user = await User.findOne({ _id: input.admin });
 
             const tab = await Tab.create({
                 table: table._id,
                 admin: user?._id,
-                users: input.totalUsers,
+                // todo: can we add exsisting users this way?
+                // perhaps we need to add a new field to existing user emails or ids
+                users: allUsers.map(user => user._id),
             });
 
             await table.updateOne({ status: TableStatus.Occupied });
@@ -41,7 +46,8 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
         }
     }
 
-    const allUsers = await GuestUser.insertMany(new Array(input.totalUsers).fill({}))
+    // insert many guest users
+    // guest flag set to true
 
     try {
         const tab = await Tab.create({
@@ -174,10 +180,9 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
         tab: foundTab._id,
         business: foundBusiness?._id,
         orders: foundOrderDetails.map(orderDetail => orderDetail._id),
-        total: subTotal + (subTotal * (foundBusiness?.taxRate ?? 0)),
-        tax: foundBusiness?.taxRate ?? 0,
-        tip: 0,
         subTotal,
+        total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
+        tax: foundBusiness?.taxRate ?? 0,
     })
 
     foundTab.checkout = checkout._id;

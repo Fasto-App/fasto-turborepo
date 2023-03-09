@@ -266,11 +266,13 @@ export type LoginInput = {
 };
 
 export type MakeCheckoutPaymentInput = {
-  _id: Scalars['ID'];
   amount: Scalars['Float'];
-  patron?: InputMaybe<Scalars['ID']>;
+  checkout: Scalars['ID'];
+  discount: Scalars['Float'];
+  patron: Scalars['ID'];
+  paymentMethod?: InputMaybe<Scalars['String']>;
   splitType?: InputMaybe<SplitType>;
-  tip?: InputMaybe<Scalars['Float']>;
+  tip: Scalars['Float'];
 };
 
 export type ManageBusinessEmployeesInput = {
@@ -925,7 +927,7 @@ export type MakeCheckoutPaymentMutationVariables = Exact<{
 }>;
 
 
-export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, totalPaid: number, total: number, tip: number, tax: number, status: CheckoutStatusKeys, paid: boolean } };
+export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, paid: boolean, totalPaid: number, total: number, tip: number, tax: number, tab: string, subTotal: number, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron?: string | null, splitType?: SplitType | null, tip?: number | null } | null> } };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -1582,12 +1584,21 @@ export const MakeCheckoutPaymentDocument = gql`
     mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
   makeCheckoutPayment(input: $input) {
     _id
+    paid
     totalPaid
     total
     tip
     tax
+    tab
+    subTotal
     status
-    paid
+    payments {
+      _id
+      amount
+      patron
+      splitType
+      tip
+    }
   }
 }
     `;

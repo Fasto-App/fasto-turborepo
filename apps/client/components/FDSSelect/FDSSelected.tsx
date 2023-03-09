@@ -3,7 +3,7 @@ import { Select, CheckIcon } from "native-base"
 import { Percentages } from "../../business-templates/Checkout/checkoutStore"
 
 type FDSSelecteProps = {
-  selectedValue: string
+  selectedValue?: string
   setSelectedValue: (value: Percentages) => void
   array: string[]
 }

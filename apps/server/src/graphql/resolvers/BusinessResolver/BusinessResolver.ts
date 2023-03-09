@@ -365,8 +365,8 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
     await foundBusiness.save()
 
     sendExistingUserEployeeEmail({
-      email: foundAsUser.email,
-      name: foundAsUser.name,
+      email: foundAsUser.email || "",
+      name: foundAsUser.name || "",
       businessName: foundBusiness.name,
     })
 

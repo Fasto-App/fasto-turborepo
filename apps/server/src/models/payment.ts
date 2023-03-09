@@ -1,16 +1,19 @@
 import { Connection, Types } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import type { CheckoutStatusKeys, SplitType } from 'app-helpers';
+import type { SplitType } from 'app-helpers';
 
 export class Payment {
   @prop({ required: true })
   public amount!: number;
 
-  @prop({ required: true })
+  @prop()
   public tip!: number;
 
-  @prop()
-  public patron?: Types.ObjectId;
+  @prop({ default: 0 })
+  public discount?: number;
+
+  @prop({ required: true })
+  public patron!: Types.ObjectId;
 
   @prop()
   public paymentMethod?: string;

@@ -10,4 +10,10 @@ export const texts = {
   sharedByTable: "W/ Shared",
   AllByTable: "Table only",
   splitBy: "Split by",
+  paymentBy: "Payment by",
+  sessionEnded: "Session ended successfully. ",
+  backToManageTables: "Back to manage Tables",
+  leftText: "Thank you for your order!\n You're almost there. Please review your items below and proceed to checkout when you're ready.",
+  table: (table: string) => `Table ${table}`,
+  viewSummary: "View Summary",
 }

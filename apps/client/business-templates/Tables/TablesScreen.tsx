@@ -141,17 +141,22 @@ export const TablesScreen = () => {
             <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
               <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
               {allTablesFilteredBySpace.map((table, index) =>
-                <SquareTable key={table?._id} index={index} status={table?.status} onPress={() => {
-                  // @ts-ignore
-                  setTableChoosen({
-                    _id: table?._id,
-                    status: table?.status,
-                    tableNumber: table?.tableNumber,
-                    tab: table?.tab?._id,
-                    orders: table?.tab?.orders ?? [],
-                    users: table?.tab?.users ?? []
-                  })
-                }} />)}
+                <SquareTable
+                  key={table?._id}
+                  index={index}
+                  status={table?.status}
+                  tableNumber={table?.tableNumber}
+                  onPress={() => {
+                    // @ts-ignore
+                    setTableChoosen({
+                      _id: table?._id,
+                      status: table?.status,
+                      tableNumber: table?.tableNumber,
+                      tab: table?.tab?._id,
+                      orders: table?.tab?.orders ?? [],
+                      users: table?.tab?.users ?? []
+                    })
+                  }} />)}
             </HStack>
           </Box>
 

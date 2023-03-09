@@ -25,6 +25,7 @@
 		"date-fns": "^2.29.3",
 		"graphql": "^16.6.0",
 		"jose": "^4.8.3",
+		"lottie-react": "^2.4.0",
 		"native-base": "^3.4.6",
 		"next": "^12.3.1",
 		"next-compose-plugins": "^2.2.1",

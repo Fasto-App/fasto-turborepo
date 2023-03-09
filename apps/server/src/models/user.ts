@@ -3,14 +3,14 @@ import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { Businesses } from 'app-helpers';
 
 export class User {
-    @prop({ unique: false, required: true })
-    public name!: string;
+    @prop({ unique: false })
+    public name?: string;
 
-    @prop({ required: true, unique: true })
-    public email!: string;
+    @prop({ unique: true })
+    public email?: string;
 
-    @prop({ required: true })
-    public password!: string;
+    @prop({ required: false })
+    public password?: string;
 
     @prop()
     public businesses?: Businesses;
@@ -23,6 +23,9 @@ export class User {
 
     @prop()
     public picture?: string;
+
+    @prop({ default: false })
+    public isGuest!: boolean;
 
     @prop({ default: Date.now() })
     public createdAt!: Date

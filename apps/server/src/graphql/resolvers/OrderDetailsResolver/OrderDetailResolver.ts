@@ -3,7 +3,6 @@ import {
     OrderDetailModel,
     ProductModel,
     TabModel,
-    GuestUserModel,
     UserModel
 } from '../../../models';
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
@@ -17,14 +16,12 @@ const createOrderDetail = async (_parent: any,
     const Product = ProductModel(db);
     const Tab = TabModel(db);
     const User = UserModel(db);
-    const GuestUser = GuestUserModel(db);
 
     try {
         const parsedInput = CreateOrderDetail.parse(input);
 
-        const tab = await Tab.findOne({ _id: parsedInput.tab });
-        const guestUser = await GuestUser.findOne({ _id: parsedInput.user });
         const user = await User.findOne({ _id: parsedInput.user });
+        const tab = await Tab.findOne({ _id: parsedInput.tab });
         const product = await Product.findOne({ _id: parsedInput.product });
 
         if (!product) throw ApolloError("NotFound");
@@ -33,7 +30,7 @@ const createOrderDetail = async (_parent: any,
         const orderDetail = await OrderDetail.create({
             ...parsedInput,
             subTotal: (product?.price || 0) * parsedInput.quantity,
-            user: user?._id || guestUser?._id,
+            user: user?._id,
         })
 
         tab.orders.push(orderDetail._id);
@@ -53,7 +50,6 @@ const createMultipleOrderDetails = async (_parent: any,
     const Product = ProductModel(db);
     const Tab = TabModel(db);
     const User = UserModel(db);
-    const GuestUser = GuestUserModel(db);
 
     try {
 
@@ -64,7 +60,6 @@ const createMultipleOrderDetails = async (_parent: any,
         const orderDetails = await Promise.all(parsedInputArray.map(async (parsedInput) => {
             const tab = await Tab.findOne({ _id: parsedInput.tab });
             const user = await User.findOne({ _id: parsedInput.user });
-            const guestUser = await GuestUser.findOne({ _id: parsedInput.user });
             const product = await Product.findOne({ _id: parsedInput.product });
 
             if (!product) throw ApolloError("NotFound");
@@ -74,7 +69,8 @@ const createMultipleOrderDetails = async (_parent: any,
             const orderDetails = await OrderDetail.create({
                 ...parsedInput,
                 subTotal: (product?.price || 0) * parsedInput.quantity,
-                user: user?._id || guestUser?._id,
+                // null users means it's for the table
+                user: user?._id,
                 tab: tab._id,
             });
 

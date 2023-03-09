@@ -26,11 +26,13 @@ export const CheckoutTypeDefinition = gql`
   }
 
   input MakeCheckoutPaymentInput {
-    _id: ID!
+    checkout: ID!
     amount: Float!
-    tip: Float
-    patron: ID
+    tip: Float!
+    patron: ID!
+    discount: Float!
     splitType: SplitType
+    paymentMethod: String
   }
 
   enum CheckoutStatusKeys {

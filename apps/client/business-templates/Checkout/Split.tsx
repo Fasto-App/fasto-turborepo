@@ -137,6 +137,7 @@ const Row = ({
         isDisabled={!isUserSelected}
         w={"80%"}
         minW={"100"}
+        maxW={"400"}
         fontSize={"2xl"}
         h={"80%"}
         colorScheme={"tertiary"}

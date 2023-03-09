@@ -1,17 +1,38 @@
 import { formatAsPercentage, getPercentageOfValue } from 'app-helpers'
 import { Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { FDSSelect } from '../../components/FDSSelect'
 import { parseToCurrency } from 'app-helpers'
 import { Percentages, percentages, useCheckoutStore } from './checkoutStore'
 import { texts } from './texts'
 import { Checkout } from './types'
+import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
+import { useRouter } from 'next/router'
 
 export const PayInFull = ({
   subTotal,
   tax,
-  totalPaid
 }: Checkout) => {
+
+  const route = useRouter()
+  const { tabId, checkoutId } = route.query
+
+  const [selectedUser, setSelectedUser] = React.useState<string>()
+
+  const { data } = useGetTabCheckoutByIdQuery({
+    skip: !tabId,
+    variables: {
+      input: {
+        _id: tabId as string
+      }
+    },
+    onCompleted(data) {
+      setSelectedUser(data?.getTabByID?.users?.[0]._id)
+    },
+  })
+
+  const allUsersFromTab = useMemo(() => data?.getTabByID?.users?.map(user => user._id) ?? [], [data?.getTabByID?.users])
+
 
   const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
     tip: state.tip,
@@ -40,7 +61,8 @@ export const PayInFull = ({
   const total = useMemo(() => {
     const discountAmount = getPercentageOfValue(subTotal, discount)
     const tipAmount = getPercentageOfValue(subTotal, tip)
-    return parseToCurrency((subTotal ?? 0) - discountAmount + tipAmount)
+
+    return (subTotal ?? 0) - discountAmount + tipAmount
   }, [subTotal, tip, discount])
 
   const handleDiscountChange = (value: string) => {
@@ -59,6 +81,33 @@ export const PayInFull = ({
     }
   }
 
+  const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
+    refetchQueries: [{
+      query: GetCheckoutByIdDocument,
+      variables: {
+        input: {
+          _id: checkoutId as string
+        }
+      }
+    }],
+  })
+
+  const handlePay = useCallback(async () => {
+    if (!selectedUser) return
+    await makeCheckoutPayment({
+      variables: {
+        input: {
+          patron: selectedUser,
+          checkout: checkoutId as string,
+          amount: total,
+          tip,
+          discount,
+          paymentMethod: "Cash",
+        }
+      }
+    })
+  }, [checkoutId, discount, makeCheckoutPayment, selectedUser, tip, total])
+
   return (
     <Center>
       <Heading size={"2xl"} p={4}>
@@ -72,7 +121,8 @@ export const PayInFull = ({
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.feesAndTax}</Text>
-          <Text fontSize={"2xl"}>{parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)}</Text>
+          <Text fontSize={"2xl"}>{parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)}
+          </Text>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.discount}</Text>
@@ -110,17 +160,26 @@ export const PayInFull = ({
             />
           </HStack>
         </HStack>
+        <HStack justifyContent={"space-between"} px={12}>
+          <Text fontSize={"2xl"}>{texts.paymentBy}</Text>
+          <FDSSelect
+            array={allUsersFromTab}
+            selectedValue={selectedUser}
+            setSelectedValue={(string) => setSelectedTip(string as Percentages)}
+          />
+        </HStack>
         <Divider marginY={6} />
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"3xl"} bold>{texts.total}</Text>
-          <Text fontSize={"3xl"} bold>{total}</Text>
+          <Text fontSize={"3xl"} bold>{parseToCurrency(total)}</Text>
         </HStack>
         <Button
+          isLoading={loading}
           w={"full"}
-          onPress={() => console.log("View Summary")}
           mb={4}
           mt={6}
           colorScheme={"tertiary"}
+          onPress={handlePay}
         >
           {texts.pay}
         </Button>

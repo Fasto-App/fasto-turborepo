@@ -1,5 +1,5 @@
 
-import { paymentSchema, PaymentType } from "app-helpers";
+import { FIXED_POINT_FACTOR_PERCENTAGE, getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
 import { TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
@@ -8,49 +8,49 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 
 export const makeCheckoutPayment = async (parent: any, args: { input: PaymentType }, { db }: Context, info: any) => {
-  // at some point, we need to add a check to make sure that the payment is not being made by a patron that is not part of the checkout
 
-  // when the payment is made, we need to close the tab and free the Table
+  console.log("makeCheckoutPayment", args.input)
 
 
-  const { amount, patron, paymentMethod, tip, _id, splitType } = paymentSchema.parse(args.input);
+  const { amount, patron, paymentMethod, tip, checkout, splitType, discount } = paymentSchema.parse(args.input);
   const Checkout = CheckoutModel(db);
   const Payment = PaymentModel(db);
   const User = UserModel(db);
-  const Session = SessionModel(db);
-  const foundCheckout = await Checkout.findById(_id);
   const Tab = TabModel(db);
   const Table = TableModel(db);
+  const foundCheckout = await Checkout.findById(checkout);
 
-  async function verifiePatron(patron?: string) {
-    if (!patron) return null
+  if (!foundCheckout) throw ApolloError('BadRequest')
+  console.log("foundCheckout make payment", foundCheckout)
 
-    try {
-      const foundSession = await Session.findById(patron);
+  if (foundCheckout?.discount == undefined) {
+    foundCheckout.discount = discount
+    foundCheckout.total = foundCheckout.subTotal - getPercentageOfValue(foundCheckout.subTotal, discount)
+    await foundCheckout.save()
+  }
 
-      return foundSession
-    } catch (error) {
-      console.log("error", error)
-      return await User.findById(patron);
-    }
+  if (foundCheckout?.tip === undefined) {
+    foundCheckout.tip = tip
+    foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, tip)
+    await foundCheckout.save()
+  }
+
+  async function verifiePatron(patron: string) {
+    const foundUser = await User.findById(patron);
+    // this will fails because I changed the user model
+    // I need to perform a payment to then enforce the user to be part of the checkout
+    return foundUser ?? patron
   }
 
   async function updateTabAndTable() {
-    const foundTab = Tab.findById(foundCheckout?.tab);
-    const foundTable = Table.findById(foundTab?.table);
-
-    foundTable?.update({
-      status: "Available",
-    })
-
-    foundTab?.update({
+    const foundTab = await Tab.findByIdAndUpdate(foundCheckout?.tab, {
       status: "Closed",
-    })
+    }, { new: true })
+
+    await Table.findByIdAndUpdate(foundTab?.table, {
+      status: "Available",
+    }, { new: true })
   }
-
-  if (!foundCheckout) throw ApolloError('BadRequest')
-
-  console.log("foundCheckout", foundCheckout)
 
   switch (foundCheckout.status) {
     case "PartiallyPaid":
@@ -66,30 +66,34 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
 
         const payment = await Payment.create({
           amount,
-          patron,
           paymentMethod,
           splitType,
           tip,
-          ...(foundPatron && { patron: foundPatron._id }),
+          discount,
+          patron: typeof foundPatron === "string" ? foundPatron : foundPatron?._id,
         })
 
-        foundCheckout?.payments?.push(payment._id);
-
-        await foundCheckout.update({
+        const upadatedCheckout = await foundCheckout.update({
           totalPaid: foundCheckout?.totalPaid + amount,
-          totalTip: foundCheckout?.tip ?? 0 + (tip ?? 0),
           status: "PartiallyPaid",
           splitType,
+          payments: [...(foundCheckout?.payments ?? []), payment._id],
         }, { new: true })
 
-        if (foundCheckout?.totalPaid >= foundCheckout?.total) {
-          foundCheckout.status = "Paid"
-          foundCheckout.paid = true
+        if (upadatedCheckout?.totalPaid >= foundCheckout?.total) {
+          upadatedCheckout.status = "Paid"
+          upadatedCheckout.paid = true
 
           await updateTabAndTable()
         }
 
-        return await foundCheckout?.save();
+        const updatedCheckout = await upadatedCheckout?.save();
+        const payments = await Payment.find({ _id: { $in: updatedCheckout?.payments } })
+
+        return ({
+          ...updatedCheckout,
+          payments,
+        })
       }
       // the payment is not a split of the check
       // so it will only be valid if the amount is equal to the total
@@ -103,7 +107,7 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
         amount,
         paymentMethod,
         tip,
-        ...(foundPatron && { patron: foundPatron._id }),
+        patron: typeof foundPatron === "string" ? foundPatron : foundPatron?._id,
       })
 
       foundCheckout?.payments?.push(payment._id);

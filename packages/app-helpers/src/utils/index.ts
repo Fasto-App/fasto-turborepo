@@ -23,15 +23,15 @@ export function formatAsPercentage(num?: number | null) {
 
 // a function that takes the percentage value and returns the fixed-point value
 export const parseToFixedPoint = (percentage?: number) => {
-  return (percentage ?? 0) / FIXED_POINT_FACTOR_PERCENTAGE;
+  return Math.floor(percentage ?? 0) / FIXED_POINT_FACTOR_PERCENTAGE;
 }
 
 // get percentage of a value
 export const getPercentageOfValue = (value?: number, percentage?: number) => {
-  return ((value ?? 0) * ((percentage ?? 0) / FIXED_POINT_FACTOR_PERCENTAGE));
+  return (Math.floor((value ?? 0) * ((percentage ?? 0)) / FIXED_POINT_FACTOR_PERCENTAGE));
 }
 
 // get the percentage value with the fixed-point value
 export const getFixedPointPercentage = (percentage?: number) => {
-  return ((percentage ?? 0) * FIXED_POINT_FACTOR_PERCENTAGE);
+  return (Math.floor(percentage ?? 0) * FIXED_POINT_FACTOR_PERCENTAGE);
 }

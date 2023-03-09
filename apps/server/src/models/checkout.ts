@@ -31,6 +31,9 @@ export class Checkout {
   public tip?: number;
 
   @prop({ default: 0 })
+  public discount?: number;
+
+  @prop({ default: 0 })
   public tax?: number;
 
   @prop({ required: true, default: 0 })
