@@ -25,7 +25,7 @@ export const clientRoute = {
   cart: `${CLIENT}/settings`,
   menu: (businessId: string) => `${CLIENT}/${businessId}/menu`,
   checkout: `${CLIENT}/checkout`,
-  production_description: `${CLIENT}/production_description`,
+  production_description: (productId: string) => `${CLIENT}/ronaldo/product-description/${productId}`, // todo: remove ronaldo
   settings: `${CLIENT}/settings`,
 } as const
 

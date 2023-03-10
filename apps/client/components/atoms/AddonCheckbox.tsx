@@ -54,9 +54,6 @@ export const AddonCheckbox = (props) => {
 
   return (
     <React.Fragment>
-      <Box bg="tertiary.500" p={"3"}>
-        <Text style={styles.subtitle}>Adds {position}</Text>
-      </Box>
       <View style={styles.container}>
         {item?.length &&
           item.map((addon, index) => (
@@ -78,10 +75,10 @@ export const AddonCheckbox = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 1,
-    borderColor: "#F3F3F3",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    // borderBottomWidth: 1,
+    // borderColor: "#F3F3F3",
+    // paddingVertical: 10,
+    // paddingHorizontal: 20,
     flex: 1,
     // flexDirection: "row",
     // borderRadius: 5

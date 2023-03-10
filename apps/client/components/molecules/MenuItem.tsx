@@ -1,5 +1,6 @@
 import { Box, HStack, Text, Image, Pressable } from "native-base";
 import React from "react";
+import { PriceTag } from "./PriceTag";
 
 type MenuItemProps = {
   // name: string;
@@ -36,21 +37,11 @@ const MenuItem = ({ onPress }: MenuItemProps) => {
             textAlign={"justify"}>{formatIngredients}</Text>
         </Box>
         <Box>
-          <Image size={"xl"} source={{ uri: uri }} alt={""} borderRadius={5} />
-          <Box bgColor={"white"}
-            borderRadius={"5"}
-            position={"absolute"}
-            top={1}
-            right={1}
-            p={0.5}
-          >
-            <Text
-              fontSize={"16"}
-              fontWeight={"700"}
-            >
-              {formatPrice}
-            </Text>
-          </Box>
+          <Image
+            size={"xl"}
+            source={{ uri: uri }}
+            alt={""} borderRadius={5} />
+          <PriceTag price={formatPrice} />
         </Box>
       </HStack>
     </Pressable>

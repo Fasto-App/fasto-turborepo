@@ -1,22 +1,11 @@
-import { AddIcon, Box, Button, Divider, HStack, Icon, IconButton, MinusIcon, Spacer, Text, VStack } from "native-base"
+import { Box, Button, Divider, HStack, Icon, Text } from "native-base"
 import React from "react"
 import { BsFillPersonFill } from "react-icons/bs";
 import { GiRoundTable } from "react-icons/gi";
 import { parseToCurrency } from 'app-helpers';
+import { IncrementButtons } from "./IncrementButtons";
 
-const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress?: () => void }) => {
-  const Icon = type === "plus" ? AddIcon : MinusIcon
-  return (
-    <IconButton
-      size={5}
-      borderRadius="md"
-      onPress={onPress}
-      variant={"subtle"}
-      backgroundColor={"primary.500"}
-      icon={<Icon color={"white"} size={2} />}
-    />
-  )
-};
+
 
 type SummaryProps = {
   name: string;
@@ -61,11 +50,11 @@ export const SummaryComponent = ({ name,
       </Button>
     </HStack>
     <HStack pb={3}>
-      <HStack space={2}>
-        <StyledIconButton type={"minus"} onPress={onMinusPress} />
-        <Text textAlign={"center"} w={4}>{quantity}</Text>
-        <StyledIconButton type="plus" onPress={onPlusPress} />
-      </HStack>
+      <IncrementButtons
+        quantity={quantity}
+        onPlusPress={onPlusPress}
+        onMinusPress={onMinusPress}
+      />
       <HStack justifyContent={"space-between"} flex={1} pl={8}>
         <Button
           size="sm"

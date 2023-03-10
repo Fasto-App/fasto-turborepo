@@ -2,6 +2,9 @@ import React, { } from "react";
 import { FlatList, ScrollView, Spacer } from "native-base"
 import { MenuItem } from "../../components/molecules/MenuItem";
 import { Tab } from "./Tab";
+import router from "next/router";
+import { clientRoute } from "../../routes";
+
 
 
 // create array with 10 items
@@ -12,7 +15,7 @@ const categories = ["Wines", "Beers", "Cocktails", "Spirits", "Soft Drinks", "Ju
 
 const renderItem = ({ item }: { item: number }) => (
   <MenuItem
-    onPress={() => console.log("item", item)}
+    onPress={() => router.push(clientRoute.production_description("123"))}
   />)
 
 export const MenuScreen = () => {

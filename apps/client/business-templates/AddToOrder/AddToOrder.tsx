@@ -172,7 +172,6 @@ export const AddToOrder = () => {
                   })
                   setOrderItems(newOrderItems)
                 }}
-                // useCallback(() => {},[])
                 onMinusPress={() => {
                   if (order.quantity === 1) {
                     const newOrderItems = orderItems.filter((_, orderIndex) => index !== orderIndex)
