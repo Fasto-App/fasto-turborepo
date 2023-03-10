@@ -55,7 +55,7 @@ const ClientTabBar: React.FC = (props) => {
         type={NavigationButtonType.Payment}
         selected={isCheckout}
         onPress={() => {
-          router.push(clientRoute.production_description);
+          router.push(clientRoute.production_description("123"));
         }}
       />
       <NavigationButton
