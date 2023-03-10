@@ -24,9 +24,10 @@ const ClientNavBar: React.FC = (props) => {
       >
       </Box>
       <HStack
-        mt={2}
-        mx={2}
         p={1}
+        my={2}
+        mb={4}
+        mx={2}
         background={"white"}
         borderRadius={"lg"}
         justifyContent={"space-around"}
