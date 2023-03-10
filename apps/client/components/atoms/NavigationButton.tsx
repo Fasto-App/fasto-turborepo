@@ -100,12 +100,8 @@ const NavigationButton = ({
   text?: string;
   flexDirection?: "row" | "column";
 }) => {
-  const iconSize = useBreakpointValue({
-    base: "20px",
-    lg: "30px",
-  });
   const [isHovered, setIsHovered] = React.useState(false);
-  const selectedColor = selected || isHovered ? colors.yellow : colors.pureWhite;
+  const selectedColor = selected || isHovered ? colors.yellow : colors.black;
   const isRow = flexDirection === "row";
 
   return (
@@ -117,11 +113,9 @@ const NavigationButton = ({
       width={isRow ? "90%" : "auto"}
       background={selected ? "secondary.300" : "clear"}
       borderRadius={"md"}
-      padding={"2"}
+      padding={"1"}
     >
-      <Box justifyContent="center" alignItems="center" h={iconSize} w={iconSize}>
-        <Icon type={type} size={"100%"} color={colors.blueboard} />
-      </Box>
+      <Icon type={type} size={"2em"} color={colors.black} />
       <Box w={"2"} />
       <Text
         fontSize={isRow ? "lg" : "xs"}

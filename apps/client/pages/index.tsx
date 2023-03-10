@@ -13,7 +13,7 @@ export default function Home() {
 	return (
 		<HomeStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
 			<Pressable>
-				<Link href={'/client/menu'}>
+				<Link href={`/client/${`ronaldo`}/menu`}>
 					<Center width={{
 						base: 300,
 						sm: 400

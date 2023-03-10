@@ -23,7 +23,7 @@ export const businessRoute = {
 
 export const clientRoute = {
   cart: `${CLIENT}/settings`,
-  menu: `${CLIENT}/menu`,
+  menu: (businessId: string) => `${CLIENT}/${businessId}/menu`,
   checkout: `${CLIENT}/checkout`,
   production_description: `${CLIENT}/production_description`,
   settings: `${CLIENT}/settings`,

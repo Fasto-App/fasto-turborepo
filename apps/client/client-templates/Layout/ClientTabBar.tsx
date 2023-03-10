@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 // import { colors } from "shared/theme";
 import { useRouter } from "next/router";
@@ -13,11 +13,12 @@ import { NavigationButtonType } from "../../components/types";
 
 const ClientTabBar: React.FC = (props) => {
   const router = useRouter();
+  const { businessId } = router.query
 
-  const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
-    pathname === router.pathname, [router.pathname])
+  const useIsPageSelected = useCallback((pathname: string) =>
+    pathname === router.asPath, [router.asPath])
 
-  const isMenu = useIsPageSelected(clientRoute.menu);
+  const isMenu = useIsPageSelected(clientRoute.menu(businessId as string));
   const isCart = useIsPageSelected(clientRoute.cart);
   const isCheckout = useIsPageSelected(clientRoute.checkout);
   const isSettings = useIsPageSelected(clientRoute.settings);
@@ -28,33 +29,40 @@ const ClientTabBar: React.FC = (props) => {
   });
 
   return (
-    <HStack justifyContent={"space-between"} paddingY={"2"} paddingX={paddingX} bg={"primary.500"}>
+    <HStack
+      w={"100%"}
+      justifyContent={"space-between"}
+      paddingY={"2"}
+      paddingX={paddingX}
+      bg={"primary.500"}
+      safeAreaBottom={1}
+    >
       <NavigationButton
         type={NavigationButtonType.ListStar}
         selected={isMenu}
         onPress={() => {
-          router.push("/");
+          router.push(clientRoute.menu("123"));
         }}
       />
       <NavigationButton
         type={NavigationButtonType.Bag}
         selected={isCart}
         onPress={() => {
-          router.push(clientRoute.menu);
+          router.push(clientRoute.menu("123"));
         }}
       />
       <NavigationButton
         type={NavigationButtonType.Payment}
         selected={isCheckout}
         onPress={() => {
-          router.push(clientRoute.menu);
+          router.push(clientRoute.production_description);
         }}
       />
       <NavigationButton
         type={NavigationButtonType.Radio}
         selected={isSettings}
         onPress={() => {
-          router.push(clientRoute.menu);
+          router.push(clientRoute.settings);
         }}
       />
     </HStack>
@@ -64,28 +72,3 @@ const ClientTabBar: React.FC = (props) => {
 ClientTabBar.displayName = "ClientTabBar"
 
 export { ClientTabBar };
-
-
-const styles = StyleSheet.create({
-  touchableArea: {
-    minWidth: 20,
-    minHeight: 20,
-    padding: 5,
-    alignItems: "center",
-    borderColor: colors.pureWhite,
-    // borderWidth: 1,
-  },
-  iconContainer: {
-    height: 20,
-    width: 20,
-    borderColor: colors.pureWhite,
-    // borderWidth: 1,
-  },
-  // icon: {
-  //   stroke: "blue",
-  // },
-  micro: {
-    fontSize: 12,
-    textAlign: "center",
-  },
-});

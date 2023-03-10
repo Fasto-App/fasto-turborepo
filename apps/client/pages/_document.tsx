@@ -26,7 +26,7 @@ class MyDocument extends Document {
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
-            content="black-translucent"
+            content="default"
           />
           <meta name="apple-mobile-web-app-title" content="Fasto" />
           <meta name="description" content="The Smartest and Fastest Way to Order" />
@@ -36,9 +36,9 @@ class MyDocument extends Document {
             name="msapplication-config"
             content="/icons/browserconfig.xml"
           />
-          <meta name="msapplication-TileColor" content="#2B5797" />
+          <meta name="msapplication-TileColor" content="#d56f5b" />
           <meta name="msapplication-tap-highlight" content="no" />
-          <meta name="theme-color" content="#90cdf4" />
+          <meta name="theme-color" content="#d56f5b" />
           {/* END */}
           {/* ADDED FROM GOOGLE PWA */}
           <meta
@@ -83,7 +83,7 @@ class MyDocument extends Document {
           <link
             rel="mask-icon"
             href="/icons/safari-pinned-tab.svg"
-            color="#5bbad5"
+            color="#d56f5b"
           />
           <link rel="shortcut icon" href="/favicon.ico" />
           {/* ADDED FROM NEXT-PWA */}

@@ -1,34 +1,9 @@
 import React from "react"
-import { StyleSheet } from "react-native"
 import { useRouter } from "next/router";
-import { colors } from "../../theme/colors";
-import { Box, Pressable, Text, useTheme } from "native-base";
-import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
-
-const styles = StyleSheet.create({
-  view: { height: 30, width: 30, zIndex: 9999 },
-  section: {
-    justifyContent: "center",
-    textAlign: "center",
-  },
-  // pageTitle: {
-  //   fontSize: 25,
-  //   fontWeight: "bold",
-  //   color: colors.white,
-  // },
-  logo: {
-    height: 30,
-    width: 30,
-  },
-  icon: {
-    height: 30,
-    width: 30,
-  },
-});
+import { Avatar, Box, HStack, Text, useTheme, VStack } from "native-base";
 
 const texts = {
-  navigationTitle: "OpenTab",
+  navigationTitle: "Fasto App",
 }
 
 const ClientNavBar: React.FC = (props) => {
@@ -38,29 +13,41 @@ const ClientNavBar: React.FC = (props) => {
   const theme = useTheme();
 
   return (
-    <Box bg={"primary.500"} padding={"1"} flexDirection={"row"} justifyContent={"space-between"}>
-      {isBackButtonAvailable && (
-        <NavigationButton
-          type={NavigationButtonType.ArrowBack}
-          onPress={() => {
-            router.back();
-          }}
-        />)}
-      <Pressable
-        style={styles.section}
-        onPress={() => {
-          router.push("/");
-        }}
+    <>
+      <Box
+        bg={"primary.500"}
+        padding={"1"}
+        height={"12"}
+        w={"100%"}
+        position={"absolute"}
+        zIndex={-1}
       >
-        <Text color={"white"} fontSize={"md"}>{texts.navigationTitle}</Text>
-      </Pressable>
-      <NavigationButton
-        type={NavigationButtonType.Logout}
-        onPress={() => {
-          router.back();
-        }}
-      />
-    </Box>
+      </Box>
+      <HStack
+        mt={2}
+        mx={2}
+        p={1}
+        background={"white"}
+        borderRadius={"lg"}
+        justifyContent={"space-around"}
+        alignItems={"center"}
+        borderWidth={1}
+        borderColor={"coolGray.300"}
+      >
+        <Avatar size="48px" source={{ uri: "https://cdn.logo.com/hotlink-ok/logo-social.png" }} />
+        <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
+          Haruko
+        </Text>
+        <VStack alignItems={"center"}>
+          <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
+            Table
+          </Text>
+          <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
+            12
+          </Text>
+        </VStack>
+      </HStack>
+    </>
   );
 };
 

@@ -12,11 +12,11 @@ import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
 import { Box, useTheme } from 'native-base';
 import { ModalFeedback } from '../components/ModalFeedback';
+import { View } from 'react-native';
 
 
 const LandingWrapper: React.FC = ({ children }) => (
 	<Fragment>
-		<ClientNavBar />
 		{children}
 	</Fragment>)
 
@@ -28,7 +28,7 @@ const ProgressBar = () => {
 		<NextNProgress
 			height={6}
 			color={theme.colors.secondary[400]}
-			startPosition={0.5}
+			startPosition={0.8}
 		/>)
 }
 
@@ -49,8 +49,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 	}, [isClientExp, isBusinessExp])
 
 	return (
-		<ThemeProvider >
-			<Box h={"100vh"}>
+		<View style={{ height: "100%" }}>
+			<ThemeProvider >
 				<AppApolloProvider>
 					<AppProvider>
 						<Wrapper>
@@ -61,9 +61,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 						</Wrapper>
 					</AppProvider>
 				</AppApolloProvider>
-			</Box>
-			<ModalFeedback />
-		</ThemeProvider>
+
+				<ModalFeedback />
+			</ThemeProvider>
+		</View>
 	);
 }
 
