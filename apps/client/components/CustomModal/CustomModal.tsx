@@ -35,8 +35,6 @@ export const CustomModal = ({
         <Button.Group flex={1} justifyContent={"center"} space={4}>
           {ModalFooter}
         </Button.Group>
-
-
       </Modal.Footer>
     </Modal.Content>
   </Modal>
