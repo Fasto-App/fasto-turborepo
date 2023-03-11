@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Center, VStack } from "native-base";
+import { Center } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
-import { AppNavigation, appRoute, businessRoute, BUSINESS_ADMIN } from "../../routes";
+import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { clearCookies } from "../../cookies/businessCookies";
 import { LeftSideBar } from "../../components";
 
@@ -36,7 +35,7 @@ const BusinessNavigationTab = () => {
         <NavigationButton
           flexDirection={"row"}
           text={navigationTitle.dashboard}
-          type={NavigationButtonType.Dashboard}
+          type={"Dashboard"}
           selected={useIsPageSelected(businessRoute.dashboard)}
           onPress={() => {
             router.push(businessRoute.dashboard);
@@ -45,7 +44,7 @@ const BusinessNavigationTab = () => {
         <NavigationButton
           flexDirection={"row"}
           text={navigationTitle.categories_products}
-          type={NavigationButtonType.Fork}
+          type={"Fork"}
           selected={useIsPageSelected(businessRoute.add_products_categories)}
           onPress={() => {
             router.push(businessRoute.add_products_categories);
@@ -54,7 +53,7 @@ const BusinessNavigationTab = () => {
         <NavigationButton
           flexDirection={"row"}
           text={navigationTitle.menu}
-          type={NavigationButtonType.Menu}
+          type={"Menu"}
           selected={useIsPageSelected(businessRoute.menu)}
           onPress={() => {
             router.push(businessRoute.menu);
@@ -64,7 +63,7 @@ const BusinessNavigationTab = () => {
         <NavigationButton
           flexDirection={"row"}
           text={navigationTitle.tables}
-          type={NavigationButtonType.Table}
+          type={"Table"}
           selected={useIsPageSelected(businessRoute.tables)}
           onPress={() => {
             router.push(businessRoute.tables);
@@ -73,7 +72,7 @@ const BusinessNavigationTab = () => {
         <NavigationButton
           flexDirection={"row"}
           text={navigationTitle.settings}
-          type={NavigationButtonType.Settings}
+          type={"Settings"}
           selected={useIsPageSelected(businessRoute.settings)}
           onPress={() => {
             router.push(businessRoute.settings);
@@ -82,7 +81,7 @@ const BusinessNavigationTab = () => {
         <NavigationButton
           flexDirection={"row"}
           text={navigationTitle.logout}
-          type={NavigationButtonType.Logout}
+          type={"Logout"}
           selected={useIsPageSelected(businessRoute.login)}
           onPress={() => {
             clearCookies();

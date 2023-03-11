@@ -19,7 +19,7 @@ export function HamburgerMenu() {
         <NavigationButton
           flexDirection={"row"}
           text={"Add Products"}
-          type={NavigationButtonType.Plus}
+          type={"Plus"}
           selected={false}
           onPress={() => {
             router.push(businessRoute.add_products_categories);
