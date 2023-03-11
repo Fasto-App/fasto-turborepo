@@ -3,6 +3,9 @@ import NextImage from 'next/image'
 import React from 'react'
 import { NavigationButton } from '../../components/atoms/NavigationButton'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
+import { useHtml5QrCodeScanner } from 'react-html5-qrcode-reader';
+import { QrReader } from 'react-qr-reader';
+
 
 const texts = {
   openNewTab: 'Open a New Tab',
@@ -37,7 +40,9 @@ const handleOpenCamera = () => {
     console.log("Let's get this party started");
     navigator.mediaDevices
       .getUserMedia({
-        video: true,
+        video: {
+          facingMode: "environment",
+        },
       })
       .then(function success(stream) {
         console.log({ stream });
@@ -49,11 +54,28 @@ const handleOpenCamera = () => {
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = React.useState(false)
 
+  const { Html5QrcodeScanner } = useHtml5QrCodeScanner(
+    './node_modules/html5-qrcode/html5-qrcode.min.js'
+  );
+
   // join a tab will open the camera and scan the QR code
   const joinTab = () => {
     console.log("Pressed")
     setIsJoinTabModalOpen(true)
-    handleOpenCamera()
+
+    console.log("Html5QrcodeScanner", Html5QrcodeScanner)
+    // handleOpenCamera()
+    if (Html5QrcodeScanner) {
+      // Creates anew instance of `HtmlQrcodeScanner` and renders the block.
+      let html5QrcodeScanner = new Html5QrcodeScanner(
+        "camera",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        /* verbose= */ false);
+      html5QrcodeScanner.render(
+        (data: any) => console.log('success ->', data),
+        (err: any) => console.log('err ->', err)
+      );
+    }
   }
 
   const onPress = () => {
@@ -104,10 +126,22 @@ export const HomeScreen = () => {
         isOpen={isJoinTabModalOpen}
         HeaderComponent={"Scan the QR code to join a tab"}
         ModalBody={
-          <Box width={"100%"}>
-            <div id={"camera"}>
+          <Box width={"100%"} >
+            <QrReader
+              videoStyle={{ borderRadius: 10 }}
+              containerStyle={{ borderRadius: 10 }}
+              constraints={{ facingMode: "environment" }}
+              onResult={(result, error) => {
+                if (!!result) {
+                  // setData(result?.text);
+                  console.info(result)
+                }
 
-            </div>
+                // if (!!error) {
+                //   console.info(error)
+                // }
+              }}
+            />
           </Box>
         }
         ModalFooter={
