@@ -21,6 +21,9 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {/* Failed attempt to move the address bar on scroll using ChatGPT */}
+          <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
           {/* ADDED FROM NEXT-PWA  */}
           <meta name="application-name" content="Fasto" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -98,7 +101,7 @@ class MyDocument extends Document {
             name="twitter:image"
             content="https://yourdomain.com/icons/android-chrome-192x192.png"
           />
-          <meta name="twitter:creator" content="@DavidWShadow" />
+          <meta name="twitter:creator" content="@mendesbr__" />
           <meta property="og:type" content="website" />
           <meta property="og:title" content="Fasto" />
           <meta property="og:description" content="The Smartest and Fastest Way to Order" />
@@ -108,7 +111,6 @@ class MyDocument extends Document {
             property="og:image"
             content="https://yourdomain.com/icons/apple-touch-icon.png"
           />
-          {/* END */}
         </Head>
         <body>
           <Main />

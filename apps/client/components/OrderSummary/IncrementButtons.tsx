@@ -5,12 +5,12 @@ const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress?:
   const Icon = type === "plus" ? AddIcon : MinusIcon
   return (
     <IconButton
-      size={5}
+      size={7}
       borderRadius="md"
       onPress={onPress}
       variant={"subtle"}
       backgroundColor={"primary.500"}
-      icon={<Icon color={"white"} size={2} />}
+      icon={<Icon color={"white"} size={4} />}
     />
   )
 };
@@ -27,7 +27,11 @@ export const IncrementButtons = (props: IncrementButtonsProps) => {
   return (
     <HStack space={2}>
       <StyledIconButton type={"minus"} onPress={onMinusPress} />
-      <Text textAlign={"center"} w={4}>{quantity}</Text>
+      <Text
+        fontSize={16}
+        alignSelf={"center"}
+        textAlign={"center"}
+        w={5}>{quantity}</Text>
       <StyledIconButton type="plus" onPress={onPlusPress} />
     </HStack>
   )

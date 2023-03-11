@@ -1,11 +1,6 @@
 import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
-// import { colors } from "shared/theme";
 import { useRouter } from "next/router";
-import { colors } from "../../theme/colors";
-// import { NavigationButton } from "../atoms/NavigationButton";
-// import { NavigationButtonType } from "../types";
-import { AppNavigation, clientRoute } from "../../routes";
+import { clientRoute } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { NavigationButtonType } from "../../components/types";

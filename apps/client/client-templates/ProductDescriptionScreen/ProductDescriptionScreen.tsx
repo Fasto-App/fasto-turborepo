@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  StyleSheet
-} from "react-native";
-import { AddonCheckbox } from "../../components/atoms/AddonCheckbox";
-import { Box, Button, Image, Pressable, TextArea, Text, ScrollView, Spacer, Divider } from "native-base";
+import { Addon } from "../../components/atoms/AddonCheckbox";
+import { Box, Button, Image, TextArea, Text, ScrollView, Divider, VStack } from "native-base";
 import { useSpring, animated } from "react-spring";
 import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
-import { D } from "chart.js/dist/chunks/helpers.core";
+import { parseToCurrency } from "app-helpers";
+import { texts } from "./texts";
 
 const AnimatedBox = animated(Box);
+
+const addons = [
+  { _id: "1234", name: "Cheese", price: 250 },
+  { _id: "1235", name: "Pickles", price: 450, },
+  { _id: "1236", name: "Peperoni", price: 350 },
+]
 
 const item = {
   restaurant_id: 3456789876543,
@@ -24,17 +28,6 @@ const item = {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   quantity: 1,
   subtotal: 1.5,
-  addons: [
-    { name: "Cheese", price: "$2,50", selected: false },
-    {
-      name: "Pickles",
-      price: "$4,50",
-    },
-    {
-      name: "Peperoni",
-      price: "$3,50",
-    },
-  ],
   pricing: [
     {
       price: 2.25,
@@ -45,113 +38,88 @@ const item = {
   price: 2.25,
 };
 
-type HeaderProps = {
-  quantity: number;
-  setQuantity: (quantity: number) => void;
-  item: typeof item;
-};
-
-const HeaderList = ({ quantity, setQuantity, item }: HeaderProps) => {
-  return (
-    <Box>
-      <Box>
-        <Image
-          w={"100%"}
-          h={"200"}
-          maxW={"425"}
-          alt="logo"
-          source={{ uri: item.uri }}
-          borderRadius={5}
-        />
-        <PriceTag price={"$12.34"} />
-      </Box>
-      <Box pt={"4"}>
-        <Text fontWeight={"semibold"} fontSize={"25"}>{item.name}</Text>
-        <Text pt={"2"}>{item.description}</Text>
-      </Box>
-      <Box pt={"4"}>
-        <IncrementButtons
-          quantity={quantity}
-          onPlusPress={() => setQuantity}
-          onMinusPress={() => setQuantity}
-        />
-      </Box>
-    </Box>
-  );
-};
-
 export const ProductDescriptionScreen = () => {
   const route = useRouter();
-  const [isBrowser, setIsBrowser] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [text, setText] = useState();
-  const [items, setItems] = useState([item?.addons]);
   const isEditMode = route.query?.edit?.toString() === "true";
 
-  const _editItemOnPress = async () => {
-    try {
-      alert("We are adding your oder");
-      // refetch();
-      route.back();
-    } catch {
-
-      alert("ERROR");
-    }
-  };
-
-  // handle functions
-  const _addToCartOnPress = async () => {
-
-  };
-
-  const _onChangeText = () => {
-
-  };
-
-  const [flip, set] = React.useState(false);
   const springProps = useSpring({
     to: { opacity: 1, marginTop: 0 },
     from: { opacity: 0, marginTop: 900 },
   });
 
-  const _onPress = () =>
-    isEditMode ? _editItemOnPress() : _addToCartOnPress();
+  const increaseQuantity = useCallback(() => {
+    setQuantity(quantity + 1);
+  }, [quantity]);
 
-  // todo animate scrollview
+  const decreaseQuantity = useCallback(() => {
+    if (quantity === 1) return;
+    setQuantity(quantity - 1);
+  }, [quantity]);
+
+  const onButtonPress = useCallback(() => {
+    console.log("Pressed");
+
+    alert(`Added to cart ${quantity} items`)
+  }, [quantity]);
+
+
   return (
     <AnimatedBox style={springProps} flex={1}>
-      <ScrollView h="100%" px={2}>
-        <HeaderList
-          quantity={quantity}
-          setQuantity={setQuantity}
-          item={item}
-        />
-        <Divider my={"4"} backgroundColor={"gray.300"} />
+      <ScrollView h="100%" px={4}>
         <Box>
-          {items.length &&
-            items.map((item, index) => (
-              <AddonCheckbox
-                key={index}
-                item={item}
-                setItems={setItems}
-                position={index}
-              />
-            ))}
+          <Image
+            w={"100%"}
+            h={"200"}
+            maxW={"425"}
+            alt="logo"
+            source={{ uri: item.uri }}
+            borderRadius={5}
+          />
+          <PriceTag price={"$12.34"} />
         </Box>
+        <Box pt={"4"}>
+          <Text fontWeight={"semibold"} fontSize={"25"}>{item.name}</Text>
+          <Text pt={"2"}>{item.description}</Text>
+        </Box>
+        <Box pt={"4"}>
+          <IncrementButtons
+            quantity={quantity}
+            onPlusPress={increaseQuantity}
+            onMinusPress={decreaseQuantity}
+          />
+        </Box>
+        <Divider my={"3"} backgroundColor={"gray.300"} />
+        <VStack space={"1"} mb={"4"}>
+          <Text fontWeight={"semibold"} fontSize={"25"}>{texts.extras}</Text>
+          {addons.map((addon, index) => (
+            <Addon
+              key={index}
+              name={addon.name}
+              price={parseToCurrency(addon.price)}
+              value={addon._id}
+              onChange={() => console.log("Checked")}
+            />
+          ))}
+        </VStack>
         <TextArea
-          onChange={_onChangeText}
+          borderWidth={1}
+          onChange={() => console.log("text")}
           value={text}
           placeholder="Add a note to your order"
-          color="primary" autoCompleteType={""}
+          color="primary"
+          autoCompleteType={"none"}
+          fontSize={"16"}
         />
-
       </ScrollView>
       <Box padding={4}>
         <Button
           disabled={false}
-          onPress={_onPress}
+          onPress={onButtonPress}
           size={"lg"}
-          colorScheme="secondary"
+          colorScheme="primary"
+          _text={{ fontSize: "18", bold: true }}
         >
           {isEditMode ? "Edit" : "Add to cart"}
         </Button>

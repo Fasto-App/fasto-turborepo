@@ -89,7 +89,7 @@ const NavigationButton = ({
   selected = false,
   text,
   onPress,
-  color = colors.white,
+  color = colors.black,
   flexDirection = "column",
 }: {
   type: NavigationButtonType;
@@ -101,7 +101,7 @@ const NavigationButton = ({
   flexDirection?: "row" | "column";
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
-  const selectedColor = selected || isHovered ? colors.yellow : colors.black;
+  // const selectedColor = selected || isHovered ? colors.yellow : colors.black;
   const isRow = flexDirection === "row";
 
   return (
@@ -115,7 +115,7 @@ const NavigationButton = ({
       borderRadius={"md"}
       padding={"1"}
     >
-      <Icon type={type} size={"2em"} color={colors.black} />
+      <Icon type={type} size={"2em"} color={color} />
       <Box w={"2"} />
       <Text
         fontSize={isRow ? "lg" : "xs"}
