@@ -53,29 +53,13 @@ const handleOpenCamera = () => {
 
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = React.useState(false)
+  const [qrCode, setQrCode] = React.useState<string | null>(null)
 
-  const { Html5QrcodeScanner } = useHtml5QrCodeScanner(
-    './node_modules/html5-qrcode/html5-qrcode.min.js'
-  );
 
   // join a tab will open the camera and scan the QR code
   const joinTab = () => {
     console.log("Pressed")
     setIsJoinTabModalOpen(true)
-
-    console.log("Html5QrcodeScanner", Html5QrcodeScanner)
-    // handleOpenCamera()
-    if (Html5QrcodeScanner) {
-      // Creates anew instance of `HtmlQrcodeScanner` and renders the block.
-      let html5QrcodeScanner = new Html5QrcodeScanner(
-        "camera",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        /* verbose= */ false);
-      html5QrcodeScanner.render(
-        (data: any) => console.log('success ->', data),
-        (err: any) => console.log('err ->', err)
-      );
-    }
   }
 
   const onPress = () => {
@@ -106,7 +90,6 @@ export const HomeScreen = () => {
         <Button onPress={joinTab} _text={{ bold: true }} colorScheme={"secondary"}>{texts.joinTab}</Button>
         <Button onPress={onPress} _text={{ bold: true }} colorScheme={"tertiary"}>{texts.viewMenu}</Button>
       </VStack>
-
       <Box
         position={"absolute"}
         bottom={0}
@@ -128,20 +111,21 @@ export const HomeScreen = () => {
         ModalBody={
           <Box width={"100%"} >
             <QrReader
-              videoStyle={{ borderRadius: 10 }}
-              containerStyle={{ borderRadius: 10 }}
+              // ViewFinder={() => <Box zIndex={999999999999} width={"100%"} height={"100px"} borderWidth={1} />}
+              videoContainerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
+              videoStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
+              containerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
               constraints={{ facingMode: "environment" }}
               onResult={(result, error) => {
                 if (!!result) {
-                  // setData(result?.text);
+                  setQrCode(result.getText());
                   console.info(result)
                 }
-
-                // if (!!error) {
-                //   console.info(error)
-                // }
               }}
             />
+            <Text>
+              {qrCode}
+            </Text>
           </Box>
         }
         ModalFooter={
