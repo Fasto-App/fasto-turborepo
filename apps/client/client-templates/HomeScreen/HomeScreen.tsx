@@ -5,6 +5,7 @@ import { NavigationButton } from '../../components/atoms/NavigationButton'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { useHtml5QrCodeScanner } from 'react-html5-qrcode-reader';
 import { QrReader } from 'react-qr-reader';
+import { useRouter } from 'next/router'
 
 
 const texts = {
@@ -54,6 +55,7 @@ const handleOpenCamera = () => {
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = React.useState(false)
   const [qrCode, setQrCode] = React.useState<string | null>(null)
+  const route = useRouter()
 
 
   // join a tab will open the camera and scan the QR code
@@ -63,7 +65,7 @@ export const HomeScreen = () => {
   }
 
   const onPress = () => {
-    console.log("Pressed")
+    route.push('/client/123/menu')
   }
 
   return (
@@ -111,7 +113,6 @@ export const HomeScreen = () => {
         ModalBody={
           <Box width={"100%"} >
             <QrReader
-              // ViewFinder={() => <Box zIndex={999999999999} width={"100%"} height={"100px"} borderWidth={1} />}
               videoContainerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
               videoStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
               containerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
