@@ -22,7 +22,8 @@ class MyDocument extends Document {
       <Html>
         <Head>
           {/* Failed attempt to move the address bar on scroll using ChatGPT */}
-          <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          {/* Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta */}
+          {/* <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> */}
 
           {/* ADDED FROM NEXT-PWA  */}
           <meta name="application-name" content="Fasto" />

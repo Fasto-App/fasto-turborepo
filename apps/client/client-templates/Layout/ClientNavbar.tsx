@@ -40,7 +40,7 @@ const ClientNavBar: React.FC = (props) => {
         {/* Avatar or back button */}
         {productId ?
           <NavigationButton
-            type={NavigationButtonType.ArrowBack}
+            type={"ArrowBack"}
             color={theme.colors.info[600]}
             onPress={() => {
               // this should explicitly go back to the menu page

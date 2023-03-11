@@ -24,6 +24,8 @@ import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line } from "react-icons/ri"
 import { BiLogOutCircle } from "react-icons/bi"
+import { MdOutlineFrontHand } from "react-icons/md"
+
 type IconProps = {
   type: NavigationButtonType;
   color?: string;
@@ -32,51 +34,53 @@ type IconProps = {
 
 const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
-    case NavigationButtonType.Home:
+    case "RaisedHand":
+      return <MdOutlineFrontHand color={color} size={size} />;
+    case "Home":
       return <AiOutlineHome color={color} size={size} />;
-    case NavigationButtonType.Settings:
+    case "Settings":
       return <AiOutlineSetting color={color} size={size} />;
-    case NavigationButtonType.Money:
+    case "Money":
       return <AiOutlineDollar color={color} size={size} />;
-    case NavigationButtonType.Message:
+    case "Message":
       return <AiOutlineMessage color={color} size={size} />;
-    case NavigationButtonType.Contacts:
+    case "Contacts":
       return <AiOutlineContacts color={color} size={size} />;
-    case NavigationButtonType.Clock:
+    case "Clock":
       return <AiOutlineClockCircle color={color} size={size} />;
-    case NavigationButtonType.Shop:
+    case "Shop":
       return <AiOutlineShop color={color} size={size} />;
-    case NavigationButtonType.Cart:
+    case "Cart":
       return <AiOutlineShoppingCart color={color} size={size} />;
-    case NavigationButtonType.Menu:
+    case "Menu":
       return <AiOutlineLayout color={color} size={size} />;
-    case NavigationButtonType.Search:
+    case "Search":
       return <AiOutlineSearch color={color} size={size} />;
-    case NavigationButtonType.Tool:
+    case "Tool":
       return <AiOutlineTool color={color} size={size} />;
-    case NavigationButtonType.UserAdd:
+    case "UserAdd":
       return <AiOutlineUserAdd color={color} size={size} />;
-    case NavigationButtonType.Plus:
+    case "Plus":
       return <AiOutlinePlus color={color} size={size} />;
-    case NavigationButtonType.Close:
+    case "Close":
       return <AiOutlineClose color={color} size={size} />;
-    case NavigationButtonType.ListStar:
+    case "ListStar":
       return <BsListStars color={color} size={size} />;
-    case NavigationButtonType.Bag:
+    case "Bag":
       return <BsBag color={color} size={size} />;
-    case NavigationButtonType.Radio:
+    case "Radio":
       return <BsUiRadiosGrid color={color} size={size} />;
-    case NavigationButtonType.Payment:
+    case "Payment":
       return <BsCreditCard2Back color={color} size={size} />;
-    case NavigationButtonType.ArrowBack:
+    case "ArrowBack":
       return <IoIosArrowBack color={color} size={size} />;
-    case NavigationButtonType.Logout:
+    case "Logout":
       return <BiLogOutCircle color={color} size={size} />;
-    case NavigationButtonType.Table:
+    case "Table":
       return <TiTabsOutline color={color} size={size} />;
-    case NavigationButtonType.Fork:
+    case "Fork":
       return <GiKnifeFork color={color} size={size} />;
-    case NavigationButtonType.Dashboard:
+    case "Dashboard":
       return <RiDashboard3Line color={color} size={size} />;
     default:
       console.error("NavigationButton: Unknown type");
@@ -119,6 +123,7 @@ const NavigationButton = ({
       <Box w={"2"} />
       <Text
         fontSize={isRow ? "lg" : "xs"}
+        textAlign={"center"}
       >
         {text}
       </Text>

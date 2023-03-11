@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { clientRoute } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
 
 
 const ClientTabBar: React.FC = (props) => {
@@ -33,28 +32,28 @@ const ClientTabBar: React.FC = (props) => {
       safeAreaBottom={1}
     >
       <NavigationButton
-        type={NavigationButtonType.ListStar}
+        type={"ListStar"}
         selected={isMenu}
         onPress={() => {
           router.push(clientRoute.menu("123"));
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Bag}
+        type={"Bag"}
         selected={isCart}
         onPress={() => {
           router.push(clientRoute.menu("123"));
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Payment}
+        type={"Payment"}
         selected={isCheckout}
         onPress={() => {
           router.push(clientRoute.production_description("123"));
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Radio}
+        type={"Radio"}
         selected={isSettings}
         onPress={() => {
           router.push(clientRoute.settings);
