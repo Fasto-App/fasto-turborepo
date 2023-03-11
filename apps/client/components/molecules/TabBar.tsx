@@ -1,9 +1,6 @@
 import React, { useMemo } from "react";
-import { StyleSheet } from "react-native";
 import { useRouter } from "next/router";
-import { colors } from "../../theme/colors";
 import { NavigationButton } from "../atoms/NavigationButton";
-import { NavigationButtonType } from "../types";
 import { AppNavigation, clientRoute } from "../../routes";
 import { Box } from "native-base";
 
@@ -22,7 +19,7 @@ const TabBar = React.forwardRef((props, ref) => {
   return (
     <Box paddingY={"1"} paddingX={"16"} ref={ref}>
       <NavigationButton
-        type={NavigationButtonType.ListStar}
+        type={"ListStar"}
         selected={isMenu}
         text="Menu"
         onPress={() => {
@@ -30,21 +27,21 @@ const TabBar = React.forwardRef((props, ref) => {
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Bag}
+        type={"Bag"}
         selected={isCart}
         onPress={() => {
           router.push(clientRoute.menu("ronaldo"));
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Payment}
+        type={"Payment"}
         selected={isCheckout}
         onPress={() => {
           router.push(clientRoute.menu("ronaldo"));
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Radio}
+        type={"Radio"}
         selected={isSettings}
         onPress={() => {
           router.push(clientRoute.menu("ronaldo"));

@@ -2,7 +2,6 @@ import React from "react"
 import { useRouter } from "next/router";
 import { Avatar, Box, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
 
 const texts = {
   navigationTitle: "Fasto App",

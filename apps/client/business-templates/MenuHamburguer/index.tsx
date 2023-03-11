@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Menu, HamburgerIcon, Pressable } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
 import { businessRoute } from "../../routes";
 import { useRouter } from "next/router";
 
