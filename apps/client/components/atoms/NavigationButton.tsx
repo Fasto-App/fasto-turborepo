@@ -32,7 +32,7 @@ type IconProps = {
   size?: number | string;
 };
 
-const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
+export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
     case "RaisedHand":
       return <MdOutlineFrontHand color={color} size={size} />;

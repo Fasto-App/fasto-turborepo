@@ -22,7 +22,7 @@ export const businessRoute = {
 } as const;
 
 export const clientRoute = {
-  cart: `${CLIENT}/settings`,
+  cart: `${CLIENT}/123/cart/123`,
   menu: (businessId: string) => `${CLIENT}/${businessId}/menu`,
   checkout: `${CLIENT}/checkout`,
   production_description: (productId: string) => `${CLIENT}/ronaldo/product-description/${productId}`, // todo: remove ronaldo

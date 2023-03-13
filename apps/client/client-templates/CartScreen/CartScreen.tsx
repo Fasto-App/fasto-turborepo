@@ -1,86 +1,52 @@
-// TODO
-//@ts-nocheck
-import { Button } from "native-base";
+import { Box, Button, FlatList, Heading, Text, useTheme, VStack } from "native-base";
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
+import { texts } from "./texts";
 
-const CartScreen = () => {
+const orders = new Array(10).fill({
+  id: "1",
+  status: "pending",
+});
 
-  const orders = []
-  const isLoading = false;
-  const error = false;
-  const putOrder = (order) => undefined;
+const renderItem = ({ item, index }: any) =>
+  <CartTile
+    key={index}
+    index={index}
+    order={item}
+    refetch={() => undefined}
+  />
 
-  const pendingToInProgress = orders?.reduce((resultsArray, orderObject) => {
-    if (orderObject.status === "pending") {
-      resultsArray.push({ ...orderObject, status: "in-progress" });
-    }
-    return resultsArray;
-  }, []);
+export const CartScreen = () => {
 
-  const pendindOrders = orders?.filter((order) => order.status === "pending");
-  const completedOrders = orders?.filter(
-    (order) => order.status === "completed"
-  );
-  const inProgressOrders = orders?.filter(
-    (order) => order.status === "in-progress"
-  );
-
-  const _onPress = () => {
-    // loop through the orders and create a axios request to update the status
-
-    pendingToInProgress.forEach((order) => putOrder(order));
+  const theme = useTheme();
+  const sendToKitchen = () => {
+    console.log("send to kitchen");
   };
 
-  if (isLoading) {
-
-    return null;
-  }
-  if (error || !orders) {
-
-    return null;
-  }
 
   return (
-    <>
-      <View style={styles.bagTemplateContainer}>
-        <Text style={styles.title}>Orders</Text>
-        {orders.length ? (
-          orders.map((order, index) => (
-            <CartTile
-              key={index}
-              index={index}
-              order={order}
-              refetch={() => undefined}
-            />
-          ))
-        ) : (
-          <TouchableOpacity>
-            <Text>Empty bag. Go to a different screen</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      {orders && <Button onPress={_onPress}>Send to the Kitchen</Button>}
-    </>
-
+    <Box w={"full"} h={"full"}>
+      <Heading textAlign={"center"}>{texts.title}</Heading>
+      <FlatList
+        data={orders}
+        renderItem={renderItem}
+        ListEmptyComponent={
+          <Box>
+            <Text justifyContent={"center"} alignItems={"flex-end"} pt={"8"} textAlign={"center"}>
+              <Text fontSize={"18"}>{texts.yourCartIsEmpty}</Text>
+              <Box px={"2"}>
+                <Icon type="ListStar" color={theme.colors.primary["500"]} size={"2em"} />
+              </Box>
+              <Text fontSize={"18"}>{texts.andStartOrdering}</Text>
+            </Text>
+          </Box>
+        }
+      />
+      <VStack space={"4"} p={"4"}>
+        <Button colorScheme={"tertiary"} onPress={sendToKitchen}>{texts.seePastOrders}</Button>
+        <Button colorScheme={"secondary"} onPress={sendToKitchen}>{texts.sendToKitchen}</Button>
+      </VStack>
+    </Box>
   );
 };
-
-export { CartScreen };
-
-
-const styles = StyleSheet.create({
-  bagTemplateContainer: {
-    padding: 8,
-    justifyConte: "center",
-  },
-  title: {
-    fontSize: 22,
-    // borderWidth: 1,
-    padding: 10,
-    marginBottom: 10,
-    textAlign: "center",
-    textAlignVertical: "center",
-  },
-});
