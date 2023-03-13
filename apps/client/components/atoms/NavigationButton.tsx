@@ -25,6 +25,8 @@ import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line } from "react-icons/ri"
 import { BiLogOutCircle } from "react-icons/bi"
 import { MdOutlineFrontHand } from "react-icons/md"
+import { ImBin } from "react-icons/im"
+import { BsTrash } from "react-icons/bs"
 
 type IconProps = {
   type: NavigationButtonType;
@@ -34,6 +36,8 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "TrashCan":
+      return <BsTrash color={color} size={size} />;
     case "RaisedHand":
       return <MdOutlineFrontHand color={color} size={size} />;
     case "Home":

@@ -1,3 +1,4 @@
+import { parseToCurrency } from "app-helpers";
 import { Box, Button, FlatList, Heading, Text, useTheme, VStack } from "native-base";
 import React from "react";
 import { Icon } from "../../components/atoms/NavigationButton";
@@ -7,14 +8,17 @@ import { texts } from "./texts";
 const orders = new Array(10).fill({
   id: "1",
   status: "pending",
+  name: "Pizza de Alho Poro",
+  price: 1000,
+  uri: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80",
 });
 
-const renderItem = ({ item, index }: any) =>
+const renderItem = ({ item, index }: { item: any, index: number }) =>
   <CartTile
     key={index}
     index={index}
-    order={item}
-    refetch={() => undefined}
+    name={item.name}
+    price={parseToCurrency(item.price)}
   />
 
 export const CartScreen = () => {
@@ -27,10 +31,11 @@ export const CartScreen = () => {
 
   return (
     <Box w={"full"} h={"full"}>
-      <Heading textAlign={"center"}>{texts.title}</Heading>
       <FlatList
         data={orders}
         renderItem={renderItem}
+        contentContainerStyle={{ paddingHorizontal: 4 }}
+        ListHeaderComponent={<Heading pb={2} textAlign={"center"}>{texts.title}</Heading>}
         ListEmptyComponent={
           <Box>
             <Text justifyContent={"center"} alignItems={"flex-end"} pt={"8"} textAlign={"center"}>
