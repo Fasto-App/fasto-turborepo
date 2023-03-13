@@ -42,7 +42,7 @@ const ClientTabBar: React.FC = (props) => {
         type={"Bag"}
         selected={isCart}
         onPress={() => {
-          router.push(clientRoute.menu("123"));
+          router.push(clientRoute.cart);
         }}
       />
       <NavigationButton
