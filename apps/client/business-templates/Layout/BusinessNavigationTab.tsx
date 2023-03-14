@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { Center } from "native-base";
-import { NavigationButton } from "../../components/atoms/NavigationButton";
+import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
 import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { clearCookies } from "../../cookies/businessCookies";
 import { LeftSideBar } from "../../components";
@@ -32,8 +32,7 @@ const BusinessNavigationTab = () => {
         justifyContent={"center"}
         h={"full"}
       >
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.dashboard}
           type={"Dashboard"}
           selected={useIsPageSelected(businessRoute.dashboard)}
@@ -41,8 +40,7 @@ const BusinessNavigationTab = () => {
             router.push(businessRoute.dashboard);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.categories_products}
           type={"Fork"}
           selected={useIsPageSelected(businessRoute.add_products_categories)}
@@ -50,8 +48,7 @@ const BusinessNavigationTab = () => {
             router.push(businessRoute.add_products_categories);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.menu}
           type={"Menu"}
           selected={useIsPageSelected(businessRoute.menu)}
@@ -60,8 +57,7 @@ const BusinessNavigationTab = () => {
           }}
         />
 
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.tables}
           type={"Table"}
           selected={useIsPageSelected(businessRoute.tables)}
@@ -69,8 +65,7 @@ const BusinessNavigationTab = () => {
             router.push(businessRoute.tables);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.settings}
           type={"Settings"}
           selected={useIsPageSelected(businessRoute.settings)}
@@ -78,8 +73,7 @@ const BusinessNavigationTab = () => {
             router.push(businessRoute.settings);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.logout}
           type={"Logout"}
           selected={useIsPageSelected(businessRoute.login)}

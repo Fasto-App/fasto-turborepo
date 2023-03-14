@@ -97,7 +97,7 @@ const NavigationButton = ({
   selected = false,
   text,
   onPress,
-  color = colors.black,
+  color,
   flexDirection = "column",
 }: {
   type: NavigationButtonType;
@@ -109,7 +109,7 @@ const NavigationButton = ({
   flexDirection?: "row" | "column";
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
-  // const selectedColor = selected || isHovered ? colors.yellow : colors.black;
+  const selectedColor = selected || isHovered ? colors.orange : colors.white;
   const isRow = flexDirection === "row";
 
   return (
@@ -121,13 +121,14 @@ const NavigationButton = ({
       width={isRow ? "90%" : "auto"}
       background={selected ? "secondary.300" : "clear"}
       borderRadius={"md"}
-      padding={"1"}
+      padding={"2"}
     >
-      <Icon type={type} size={"2em"} color={color} />
+      <Icon type={type} size={"2em"} color={color ?? selectedColor} />
       <Box w={"2"} />
       <Text
         fontSize={isRow ? "lg" : "xs"}
         textAlign={"center"}
+        color={color ?? selectedColor}
       >
         {text}
       </Text>
@@ -135,4 +136,47 @@ const NavigationButton = ({
   );
 };
 
-export { NavigationButton };
+const BusinessNavigationButton = ({
+  type,
+  selected = false,
+  text,
+  onPress,
+  color = colors.black,
+}: {
+  type: NavigationButtonType;
+  selected?: boolean;
+  hovered?: boolean;
+  onPress: () => void;
+  color?: string;
+  text?: string;
+}) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+  const selectedColor = selected || isHovered ? colors.orange : color;
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}
+      flexDirection={"row"}
+      width={"90%"}
+      borderRadius={"md"}
+      borderWidth={1}
+      borderColor={selected ? colors.orange : "transparent"}
+      padding={"2"}
+    >
+      <Icon type={type} size={"2em"} color={selectedColor} />
+      <Box w={"2"} />
+      <Text
+        fontSize={"lg"}
+        textAlign={"center"}
+        color={selectedColor}
+        alignSelf={"flex-end"}
+      >
+        {text}
+      </Text>
+    </Pressable >
+  );
+};
+
+export { NavigationButton, BusinessNavigationButton };

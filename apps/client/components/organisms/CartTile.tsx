@@ -21,11 +21,10 @@ const CartTile = (props: CartTileProps) => {
     <HStack
       borderRadius={"sm"}
       p={2}
-      space={4}
       backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
       justifyContent={"space-between"}
       alignItems={"center"}>
-      <HStack space={4}>
+      <HStack space={2}>
         <Box>
           <Image
             size={"xs"}
@@ -34,7 +33,7 @@ const CartTile = (props: CartTileProps) => {
             borderRadius={5}
           />
         </Box>
-        <Text alignSelf={"center"} maxW={110}>{name}</Text>
+        <Text alignSelf={"center"} maxW={100}>{name}</Text>
       </HStack>
 
       <Text>{price}</Text>

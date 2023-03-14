@@ -1,5 +1,5 @@
 import { parseToCurrency } from "app-helpers";
-import { Box, Button, FlatList, Heading, Text, useTheme, VStack } from "native-base";
+import { Box, Button, FlatList, Heading, HStack, Text, useTheme } from "native-base";
 import React from "react";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
@@ -48,10 +48,12 @@ export const CartScreen = () => {
           </Box>
         }
       />
-      <VStack space={"4"} p={"4"}>
-        <Button colorScheme={"tertiary"} onPress={sendToKitchen}>{texts.seePastOrders}</Button>
-        <Button colorScheme={"secondary"} onPress={sendToKitchen}>{texts.sendToKitchen}</Button>
-      </VStack>
+
+      {/*  give a transparency to the HStack */}
+      <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
+        <Button _text={{ bold: true }} flex={1} colorScheme={"primary"} onPress={sendToKitchen}>{texts.cta1}</Button>
+        <Button _text={{ bold: true }} flex={1} colorScheme={"success"} onPress={sendToKitchen}>{texts.cta2}</Button>
+      </HStack>
     </Box>
   );
 };
