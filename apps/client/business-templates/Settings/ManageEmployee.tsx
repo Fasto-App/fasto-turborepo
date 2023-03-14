@@ -6,7 +6,7 @@ import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
 import { texts } from "./texts"
 import { AddMoreButton } from "../../components/atoms/AddMoreButton"
-import { EmployeeInformation } from "app-helpers"
+import { DICE_BEAR_INITIALS_URL, EmployeeInformation } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
 import { useDeleteBusinessEmployeeMutation, useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
 import { MoreButton } from "../../components/MoreButton"
@@ -14,8 +14,6 @@ import { EmployeeTile } from "../../components/BorderTile"
 import { DeleteAlert } from "../../components/DeleteAlert"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
-
-const DICE_BEAR_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
 export const ManageEmployee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -187,7 +185,7 @@ export const ManageEmployee = () => {
                   jobTitle={employee.jobTitle}
                   name={employee.name}
                   privilege={employee.privilege}
-                  picture={employee.picture || DICE_BEAR_URL(employee.name)}
+                  picture={employee.picture || DICE_BEAR_INITIALS_URL(employee.name)}
                   ctaTitle={"Edit"}
                   isPending={employee.isPending}
                   onPress={() => onEditPressed(employee)}

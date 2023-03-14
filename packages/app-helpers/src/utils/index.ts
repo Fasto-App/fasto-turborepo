@@ -35,3 +35,5 @@ export const getPercentageOfValue = (value?: number, percentage?: number) => {
 export const getFixedPointPercentage = (percentage?: number) => {
   return (Math.floor(percentage ?? 0) * FIXED_POINT_FACTOR_PERCENTAGE);
 }
+
+export const DICE_BEAR_INITIALS_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`

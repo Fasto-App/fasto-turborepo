@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AiOutlineHome,
-  AiOutlineSetting,
   AiOutlineDollar,
   AiOutlineMessage,
   AiOutlineContacts,
@@ -17,16 +16,18 @@ import {
 } from "react-icons/ai";
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
-import { BsBag, BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
-import { Box, Pressable, Text, useBreakpointValue } from "native-base";
+import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
+import { Box, Pressable, Text } from "native-base";
 import { IoIosArrowBack } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line } from "react-icons/ri"
 import { BiLogOutCircle } from "react-icons/bi"
 import { MdOutlineFrontHand } from "react-icons/md"
-import { ImBin } from "react-icons/im"
 import { BsTrash } from "react-icons/bs"
+import { RiUserSettingsLine } from "react-icons/ri"
+import { RiShoppingBag3Line } from "react-icons/ri"
+import { ImQrcode } from "react-icons/im"
 
 type IconProps = {
   type: NavigationButtonType;
@@ -36,6 +37,8 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "QRCode":
+      return <ImQrcode color={color} size={size} />;
     case "TrashCan":
       return <BsTrash color={color} size={size} />;
     case "RaisedHand":
@@ -43,7 +46,7 @@ export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) =>
     case "Home":
       return <AiOutlineHome color={color} size={size} />;
     case "Settings":
-      return <AiOutlineSetting color={color} size={size} />;
+      return <RiUserSettingsLine color={color} size={size} />;
     case "Money":
       return <AiOutlineDollar color={color} size={size} />;
     case "Message":
@@ -71,7 +74,7 @@ export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) =>
     case "ListStar":
       return <BsListStars color={color} size={size} />;
     case "Bag":
-      return <BsBag color={color} size={size} />;
+      return <RiShoppingBag3Line color={color} size={size} />;
     case "Radio":
       return <BsUiRadiosGrid color={color} size={size} />;
     case "Payment":
@@ -135,6 +138,8 @@ const NavigationButton = ({
     </Pressable >
   );
 };
+
+
 
 const BusinessNavigationButton = ({
   type,

@@ -3,28 +3,22 @@ import { Box, Flex, ScrollView } from "native-base";
 import { ClientNavBar } from "./ClientNavbar";
 import { ClientTabBar } from "./ClientTabBar";
 import { useRouter } from "next/router";
+import { PathNameKeys } from "../../routes";
 
 const ClientLayout: React.FC = ({ children }) => {
-  // for productDescription page don't display TabBar
-  // if (children.props?.route?.pathname === "/client/production_description") {
   const route = useRouter()
   const { productId } = route.query
-
   const isHome = route.pathname === "/client/[businessId]"
 
-  // some flag that will hide the tab bar and the navigation bar
 
-  // route is /client/businessId only 
+  // para essa rota essa cora para aquela 
 
-  console.log("route", route)
-
-  console.log("route", route)
   return (
     <Flex
       flexDirection="column"
       justifyContent={"space-between"}
       h={"100%"}
-      bg={"white"}>
+      bg={route.pathname === "/client/[businessId]/settings" ? "gray.100" : "white"}>
       {isHome ? null : <ClientNavBar />}
       <Box flex={1}>
         {children}
