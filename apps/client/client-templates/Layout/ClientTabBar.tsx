@@ -29,7 +29,6 @@ const ClientTabBar: React.FC = (props) => {
       paddingY={"2"}
       paddingX={paddingX}
       bg={"primary.500"}
-      safeAreaBottom={1}
     >
       <NavigationButton
         type={"ListStar"}
