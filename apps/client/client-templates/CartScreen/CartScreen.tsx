@@ -35,7 +35,14 @@ export const CartScreen = () => {
         data={orders}
         renderItem={renderItem}
         contentContainerStyle={{ paddingHorizontal: 4 }}
-        ListHeaderComponent={<Heading pb={2} textAlign={"center"}>{texts.title}</Heading>}
+        ListHeaderComponent={
+          <Box alignItems={"flex-end"} px={2}>
+            <Button size="sm" variant="link" colorScheme={"info"}>
+              {texts.seePastOrders}
+            </Button>
+          </Box>
+
+        }
         ListEmptyComponent={
           <Box>
             <Text justifyContent={"center"} alignItems={"flex-end"} pt={"8"} textAlign={"center"}>
@@ -48,8 +55,6 @@ export const CartScreen = () => {
           </Box>
         }
       />
-
-      {/*  give a transparency to the HStack */}
       <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button _text={{ bold: true }} flex={1} colorScheme={"primary"} onPress={sendToKitchen}>{texts.cta1}</Button>
         <Button _text={{ bold: true }} flex={1} colorScheme={"success"} onPress={sendToKitchen}>{texts.cta2}</Button>

@@ -4,4 +4,5 @@ export const texts = {
   andStartOrdering: "and start ordering!",
   cta1: "Place Order",
   cta2: "Pay Bill",
+  seePastOrders: "See Past Orders",
 }

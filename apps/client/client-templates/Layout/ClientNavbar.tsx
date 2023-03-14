@@ -2,15 +2,11 @@ import React from "react"
 import { useRouter } from "next/router";
 import { Avatar, Box, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
+import { clientPathName, PathNameKeys } from "../../routes";
 
-const texts = {
-  navigationTitle: "Fasto App",
-}
-
-const ClientNavBar: React.FC = (props) => {
+const ClientNavBar = () => {
   const route = useRouter();
   const { productId } = route.query
-
   const theme = useTheme();
 
   return (
@@ -27,7 +23,6 @@ const ClientNavBar: React.FC = (props) => {
       <HStack
         p={1}
         my={2}
-        mb={4}
         mx={2}
         background={"white"}
         borderRadius={"lg"}
@@ -47,8 +42,8 @@ const ClientNavBar: React.FC = (props) => {
             }}
           />
           : <Avatar size="48px" source={{ uri: "https://cdn.logo.com/hotlink-ok/logo-social.png" }} />}
-        <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
-          Haruko
+        <Text textAlign={"center"} w={"50%"} fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
+          {clientPathName[route.pathname as PathNameKeys]}
         </Text>
         <VStack alignItems={"center"}>
           <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
