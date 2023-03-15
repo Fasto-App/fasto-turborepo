@@ -9,6 +9,7 @@ const ClientLayout: React.FC = ({ children }) => {
   const route = useRouter()
   const { productId } = route.query
   const isHome = route.pathname === "/client/[businessId]"
+  const isCheckout = route.pathname === "/client/[businessId]/checkout/[checkoutId]"
 
 
   // para essa rota essa cora para aquela 
@@ -23,7 +24,7 @@ const ClientLayout: React.FC = ({ children }) => {
       <Box flex={1}>
         {children}
       </Box>
-      {productId || isHome ? null : <ClientTabBar />}
+      {productId || isHome || isCheckout ? null : <ClientTabBar />}
     </Flex>
   );
 };

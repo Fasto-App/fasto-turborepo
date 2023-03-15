@@ -1,10 +1,12 @@
 import { parseToCurrency, typedKeys } from "app-helpers";
 import { Box, Button, FlatList, Heading, HStack, Text, useTheme } from "native-base";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useCallback } from "react";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CustomModal } from "../../components/CustomModal/CustomModal";
 import { FDSTab, TabsType } from "../../components/FDSTab";
 import { CartTile, PastOrdersTile } from "../../components/organisms/CartTile";
+import { clientRoute } from "../../routes";
 import { texts } from "./texts";
 
 const orders = new Array(10).fill({
@@ -40,11 +42,18 @@ const renderPastOrderItem = ({ item, index }: { item: any, index: number }) =>
 export const CartScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState("yourOrders");
+  const route = useRouter();
 
   const theme = useTheme();
-  const sendToKitchen = () => {
+
+  const placeOrder = () => {
     console.log("send to kitchen");
   };
+
+  const payBill = useCallback(() => {
+    console.log("pay bill");
+    route.push(clientRoute.checkout);
+  }, [route]);
 
 
   return (
@@ -78,8 +87,8 @@ export const CartScreen = () => {
         }
       />
       <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
-        <Button _text={{ bold: true }} flex={1} colorScheme={"primary"} onPress={sendToKitchen}>{texts.cta1}</Button>
-        <Button _text={{ bold: true }} flex={1} colorScheme={"success"} onPress={sendToKitchen}>{texts.cta2}</Button>
+        <Button _text={{ bold: true }} flex={1} colorScheme={"primary"} onPress={placeOrder}>{texts.cta1}</Button>
+        <Button _text={{ bold: true }} flex={1} colorScheme={"success"} onPress={payBill}>{texts.cta2}</Button>
       </HStack>
       <CustomModal
         isOpen={isModalOpen}

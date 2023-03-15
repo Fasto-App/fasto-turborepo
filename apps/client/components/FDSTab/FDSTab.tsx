@@ -15,18 +15,19 @@ type FDSTabProps<T extends TabsType> = {
 export const FDSTab = <T extends TabsType>({ setSelectedTab, selectedTab, tabs }: FDSTabProps<T>) => {
 
   return (
-    <HStack flex={1} justifyContent={"space-around"}>
+    <HStack justifyContent={"space-around"}>
       {typedKeys(tabs).map((key, index) => {
         return (
           <Pressable key={index} flex={1} onPress={() => setSelectedTab(key as string)}>
             <Heading
-              size={"md"}
+              size={"sm"}
               textAlign={"center"}
-              color={selectedTab === key ? undefined : "gray.400"}
+              color={selectedTab === key ? "primary.500" : "gray.400"}
+              pb={2}
             >
               {tabs[key]}
             </Heading>
-            <Divider bg={selectedTab === key ? "gray.400" : "gray.300"} />
+            <Divider bg={"gray.300"} />
           </Pressable>
         )
       })}

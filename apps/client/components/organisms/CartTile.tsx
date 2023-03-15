@@ -45,8 +45,15 @@ export const CartTile = (props: CartTileProps) => {
         />
       </Box>
       <Box style={{ flexDirection: "row" }}>
-        <Pressable onPress={() => console.log("")}>
-          <Icon type={"TrashCan"} />
+        <Pressable
+          backgroundColor={"amber.200"}
+          borderRadius={"md"}
+          onPress={() => console.log("")}
+          p={2}
+        >
+          <Text fontSize={"18"}>
+            🗑
+          </Text>
         </Pressable>
       </Box>
     </HStack>
