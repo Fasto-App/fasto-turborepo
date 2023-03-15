@@ -5,4 +5,6 @@ export const texts = {
   cta1: "Place Order",
   cta2: "Pay Bill",
   seePastOrders: "See Past Orders",
+  modalCta1: "Back",
+  modalTitle: "Past Orders",
 }

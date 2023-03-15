@@ -81,7 +81,7 @@ const SettingsScreen = () => {
               Alex Mendes
             </Text>
             <Text color="secondary.900" italic>
-              Admin
+              Tab Admin
             </Text>
           </VStack>
         </HStack>

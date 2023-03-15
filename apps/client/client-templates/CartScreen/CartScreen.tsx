@@ -1,8 +1,10 @@
-import { parseToCurrency } from "app-helpers";
+import { parseToCurrency, typedKeys } from "app-helpers";
 import { Box, Button, FlatList, Heading, HStack, Text, useTheme } from "native-base";
 import React from "react";
 import { Icon } from "../../components/atoms/NavigationButton";
-import { CartTile } from "../../components/organisms/CartTile";
+import { CustomModal } from "../../components/CustomModal/CustomModal";
+import { FDSTab, TabsType } from "../../components/FDSTab";
+import { CartTile, PastOrdersTile } from "../../components/organisms/CartTile";
 import { texts } from "./texts";
 
 const orders = new Array(10).fill({
@@ -13,7 +15,13 @@ const orders = new Array(10).fill({
   uri: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80",
 });
 
-const renderItem = ({ item, index }: { item: any, index: number }) =>
+// 01. add tab from Business dashboard
+const tabs: TabsType = {
+  yourOrders: "Your Orders",
+  tableOrders: "Past Orders",
+}
+
+const renderCartItem = ({ item, index }: { item: any, index: number }) =>
   <CartTile
     key={index}
     index={index}
@@ -21,7 +29,17 @@ const renderItem = ({ item, index }: { item: any, index: number }) =>
     price={parseToCurrency(item.price)}
   />
 
+const renderPastOrderItem = ({ item, index }: { item: any, index: number }) =>
+  <PastOrdersTile
+    key={index}
+    index={index}
+    name={item.name}
+    price={parseToCurrency(item.price)}
+  />
+
 export const CartScreen = () => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedTab, setSelectedTab] = React.useState("yourOrders");
 
   const theme = useTheme();
   const sendToKitchen = () => {
@@ -33,11 +51,15 @@ export const CartScreen = () => {
     <Box w={"full"} h={"full"}>
       <FlatList
         data={orders}
-        renderItem={renderItem}
+        renderItem={renderCartItem}
         contentContainerStyle={{ paddingHorizontal: 4 }}
         ListHeaderComponent={
           <Box alignItems={"flex-end"} px={2}>
-            <Button size="sm" variant="link" colorScheme={"info"}>
+            <Button
+              size="sm"
+              variant="link"
+              colorScheme={"info"}
+              onPress={() => setIsModalOpen(true)}>
               {texts.seePastOrders}
             </Button>
           </Box>
@@ -59,6 +81,39 @@ export const CartScreen = () => {
         <Button _text={{ bold: true }} flex={1} colorScheme={"primary"} onPress={sendToKitchen}>{texts.cta1}</Button>
         <Button _text={{ bold: true }} flex={1} colorScheme={"success"} onPress={sendToKitchen}>{texts.cta2}</Button>
       </HStack>
+      <CustomModal
+        isOpen={isModalOpen}
+        size={"full"}
+        onClose={() => setIsModalOpen(false)}
+        HeaderComponent={
+          <Heading textAlign={"center"} size={"md"}>
+            {texts.modalTitle}
+          </Heading>}
+        ModalBody={
+          <FlatList
+            data={orders}
+            ListHeaderComponent={
+              <>
+                <FDSTab
+                  tabs={tabs}
+                  selectedTab={selectedTab}
+                  setSelectedTab={setSelectedTab}
+                />
+                <Box h={"2"} />
+              </>
+            }
+            renderItem={renderPastOrderItem}
+          />
+        }
+        ModalFooter={
+          <Button
+            w={"full"}
+            colorScheme={"primary"}
+            onPress={() => setIsModalOpen(false)}
+          >
+            {texts.modalCta1}
+          </Button>}
+      />
     </Box>
   );
 };

@@ -12,9 +12,9 @@ export type CartTileProps = {
   price: string;
 };
 
-const states = ["🗑", "⏳", "✅"];
+const states = ["✅", "⏳"];
 
-const CartTile = (props: CartTileProps) => {
+export const CartTile = (props: CartTileProps) => {
   const { name, index, price } = props;
 
   return (
@@ -54,4 +54,38 @@ const CartTile = (props: CartTileProps) => {
   );
 };
 
-export { CartTile };
+export const PastOrdersTile = (props: CartTileProps) => {
+  const { name, index, price } = props;
+
+  return (
+    <HStack
+      borderRadius={"sm"}
+      p={2}
+      backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
+      justifyContent={"space-between"}
+      alignItems={"center"}>
+      <HStack space={2}>
+        <Box>
+          <Image
+            size={"xs"}
+            source={{ uri: uri }}
+            alt={""}
+            borderRadius={5}
+          />
+        </Box>
+        <Text alignSelf={"center"} maxW={100}>{name}</Text>
+      </HStack>
+
+      <Text>{price}</Text>
+
+      <Text>{"x3"}</Text>
+
+      <Text fontSize={"18"}>
+
+        {index > 5 ? states[0] : states[1]}
+
+      </Text>
+    </HStack>
+
+  );
+};
