@@ -4,7 +4,9 @@ import React, { Dispatch, SetStateAction } from 'react'
 
 export type TabsType = {
   [key: string]: string
-}
+} & {
+    readonly [K in string]: K;
+  };
 
 type FDSTabProps<T extends TabsType> = {
   tabs: T;

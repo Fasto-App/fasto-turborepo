@@ -1,20 +1,21 @@
 import { Box, Button, Divider, Heading, HStack, Text, VStack } from 'native-base'
-import React from 'react'
+import React, { useState } from 'react'
+import { FDSSelect } from '../../components/FDSSelect'
 import { FDSTab, TabsType } from '../../components/FDSTab'
+import { PayTable } from './PayTable'
+import { Split } from './Split'
 
 const tabs: TabsType = {
   payTable: "Pay Table",
-  split: "Split",
+  split: "Split Payment",
 }
 
 export const CheckoutScreen = () => {
-  const [selectedTab, setSelectedTab] = React.useState("payTable");
+  const [selectedTab, setSelectedTab] = useState("payTable");
 
   const pay = () => {
     console.log("pay")
   }
-
-
 
   return (
     <Box p={4}>
@@ -23,25 +24,9 @@ export const CheckoutScreen = () => {
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
       />
-      <HStack justifyContent={"space-between"} pt={4} px={4}>
-        <Text fontSize={"lg"}>{"Subtotal"}</Text>
-        <Text fontSize={"lg"}>{"$19.00"}</Text>
-      </HStack>
-      <HStack justifyContent={"space-between"} pt={4} px={4}>
-        <Text fontSize={"lg"}>{"Taxes"}</Text>
-        <Text fontSize={"lg"}>{"$19.00"}</Text>
-      </HStack>
-      <HStack justifyContent={"space-between"} pt={4} px={4}>
-        <Text fontSize={"lg"}>{"Tip"}</Text>
-        <Text fontSize={"lg"}>{"$19.00"}</Text>
-      </HStack>
-      <Divider marginY={2} />
-      <HStack justifyContent={"space-between"} pt={2} px={4}>
-        <Text fontSize={"xl"} bold>{"total"}</Text>
-        <Text fontSize={"xl"} bold>{"$19.00"}</Text>
-      </HStack>
-      <Box h={"100%"} justifyContent={"flex-end"}>
-
+      {selectedTab === "split" && <Split />}
+      <PayTable />
+      <Box justifyContent={"flex-end"} mt={4}>
         <VStack space={"4"} p={4}>
           <Button
             _text={{ bold: true }}

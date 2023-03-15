@@ -17,7 +17,7 @@ import {
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
 import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
-import { Box, Pressable, Text } from "native-base";
+import { Badge, Box, Pressable, Text } from "native-base";
 import { IoIosArrowBack } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
@@ -28,6 +28,7 @@ import { BsTrash } from "react-icons/bs"
 import { RiUserSettingsLine } from "react-icons/ri"
 import { RiShoppingBag3Line } from "react-icons/ri"
 import { ImQrcode } from "react-icons/im"
+import { BsBag } from "react-icons/bs"
 
 type IconProps = {
   type: NavigationButtonType;
@@ -74,7 +75,7 @@ export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) =>
     case "ListStar":
       return <BsListStars color={color} size={size} />;
     case "Bag":
-      return <RiShoppingBag3Line color={color} size={size} />;
+      return <BsBag color={color} size={size} />;
     case "Radio":
       return <BsUiRadiosGrid color={color} size={size} />;
     case "Payment":
@@ -102,6 +103,7 @@ const NavigationButton = ({
   onPress,
   color,
   flexDirection = "column",
+  numNotifications,
 }: {
   type: NavigationButtonType;
   selected?: boolean;
@@ -110,6 +112,7 @@ const NavigationButton = ({
   color?: string;
   text?: string;
   flexDirection?: "row" | "column";
+  numNotifications?: number;
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const selectedColor = selected || isHovered ? colors.orange : colors.white;
@@ -126,6 +129,15 @@ const NavigationButton = ({
       borderRadius={"md"}
       padding={"2"}
     >
+      {numNotifications ?
+        <Badge
+          position={"absolute"}
+          colorScheme="fuchsia" rounded="full" mr={-2} zIndex={1} variant="solid" alignSelf="flex-end" _text={{
+            fontSize: 8,
+            bold: true
+          }}>
+          {numNotifications}
+        </Badge> : null}
       <Icon type={type} size={"2em"} color={color ?? selectedColor} />
       <Box w={"2"} />
       <Text

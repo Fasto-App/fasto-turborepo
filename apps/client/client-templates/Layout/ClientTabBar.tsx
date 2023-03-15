@@ -40,6 +40,7 @@ const ClientTabBar: React.FC = (props) => {
       <NavigationButton
         type={"Bag"}
         selected={isCart}
+        numNotifications={9}
         onPress={() => {
           router.push(clientRoute.cart);
         }}
