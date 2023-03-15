@@ -28,10 +28,10 @@ export const IncrementButtons = (props: IncrementButtonsProps) => {
     <HStack space={2}>
       <StyledIconButton type={"minus"} onPress={onMinusPress} />
       <Text
-        fontSize={16}
+        fontSize={quantity > 99 ? 12 : 16}
         alignSelf={"center"}
         textAlign={"center"}
-        w={5}>{quantity}</Text>
+        w={quantity > 99 ? 6 : 5}>{quantity}</Text>
       <StyledIconButton type="plus" onPress={onPlusPress} />
     </HStack>
   )

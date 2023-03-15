@@ -36,7 +36,7 @@ export const CheckoutScreen = () => {
           <Button
             _text={{ bold: true }}
             flex={1}
-            colorScheme={"success"}
+            colorScheme={"tertiary"}
             onPress={pay}>{"See Check"}</Button>
         </VStack>
       </Box>

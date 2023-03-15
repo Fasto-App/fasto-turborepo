@@ -31,7 +31,7 @@ export const borderColor = (status?: TableStatus) => {
     case "Reserved":
       return "muted.300"
     case "Available":
-      return "success.600"
+      return "tertiary.700"
     default:
       return "tertiary.600"
   }

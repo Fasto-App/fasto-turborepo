@@ -39,14 +39,14 @@ export const CartTile = (props: CartTileProps) => {
       <Text>{price}</Text>
       <Box>
         <IncrementButtons
-          quantity={1}
+          quantity={10}
           onPlusPress={() => { }}
           onMinusPress={() => { }}
         />
       </Box>
       <Box style={{ flexDirection: "row" }}>
         <Pressable
-          backgroundColor={"amber.200"}
+          backgroundColor={"tertiary.300"}
           borderRadius={"md"}
           onPress={() => console.log("")}
           p={2}

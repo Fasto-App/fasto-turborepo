@@ -88,7 +88,7 @@ export const CartScreen = () => {
       />
       <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button _text={{ bold: true }} flex={1} colorScheme={"primary"} onPress={placeOrder}>{texts.cta1}</Button>
-        <Button _text={{ bold: true }} flex={1} colorScheme={"success"} onPress={payBill}>{texts.cta2}</Button>
+        <Button _text={{ bold: true }} flex={1} colorScheme={"tertiary"} onPress={payBill}>{texts.cta2}</Button>
       </HStack>
       <CustomModal
         isOpen={isModalOpen}
