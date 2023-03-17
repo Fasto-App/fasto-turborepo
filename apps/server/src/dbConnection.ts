@@ -1,19 +1,15 @@
 
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
+import { MONGO_DB_URI } from "./constants";
 dotenv.config();
 
-// console.log("mongodb://mongo:8AkiVWxYNcVcjuRDDaHf@containers-us-west-85.railway.app:7492")
 const RAILWAY_MONGO_DB = "mongodb://mongo:8sIXR7VXmZ1d7fEZIYUn@containers-us-west-62.railway.app:6178"
 function dbConnection() {
 
-  const oldUri = `mongodb+srv://dbOpenTab:${process.env.CLUSTER_PASSWORD}@cluster1.ml57r.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-
-  const uri = oldUri
-
   mongoose.Promise = global.Promise;
   mongoose.connect(
-    uri,
+    MONGO_DB_URI,
     {
       dbName: process.env.DB_NAME,
       //@ts-ignore

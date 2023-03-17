@@ -1,6 +1,5 @@
 import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { dbConnection } from '../dbConnection';
 import { ApolloError } from "./ApolloErrorExtended/ApolloErrorExtended";
 import { resolvers } from "./resolvers/GraphResolvers";
 import { getUserFromToken } from "./resolvers/utils";
@@ -23,10 +22,9 @@ import {
   PaymentTypeDefinition,
   RequestTypeDefinition
 } from "./typeDefs";
+import { db } from "..";
 
 
-
-const db = dbConnection();
 
 function logUserCredentialsValid(userFromToken: boolean) {
   console.log("BACKEND: ID, EMAIL, BUSINESS  🔐 ", userFromToken ? "✅" : "❌");
@@ -81,7 +79,7 @@ const server = new ApolloServer({
   },
   formatError: (error) => {
 
-    console.log("Error: ���")
+    console.log("Error: 👹 ", error.message, "👹")
     return error;
   }
 });

@@ -47,6 +47,7 @@ const authLink = setContext((_: any, { headers }) => {
   return {
     headers: {
       ...headers,
+      credential: "include",
       authorization: token ? `Bearer ${token}` : "",
       'Apollo-Require-Preflight': 'true',
       "x-api-key": process.env.NEXT_PUBLIC_API_KEY
