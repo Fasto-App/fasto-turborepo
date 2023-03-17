@@ -4,11 +4,8 @@ import express, { Express } from 'express';
 import apolloServer from './graphql';
 import { graphqlUploadExpress } from 'graphql-upload'
 import { Bugsnag } from "./bugsnag/bugsnag";
-import session from 'express-session';
-import MongoStore from "connect-mongo"
-import { MONGO_DB_URI } from "./constants";
 import { dbConnection } from "./dbConnection";
-import cors from 'cors';
+// import cors from 'cors';
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
@@ -18,26 +15,6 @@ export const db = dbConnection();
 
 async function main() {
   const app = express();
-  // Configure session middleware
-  // app.use(session({
-  //   secret: 'keyboard cat',
-  //   saveUninitialized: false, // don't create session until something stored
-  //   resave: false, //don't save session if unmodified
-  //   store: MongoStore.create({
-  //     mongoUrl: MONGO_DB_URI,
-  //     collectionName: "sessions",
-  //     touchAfter: 24 * 3600, // time period in seconds
-  //   })
-  // }));
-  app.use(session({
-    secret: 'keyboard cat',
-    cookie: {
-      maxAge: 60000,
-      httpOnly: true,
-      domain: "http://localhost:3000/",
-      secure: false
-    },
-  }));
 
   app.use(middleware?.requestHandler!)
   app.use(middleware?.errorHandler!)
@@ -49,6 +26,7 @@ async function main() {
   console.log("process.env.FRONTEND_URL", FRONTEND_URL)
   console.log("API_KEY", process.env.API_KEY)
 
+  // todo: Configure CORS
   // app.use(cors({
   //   origin: function (origin, callback) {
   //     console.log("FRONTEND_URL", FRONTEND_URL)

@@ -87,8 +87,9 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   }, [totalGuests])
 
   const [clientRequestTab, { loading }] = useOpenTabRequestMutation({
-    onCompleted: () => {
+    onCompleted: (data) => {
       console.log("Tab Request Completed")
+      console.log(data)
     },
     onError: (err) => {
       console.log("Tab Request Error")
