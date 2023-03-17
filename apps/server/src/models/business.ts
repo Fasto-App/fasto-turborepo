@@ -1,4 +1,4 @@
-import { Types, SchemaTypes, Schema, SchemaDefinition, Connection } from 'mongoose'
+import { Types, Connection } from 'mongoose'
 import { Menu } from './menu';
 import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';

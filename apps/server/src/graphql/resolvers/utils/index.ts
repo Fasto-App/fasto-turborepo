@@ -21,7 +21,7 @@ type UserToken = {
 export const getUserFromToken = async (token?: string): Promise<UserToken | null> => {
   const tokenSecret = process.env.TOKEN_SECRET;
 
-  if (!tokenSecret) throw new Error('Token secret or bearer token not found');
+  if (!tokenSecret) throw new Error('Token secret not found');
 
   if (!token) {
     console.log("🚯 No Token: Limited Access");

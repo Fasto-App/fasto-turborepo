@@ -4,10 +4,12 @@ import { NavigationButton } from '../../components/atoms/NavigationButton'
 import { useRouter } from 'next/router'
 import { texts } from './texts'
 import { QRCodeReader } from './QRCodeReader'
+import { OpenTabModal } from './OpenTabModal'
 
 export const HomeScreen = () => {
 
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
+  const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
   const route = useRouter()
 
   const joinTab = () => {
@@ -18,6 +20,8 @@ export const HomeScreen = () => {
   const onPress = () => {
     route.push('/client/123/menu')
   }
+
+  // add modal for join tab
 
   return (
     <Center h={"100%"} backgroundColor={"white"}>
@@ -39,7 +43,7 @@ export const HomeScreen = () => {
         alt="Business Name"
       />
       <VStack space={6} mt={"10"} w={"80%"}>
-        <Button onPress={onPress} _text={{ bold: true }}>{texts.openNewTab}</Button>
+        <Button onPress={() => setIsOpenTabModalOpen(true)} _text={{ bold: true }}>{texts.openNewTab}</Button>
         <Button onPress={joinTab} _text={{ bold: true }} colorScheme={"secondary"}>{texts.joinTab}</Button>
         <Button onPress={onPress} _text={{ bold: true }} colorScheme={"tertiary"}>{texts.viewMenu}</Button>
       </VStack>
@@ -60,6 +64,10 @@ export const HomeScreen = () => {
       <QRCodeReader
         isOpen={isJoinTabModalOpen}
         setModalVisibility={setIsJoinTabModalOpen}
+      />
+      <OpenTabModal
+        isOpen={isOpenTabModalOpen}
+        setModalVisibility={() => setIsOpenTabModalOpen(false)}
       />
     </Center>
   )

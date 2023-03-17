@@ -319,6 +319,7 @@ export type Mutation = {
   linkCategoryToProducts?: Maybe<Category>;
   makeCheckoutPayment: Checkout;
   manageBusinessEmployees: Employee;
+  openTabRequest?: Maybe<Scalars['String']>;
   passwordReset: User;
   postUserLogin: User;
   recoverPassword?: Maybe<RequestResponseOk>;
@@ -460,6 +461,11 @@ export type MutationManageBusinessEmployeesArgs = {
 };
 
 
+export type MutationOpenTabRequestArgs = {
+  input: OpenTabRequestInput;
+};
+
+
 export type MutationPasswordResetArgs = {
   input: ResetPasswordInput;
 };
@@ -547,6 +553,13 @@ export type MutationUpdateUserInformationArgs = {
 
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
+};
+
+export type OpenTabRequestInput = {
+  name: Scalars['String'];
+  names?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  phoneNumber: Scalars['String'];
+  totalGuests: Scalars['Int'];
 };
 
 export type OrderDetail = {
@@ -1016,6 +1029,13 @@ export type UploadFileMutationVariables = Exact<{
 
 
 export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
+
+export type OpenTabRequestMutationVariables = Exact<{
+  input: OpenTabRequestInput;
+}>;
+
+
+export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
 
 export type CreateSpaceMutationVariables = Exact<{
   input?: InputMaybe<CreateSpaceInput>;
@@ -2150,6 +2170,37 @@ export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
 export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
 export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
+export const OpenTabRequestDocument = gql`
+    mutation OpenTabRequest($input: OpenTabRequestInput!) {
+  openTabRequest(input: $input)
+}
+    `;
+export type OpenTabRequestMutationFn = Apollo.MutationFunction<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
+
+/**
+ * __useOpenTabRequestMutation__
+ *
+ * To run a mutation, you first call `useOpenTabRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOpenTabRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [openTabRequestMutation, { data, loading, error }] = useOpenTabRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OpenTabRequestMutation, OpenTabRequestMutationVariables>(OpenTabRequestDocument, options);
+      }
+export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
+export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
+export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
 export const CreateSpaceDocument = gql`
     mutation CreateSpace($input: CreateSpaceInput) {
   createSpace(input: $input) {

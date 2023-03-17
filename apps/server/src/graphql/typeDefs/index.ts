@@ -11,3 +11,4 @@ export * from "./UserTypeDefinition";
 export * from "./SpaceTypeDefinition";
 export * from "./CheckoutTypeDefinition";
 export * from "./PaymentTypeDefinition"
+export * from "./RequestTypeDefinition"
