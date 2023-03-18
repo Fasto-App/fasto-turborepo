@@ -556,6 +556,7 @@ export type MutationUploadFileArgs = {
 };
 
 export type OpenTabRequestInput = {
+  business: Scalars['ID'];
   name: Scalars['String'];
   names?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   phoneNumber: Scalars['String'];
@@ -623,6 +624,7 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
+  getBusinessById: Business;
   getBusinessInformation: Business;
   getBusinessLocation?: Maybe<Address>;
   getCategoryByID?: Maybe<Category>;
@@ -632,6 +634,7 @@ export type Query = {
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getTabByID?: Maybe<Tab>;
+  getTabRequest?: Maybe<Request>;
   getToken?: Maybe<User>;
   getUserInformation?: Maybe<User>;
 };
@@ -644,6 +647,11 @@ export type QueryGetAddressArgs = {
 
 export type QueryGetAllOrderDetailsByOrderIdArgs = {
   orderID: Scalars['ID'];
+};
+
+
+export type QueryGetBusinessByIdArgs = {
+  input?: InputMaybe<GetById>;
 };
 
 
@@ -676,10 +684,31 @@ export type QueryGetTabByIdArgs = {
   input: GetById;
 };
 
+export type Request = {
+  __typename?: 'Request';
+  _id: Scalars['ID'];
+  admin: Scalars['ID'];
+  business: Scalars['ID'];
+  createdAt: Scalars['String'];
+  names?: Maybe<Array<Maybe<Scalars['String']>>>;
+  status: RequestStatus;
+  totalGuests: Scalars['Int'];
+};
+
 export type RequestResponseOk = {
   __typename?: 'RequestResponseOK';
   ok?: Maybe<Scalars['Boolean']>;
 };
+
+export enum RequestStatus {
+  Accepted = 'Accepted',
+  Canceled = 'Canceled',
+  Completed = 'Completed',
+  Deleted = 'Deleted',
+  Expired = 'Expired',
+  Pending = 'Pending',
+  Rejected = 'Rejected'
+}
 
 export type RequestUserAccountInput = {
   email: Scalars['String'];
@@ -900,6 +929,13 @@ export type GetAllEmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllEmployeesQuery = { __typename?: 'Query', getAllEmployees: { __typename?: 'Employees', employees: Array<{ __typename?: 'Employee', jobTitle: string, isPending: boolean, name: string, email: string, picture?: string | null, privilege: UserPrivileges, _id: string }>, employeesPending: Array<{ __typename?: 'Employee', jobTitle: string, isPending: boolean, email: string, name: string, picture?: string | null, privilege: UserPrivileges, _id: string }> } };
 
+export type GetBusinessByIdQueryVariables = Exact<{
+  input?: InputMaybe<GetById>;
+}>;
+
+
+export type GetBusinessByIdQuery = { __typename?: 'Query', getBusinessById: { __typename?: 'Business', name: string, picture?: string | null } };
+
 export type GetBusinessInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1036,6 +1072,11 @@ export type OpenTabRequestMutationVariables = Exact<{
 
 
 export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
+
+export type GetTabRequestQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest?: { __typename?: 'Request', _id: string, admin: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus } | null };
 
 export type CreateSpaceMutationVariables = Exact<{
   input?: InputMaybe<CreateSpaceInput>;
@@ -1334,6 +1375,42 @@ export function useGetAllEmployeesLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetAllEmployeesQueryHookResult = ReturnType<typeof useGetAllEmployeesQuery>;
 export type GetAllEmployeesLazyQueryHookResult = ReturnType<typeof useGetAllEmployeesLazyQuery>;
 export type GetAllEmployeesQueryResult = Apollo.QueryResult<GetAllEmployeesQuery, GetAllEmployeesQueryVariables>;
+export const GetBusinessByIdDocument = gql`
+    query GetBusinessById($input: GetById) {
+  getBusinessById(input: $input) {
+    name
+    picture
+  }
+}
+    `;
+
+/**
+ * __useGetBusinessByIdQuery__
+ *
+ * To run a query within a React component, call `useGetBusinessByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBusinessByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBusinessByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetBusinessByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>(GetBusinessByIdDocument, options);
+      }
+export function useGetBusinessByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>(GetBusinessByIdDocument, options);
+        }
+export type GetBusinessByIdQueryHookResult = ReturnType<typeof useGetBusinessByIdQuery>;
+export type GetBusinessByIdLazyQueryHookResult = ReturnType<typeof useGetBusinessByIdLazyQuery>;
+export type GetBusinessByIdQueryResult = Apollo.QueryResult<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>;
 export const GetBusinessInformationDocument = gql`
     query GetBusinessInformation {
   getBusinessInformation {
@@ -2201,6 +2278,45 @@ export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptio
 export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
 export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
 export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
+export const GetTabRequestDocument = gql`
+    query GetTabRequest {
+  getTabRequest {
+    _id
+    admin
+    business
+    names
+    totalGuests
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetTabRequestQuery__
+ *
+ * To run a query within a React component, call `useGetTabRequestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTabRequestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTabRequestQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTabRequestQuery(baseOptions?: Apollo.QueryHookOptions<GetTabRequestQuery, GetTabRequestQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTabRequestQuery, GetTabRequestQueryVariables>(GetTabRequestDocument, options);
+      }
+export function useGetTabRequestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTabRequestQuery, GetTabRequestQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTabRequestQuery, GetTabRequestQueryVariables>(GetTabRequestDocument, options);
+        }
+export type GetTabRequestQueryHookResult = ReturnType<typeof useGetTabRequestQuery>;
+export type GetTabRequestLazyQueryHookResult = ReturnType<typeof useGetTabRequestLazyQuery>;
+export type GetTabRequestQueryResult = Apollo.QueryResult<GetTabRequestQuery, GetTabRequestQueryVariables>;
 export const CreateSpaceDocument = gql`
     mutation CreateSpace($input: CreateSpaceInput) {
   createSpace(input: $input) {

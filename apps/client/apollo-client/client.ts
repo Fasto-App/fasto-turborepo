@@ -2,10 +2,9 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client'
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
-import { getCookies } from 'cookies-next';
-import { businessCookies, clearCookies } from '../cookies/businessCookies';
+import { clearClientCookies, clearCookies, getClientCookies, getCookies } from '../cookies/businessCookies';
 import Router from 'next/router'
-import { businessRoute } from '../routes';
+import { businessRoute, clientRoute } from '../routes';
 
 // Log any GraphQL errors or network error that occurred
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -18,9 +17,13 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     });
 
     for (let err of graphQLErrors) {
-      if (err.extensions?.httpStatus === 'Unauthorized') {
+      if (err.extensions?.httpStatus === 'Unauthorized' && err.extensions?.app === 'business') {
         clearCookies()
         Router.push(businessRoute.login)
+      }
+
+      if (err.extensions?.httpStatus === 'Unauthorized' && err.extensions?.app === 'client') {
+        clearClientCookies()
       }
 
       console.log("code", err.extensions?.code)
@@ -41,13 +44,14 @@ const httpLink = createUploadLink({
 
 
 const authLink = setContext((_: any, { headers }) => {
-  const cookies = getCookies()
-  const token = cookies[businessCookies.token]
+  const token = getCookies("token")
+  const clientToken = getClientCookies("token")
 
   return {
     headers: {
       ...headers,
       authorization: token ? `Bearer ${token}` : "",
+      'clientauthorization': clientToken ? `Bearer ${clientToken}` : "",
       'Apollo-Require-Preflight': 'true',
       "x-api-key": process.env.NEXT_PUBLIC_API_KEY
     }

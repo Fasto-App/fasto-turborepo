@@ -1,12 +1,15 @@
 import React, { useCallback, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { typedValues } from 'app-helpers'
+import { NewTabForm, newTabSchema, typedValues } from 'app-helpers'
 import { Button, Heading } from 'native-base'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from '../../components/ControlledForm'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { useOpenTabRequestMutation } from '../../gen/generated'
+import { useRouter } from 'next/router'
+import { DevTool } from '@hookform/devtools'
+import { setClientCookies } from '../../cookies/businessCookies'
+import { clientRoute } from '../../routes'
 
 const array1to5 = Array.from({ length: 5 }, (_, i) => i + 1).map(
   (i) => ({ name: i.toString(), _id: i.toString() })
@@ -27,24 +30,16 @@ function guestConfigObject(number: string): RegularInputConfig[] {
   )
 }
 
-export const newTabSchema = z.object({
-  guest1: z.string().min(3, { message: 'Name must be at least 3 characters' }),
-  phoneNumber: z.string().min(6, { message: 'Required' }),
-  totalGuests: z.string().min(1, { message: 'Required' }),
-}).passthrough();
-
-type NewTabForm = z.infer<typeof newTabSchema>
-
 const Config: SideBySideInputConfig = {
-  guest1: {
-    name: "guest1",
+  name: {
+    name: "name",
     label: "Guest 1 Name",
     placeholder: "Enter your name",
     isRequired: true,
   },
   phoneNumber: {
     label: "Phone Number",
-    placeholder: "Enter your phone number",
+    placeholder: "+55 555 555 5555",
     name: "phoneNumber",
     isRequired: true,
   },
@@ -65,11 +60,14 @@ type OpenTabModalProps = {
 }
 
 export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) => {
+  const router = useRouter()
+  const { businessId } = router.query
+
   const { control, formState, watch, handleSubmit } = useForm({
     mode: "onBlur",
     resolver: zodResolver(newTabSchema),
     defaultValues: {
-      guest1: "",
+      name: "",
       phoneNumber: "",
       totalGuests: "1",
     },
@@ -89,7 +87,10 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   const [clientRequestTab, { loading }] = useOpenTabRequestMutation({
     onCompleted: (data) => {
       console.log("Tab Request Completed")
-      console.log(data)
+      if (!data?.openTabRequest) return
+
+      setClientCookies("token", data.openTabRequest)
+      router.push(clientRoute.menu(businessId as string))
     },
     onError: (err) => {
       console.log("Tab Request Error")
@@ -97,36 +98,28 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   })
 
   const handleOpenTab = useCallback(async (data: NewTabForm) => {
-    const { guest1, phoneNumber, totalGuests, ...rest } = data
+    const { name, phoneNumber, totalGuests, ...rest } = data
     const array = typedValues(rest).filter((i: string) => i.trim() !== "")
-
-    console.log("Sending information to create a Tab Request")
-    console.log({
-      input: {
-        name: guest1,
-        phoneNumber,
-        totalGuests: parseInt(totalGuests),
-        names: array.length > 0 ? array : undefined,
-        business: "5f9f1b0b0f1c1c0017e1b1e1",
-      },
-    })
 
     await clientRequestTab({
       variables: {
         input: {
-          name: guest1,
+          name,
           phoneNumber,
           totalGuests: parseInt(totalGuests),
           names: array.length > 0 ? array : undefined,
+          business: businessId as string,
         },
       },
     })
 
     setModalVisibility()
 
-  }, [clientRequestTab, setModalVisibility])
+  }, [clientRequestTab, setModalVisibility, businessId])
 
   return (
+
+
     <CustomModal
       isOpen={isOpen}
       onClose={setModalVisibility}
@@ -147,11 +140,16 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
           </Button>
         </>
       }
-      ModalBody={< ControlledForm
-        Config={newConfig}
-        control={control}
-        formState={formState}
-      />}
+      ModalBody={
+        <>
+          <DevTool control={control} />
+          <ControlledForm
+            Config={newConfig}
+            control={control}
+            formState={formState}
+          />
+        </>
+      }
     />
   )
 }

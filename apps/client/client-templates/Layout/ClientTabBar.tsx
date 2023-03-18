@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { clientRoute } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
+import { useGetTabRequest } from "../../hooks";
 
 
 const ClientTabBar: React.FC = (props) => {
@@ -13,9 +14,11 @@ const ClientTabBar: React.FC = (props) => {
     pathname === router.asPath, [router.asPath])
 
   const isMenu = useIsPageSelected(clientRoute.menu(businessId as string));
-  const isCart = useIsPageSelected(clientRoute.cart);
-  const isCheckout = useIsPageSelected(clientRoute.checkout);
-  const isSettings = useIsPageSelected(clientRoute.settings);
+  const isCart = useIsPageSelected(clientRoute.cart(businessId as string));
+  const isCheckout = useIsPageSelected(clientRoute.checkout(businessId as string));
+  const isSettings = useIsPageSelected(clientRoute.settings(businessId as string));
+
+  const { data: tabData } = useGetTabRequest()
 
   const paddingX = useBreakpointValue({
     base: "8",
@@ -39,17 +42,18 @@ const ClientTabBar: React.FC = (props) => {
       />
       <NavigationButton
         type={"Bag"}
+        disabled={tabData?.getTabRequest?.status === "Pending"}
         selected={isCart}
         numNotifications={9}
         onPress={() => {
-          router.push(clientRoute.cart);
+          router.push(clientRoute.cart(businessId as string));
         }}
       />
       <NavigationButton
         type={"Settings"}
         selected={isSettings}
         onPress={() => {
-          router.push(clientRoute.settings);
+          router.push(clientRoute.settings(businessId as string));
         }}
       />
     </HStack>

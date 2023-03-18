@@ -2,7 +2,7 @@ import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { ApolloError } from "./ApolloErrorExtended/ApolloErrorExtended";
 import { resolvers } from "./resolvers/GraphResolvers";
-import { getUserFromToken } from "./resolvers/utils";
+import { getClientFromToken, getUserFromToken } from "./resolvers/utils";
 import { typeDefinitions } from "./typeDefs/typeDefinitions";
 import {
   ApolloServerPluginLandingPageLocalDefault,
@@ -61,7 +61,8 @@ const server = new ApolloServer({
   schema,
   introspection: process.env.ENVIRONMENT === "development",
   context: async ({ req }) => {
-    const bearerToken = req.headers.authorization || '';
+    const bearerToken = req.headers.authorization;
+    const clientBearerToken = req.headers.clientauthorization as string | undefined;
 
     if (req.headers["x-api-key"] !== process.env.API_KEY) {
       console.log("NOT AUTHORIZED: invalid API key 🔑")
@@ -69,13 +70,20 @@ const server = new ApolloServer({
       throw ApolloError('Unauthorized');
     }
 
-    const userFromToken = await getUserFromToken(bearerToken.split(' ')[1]);
+    const userFromToken = await getUserFromToken(bearerToken?.split(' ')[1]);
+    const clientFromToken = await getClientFromToken(clientBearerToken?.split(' ')[1]);
 
-    if (!userFromToken?._id) return { db };
+    console.log("🔐 User clientBearerToken: ", clientBearerToken)
+    console.log("clientFromToken", clientFromToken)
 
     logUserCredentialsValid(!!userFromToken?.business);
 
-    return { db, user: userFromToken, business: userFromToken.business };
+    return {
+      db,
+      user: userFromToken,
+      business: userFromToken?.business,
+      client: clientFromToken
+    };
   },
   formatError: (error) => {
 

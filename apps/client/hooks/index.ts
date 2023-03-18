@@ -1,5 +1,7 @@
 import { useBreakpointValue } from "native-base";
 import { useEffect, useState } from "react";
+import { getClientCookies } from "../cookies/businessCookies";
+import { useGetTabRequestQuery } from "../gen/generated";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -50,4 +52,25 @@ export const useUploadFileHook = () => {
     imageFile,
     handleFileOnChange
   }
+}
+
+export const useGetTabRequest = () => {
+  // get the token from the user to know if they are pending the request
+  const clientToken = getClientCookies("token")
+  console.log("clientToken", clientToken)
+
+  const data = useGetTabRequestQuery({
+    skip: !clientToken,
+    onCompleted: (data) => {
+      console.log("data", data)
+      localStorage.setItem("loading", true.toString())
+    },
+    onError: (error) => {
+      console.log("error", error)
+      // clear cache
+
+    },
+  })
+
+  return data
 }

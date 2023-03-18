@@ -1,14 +1,16 @@
 import { CLIENT } from "./appRoute";
 
 export const clientRoute = {
-  cart: `${CLIENT}/123/cart/123`,
+  home: (businessId: string) => `${CLIENT}/${businessId}`,
+  cart: (businessId: string) => `${CLIENT}/${businessId}/cart/123`,
   menu: (businessId: string) => `${CLIENT}/${businessId}/menu`,
-  checkout: `${CLIENT}/123/checkout/123`,
+  checkout: (businessId: string) => `${CLIENT}/${businessId}/checkout/123`,
   production_description: (productId: string) => `${CLIENT}/123/product-description/${productId}`,
-  settings: `${CLIENT}/123/settings`,
+  settings: (businessId: string) => `${CLIENT}/${businessId}/settings`,
 } as const
 
 export const clientPathName = {
+  [`/client/[businessId]`]: 'Home',
   [`/client/[businessId]/cart/[cartId]`]: 'Cart',
   [`/client/[businessId]/menu`]: 'Menu',
   [`/client/[businessId]/checkout/[checkoutId]`]: 'Checkout',

@@ -104,6 +104,7 @@ const NavigationButton = ({
   color,
   flexDirection = "column",
   numNotifications,
+  disabled = false
 }: {
   type: NavigationButtonType;
   selected?: boolean;
@@ -113,6 +114,7 @@ const NavigationButton = ({
   text?: string;
   flexDirection?: "row" | "column";
   numNotifications?: number;
+  disabled?: boolean;
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const selectedColor = selected || isHovered ? colors.orange : colors.white;
@@ -120,6 +122,8 @@ const NavigationButton = ({
 
   return (
     <Pressable
+      isDisabled={disabled}
+      _disabled={{ opacity: 0.3 }}
       onPress={onPress}
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}

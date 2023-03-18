@@ -19,7 +19,7 @@ export class User {
     public JobTitles?: string[];
 
     @prop()
-    public phone?: string;
+    public phoneNumber?: string;
 
     @prop()
     public picture?: string;

@@ -7,6 +7,7 @@ export const BusinessTypeDefinition = gql`
     getAllBusiness: [Business]!
     getBusinessLocation: Address
     getAllEmployees: Employees!
+    getBusinessById(input: GetById): Business!
   }
 
   extend type Mutation {

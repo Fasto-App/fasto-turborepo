@@ -5,12 +5,15 @@ import { useRouter } from 'next/router'
 import { texts } from './texts'
 import { QRCodeReader } from './QRCodeReader'
 import { OpenTabModal } from './OpenTabModal'
+import { useGetBusinessByIdQuery } from '../../gen/generated'
+import { useGetTabRequest } from '../../hooks'
 
 export const HomeScreen = () => {
 
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
   const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
   const route = useRouter()
+  const { businessId } = route.query
 
   const joinTab = () => {
     console.log("Pressed")
@@ -21,7 +24,19 @@ export const HomeScreen = () => {
     route.push('/client/123/menu')
   }
 
-  // add modal for join tab
+  const { data: tabData } = useGetTabRequest()
+
+  const { data } = useGetBusinessByIdQuery({
+    skip: !businessId,
+    variables: {
+      input: {
+        _id: businessId as string
+      }
+    }
+  })
+
+  const image = data?.getBusinessById?.picture
+  const name = data?.getBusinessById?.name
 
   return (
     <Center h={"100%"} backgroundColor={"white"}>
@@ -35,17 +50,26 @@ export const HomeScreen = () => {
       >
         <Image src="/images/Asset.svg" alt="me" width={"100"} height={"31"} />
       </Box>
-      <Heading size={"2xl"}>Restaurant Name</Heading>
+      <Heading size={"2xl"}>{name}</Heading>
       <Image
         my={2}
         size="xl"
-        source={{ uri: "https://cdn.logo.com/hotlink-ok/logo-social.png" }}
+        source={{ uri: image ?? "https://via.placeholder.com/150" }}
         alt="Business Name"
       />
       <VStack space={6} mt={"10"} w={"80%"}>
-        <Button onPress={() => setIsOpenTabModalOpen(true)} _text={{ bold: true }}>{texts.openNewTab}</Button>
-        <Button onPress={joinTab} _text={{ bold: true }} colorScheme={"secondary"}>{texts.joinTab}</Button>
-        <Button onPress={onPress} _text={{ bold: true }} colorScheme={"tertiary"}>{texts.viewMenu}</Button>
+        <Button
+          isDisabled={tabData?.getTabRequest?.status === "Pending"}
+          onPress={() => setIsOpenTabModalOpen(true)}
+          _text={{ bold: true }}>{texts.openNewTab}</Button>
+        <Button
+          isDisabled={tabData?.getTabRequest?.status === "Pending"}
+          onPress={joinTab}
+          _text={{ bold: true }}
+          colorScheme={"secondary"}>{texts.joinTab}</Button>
+        <Button onPress={onPress}
+          _text={{ bold: true }}
+          colorScheme={"tertiary"}>{texts.viewMenu}</Button>
       </VStack>
       <Box
         position={"absolute"}
