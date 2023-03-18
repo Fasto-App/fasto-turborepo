@@ -704,7 +704,6 @@ export enum RequestStatus {
   Accepted = 'Accepted',
   Canceled = 'Canceled',
   Completed = 'Completed',
-  Deleted = 'Deleted',
   Expired = 'Expired',
   Pending = 'Pending',
   Rejected = 'Rejected'
@@ -923,6 +922,11 @@ export type UpdateBusinessLocationMutationVariables = Exact<{
 
 
 export type UpdateBusinessLocationMutation = { __typename?: 'Mutation', updateBusinessLocation?: { __typename?: 'Business', address?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null } | null };
+
+export type GetAllBusinessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllBusinessQuery = { __typename?: 'Query', getAllBusiness: Array<{ __typename?: 'Business', name: string, _id: string } | null> };
 
 export type GetAllEmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1324,6 +1328,41 @@ export function useUpdateBusinessLocationMutation(baseOptions?: Apollo.MutationH
 export type UpdateBusinessLocationMutationHookResult = ReturnType<typeof useUpdateBusinessLocationMutation>;
 export type UpdateBusinessLocationMutationResult = Apollo.MutationResult<UpdateBusinessLocationMutation>;
 export type UpdateBusinessLocationMutationOptions = Apollo.BaseMutationOptions<UpdateBusinessLocationMutation, UpdateBusinessLocationMutationVariables>;
+export const GetAllBusinessDocument = gql`
+    query GetAllBusiness {
+  getAllBusiness {
+    name
+    _id
+  }
+}
+    `;
+
+/**
+ * __useGetAllBusinessQuery__
+ *
+ * To run a query within a React component, call `useGetAllBusinessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllBusinessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllBusinessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllBusinessQuery(baseOptions?: Apollo.QueryHookOptions<GetAllBusinessQuery, GetAllBusinessQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllBusinessQuery, GetAllBusinessQueryVariables>(GetAllBusinessDocument, options);
+      }
+export function useGetAllBusinessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllBusinessQuery, GetAllBusinessQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllBusinessQuery, GetAllBusinessQueryVariables>(GetAllBusinessDocument, options);
+        }
+export type GetAllBusinessQueryHookResult = ReturnType<typeof useGetAllBusinessQuery>;
+export type GetAllBusinessLazyQueryHookResult = ReturnType<typeof useGetAllBusinessLazyQuery>;
+export type GetAllBusinessQueryResult = Apollo.QueryResult<GetAllBusinessQuery, GetAllBusinessQueryVariables>;
 export const GetAllEmployeesDocument = gql`
     query GetAllEmployees {
   getAllEmployees {

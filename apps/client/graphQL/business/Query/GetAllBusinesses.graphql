@@ -1,0 +1,6 @@
+query GetAllBusiness {
+	getAllBusiness {
+		name
+		_id
+	}
+}
