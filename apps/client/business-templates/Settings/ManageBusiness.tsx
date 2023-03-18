@@ -111,7 +111,7 @@ export const ManageBusiness = () => {
         control={control}
       />
       {/* Data should populate the component, but zustand should override locally */}
-      <WeeklySchedule />
+      {false ? <WeeklySchedule /> : null}
       {scheduleError ? <Text color={"red.500"}>{scheduleError}</Text> : null}
       <Box pt={4}>
         <HStack alignItems="center" space={2} justifyContent="end">

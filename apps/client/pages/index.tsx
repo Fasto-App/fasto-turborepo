@@ -14,6 +14,8 @@ export default function Home() {
 	return (
 		<VStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
 			{data?.getAllBusiness.map((business) => {
+				if (!business?._id) return null
+
 				return (
 					<Pressable key={business?._id}>
 						<Link href={clientRoute.home(business?._id)}>
