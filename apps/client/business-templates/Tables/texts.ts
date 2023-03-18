@@ -1,3 +1,7 @@
 export const texts = {
-  space: "Space"
+  space: "Space",
+  tables: "Tables",
+  requests: "Requests",
+  accept: "Accept",
+  decline: "Decline",
 }

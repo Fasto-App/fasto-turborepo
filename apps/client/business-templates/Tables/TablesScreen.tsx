@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react"
-import { Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
+import { Badge, Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
@@ -12,6 +12,7 @@ import { shallow } from 'zustand/shallow'
 import { MoreButton } from "../../components/MoreButton"
 import { useCreateTableMutation, GetSpacesFromBusinessDocument } from "../../gen/generated"
 import { useAppStore } from "../UseAppStore"
+import { RequestsModal } from "./RequestsModal"
 
 export const TablesScreen = () => {
 
@@ -137,7 +138,24 @@ export const TablesScreen = () => {
           backgroundColor={"white"}
           overflow={"scroll"}
         >
-          <Box flex={1}>
+          <Box flex={1} >
+            <HStack space={32} pb={"6"}>
+              <Heading>{texts.tables}</Heading>
+              <Box>
+                <Badge
+                  colorScheme="danger"
+                  rounded="full"
+                  mb={-4}
+                  mr={-2}
+                  zIndex={1}
+                  variant="solid" alignSelf="flex-end">
+                  2
+                </Badge>
+                <Button w={"48"} colorScheme={"tertiary"}>
+                  {texts.requests}
+                </Button>
+              </Box>
+            </HStack>
             <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
               <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
               {allTablesFilteredBySpace.map((table, index) =>
@@ -163,6 +181,7 @@ export const TablesScreen = () => {
         </Box> : null
         }
       </VStack>
+      <RequestsModal />
     </Box>
   )
 }

@@ -29,6 +29,8 @@ import { RiUserSettingsLine } from "react-icons/ri"
 import { RiShoppingBag3Line } from "react-icons/ri"
 import { ImQrcode } from "react-icons/im"
 import { BsBag } from "react-icons/bs"
+import { BsPeopleFill } from "react-icons/bs"
+import { MdOutlinePhoneIphone } from "react-icons/md"
 
 type IconProps = {
   type: NavigationButtonType;
@@ -38,6 +40,10 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "Phone":
+      return <MdOutlinePhoneIphone color={color} size={size} />;
+    case "People":
+      return <BsPeopleFill color={color} size={size} />;
     case "QRCode":
       return <ImQrcode color={color} size={size} />;
     case "TrashCan":
