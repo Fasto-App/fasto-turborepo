@@ -64,7 +64,7 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   const { businessId } = router.query
 
   const { control, formState, watch, handleSubmit } = useForm({
-    mode: "onBlur",
+    mode: "onSubmit",
     resolver: zodResolver(newTabSchema),
     defaultValues: {
       name: "",

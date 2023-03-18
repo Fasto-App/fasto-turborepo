@@ -43,6 +43,7 @@ export const CartScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState("yourOrders");
   const route = useRouter();
+  const { checkoutId } = route.query;
 
   const theme = useTheme();
 
@@ -52,8 +53,8 @@ export const CartScreen = () => {
 
   const payBill = useCallback(() => {
     console.log("pay bill");
-    route.push(clientRoute.checkout);
-  }, [route]);
+    route.push(clientRoute.checkout(checkoutId as string));
+  }, [checkoutId, route]);
 
 
   return (
