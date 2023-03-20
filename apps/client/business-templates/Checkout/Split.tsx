@@ -5,7 +5,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { FDSSelect } from '../../components/FDSSelect'
 import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation, SplitType as SplitTypeGen } from '../../gen/generated'
 import { parseToCurrency } from 'app-helpers'
-import { percentages, useCheckoutStore } from './checkoutStore'
+import { Percentages, percentages, useCheckoutStore } from './checkoutStore'
 import { texts } from './texts'
 import { Checkout } from './types'
 import { Transition } from '../../components/Transition'
@@ -333,7 +333,7 @@ export const Split = ({
             <HStack space={2} alignItems={"self-end"}>
               <FDSSelect
                 array={percentages}
-                selectedValue={formatedDiscount}
+                selectedValue={formatedDiscount as Percentages}
                 setSelectedValue={setSelectedDiscount}
               />
               <Input
@@ -350,7 +350,7 @@ export const Split = ({
             <HStack space={2}>
               <FDSSelect
                 array={percentages}
-                selectedValue={formatedTip}
+                selectedValue={formatedTip as Percentages}
                 setSelectedValue={setSelectedTip}
               />
               <Input

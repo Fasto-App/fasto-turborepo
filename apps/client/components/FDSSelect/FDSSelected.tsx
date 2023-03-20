@@ -2,13 +2,13 @@ import React from "react"
 import { Select, CheckIcon } from "native-base"
 import { Percentages } from "../../business-templates/Checkout/checkoutStore"
 
-type FDSSelecteProps = {
-  selectedValue?: string
-  setSelectedValue: (value: string) => void
-  array: string[] // todo: {_id: string, value: string}[]
+type FDSSelecteProps<T extends string> = {
+  selectedValue?: T
+  setSelectedValue: (value: T) => void
+  array: T[] // todo: {_id: string, value: string}[]
 }
 
-export const FDSSelect = ({ selectedValue, setSelectedValue, array }: FDSSelecteProps) => {
+export const FDSSelect = <T extends string>({ selectedValue, setSelectedValue, array }: FDSSelecteProps<T>) => {
   return (
     <Select
       overflow={"hidden"}
@@ -17,7 +17,7 @@ export const FDSSelect = ({ selectedValue, setSelectedValue, array }: FDSSelecte
       selectedValue={selectedValue}
       accessibilityLabel="Choose Service"
       placeholder="0%"
-      onValueChange={itemValue => setSelectedValue(itemValue)}
+      onValueChange={itemValue => setSelectedValue(itemValue as T)}
       _selectedItem={{
         bg: "teal.600",
         endIcon: <CheckIcon size="5" />
