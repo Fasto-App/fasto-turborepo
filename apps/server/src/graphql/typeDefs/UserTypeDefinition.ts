@@ -59,6 +59,7 @@ export const UserTypeDefinition = gql`
     token: String!
     picture: String
     businesses: [BusinessPrivileges!]!
+    phoneNumber: String
   }
 
   input LoginInput {

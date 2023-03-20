@@ -1,0 +1,12 @@
+query GetTabRequests($input: GetTabRequestInput) {
+	getTabRequests(input: $input) {
+		_id
+		admin {
+			_id
+			name
+			phoneNumber
+		}
+		status
+		totalGuests
+	}
+}

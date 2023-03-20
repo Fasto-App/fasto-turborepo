@@ -4,8 +4,8 @@ import { Percentages } from "../../business-templates/Checkout/checkoutStore"
 
 type FDSSelecteProps = {
   selectedValue?: string
-  setSelectedValue: (value: Percentages) => void
-  array: string[]
+  setSelectedValue: (value: string) => void
+  array: string[] // todo: {_id: string, value: string}[]
 }
 
 export const FDSSelect = ({ selectedValue, setSelectedValue, array }: FDSSelecteProps) => {
@@ -17,7 +17,6 @@ export const FDSSelect = ({ selectedValue, setSelectedValue, array }: FDSSelecte
       selectedValue={selectedValue}
       accessibilityLabel="Choose Service"
       placeholder="0%"
-      // @ts-ignore
       onValueChange={itemValue => setSelectedValue(itemValue)}
       _selectedItem={{
         bg: "teal.600",

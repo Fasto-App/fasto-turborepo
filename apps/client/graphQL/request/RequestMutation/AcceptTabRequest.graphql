@@ -1,0 +1,7 @@
+mutation AcceptTabRequest($input: AcceptTabRequestInput!) {
+	acceptTabRequest(input: $input) {
+		_id
+		totalGuests
+		status
+	}
+}

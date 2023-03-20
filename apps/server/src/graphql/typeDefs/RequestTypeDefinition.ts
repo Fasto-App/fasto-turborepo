@@ -2,13 +2,19 @@ import { gql } from "apollo-server-express";
 
 export const RequestTypeDefinition = gql`
 
-
   extend type Query {
-    getTabRequest: Request
+    getTabRequest: Request!
+    getTabRequests(input: GetTabRequestInput): [Request!]!
   }
 
   extend type Mutation {
     openTabRequest(input: OpenTabRequestInput!): String
+    acceptTabRequest(input: AcceptTabRequestInput!): Request
+    declineTabRequest(input: GetById!): Request
+  }
+
+  input GetTabRequestInput {
+    filterBy: RequestStatus
   }
 
   input OpenTabRequestInput {
@@ -19,10 +25,15 @@ export const RequestTypeDefinition = gql`
     names: [String]
   }
 
+  input AcceptTabRequestInput {
+    request: ID!
+    table: String
+  }
+
   type Request {
     _id: ID!
     business: ID!
-    admin: ID!
+    admin: User!
     totalGuests: Int!
     names: [String]
     createdAt: String!

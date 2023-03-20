@@ -16,6 +16,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AcceptTabRequestInput = {
+  request: Scalars['ID'];
+  table?: InputMaybe<Scalars['String']>;
+};
+
 export type AccountCreationResponse = {
   __typename?: 'AccountCreationResponse';
   ok: Scalars['Boolean'];
@@ -223,6 +228,10 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type GetTabRequestInput = {
+  filterBy?: InputMaybe<RequestStatus>;
+};
+
 export type Hours = {
   __typename?: 'Hours';
   close: Scalars['String'];
@@ -294,6 +303,7 @@ export type Menu = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  acceptTabRequest?: Maybe<Request>;
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
@@ -306,6 +316,7 @@ export type Mutation = {
   createTab: Tab;
   createTable: Table;
   createUser: User;
+  declineTabRequest?: Maybe<Request>;
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
   deleteBusinessEmployee: Scalars['ID'];
   deleteCategory?: Maybe<RequestResponseOk>;
@@ -338,6 +349,11 @@ export type Mutation = {
   updateTab: Tab;
   updateUserInformation: User;
   uploadFile: Scalars['String'];
+};
+
+
+export type MutationAcceptTabRequestArgs = {
+  input: AcceptTabRequestInput;
 };
 
 
@@ -398,6 +414,11 @@ export type MutationCreateTableArgs = {
 
 export type MutationCreateUserArgs = {
   input?: InputMaybe<UserInput>;
+};
+
+
+export type MutationDeclineTabRequestArgs = {
+  input: GetById;
 };
 
 
@@ -634,7 +655,8 @@ export type Query = {
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getTabByID?: Maybe<Tab>;
-  getTabRequest?: Maybe<Request>;
+  getTabRequest: Request;
+  getTabRequests: Array<Request>;
   getToken?: Maybe<User>;
   getUserInformation?: Maybe<User>;
 };
@@ -684,10 +706,15 @@ export type QueryGetTabByIdArgs = {
   input: GetById;
 };
 
+
+export type QueryGetTabRequestsArgs = {
+  input?: InputMaybe<GetTabRequestInput>;
+};
+
 export type Request = {
   __typename?: 'Request';
   _id: Scalars['ID'];
-  admin: Scalars['ID'];
+  admin: User;
   business: Scalars['ID'];
   createdAt: Scalars['String'];
   names?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -864,6 +891,7 @@ export type User = {
   businesses: Array<BusinessPrivileges>;
   email: Scalars['String'];
   name: Scalars['String'];
+  phoneNumber?: Maybe<Scalars['String']>;
   picture?: Maybe<Scalars['String']>;
   token: Scalars['String'];
 };
@@ -1070,6 +1098,20 @@ export type UploadFileMutationVariables = Exact<{
 
 export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
 
+export type AcceptTabRequestMutationVariables = Exact<{
+  input: AcceptTabRequestInput;
+}>;
+
+
+export type AcceptTabRequestMutation = { __typename?: 'Mutation', acceptTabRequest?: { __typename?: 'Request', _id: string, totalGuests: number, status: RequestStatus } | null };
+
+export type DeclineTabRequestMutationVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type DeclineTabRequestMutation = { __typename?: 'Mutation', declineTabRequest?: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests: number } | null };
+
 export type OpenTabRequestMutationVariables = Exact<{
   input: OpenTabRequestInput;
 }>;
@@ -1080,7 +1122,14 @@ export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?:
 export type GetTabRequestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest?: { __typename?: 'Request', _id: string, admin: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus } | null };
+export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest: { __typename?: 'Request', _id: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus, admin: { __typename?: 'User', _id: string, name: string, phoneNumber?: string | null } } };
+
+export type GetTabRequestsQueryVariables = Exact<{
+  input?: InputMaybe<GetTabRequestInput>;
+}>;
+
+
+export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests: number, admin: { __typename?: 'User', _id: string, name: string, phoneNumber?: string | null } }> };
 
 export type CreateSpaceMutationVariables = Exact<{
   input?: InputMaybe<CreateSpaceInput>;
@@ -2286,6 +2335,76 @@ export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
 export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
 export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
+export const AcceptTabRequestDocument = gql`
+    mutation AcceptTabRequest($input: AcceptTabRequestInput!) {
+  acceptTabRequest(input: $input) {
+    _id
+    totalGuests
+    status
+  }
+}
+    `;
+export type AcceptTabRequestMutationFn = Apollo.MutationFunction<AcceptTabRequestMutation, AcceptTabRequestMutationVariables>;
+
+/**
+ * __useAcceptTabRequestMutation__
+ *
+ * To run a mutation, you first call `useAcceptTabRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptTabRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptTabRequestMutation, { data, loading, error }] = useAcceptTabRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAcceptTabRequestMutation(baseOptions?: Apollo.MutationHookOptions<AcceptTabRequestMutation, AcceptTabRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptTabRequestMutation, AcceptTabRequestMutationVariables>(AcceptTabRequestDocument, options);
+      }
+export type AcceptTabRequestMutationHookResult = ReturnType<typeof useAcceptTabRequestMutation>;
+export type AcceptTabRequestMutationResult = Apollo.MutationResult<AcceptTabRequestMutation>;
+export type AcceptTabRequestMutationOptions = Apollo.BaseMutationOptions<AcceptTabRequestMutation, AcceptTabRequestMutationVariables>;
+export const DeclineTabRequestDocument = gql`
+    mutation DeclineTabRequest($input: GetById!) {
+  declineTabRequest(input: $input) {
+    _id
+    status
+    totalGuests
+  }
+}
+    `;
+export type DeclineTabRequestMutationFn = Apollo.MutationFunction<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>;
+
+/**
+ * __useDeclineTabRequestMutation__
+ *
+ * To run a mutation, you first call `useDeclineTabRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeclineTabRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [declineTabRequestMutation, { data, loading, error }] = useDeclineTabRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeclineTabRequestMutation(baseOptions?: Apollo.MutationHookOptions<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>(DeclineTabRequestDocument, options);
+      }
+export type DeclineTabRequestMutationHookResult = ReturnType<typeof useDeclineTabRequestMutation>;
+export type DeclineTabRequestMutationResult = Apollo.MutationResult<DeclineTabRequestMutation>;
+export type DeclineTabRequestMutationOptions = Apollo.BaseMutationOptions<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>;
 export const OpenTabRequestDocument = gql`
     mutation OpenTabRequest($input: OpenTabRequestInput!) {
   openTabRequest(input: $input)
@@ -2321,7 +2440,11 @@ export const GetTabRequestDocument = gql`
     query GetTabRequest {
   getTabRequest {
     _id
-    admin
+    admin {
+      _id
+      name
+      phoneNumber
+    }
     business
     names
     totalGuests
@@ -2356,6 +2479,48 @@ export function useGetTabRequestLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetTabRequestQueryHookResult = ReturnType<typeof useGetTabRequestQuery>;
 export type GetTabRequestLazyQueryHookResult = ReturnType<typeof useGetTabRequestLazyQuery>;
 export type GetTabRequestQueryResult = Apollo.QueryResult<GetTabRequestQuery, GetTabRequestQueryVariables>;
+export const GetTabRequestsDocument = gql`
+    query GetTabRequests($input: GetTabRequestInput) {
+  getTabRequests(input: $input) {
+    _id
+    admin {
+      _id
+      name
+      phoneNumber
+    }
+    status
+    totalGuests
+  }
+}
+    `;
+
+/**
+ * __useGetTabRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetTabRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTabRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTabRequestsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetTabRequestsQuery(baseOptions?: Apollo.QueryHookOptions<GetTabRequestsQuery, GetTabRequestsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTabRequestsQuery, GetTabRequestsQueryVariables>(GetTabRequestsDocument, options);
+      }
+export function useGetTabRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTabRequestsQuery, GetTabRequestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTabRequestsQuery, GetTabRequestsQueryVariables>(GetTabRequestsDocument, options);
+        }
+export type GetTabRequestsQueryHookResult = ReturnType<typeof useGetTabRequestsQuery>;
+export type GetTabRequestsLazyQueryHookResult = ReturnType<typeof useGetTabRequestsLazyQuery>;
+export type GetTabRequestsQueryResult = Apollo.QueryResult<GetTabRequestsQuery, GetTabRequestsQueryVariables>;
 export const CreateSpaceDocument = gql`
     mutation CreateSpace($input: CreateSpaceInput) {
   createSpace(input: $input) {
