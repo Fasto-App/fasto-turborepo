@@ -657,6 +657,8 @@ export type Query = {
   getTabByID?: Maybe<Tab>;
   getTabRequest: Request;
   getTabRequests: Array<Request>;
+  getTableById: Table;
+  getTablesFromSpace: Array<Table>;
   getToken?: Maybe<User>;
   getUserInformation?: Maybe<User>;
 };
@@ -709,6 +711,16 @@ export type QueryGetTabByIdArgs = {
 
 export type QueryGetTabRequestsArgs = {
   input?: InputMaybe<GetTabRequestInput>;
+};
+
+
+export type QueryGetTableByIdArgs = {
+  input: GetById;
+};
+
+
+export type QueryGetTablesFromSpaceArgs = {
+  input: GetById;
 };
 
 export type Request = {
@@ -778,7 +790,7 @@ export type Tab = {
   checkout?: Maybe<Scalars['ID']>;
   completed_at?: Maybe<Scalars['String']>;
   created_date: Scalars['String'];
-  orders: Array<Maybe<OrderDetail>>;
+  orders: Array<OrderDetail>;
   status: TabStatus;
   table: Table;
   users?: Maybe<Array<User>>;
@@ -889,8 +901,8 @@ export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
   businesses: Array<BusinessPrivileges>;
-  email: Scalars['String'];
-  name: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
   picture?: Maybe<Scalars['String']>;
   token: Scalars['String'];
@@ -1122,14 +1134,14 @@ export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?:
 export type GetTabRequestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest: { __typename?: 'Request', _id: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus, admin: { __typename?: 'User', _id: string, name: string, phoneNumber?: string | null } } };
+export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest: { __typename?: 'Request', _id: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus, admin: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } } };
 
 export type GetTabRequestsQueryVariables = Exact<{
   input?: InputMaybe<GetTabRequestInput>;
 }>;
 
 
-export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests: number, admin: { __typename?: 'User', _id: string, name: string, phoneNumber?: string | null } }> };
+export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests: number, admin: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
 
 export type CreateSpaceMutationVariables = Exact<{
   input?: InputMaybe<CreateSpaceInput>;
@@ -1141,7 +1153,7 @@ export type CreateSpaceMutation = { __typename?: 'Mutation', createSpace: { __ty
 export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null }> | null }> | null };
+export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string }> | null }> | null };
 
 export type CreateTabMutationVariables = Exact<{
   input: CreateTabInput;
@@ -1162,14 +1174,14 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } } | null> } | null };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } }> } | null };
 
 export type GetTabCheckoutByIdQueryVariables = Exact<{
   input: GetById;
 }>;
 
 
-export type GetTabCheckoutByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, status: TabStatus, users?: Array<{ __typename?: 'User', _id: string }> | null, orders: Array<{ __typename?: 'OrderDetail', user?: string | null, _id: string, subTotal: number } | null> } | null };
+export type GetTabCheckoutByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, status: TabStatus, users?: Array<{ __typename?: 'User', _id: string }> | null, orders: Array<{ __typename?: 'OrderDetail', user?: string | null, _id: string, subTotal: number }> } | null };
 
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
@@ -1178,33 +1190,47 @@ export type CreateTableMutationVariables = Exact<{
 
 export type CreateTableMutation = { __typename?: 'Mutation', createTable: { __typename?: 'Table', space: string, _id: string } };
 
+export type GetTableByIdQueryVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type GetTableByIdQuery = { __typename?: 'Query', getTableById: { __typename?: 'Table', _id: string, space: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', _id: string, imageUrl?: string | null, name: string, price: number } }>, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null } | null } };
+
+export type GetTablesFromSpaceQueryVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type GetTablesFromSpaceQuery = { __typename?: 'Query', getTablesFromSpace: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, space: string }> };
+
 export type CreateEmployeeAccountMutationVariables = Exact<{
   input: CreateEmployeeAccountInput;
 }>;
 
 
-export type CreateEmployeeAccountMutation = { __typename?: 'Mutation', createEmployeeAccount: { __typename?: 'User', token: string, name: string, email: string, _id: string, picture?: string | null } };
+export type CreateEmployeeAccountMutation = { __typename?: 'Mutation', createEmployeeAccount: { __typename?: 'User', token: string, name?: string | null, email?: string | null, _id: string, picture?: string | null } };
 
 export type CreateUserMutationVariables = Exact<{
   input?: InputMaybe<UserInput>;
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', _id: string, name: string, email: string, token: string } };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', _id: string, name?: string | null, email?: string | null, token: string } };
 
 export type PasswordResetMutationVariables = Exact<{
   input: ResetPasswordInput;
 }>;
 
 
-export type PasswordResetMutation = { __typename?: 'Mutation', passwordReset: { __typename?: 'User', _id: string, email: string, name: string, token: string, picture?: string | null } };
+export type PasswordResetMutation = { __typename?: 'Mutation', passwordReset: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, token: string, picture?: string | null } };
 
 export type PostUserLoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
 
 
-export type PostUserLoginMutation = { __typename?: 'Mutation', postUserLogin: { __typename?: 'User', name: string, email: string, token: string } };
+export type PostUserLoginMutation = { __typename?: 'Mutation', postUserLogin: { __typename?: 'User', name?: string | null, email?: string | null, token: string } };
 
 export type RecoverPasswordMutationVariables = Exact<{
   input: Scalars['String'];
@@ -1225,12 +1251,12 @@ export type UpdateUserInformationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } };
+export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } };
 
 export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email: string, name: string, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } | null };
+export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } | null };
 
 
 export const DeleteBusinessEmployeeDocument = gql`
@@ -2566,28 +2592,6 @@ export const GetSpacesFromBusinessDocument = gql`
       _id
       status
       tableNumber
-      tab {
-        users {
-          _id
-        }
-        _id
-        table {
-          _id
-          tableNumber
-        }
-        admin
-        orders {
-          _id
-          status
-          quantity
-          subTotal
-          product {
-            imageUrl
-            price
-            name
-          }
-        }
-      }
     }
   }
 }
@@ -2828,6 +2832,102 @@ export function useCreateTableMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateTableMutationHookResult = ReturnType<typeof useCreateTableMutation>;
 export type CreateTableMutationResult = Apollo.MutationResult<CreateTableMutation>;
 export type CreateTableMutationOptions = Apollo.BaseMutationOptions<CreateTableMutation, CreateTableMutationVariables>;
+export const GetTableByIdDocument = gql`
+    query GetTableById($input: GetById!) {
+  getTableById(input: $input) {
+    _id
+    space
+    status
+    tableNumber
+    tab {
+      _id
+      admin
+      orders {
+        _id
+        status
+        quantity
+        subTotal
+        product {
+          _id
+          imageUrl
+          name
+          price
+        }
+      }
+      users {
+        _id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTableByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTableByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTableByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTableByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetTableByIdQuery(baseOptions: Apollo.QueryHookOptions<GetTableByIdQuery, GetTableByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTableByIdQuery, GetTableByIdQueryVariables>(GetTableByIdDocument, options);
+      }
+export function useGetTableByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTableByIdQuery, GetTableByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTableByIdQuery, GetTableByIdQueryVariables>(GetTableByIdDocument, options);
+        }
+export type GetTableByIdQueryHookResult = ReturnType<typeof useGetTableByIdQuery>;
+export type GetTableByIdLazyQueryHookResult = ReturnType<typeof useGetTableByIdLazyQuery>;
+export type GetTableByIdQueryResult = Apollo.QueryResult<GetTableByIdQuery, GetTableByIdQueryVariables>;
+export const GetTablesFromSpaceDocument = gql`
+    query GetTablesFromSpace($input: GetById!) {
+  getTablesFromSpace(input: $input) {
+    _id
+    status
+    tableNumber
+    space
+  }
+}
+    `;
+
+/**
+ * __useGetTablesFromSpaceQuery__
+ *
+ * To run a query within a React component, call `useGetTablesFromSpaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTablesFromSpaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTablesFromSpaceQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetTablesFromSpaceQuery(baseOptions: Apollo.QueryHookOptions<GetTablesFromSpaceQuery, GetTablesFromSpaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTablesFromSpaceQuery, GetTablesFromSpaceQueryVariables>(GetTablesFromSpaceDocument, options);
+      }
+export function useGetTablesFromSpaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTablesFromSpaceQuery, GetTablesFromSpaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTablesFromSpaceQuery, GetTablesFromSpaceQueryVariables>(GetTablesFromSpaceDocument, options);
+        }
+export type GetTablesFromSpaceQueryHookResult = ReturnType<typeof useGetTablesFromSpaceQuery>;
+export type GetTablesFromSpaceLazyQueryHookResult = ReturnType<typeof useGetTablesFromSpaceLazyQuery>;
+export type GetTablesFromSpaceQueryResult = Apollo.QueryResult<GetTablesFromSpaceQuery, GetTablesFromSpaceQueryVariables>;
 export const CreateEmployeeAccountDocument = gql`
     mutation CreateEmployeeAccount($input: CreateEmployeeAccountInput!) {
   createEmployeeAccount(input: $input) {

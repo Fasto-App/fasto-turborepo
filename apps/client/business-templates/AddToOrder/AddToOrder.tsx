@@ -20,7 +20,7 @@ import { Tile } from "../../components/Tile";
 import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
-import { Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
+import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { useAppStore } from "../UseAppStore";
 import { businessRoute } from "../../routes";
 
@@ -94,7 +94,13 @@ export const AddToOrder = () => {
   })
 
   const [createOrders] = useCreateMultipleOrderDetailsMutation({
-    refetchQueries: ["GetSpacesFromBusiness"],
+    refetchQueries: [{
+      query: GetTableByIdDocument, variables: {
+        input: {
+          _id: tabData?.getTabByID?.table?._id,
+        }
+      }
+    }],
     onCompleted: () => {
       setNetworkState("success")
       route.back()
@@ -112,13 +118,13 @@ export const AddToOrder = () => {
       quantity: order.quantity,
     }))
 
-    try {
-      await createOrders({
-        variables: {
-          input: orderDetails,
-        }
-      })
-    } catch { }
+
+    await createOrders({
+      variables: {
+        input: orderDetails,
+      }
+    })
+
   }, [createOrders, orderItems, tabId])
 
   const requestCloseTab = useCallback(() => {

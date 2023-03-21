@@ -1,0 +1,28 @@
+query GetTableById($input: GetById!) {
+	getTableById(input: $input) {
+		_id
+		space
+		status
+		tableNumber
+		tab {
+			_id
+			admin
+			orders {
+				_id
+				status
+				quantity
+				subTotal
+				product {
+					_id
+					imageUrl
+					name
+					price
+				}
+			}
+			users {
+				_id
+				name
+			}
+		}
+	}
+}

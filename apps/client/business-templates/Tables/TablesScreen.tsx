@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo } from "react"
+import React, { useCallback, useState, useMemo } from "react"
 import { Badge, Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
-import { useSpacesMutationHook } from "../../graphQL/SpaceQL"
 import { SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
@@ -10,18 +9,22 @@ import { texts } from "./texts"
 import { useTableScreenStore } from "./tableScreenStore"
 import { shallow } from 'zustand/shallow'
 import { MoreButton } from "../../components/MoreButton"
-import { useCreateTableMutation, GetSpacesFromBusinessDocument } from "../../gen/generated"
+import { useCreateTableMutation, GetSpacesFromBusinessDocument, useGetSpacesFromBusinessQuery, useGetTablesFromSpaceQuery, TableStatus, RequestStatus, useGetTabRequestsQuery } from "../../gen/generated"
 import { useAppStore } from "../UseAppStore"
 import { RequestsModal } from "./RequestsModal"
+import { BottomSection } from "../../components/BottomSection"
+import { UpperSection } from "../../components/UpperSection"
+import { Tile } from "../../components/Tile"
+import { OrangeBox } from "../../components/OrangeBox"
 
 export const TablesScreen = () => {
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
 
   const { selectedSpaceId,
     isNewTableModalOpen,
     setIsNewTableModalOpen,
     isSpaceModalOpen,
     setSelectedSpace,
-    tableChoosen,
     setTableChoosen,
     setSpaceIsModalOpen
   } = useTableScreenStore(
@@ -40,22 +43,52 @@ export const TablesScreen = () => {
 
   const setNetworkState = useAppStore(state => state.setNetworkState)
 
-  const {
-    allSpaces,
-  } = useSpacesMutationHook(setSelectedSpace);
+  // todo: get all the spaces and default to the first one
+  // const { allSpaces } = useSpacesMutationHook(setSelectedSpace);
+  const { data } = useGetSpacesFromBusinessQuery({
+    onCompleted: (data) => {
+      setSelectedSpace?.(data.getSpacesFromBusiness?.[0]._id)
+    },
+  });
 
-  const selectedSpace = useMemo(() => allSpaces.find(space => space?._id === selectedSpaceId), [allSpaces, selectedSpaceId])
-  const allTablesFilteredBySpace = useMemo(() => selectedSpace?.tables || [], [selectedSpace?.tables])
+  // use reduce
+  const allTables = useMemo(() => {
+    return data?.getSpacesFromBusiness?.reduce((acc, space) => {
+      if (space._id !== selectedSpaceId) return acc
+
+      return space.tables
+    }, [] as {
+      __typename?: "Table" | undefined;
+      _id: string;
+      status: TableStatus;
+      tableNumber: string;
+      tab?: string | null | undefined;
+    }[] | undefined | null)
+  }, [data?.getSpacesFromBusiness, selectedSpaceId])
+
+  const availableTables = useMemo(() => {
+    return allTables?.
+      filter(table => table.status === TableStatus.Available).
+      map(table => table._id)
+  }, [allTables])
 
   const [createTable] = useCreateTableMutation({
     refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
     onCompleted: () => {
       setNetworkState(("success"))
     },
-    onError: (error) => {
+    onError: () => {
       setNetworkState(("error"))
     }
   });
+
+  const { data: pendingRequestsData, loading: pendingResquestLoading } = useGetTabRequestsQuery({
+    variables: {
+      input: {
+        filterBy: RequestStatus.Pending
+      }
+    }
+  })
 
   const postNewTable = async () => {
 
@@ -69,21 +102,13 @@ export const TablesScreen = () => {
   }
 
   const renderSpaces = useCallback(({ item }) => {
-    const selected = selectedSpaceId === item._id
     return (
-      <Button
-        px={4}
-        m={0}
-        minW={"100px"}
-        maxH={"40px"}
-        borderColor={selected ? 'primary.500' : "gray.300"}
-        disabled={selected}
-        variant={selected ? 'outline' : 'outline'}
-        colorScheme={selected ? "primary" : "black"}
+      <Tile
+        selected={selectedSpaceId === item._id}
         onPress={() => setSelectedSpace(item._id)}
       >
         {item.name}
-      </Button>
+      </Tile>
     )
   }, [selectedSpaceId, setSelectedSpace])
 
@@ -99,18 +124,16 @@ export const TablesScreen = () => {
         setIsModalOpen={setSpaceIsModalOpen}
       />
       <TableModal />
-      <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
+      <RequestsModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        availableTables={availableTables}
+        requests={pendingRequestsData?.getTabRequests}
+        isLoading={pendingResquestLoading}
+      />
+      <OrangeBox height={150} />
       <VStack m={"4"} space={"4"} flex={1}>
-        <VStack
-          p={"4"}
-          space={"2"}
-          shadow={"4"}
-          borderWidth={1}
-          borderRadius={"md"}
-          borderColor={"trueGray.400"}
-          backgroundColor={"white"}
-          flexDirection={"column"}
-        >
+        <UpperSection>
 
           <Heading>
             {texts.space}
@@ -120,7 +143,7 @@ export const TablesScreen = () => {
             <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
             <FlatList
               horizontal
-              data={allSpaces}
+              data={data?.getSpacesFromBusiness}
               renderItem={renderSpaces}
               ItemSeparatorComponent={() => <Box w={4} />}
               keyExtractor={(item, index) => `${item?._id}-${index}`}
@@ -128,60 +151,54 @@ export const TablesScreen = () => {
             <Divider orientation="vertical" />
             <Stats />
           </HStack>
-        </VStack>
-        {selectedSpaceId ? <Box
-          p={"4"}
-          flex={1}
-          borderWidth={1}
-          borderRadius={"md"}
-          borderColor={"trueGray.400"}
-          backgroundColor={"white"}
-          overflow={"scroll"}
-        >
-          <Box flex={1} >
-            <HStack space={32} pb={"6"}>
-              <Heading>{texts.tables}</Heading>
-              <Box>
-                <Badge
-                  colorScheme="danger"
-                  rounded="full"
-                  mb={-4}
-                  mr={-2}
-                  zIndex={1}
-                  variant="solid" alignSelf="flex-end">
-                  2
-                </Badge>
-                <Button w={"48"} colorScheme={"tertiary"}>
+        </UpperSection>
+        {selectedSpaceId ?
+          <BottomSection>
+            <Box flex={1} >
+              <HStack space={32} pb={"6"}>
+                <Heading>{texts.tables}</Heading>
+                <ButtonWithBadge
+                  onPress={() => setIsRequestModalOpen(true)}
+                  badgeCount={pendingRequestsData?.getTabRequests.length}>
                   {texts.requests}
-                </Button>
-              </Box>
-            </HStack>
-            <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-              <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
-              {allTablesFilteredBySpace.map((table, index) =>
-                <SquareTable
-                  key={table?._id}
-                  index={index}
-                  status={table?.status}
-                  tableNumber={table?.tableNumber}
-                  onPress={() => {
-                    // @ts-ignore
-                    setTableChoosen({
-                      _id: table?._id,
-                      status: table?.status,
-                      tableNumber: table?.tableNumber,
-                      tab: table?.tab?._id,
-                      orders: table?.tab?.orders ?? [],
-                      users: table?.tab?.users ?? []
-                    })
-                  }} />)}
-            </HStack>
-          </Box>
-
-        </Box> : null
-        }
+                </ButtonWithBadge>
+              </HStack>
+              <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
+                <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
+                {allTables?.map((table, index) =>
+                  <SquareTable
+                    key={table?._id}
+                    index={index}
+                    status={table?.status}
+                    tableNumber={table?.tableNumber}
+                    onPress={() => setTableChoosen(table._id)} />)}
+              </HStack>
+            </Box>
+          </BottomSection> : null}
       </VStack>
-      <RequestsModal />
     </Box>
+  )
+}
+
+type ButtonWithBadgeProps = {
+  onPress: () => void;
+  children: React.ReactNode;
+  badgeCount?: number;
+}
+const ButtonWithBadge = ({ onPress, children, badgeCount }: ButtonWithBadgeProps) => {
+  return (<Box>
+    {badgeCount ? <Badge
+      colorScheme="danger"
+      rounded="full"
+      mb={-4}
+      mr={-2}
+      zIndex={1}
+      variant="solid" alignSelf="flex-end">
+      {badgeCount}
+    </Badge> : null}
+    <Button w={"48"} colorScheme={"tertiary"} onPress={onPress}>
+      {children}
+    </Button>
+  </Box>
   )
 }

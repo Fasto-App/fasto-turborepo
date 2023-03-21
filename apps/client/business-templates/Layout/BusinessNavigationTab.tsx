@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Center } from "native-base";
+import { Box, Center } from "native-base";
 import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
 import { AppNavigation, appRoute, businessRoute } from "../../routes";
-import { clearCookies } from "../../cookies/businessCookies";
 import { LeftSideBar } from "../../components";
+import { HamburgerMenu } from "../MenuHamburguer";
 
 const navigationTitle = {
   dashboard: "Dashboard",
@@ -20,10 +20,6 @@ const BusinessNavigationTab = () => {
   const router = useRouter();
   const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
     pathname === router.pathname, [router.pathname])
-
-  const isHome = useIsPageSelected(appRoute.home)
-  const isAddProductsCategories = useIsPageSelected(businessRoute.add_products_categories)
-
 
   return (
     <LeftSideBar>
@@ -73,16 +69,10 @@ const BusinessNavigationTab = () => {
             router.push(businessRoute.settings);
           }}
         />
-        <BusinessNavigationButton
-          text={navigationTitle.logout}
-          type={"Logout"}
-          selected={useIsPageSelected(businessRoute.login)}
-          onPress={() => {
-            clearCookies();
-            router.push(businessRoute.login);
-          }}
-        />
       </Center>
+      <Box position={"absolute"} bottom={"0"} flex={1} pl={2} pb={4}>
+        <HamburgerMenu />
+      </Box>
     </LeftSideBar>
   );
 };

@@ -7,6 +7,7 @@ import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
 import { parseToCurrency } from "app-helpers";
 import { texts } from "./texts";
+import { getClientCookies } from "../../cookies/businessCookies";
 
 const AnimatedBox = animated(Box);
 
@@ -42,7 +43,7 @@ export const ProductDescriptionScreen = () => {
   const route = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [text, setText] = useState();
-  const isEditMode = route.query?.edit?.toString() === "true";
+  const token = getClientCookies("token")
 
   const springProps = useSpring({
     to: { opacity: 1, marginTop: 0 },
@@ -88,6 +89,7 @@ export const ProductDescriptionScreen = () => {
             quantity={quantity}
             onPlusPress={increaseQuantity}
             onMinusPress={decreaseQuantity}
+            disabled={!token}
           />
         </Box>
         <Divider my={"3"} backgroundColor={"gray.300"} />
@@ -95,6 +97,7 @@ export const ProductDescriptionScreen = () => {
           <Text fontWeight={"semibold"} fontSize={"25"}>{texts.extras}</Text>
           {addons.map((addon, index) => (
             <Addon
+              isDisabled={!token}
               key={index}
               name={addon.name}
               price={parseToCurrency(addon.price)}
@@ -104,6 +107,7 @@ export const ProductDescriptionScreen = () => {
           ))}
         </VStack>
         <TextArea
+          isDisabled={!token}
           borderWidth={1}
           onChange={() => console.log("text")}
           value={text}
@@ -115,13 +119,13 @@ export const ProductDescriptionScreen = () => {
       </ScrollView>
       <Box padding={4}>
         <Button
-          disabled={false}
+          isDisabled={!token}
           onPress={onButtonPress}
           size={"lg"}
           colorScheme="primary"
           _text={{ fontSize: "18", bold: true }}
         >
-          {isEditMode ? "Edit" : "Add to cart"}
+          {"Add to cart"}
         </Button>
       </Box>
     </AnimatedBox>

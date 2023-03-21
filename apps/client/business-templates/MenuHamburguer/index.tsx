@@ -1,37 +1,51 @@
 import React from "react";
-import { Box, Menu, HamburgerIcon, Pressable } from "native-base";
-import { NavigationButton } from "../../components/atoms/NavigationButton";
+import { Divider, Menu, Text, Pressable, HStack, Avatar, VStack } from "native-base";
+import { BusinessNavigationButton, NavigationButton } from "../../components/atoms/NavigationButton";
 import { businessRoute } from "../../routes";
 import { useRouter } from "next/router";
+import { clearCookies } from "../../cookies/businessCookies";
+
+const AccountTile = ({ isActive = false }: { isActive?: boolean }) => {
+  return (
+    <HStack flex={1} space={2}>
+      <Avatar size={"lg"} source={{ uri: "https://bit.ly/dan-abramov" }} borderWidth={2} borderColor={isActive ? "primary.500" : "gray.400"} />
+      <VStack flex={1} justifyContent="center">
+        <Text fontSize={"24"} bold>Business Name</Text>
+        {isActive ? <Text fontSize={"16"}>Employee Name</Text> : null}
+      </VStack>
+    </HStack>
+  )
+}
 
 export function HamburgerMenu() {
   const router = useRouter();
 
-
-  return <Box pl={"4"} h="80%" alignItems="flex-start">
-    <Menu w="190" trigger={triggerProps => {
+  return <Menu
+    placement="right bottom"
+    trigger={triggerProps => {
       return <Pressable accessibilityLabel="More options menu" {...triggerProps}>
-        <HamburgerIcon color="white" />
+        <AccountTile isActive />
       </Pressable>;
     }}>
+    <Menu.Group title="Accounts">
       <Menu.Item>
-        <NavigationButton
-          flexDirection={"row"}
-          text={"Add Products"}
-          type={"Plus"}
-          selected={false}
-          onPress={() => {
-            router.push(businessRoute.add_products_categories);
-          }}
-        />
+        <AccountTile />
       </Menu.Item>
-      <Menu.Item>Nunito Sans</Menu.Item>
-      <Menu.Item>Roboto</Menu.Item>
-      <Menu.Item>Poppins</Menu.Item>
-      <Menu.Item>SF Pro</Menu.Item>
-      <Menu.Item>Helvetica</Menu.Item>
-      <Menu.Item isDisabled>Sofia</Menu.Item>
-      <Menu.Item>Cookie</Menu.Item>
-    </Menu>
-  </Box>;
+      <Menu.Item>
+        <AccountTile />
+      </Menu.Item>
+    </Menu.Group>
+    <Divider mt="3" w="100%" />
+    <Menu.Item>
+      <BusinessNavigationButton
+        text={"Logout"}
+        type={"Logout"}
+        onPress={() => {
+          clearCookies();
+          router.push(businessRoute.login);
+        }}
+      />
+    </Menu.Item>
+  </Menu>
+
 }

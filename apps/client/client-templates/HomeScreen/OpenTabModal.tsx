@@ -5,7 +5,7 @@ import { Button, Heading } from 'native-base'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from '../../components/ControlledForm'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
-import { useOpenTabRequestMutation } from '../../gen/generated'
+import { GetTabRequestDocument, GetTabRequestsDocument, useOpenTabRequestMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies/businessCookies'
@@ -85,6 +85,8 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   }, [totalGuests])
 
   const [clientRequestTab, { loading }] = useOpenTabRequestMutation({
+    refetchQueries: [
+      { query: GetTabRequestsDocument }],
     onCompleted: (data) => {
       console.log("Tab Request Completed")
       if (!data?.openTabRequest) return

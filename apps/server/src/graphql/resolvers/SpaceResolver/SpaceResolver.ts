@@ -22,9 +22,7 @@ export const getSpacesFromBusiness = async (
   const businessByID = await BusinessModel(db).findById(business)
   if (!businessByID) throw ApolloError('NotFound', "Business not found.")
 
-  // get all spaces from a business
-  const spaces = await SpaceModel(db).find({ business: businessByID?._id })
-  return spaces
+  return await SpaceModel(db).find({ business: businessByID?._id })
 }
 
 // create a space from a input name

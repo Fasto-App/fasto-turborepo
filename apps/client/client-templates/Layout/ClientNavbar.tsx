@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 import { Avatar, Box, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { clientPathName, PathNameKeys } from "../../routes";
+import { getClientCookies } from "../../cookies/businessCookies";
 
 const ClientNavBar = () => {
+  const token = getClientCookies("token")
   const route = useRouter();
   const { productId } = route.query
   const theme = useTheme();
@@ -32,7 +34,7 @@ const ClientNavBar = () => {
         borderColor={"coolGray.300"}
       >
         {/* Avatar or back button */}
-        {productId ?
+        {productId || !token ?
           <NavigationButton
             type={"ArrowBack"}
             color={theme.colors.info[600]}

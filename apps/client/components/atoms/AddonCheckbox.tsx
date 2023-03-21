@@ -6,13 +6,15 @@ type AddonProps = {
   price: string;
   value: string;
   onChange: (value: boolean) => void;
+  isDisabled?: boolean;
 };
 
-export const Addon = ({ name, price, value, onChange }: AddonProps) => {
+export const Addon = ({ name, price, value, onChange, isDisabled }: AddonProps) => {
   return (
     <HStack justifyContent={"space-between"}>
       <HStack>
         <Checkbox
+          isDisabled={isDisabled}
           shadow={2}
           value={value}
           onChange={onChange}

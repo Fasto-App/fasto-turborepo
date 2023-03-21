@@ -2,6 +2,11 @@ import { gql } from "apollo-server-express";
 
 export const TableTypeDefinition = gql`
 
+  extend type Query {
+    getTablesFromSpace(input: GetById!): [Table!]!
+    getTableById(input: GetById!): Table!
+  }
+
   extend type Mutation {
     createTable(input: CreateTableInput): Table!
     deleteTable(input: DeleteTableInput): RequestResponseOK!

@@ -5,6 +5,7 @@ import { ClientTabBar } from "./ClientTabBar";
 import { useRouter } from "next/router";
 import { HourGlassAnimation } from "../../components/SuccessAnimation";
 import { useGetTabRequest } from "../../hooks";
+import { getClientCookies } from "../../cookies/businessCookies";
 
 const ClientLayout: React.FC = ({ children }) => {
   const route = useRouter()
@@ -12,6 +13,7 @@ const ClientLayout: React.FC = ({ children }) => {
   const isHome = route.pathname === "/client/[businessId]"
   const isCheckout = route.pathname === "/client/[businessId]/checkout/[checkoutId]"
   const { data } = useGetTabRequest()
+  const token = getClientCookies("token")
 
 
   return (
@@ -24,7 +26,7 @@ const ClientLayout: React.FC = ({ children }) => {
       <Box flex={1}>
         {children}
       </Box>
-      {productId || isHome || isCheckout ? null : <ClientTabBar />}
+      {productId || isHome || isCheckout || !token ? null : <ClientTabBar />}
 
       {data?.getTabRequest?.status === "Pending" ?
         <Box position={"absolute"} zIndex={999} right={0} top={0} >

@@ -39,7 +39,8 @@ import {
 } from './SpaceResolver';
 import {
   TableResolverMutation,
-  TableResolver
+  TableResolver,
+  TableResolverQuery
 } from './TableResolver';
 import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
 import { CheckoutResolverMutation, CheckoutResolverQuery, CheckoutResolver } from './CheckoutResolver';
@@ -59,6 +60,7 @@ export const resolvers = {
     ...UserResolverQuery,
     ...CheckoutResolverQuery,
     ...RequestResolverQuery,
+    ...TableResolverQuery,
   },
   Mutation: {
     ...AddressResolverMutation,
@@ -89,7 +91,7 @@ export const resolvers = {
     products: ProductResolver.getProductsByCategory,
   },
   Space: {
-    tables: TableResolver.getTablesFromSpace,
+    tables: TableResolver.resolveTablesFromSpace,
   },
   // todo
   // this is bad, a resolver for a resolver?

@@ -1,7 +1,7 @@
 import React from "react"
 import Link from 'next/link';
 import { Pressable } from 'react-native'
-import { HStack, Text, Center, VStack, useBreakpointValue, } from "native-base"
+import { HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, } from "native-base"
 import { useGetAllBusinessQuery } from "../gen/generated";
 import { clientRoute } from "../routes";
 
@@ -9,10 +9,20 @@ export default function Home() {
 
 
 	// get all the business hereuseGetAllBusinessQuery
-	const { data } = useGetAllBusinessQuery()
+	const { data, loading } = useGetAllBusinessQuery()
 
 	return (
 		<VStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
+			{loading && <Box borderWidth={1} borderColor="coolGray.500"
+				rounded="md"
+				p={4}
+				h="20"
+				width={{
+					base: 300,
+					sm: 400
+				}}>
+				<Skeleton.Text />
+			</Box>}
 			{data?.getAllBusiness.map((business) => {
 				if (!business?._id) return null
 

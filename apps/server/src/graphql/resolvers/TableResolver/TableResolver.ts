@@ -37,7 +37,7 @@ const createTable = async (
   return await table.save()
 }
 
-export const getTablesFromSpace = async (
+export const resolveTablesFromSpace = async (
   parent: any,
   _args: any,
   { db }: { db: Connection },
@@ -69,12 +69,26 @@ const getOpenTabByTable = async (table: any, _: any, { db }: { db: Connection })
   })
 }
 
+const getTableById = async (parent: any, { input }: any, { db }: { db: Connection }) => {
+  return await TableModel(db).findById(input._id)
+}
+
+
+const getTablesFromSpace = async (parent: any, { input }: any, { db }: { db: Connection }) => {
+  return await TableModel(db).find({ space: input._id })
+}
+
+const TableResolverQuery = {
+  getTablesFromSpace,
+  getTableById,
+}
+
 const TableResolverMutation = { deleteTable, createTable }
 
 const TableResolver = {
   getOpenTabByTable,
-  getTablesFromSpace,
+  resolveTablesFromSpace,
 }
 
-export { TableResolverMutation, TableResolver }
+export { TableResolverMutation, TableResolver, TableResolverQuery }
 

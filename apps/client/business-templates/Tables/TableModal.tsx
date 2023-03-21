@@ -2,18 +2,18 @@ import React, { useCallback } from "react"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { Badge, Button, Modal, Text } from "native-base";
+import { Badge, Button, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { OrderDetail, Table, useGetAllMenusByBusinessIdQuery, useGetTabByIdQuery, User } from "../../gen/generated";
+import { OrderDetail, Table, useGetAllMenusByBusinessIdQuery, useGetTabByIdQuery, useGetTableByIdQuery, User } from "../../gen/generated";
 import { useTabMutationHook } from "../../graphQL/TabQL";
 import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
 import * as z from "zod"
-import { SelectedTable } from "./types";
 import { useTableScreenStore } from "./tableScreenStore";
+import { CustomModal } from "../../components/CustomModal/CustomModal";
 
 const tableSchema = z.object({
   admin: z.string().optional(),
@@ -59,27 +59,25 @@ export const TableModal = () => {
   const router = useRouter()
   const { createTab } = useTabMutationHook();
 
-  const tableChoosen = useTableScreenStore(state => state.tableChoosen)
+  const tableId = useTableScreenStore(state => state.tableChoosen)
   const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
+  const { data } = useGetTableByIdQuery({
+    skip: !tableId,
+    variables: {
+      input: {
+        _id: tableId!
+      }
+    }
+  })
 
+  const tableChoosen = data?.getTableById
+
+  // fetch to get information about the table
   const isOcuppiedTable = tableChoosen?.status === "Occupied"
   const isAvailableTable = tableChoosen?.status === "Available"
   const isReservedTable = tableChoosen?.status === "Reserved"
 
   const { data: menusData, loading: loadingGetMenus } = useGetAllMenusByBusinessIdQuery();
-
-  // get all the menus from a business
-
-  // store the id and go through the array of orders
-  // fetch information for an specific TAB 
-  const { data } = useGetTabByIdQuery({
-    variables: {
-      input: {
-        _id: `${tableChoosen?.tab}`
-      }
-    },
-    skip: !tableChoosen?.tab
-  })
 
   const {
     control,
@@ -122,7 +120,7 @@ export const TableModal = () => {
 
       case "Occupied":
         console.log(tableChoosen)
-        router.push(businessRoute.add_to_order(`${tableChoosen?.tab}`, menuId))
+        router.push(businessRoute.add_to_order(`${tableChoosen?.tab?._id}`, menuId))
         break;
     }
 
@@ -134,45 +132,51 @@ export const TableModal = () => {
     clearErrors()
   }
 
-  return <Modal
-    size={isOcuppiedTable ? "full" : "lg"}
-    isOpen={!!tableChoosen}
-    onClose={onCancel}
-  >
-    <DevTool control={control} />
-    <Modal.CloseButton />
-    <Modal.Content >
-      <Modal.Header borderColor={"gray.50"}>
-        {"Table " + tableChoosen?._id}
-        <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
-          {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}</Badge>
-      </Modal.Header>
-      <Modal.Body>
-        {isOcuppiedTable ? <OccupiedModal /> : isAvailableTable ?
-          <ControlledForm
-            control={control}
-            formState={formState}
-            Config={SideBySideTabConfig}
-          /> : isReservedTable ? <>
-            <Text>{"tableChoosen.reservation.name"}</Text>
-            <Text>{"tableChoosen.reservation.phone"}</Text>
-            <Text>{format(new Date(), "PPpp")}</Text>
-          </> : null
+  return (
+    <>
+      <DevTool control={control} />
+
+      <CustomModal
+        size={isOcuppiedTable ? "full" : "lg"}
+        isOpen={!!tableChoosen}
+        HeaderComponent={
+          <>
+            <Text fontSize={"20"}>
+              {"Table " + tableChoosen?.tableNumber}
+            </Text>
+            <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
+              {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}
+            </Badge>
+          </>}
+        ModalBody={
+          isOcuppiedTable ? <OccupiedModal
+            orders={tableChoosen?.tab?.orders}
+            users={tableChoosen?.tab?.users}
+          /> : isAvailableTable ?
+            <ControlledForm
+              control={control}
+              formState={formState}
+              Config={SideBySideTabConfig}
+            /> : isReservedTable ? <>
+              <Text>{"tableChoosen.reservation.name"}</Text>
+              <Text>{"tableChoosen.reservation.phone"}</Text>
+              <Text>{format(new Date(), "PPpp")}</Text>
+            </> : null
         }
-      </Modal.Body>
-      <Modal.Footer borderColor={"gray.50"}>
-        <Button.Group flex={1} justifyContent={"center"} space={4}>
-          <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-            {texts.cancel}
-          </Button>
-          <Button w={"200px"}
-            onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}
-            isLoading={loadingGetMenus}
-          >
-            {isOcuppiedTable ? texts.addNewItem : texts.openTab}
-          </Button>
-        </Button.Group>
-      </Modal.Footer>
-    </Modal.Content>
-  </Modal >
+        ModalFooter={
+          <Button.Group flex={1} justifyContent={"center"} space={4}>
+            <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
+              {texts.cancel}
+            </Button>
+            <Button w={"200px"}
+              onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}
+              isLoading={loadingGetMenus}
+            >
+              {isOcuppiedTable ? texts.addNewItem : texts.openTab}
+            </Button>
+          </Button.Group>
+        }
+      />
+    </>
+  )
 }

@@ -136,14 +136,13 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
 }
 
 const getUsersByTabID = async (parent: any, _args: any, { db }: Context) => {
-
-    console.log('getUsersByTabID', parent._id)
     const Tab = TabModel(db);
+    const User = UserModel(db);
     const tab = await Tab.findById(parent._id);
 
     if (!tab) throw ApolloError('NotFound')
 
-    return tab.users;
+    return await User.find({ _id: { $in: tab.users } });
 }
 
 const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {

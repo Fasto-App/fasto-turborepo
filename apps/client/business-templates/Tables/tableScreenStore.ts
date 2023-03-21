@@ -1,8 +1,7 @@
 import { create } from 'zustand'
-import { SelectedTable } from './types'
 
 interface TableScreenStore {
-  tableChoosen?: SelectedTable
+  tableChoosen?: string
   selectedSpaceId?: string
   isSpaceModalOpen: boolean
   isNewTableModalOpen: boolean
@@ -11,7 +10,7 @@ interface TableScreenStore {
 interface TableScreenStoreActions extends TableScreenStore {
   setSelectedSpace: (spaceId?: string) => void
   setSpaceIsModalOpen: (isOpen: boolean) => void
-  setTableChoosen: (table?: SelectedTable) => void
+  setTableChoosen: (table?: string) => void
   setIsNewTableModalOpen: (isOpen: boolean) => void
 }
 
@@ -25,7 +24,7 @@ const getInitialState = (): TableScreenStore => ({
 
 export const useTableScreenStore = create<TableScreenStoreActions>((set) => ({
   ...getInitialState(),
-  setTableChoosen: (table?: SelectedTable) => set({ tableChoosen: table }),
+  setTableChoosen: (tableId?: string) => set({ tableChoosen: tableId }),
   setSelectedSpace: (spaceId?: string) => set({ selectedSpaceId: spaceId }),
   setSpaceIsModalOpen: (isOpen: boolean) => set({ isSpaceModalOpen: isOpen }),
   setIsNewTableModalOpen: (isOpen: boolean) => set({ isNewTableModalOpen: isOpen })
