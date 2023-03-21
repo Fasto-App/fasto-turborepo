@@ -31,9 +31,12 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
   const [resetPassword, { loading }] = usePasswordResetMutation({
     onCompleted: (data) => {
       console.log("Reset password completed")
-      setCookies("name", data.passwordReset.name);
-      setCookies("token", data.passwordReset.token);
-      setCookies("email", data.passwordReset.email);
+
+      const { token, email, name } = data.passwordReset;
+      setCookies("token", token);
+      email && setCookies("email", email);
+      name && setCookies("name", name);
+
       router.push(businessRoute.dashboard);
     }
   });
@@ -86,9 +89,7 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
         {texts.resetPassword}
       </Heading>
       <Center>
-        <Heading maxWidth={"400px"} mt="2" alignContent={"center"} _dark={{
-          color: "warmGray.200"
-        }} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
+        <Heading maxWidth={"400px"} mt="2" alignContent={"center"} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
           {texts.pleaseEnterYourPassword(email)}
         </Heading>
       </Center>
@@ -103,9 +104,7 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
           {texts.reset}
         </Button>
         <HStack mt="6" justifyContent="center">
-          <Text fontSize="sm" color="coolGray.600" _dark={{
-            color: "warmGray.200"
-          }}>
+          <Text fontSize="sm" color="coolGray.600">
             {texts.imAlreadyAUser}
           </Text>
           <Pressable>
@@ -122,5 +121,6 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
         </HStack>
       </VStack>
     </Box>
-  </Center >)
+  </Center>
+  )
 }
