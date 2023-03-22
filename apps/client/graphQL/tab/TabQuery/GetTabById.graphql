@@ -3,6 +3,7 @@ query GetTabByID($input: GetById!) {
 		_id
 		users {
 			_id
+			name
 		}
 		_id
 		table {

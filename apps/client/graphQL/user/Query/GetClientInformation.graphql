@@ -1,0 +1,7 @@
+query GetClientInformation {
+	getClientInformation {
+		_id
+		name
+		phoneNumber
+	}
+}

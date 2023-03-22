@@ -4,17 +4,19 @@ import { ClientNavBar } from "./ClientNavbar";
 import { ClientTabBar } from "./ClientTabBar";
 import { useRouter } from "next/router";
 import { HourGlassAnimation } from "../../components/SuccessAnimation";
-import { useGetTabRequest } from "../../hooks";
+import { useGetTabInformation, useGetTabRequest } from "../../hooks";
 import { getClientCookies } from "../../cookies/businessCookies";
 
 const ClientLayout: React.FC = ({ children }) => {
+  const token = getClientCookies("token")
   const route = useRouter()
   const { productId } = route.query
   const isHome = route.pathname === "/client/[businessId]"
   const isCheckout = route.pathname === "/client/[businessId]/checkout/[checkoutId]"
   const { data } = useGetTabRequest()
-  const token = getClientCookies("token")
+  const { data: tab } = useGetTabInformation()
 
+  console.log({ tab })
 
   return (
     <Flex
@@ -22,7 +24,7 @@ const ClientLayout: React.FC = ({ children }) => {
       justifyContent={"space-between"}
       h={"100%"}
       bg={route.pathname === "/client/[businessId]/settings" ? "gray.100" : "white"}>
-      {isHome ? null : <ClientNavBar />}
+      {isHome ? null : <ClientNavBar tableNumber={tab?.getTabByID?.table.tableNumber} />}
       <Box flex={1}>
         {children}
       </Box>

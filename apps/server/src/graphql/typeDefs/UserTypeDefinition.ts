@@ -5,6 +5,7 @@ export const UserTypeDefinition = gql`
     getToken: User
     getAllUsers: [User!]!
     getUserInformation: User
+    getClientInformation: User!
   }
 
   extend type Mutation {

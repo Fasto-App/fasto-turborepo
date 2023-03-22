@@ -10,6 +10,7 @@ export const clientCookies = {
   token: "fasto-client-cookies-token",
   phoneNumber: "fasto-client-cookies-phoneNumber",
   name: "fasto-client-cookies-name",
+  tab: "fasto-client-cookies-tab"
 }
 
 export const clearCookies = () => {

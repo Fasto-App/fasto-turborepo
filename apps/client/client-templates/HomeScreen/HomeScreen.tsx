@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { texts } from './texts'
 import { QRCodeReader } from './QRCodeReader'
 import { OpenTabModal } from './OpenTabModal'
-import { useGetBusinessByIdQuery } from '../../gen/generated'
-import { useGetTabRequest } from '../../hooks'
+import { useGetBusinessInformation, useGetTabRequest } from '../../hooks'
+import { clientRoute } from '../../routes'
 
 export const HomeScreen = () => {
 
@@ -21,22 +21,14 @@ export const HomeScreen = () => {
   }
 
   const onPress = () => {
-    route.push('/client/123/menu')
+    route.push(clientRoute.menu(businessId as string))
   }
 
   const { data: tabData } = useGetTabRequest()
+  const { data: businessInfo } = useGetBusinessInformation()
 
-  const { data } = useGetBusinessByIdQuery({
-    skip: !businessId,
-    variables: {
-      input: {
-        _id: businessId as string
-      }
-    }
-  })
-
-  const image = data?.getBusinessById?.picture
-  const name = data?.getBusinessById?.name
+  const image = businessInfo?.getBusinessById?.picture
+  const name = businessInfo?.getBusinessById?.name
 
   return (
     <Center h={"100%"} backgroundColor={"white"}>

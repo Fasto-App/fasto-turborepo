@@ -38,6 +38,7 @@ export const RequestTypeDefinition = gql`
     names: [String]
     createdAt: String!
     status: RequestStatus!
+    tab: ID
   }
 
   enum RequestStatus {

@@ -388,6 +388,17 @@ const passwordReset = async (_parent: any,
 
 }
 
+const getClientInformation = async (_parent: any, { input }: { input: string }, { db, client }: Context) => {
+  const User = UserModel(db)
+  const foundClient = await User.findById(client?._id)
+
+  if (!foundClient) throw ApolloError('BadRequest', 'Client not found')
+
+  return foundClient
+}
+
+
+
 
 const UserResolverMutation = {
   requestUserAccountCreation,
@@ -403,6 +414,7 @@ const UserResolverQuery = {
   getUserInformation,
   getAllUsers,
   getToken,
+  getClientInformation
 }
 
 const UserResolver = {

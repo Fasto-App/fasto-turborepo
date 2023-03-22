@@ -650,6 +650,7 @@ export type Query = {
   getBusinessLocation?: Maybe<Address>;
   getCategoryByID?: Maybe<Category>;
   getCheckoutByID: Checkout;
+  getClientInformation: User;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getProductByID?: Maybe<Product>;
@@ -731,6 +732,7 @@ export type Request = {
   createdAt: Scalars['String'];
   names?: Maybe<Array<Maybe<Scalars['String']>>>;
   status: RequestStatus;
+  tab?: Maybe<Scalars['ID']>;
   totalGuests: Scalars['Int'];
 };
 
@@ -1134,7 +1136,7 @@ export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?:
 export type GetTabRequestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest: { __typename?: 'Request', _id: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus, admin: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } } };
+export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest: { __typename?: 'Request', _id: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus, tab?: string | null, admin: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } } };
 
 export type GetTabRequestsQueryVariables = Exact<{
   input?: InputMaybe<GetTabRequestInput>;
@@ -1174,7 +1176,7 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } }> } | null };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } }> } | null };
 
 export type GetTabCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -1252,6 +1254,11 @@ export type UpdateUserInformationMutationVariables = Exact<{
 
 
 export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } };
+
+export type GetClientInformationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetClientInformationQuery = { __typename?: 'Query', getClientInformation: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } };
 
 export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2475,6 +2482,7 @@ export const GetTabRequestDocument = gql`
     names
     totalGuests
     status
+    tab
   }
 }
     `;
@@ -2705,6 +2713,7 @@ export const GetTabByIdDocument = gql`
     _id
     users {
       _id
+      name
     }
     _id
     table {
@@ -3180,6 +3189,42 @@ export function useUpdateUserInformationMutation(baseOptions?: Apollo.MutationHo
 export type UpdateUserInformationMutationHookResult = ReturnType<typeof useUpdateUserInformationMutation>;
 export type UpdateUserInformationMutationResult = Apollo.MutationResult<UpdateUserInformationMutation>;
 export type UpdateUserInformationMutationOptions = Apollo.BaseMutationOptions<UpdateUserInformationMutation, UpdateUserInformationMutationVariables>;
+export const GetClientInformationDocument = gql`
+    query GetClientInformation {
+  getClientInformation {
+    _id
+    name
+    phoneNumber
+  }
+}
+    `;
+
+/**
+ * __useGetClientInformationQuery__
+ *
+ * To run a query within a React component, call `useGetClientInformationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClientInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClientInformationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetClientInformationQuery(baseOptions?: Apollo.QueryHookOptions<GetClientInformationQuery, GetClientInformationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClientInformationQuery, GetClientInformationQueryVariables>(GetClientInformationDocument, options);
+      }
+export function useGetClientInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientInformationQuery, GetClientInformationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClientInformationQuery, GetClientInformationQueryVariables>(GetClientInformationDocument, options);
+        }
+export type GetClientInformationQueryHookResult = ReturnType<typeof useGetClientInformationQuery>;
+export type GetClientInformationLazyQueryHookResult = ReturnType<typeof useGetClientInformationLazyQuery>;
+export type GetClientInformationQueryResult = Apollo.QueryResult<GetClientInformationQuery, GetClientInformationQueryVariables>;
 export const GetUserInformationDocument = gql`
     query GetUserInformation {
   getUserInformation {

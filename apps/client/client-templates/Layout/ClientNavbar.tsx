@@ -4,24 +4,24 @@ import { Avatar, Box, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { clientPathName, PathNameKeys } from "../../routes";
 import { getClientCookies } from "../../cookies/businessCookies";
+import { useGetBusinessInformation } from "../../hooks";
+import { OrangeBox } from "../../components/OrangeBox";
 
-const ClientNavBar = () => {
+const plaholderImage = "https://via.placeholder.com/150"
+
+const ClientNavBar = (props: { tableNumber?: string }) => {
+  const { tableNumber } = props
+
   const token = getClientCookies("token")
   const route = useRouter();
   const { productId } = route.query
   const theme = useTheme();
 
+  const { data: businessInfo } = useGetBusinessInformation()
+
   return (
     <>
-      <Box
-        bg={"primary.500"}
-        padding={"1"}
-        height={"12"}
-        w={"100%"}
-        position={"absolute"}
-        zIndex={-1}
-      >
-      </Box>
+      <OrangeBox height={"12"} />
       <HStack
         p={1}
         my={2}
@@ -43,16 +43,19 @@ const ClientNavBar = () => {
               route.back();
             }}
           />
-          : <Avatar size="48px" source={{ uri: "https://cdn.logo.com/hotlink-ok/logo-social.png" }} />}
+          : <Avatar
+            size="48px"
+            source={{ uri: businessInfo?.getBusinessById.picture ?? plaholderImage }}
+          />}
         <Text textAlign={"center"} w={"50%"} fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
           {clientPathName[route.pathname as PathNameKeys]}
         </Text>
         <VStack alignItems={"center"}>
-          <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
+          <Text fontSize={"lg"} color="coolGray.800" bold>
             Table
           </Text>
-          <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
-            12
+          <Text fontSize={"lg"} color="coolGray.800" bold>
+            {tableNumber || "-"}
           </Text>
         </VStack>
       </HStack>
