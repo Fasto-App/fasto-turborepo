@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react"
-import { Badge, Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
+import { Badge, Box, Button, Divider, FlatList, Heading, HStack, Skeleton, VStack } from "native-base"
 import { SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
@@ -14,7 +14,7 @@ import { useAppStore } from "../UseAppStore"
 import { RequestsModal } from "./RequestsModal"
 import { BottomSection } from "../../components/BottomSection"
 import { UpperSection } from "../../components/UpperSection"
-import { Tile } from "../../components/Tile"
+import { Tile, TileLoading } from "../../components/Tile"
 import { OrangeBox } from "../../components/OrangeBox"
 
 export const TablesScreen = () => {
@@ -45,7 +45,7 @@ export const TablesScreen = () => {
 
   // todo: get all the spaces and default to the first one
   // const { allSpaces } = useSpacesMutationHook(setSelectedSpace);
-  const { data } = useGetSpacesFromBusinessQuery({
+  const { data, loading: spaceLoading } = useGetSpacesFromBusinessQuery({
     onCompleted: (data) => {
       setSelectedSpace?.(data.getSpacesFromBusiness?.[0]._id)
     },
@@ -141,13 +141,14 @@ export const TablesScreen = () => {
 
           <HStack space={2} mt={2}>
             <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
-            <FlatList
+            {spaceLoading ? <TileLoading /> : <FlatList
               horizontal
               data={data?.getSpacesFromBusiness}
               renderItem={renderSpaces}
               ItemSeparatorComponent={() => <Box w={4} />}
               keyExtractor={(item, index) => `${item?._id}-${index}`}
-            />
+            />}
+
             <Divider orientation="vertical" />
             <Stats />
           </HStack>

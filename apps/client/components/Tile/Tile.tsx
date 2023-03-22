@@ -1,5 +1,5 @@
 import React from "react"
-import { Button } from "native-base"
+import { Button, HStack, Skeleton } from "native-base"
 
 type TileProps = {
   selected: boolean,
@@ -25,5 +25,15 @@ export const Tile: React.FC<TileProps> = ({
     >
       {children}
     </Button>
+  )
+}
+
+export const TileLoading = () => {
+  return (
+    <HStack space={4}>
+      <Skeleton borderRadius={"md"} w={"100px"} />
+      <Skeleton borderRadius={"md"} w={"100px"} />
+      <Skeleton borderRadius={"md"} w={"100px"} />
+    </HStack>
   )
 }
