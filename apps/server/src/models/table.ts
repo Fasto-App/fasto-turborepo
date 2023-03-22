@@ -4,9 +4,13 @@ import type { Ref } from '@typegoose/typegoose';
 import { Space } from './space';
 import { TableStatus } from 'app-helpers';
 import type { TableStatusType } from 'app-helpers';
+import { Tab } from './tab';
 export class Table {
   @prop({ required: true })
   public space!: Ref<Space>;
+
+  @prop()
+  public tab?: Ref<Tab>;
 
   @prop({ required: true })
   public tableNumber!: string;

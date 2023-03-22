@@ -89,10 +89,6 @@ const acceptTabRequest = async (
   },
   { db, business }: Context
 ) => {
-
-  console.log('business', business)
-  console.log(input)
-
   const Tab = TabModel(db);
   const Request = RequestModel(db)
   const Table = TableModel(db);
@@ -108,17 +104,24 @@ const acceptTabRequest = async (
   // check if the request is pending
   if (foundRequest.status !== 'Pending') throw ApolloError('BadRequest', "Request Not Pending")
 
-  const allUsers = await User.insertMany(new Array(foundRequest.totalGuests).fill({ isGuest: true }))
-
   const table = await Table.findOne({ _id: input.table, business });
+
+  if (!table) throw ApolloError('BadRequest', "Table Not Found")
+  if (table.status !== 'Available') throw ApolloError('BadRequest', "Table Not Available")
+
+  const numGuests = foundRequest.totalGuests - 1;
+  const allUsers = await User.insertMany(new Array(numGuests).fill({ isGuest: true }))
+  const usersId = allUsers.map(user => user._id)
 
   const tab = await Tab.create({
     table: table?._id,
     admin: foundRequest?.admin,
-    // todo: can we add exsisting users this way?
-    // perhaps we need to add a new field to existing user emails or ids
-    users: allUsers.map(user => user._id),
+    users: [foundRequest.admin._id, ...usersId],
   });
+
+  table.status = 'Occupied';
+  table.tab = tab._id;
+  await table.save();
 
   foundRequest.status = 'Accepted';
   foundRequest.tab = tab._id;

@@ -15,7 +15,7 @@ export class Tab {
     public admin!: Ref<User>;
 
     @prop({ default: TabStatus.Open })
-    public status!: TabStatusType;
+    public status?: TabStatusType;
 
     @prop({ required: true })
     public table!: Ref<Table>;

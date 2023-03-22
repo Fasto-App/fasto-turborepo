@@ -18,6 +18,13 @@ type TileProps = {
   array: string[];
 }
 
+const refetchQueries = [{
+  query: GetTabRequestsDocument, variables:
+    { input: { filterBy: RequestStatus.Pending } },
+},
+{ query: GetSpacesFromBusinessDocument }
+]
+
 const TileRequest = ({ name,
   phone,
   people,
@@ -88,18 +95,8 @@ export const RequestsModal = ({
   availableTables,
 }: RequestsModalProps) => {
 
-  const [decline, { loading: loadingDecline }] = useDeclineTabRequestMutation({
-    refetchQueries: [
-      {
-        query: GetTabRequestsDocument, variables:
-          { input: { filterBy: RequestStatus.Pending } }
-      },
-      { query: GetSpacesFromBusinessDocument }
-    ]
-  })
-  const [accept, { loading: loadingAccept }] = useAcceptTabRequestMutation({
-    refetchQueries: [{ query: GetTabRequestsDocument }]
-  })
+  const [decline, { loading: loadingDecline }] = useDeclineTabRequestMutation({ refetchQueries })
+  const [accept, { loading: loadingAccept }] = useAcceptTabRequestMutation({ refetchQueries })
 
   const onDeclinePress = useCallback((_id: string) => {
     decline({
