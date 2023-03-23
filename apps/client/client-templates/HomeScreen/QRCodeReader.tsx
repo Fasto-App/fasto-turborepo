@@ -34,7 +34,6 @@ export const QRCodeReader = ({ isOpen, setModalVisibility }: QRCodeReaderProps) 
                 console.info(result)
                 //todo: if the QR code is valid, navigate to the tab
                 console.log("Navigating to tab")
-                route.push(`/client/${"123"}/menu`)
               }
             }}
           />

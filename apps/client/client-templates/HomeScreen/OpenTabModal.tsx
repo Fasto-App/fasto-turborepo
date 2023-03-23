@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { NewTabForm, newTabSchema, typedValues } from 'app-helpers'
-import { Button, Heading } from 'native-base'
+import { Box, Button, Heading, Input } from 'native-base'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from '../../components/ControlledForm'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
@@ -34,14 +34,18 @@ const Config: SideBySideInputConfig = {
   name: {
     name: "name",
     label: "Guest 1 Name",
+    type: 'text',
     placeholder: "Enter your name",
     isRequired: true,
+    autoFocus: true,
   },
   phoneNumber: {
     label: "Phone Number",
     placeholder: "+55 555 555 5555",
     name: "phoneNumber",
     isRequired: true,
+    autoFocus: true,
+    autoComplete: "tel-country-code"
   },
   totalGuests: {
     label: "Total Guests",
@@ -64,7 +68,6 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   const { businessId } = router.query
 
   const { control, formState, watch, handleSubmit } = useForm({
-    mode: "onSubmit",
     resolver: zodResolver(newTabSchema),
     defaultValues: {
       name: "",
@@ -120,38 +123,37 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   }, [clientRequestTab, setModalVisibility, businessId])
 
   return (
-
-
-    <CustomModal
-      isOpen={isOpen}
-      onClose={setModalVisibility}
-      HeaderComponent={<Heading>Request Tab</Heading>}
-      ModalFooter={
-        <>
-          <Button
-            isLoading={loading}
-            onPress={handleSubmit(handleOpenTab)}
-            flex={1}>
-            Open New Tab
-          </Button>
-          <Button
-            isLoading={loading}
-            onPress={setModalVisibility}
-            colorScheme={"muted"} flex={1}>
-            Cancel
-          </Button>
-        </>
-      }
-      ModalBody={
-        <>
-          <DevTool control={control} />
+    <>
+      <DevTool control={control} />
+      <CustomModal
+        isOpen={isOpen}
+        onClose={setModalVisibility}
+        HeaderComponent={<Heading>Request Tab</Heading>}
+        ModalFooter={
+          <>
+            <Button
+              isLoading={loading}
+              onPress={handleSubmit(handleOpenTab)}
+              flex={1}>
+              Open New Tab
+            </Button>
+            <Button
+              isLoading={loading}
+              onPress={setModalVisibility}
+              colorScheme={"muted"} flex={1}>
+              Cancel
+            </Button>
+          </>
+        }
+        ModalBody={<Box>
           <ControlledForm
             Config={newConfig}
             control={control}
             formState={formState}
           />
-        </>
-      }
-    />
+        </Box>
+        }
+      />
+    </>
   )
 }
