@@ -6,6 +6,9 @@ import { ManageBusiness } from './ManageBusiness'
 import { ManageBusinessLocation } from './ManageLocation'
 import { ManageEmployee } from './ManageEmployee'
 import { texts } from './texts'
+import { UpperSection } from '../../components/UpperSection'
+import { OrangeBox } from '../../components/OrangeBox'
+import { BottomSection } from '../../components/BottomSection'
 
 const manageTabs = {
   manage_business: {
@@ -54,24 +57,9 @@ export const SettingsScreen = () => {
 
   return (
     <Box flex={1}>
-      <Box
-        backgroundColor={"primary.500"}
-        h={100}
-        w={"100%"}
-        position={"absolute"}
-        zIndex={-1}
-      />
+      <OrangeBox />
       <VStack m={"4"} space={"4"} flex={1}>
-        <VStack
-          space={"2"}
-          p={"4"}
-          shadow={"4"}
-          borderWidth={1}
-          borderRadius={"md"}
-          borderColor={"trueGray.400"}
-          backgroundColor={"white"}
-          flexDirection={"column"}
-        >
+        <UpperSection>
           <Heading>
             {texts.title}
           </Heading>
@@ -82,24 +70,15 @@ export const SettingsScreen = () => {
             ItemSeparatorComponent={() => <Box w={4} />}
             keyExtractor={(item) => item}
           />
-        </VStack>
-        <Box
-          p={"4"}
-          flex={1}
-          borderWidth={1}
-          borderRadius={"md"}
-          borderColor={"trueGray.400"}
-          backgroundColor={"white"}
-          overflow={"scroll"}
-        >
+        </UpperSection>
+        <BottomSection>
           <Box>
             {selectedTab === "manage_business_location" ? <ManageBusinessLocation /> :
               selectedTab === "manage_account" ? <ManageAccount /> :
                 selectedTab === "manage_employee" ? <ManageEmployee /> :
-                  selectedTab === "manage_business" ? <ManageBusiness /> : null
-            }
+                  selectedTab === "manage_business" ? <ManageBusiness /> : null}
           </Box>
-        </Box>
+        </BottomSection>
       </VStack>
     </Box>
   )

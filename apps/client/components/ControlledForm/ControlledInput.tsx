@@ -41,8 +41,7 @@ export const ControlledInput = <T extends Record<string, string>>({
   formatOnChange,
   handleOnChange,
   type,
-  isDisabled,
-  accessibilityLabel
+  ...rest
 }: ControlledFormInput<T>) => {
   return (
     <>
@@ -72,11 +71,12 @@ export const ControlledInput = <T extends Record<string, string>>({
                 return (
                   <Select
                     selectedValue={field.value}
-                    minWidth="200"
-                    accessibilityLabel={accessibilityLabel}
+                    // minWidth="200"
+                    accessibilityLabel={rest.accessibilityLabel}
                     placeholder={placeholder}
-                    mt={1} onValueChange={field.onChange}
-                    _selectedItem={{ endIcon: <CheckIcon size="5" /> }}>
+                    onValueChange={field.onChange}
+                    _selectedItem={{ endIcon: <CheckIcon size="5" /> }}
+                  >
                     {array?.map(item => (
                       <Select.Item key={item._id} label={item.name} value={item._id} />))
                     }
@@ -165,13 +165,15 @@ export const ControlledInput = <T extends Record<string, string>>({
               default:
                 return (
                   <Input
+                    {...rest}
                     {...field}
                     type={type}
-                    isDisabled={isDisabled}
+                    fontSize={"lg"}
                     value={formatValue ? formatValue(field.value) : field.value ?? ""}
                     placeholder={placeholder}
                     InputRightElement={rightElement}
                     onChangeText={(value) => {
+                      console.log("value", value)
                       if (formatOnChange) {
                         formatOnChange(value, field.onChange)
                         return

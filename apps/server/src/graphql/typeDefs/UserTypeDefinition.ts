@@ -5,6 +5,7 @@ export const UserTypeDefinition = gql`
     getToken: User
     getAllUsers: [User!]!
     getUserInformation: User
+    getClientInformation: User!
   }
 
   extend type Mutation {
@@ -54,11 +55,12 @@ export const UserTypeDefinition = gql`
 
   type User {
     _id: ID!
-    name: String!
-    email: String!
+    name: String
+    email: String
     token: String!
     picture: String
     businesses: [BusinessPrivileges!]!
+    phoneNumber: String
   }
 
   input LoginInput {

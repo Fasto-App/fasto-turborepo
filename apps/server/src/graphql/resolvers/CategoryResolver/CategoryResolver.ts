@@ -5,9 +5,6 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateCategoryInput, UpdateCategoryInput } from "./types";
 
-type GetCategoryByIDInput = {
-    business: string
-}
 // FIXME: THIS SHOULD SHOULD BE OF TYPE USERINPUT DONT REFERENCE DATABASE DIRECTLY
 type LinkCategoryToProductInput = {
     category: string;

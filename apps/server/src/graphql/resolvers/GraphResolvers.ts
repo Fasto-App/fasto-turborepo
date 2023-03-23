@@ -39,9 +39,12 @@ import {
 } from './SpaceResolver';
 import {
   TableResolverMutation,
-  TableResolver
+  TableResolver,
+  TableResolverQuery
 } from './TableResolver';
 import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
+import { CheckoutResolverMutation, CheckoutResolverQuery, CheckoutResolver } from './CheckoutResolver';
+import { RequestResolver, RequestResolverMutation, RequestResolverQuery } from './RequestResolver';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -55,6 +58,9 @@ export const resolvers = {
     ...SpaceResolverQuery,
     ...TabResolverQuery,
     ...UserResolverQuery,
+    ...CheckoutResolverQuery,
+    ...RequestResolverQuery,
+    ...TableResolverQuery,
   },
   Mutation: {
     ...AddressResolverMutation,
@@ -67,11 +73,16 @@ export const resolvers = {
     ...TableResolverMutation,
     ...TabResolverMutation,
     ...UserResolverMutation,
+    ...CheckoutResolverMutation,
+    ...RequestResolverMutation,
   },
   Business: {
     address: AddressResolver.getAddressFromBusiness,
     categories: BusinessResolver.getCategoriesByBusiness,
     products: BusinessResolver.getProductsByBusiness,
+  },
+  Checkout: {
+    payments: CheckoutResolver.payments,
   },
   Product: {
     category: ProductResolver.getCategoryByProduct,
@@ -80,11 +91,15 @@ export const resolvers = {
     products: ProductResolver.getProductsByCategory,
   },
   Space: {
-    tables: TableResolver.getTablesFromSpace,
+    tables: TableResolver.resolveTablesFromSpace,
   },
+  // todo
+  // this is bad, a resolver for a resolver?
   Table: {
     tab: TableResolver.getOpenTabByTable,
   },
+  // todo
+  // This can be a problem, if we have a lot of tabs, we will have to make a lot of queries
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,
     table: TabResolver.getTableByTabID,
@@ -105,5 +120,8 @@ export const resolvers = {
     // order: OrderDetailsResolver.getOrderDetailsByOrderID,
     // tab: OrderDetailsResolver.getTabByOrderDetails,
     product: ProductResolver.getProductByOrderDetails,
+  },
+  Request: {
+    admin: RequestResolver.getUserFromRequest,
   },
 };

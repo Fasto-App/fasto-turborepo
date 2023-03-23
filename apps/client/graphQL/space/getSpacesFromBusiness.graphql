@@ -7,28 +7,6 @@ query GetSpacesFromBusiness {
 			_id
 			status
 			tableNumber
-			tab {
-				users {
-					_id
-				}
-				_id
-				table {
-					_id
-					tableNumber
-				}
-				admin
-				orders {
-					_id
-					status
-					quantity
-					subTotal
-					product {
-						imageUrl
-						price
-						name
-					}
-				}
-			}
 		}
 	}
 }

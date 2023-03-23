@@ -17,7 +17,9 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 	});
 
 	const isAdminRoute = router.pathname.includes(BUSINESS_ADMIN)
-	const shouldShowSideBar = display && isAdminRoute && !router.pathname.includes("add-to-order")
+	const shouldShowSideBar = display && isAdminRoute &&
+		!router.pathname.includes("add-to-order") &&
+		!router.pathname.includes("checkout")
 
 	useEffect(() => {
 		setHasMounted(true);

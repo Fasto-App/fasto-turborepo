@@ -1,0 +1,3 @@
+mutation OpenTabRequest($input: OpenTabRequestInput!) {
+	openTabRequest(input: $input)
+}

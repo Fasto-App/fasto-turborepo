@@ -1,0 +1,8 @@
+query GetTablesFromSpace($input: GetById!) {
+	getTablesFromSpace(input: $input) {
+		_id
+		status
+		tableNumber
+		space
+	}
+}

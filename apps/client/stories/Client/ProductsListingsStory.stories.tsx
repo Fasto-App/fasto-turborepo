@@ -1,7 +1,7 @@
 //@ts-nocheck
 import React from 'react';
 import { StoryProvider } from '../StoryProvider';
-import { ProductsListingScreen } from '../../client-templates/ProductsListingScreen';
+import { ProductsListingScreen } from '../../client-templates/MenuScreen/MenuScreen';
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {

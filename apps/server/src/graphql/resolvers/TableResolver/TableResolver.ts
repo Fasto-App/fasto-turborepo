@@ -4,7 +4,7 @@ import { Connection } from "mongoose";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { SpaceModel } from "../../../models/space";
 import { TabModel } from "../../../models/tab";
-import { TabStatus } from "../../../models/types";
+import { TabStatus } from "app-helpers";
 import { Context } from "../types";
 
 const createTable = async (
@@ -37,7 +37,7 @@ const createTable = async (
   return await table.save()
 }
 
-export const getTablesFromSpace = async (
+export const resolveTablesFromSpace = async (
   parent: any,
   _args: any,
   { db }: { db: Connection },
@@ -60,18 +60,34 @@ const deleteTable = async (parent: any, args: any, { db, business }: Context) =>
   return tableByID
 }
 
+// FIX: refactor this to return a tab by the ID
 const getOpenTabByTable = async (table: any, _: any, { db }: { db: Connection }) => {
-  // TODO: add a check to make sure the business owns the table
-  const tab = await TabModel(db).findOne({ status: TabStatus.OPEN, table: table._id.toString() })
-  return tab
+  return await TabModel(db).findOne({
+    table: table._id,
+    status: { $in: [TabStatus.Open, TabStatus.Pendent] }
+  })
+}
+
+const getTableById = async (parent: any, { input }: any, { db }: { db: Connection }) => {
+  return await TableModel(db).findById(input._id)
+}
+
+
+const getTablesFromSpace = async (parent: any, { input }: any, { db }: { db: Connection }) => {
+  return await TableModel(db).find({ space: input._id })
+}
+
+const TableResolverQuery = {
+  getTablesFromSpace,
+  getTableById,
 }
 
 const TableResolverMutation = { deleteTable, createTable }
 
 const TableResolver = {
   getOpenTabByTable,
-  getTablesFromSpace,
+  resolveTablesFromSpace,
 }
 
-export { TableResolverMutation, TableResolver }
+export { TableResolverMutation, TableResolver, TableResolverQuery }
 

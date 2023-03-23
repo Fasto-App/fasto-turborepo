@@ -21,12 +21,16 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {/* Failed attempt to move the address bar on scroll using ChatGPT */}
+          {/* Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta */}
+          {/* <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> */}
+
           {/* ADDED FROM NEXT-PWA  */}
           <meta name="application-name" content="Fasto" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
-            content="black-translucent"
+            content="default"
           />
           <meta name="apple-mobile-web-app-title" content="Fasto" />
           <meta name="description" content="The Smartest and Fastest Way to Order" />
@@ -36,9 +40,9 @@ class MyDocument extends Document {
             name="msapplication-config"
             content="/icons/browserconfig.xml"
           />
-          <meta name="msapplication-TileColor" content="#2B5797" />
+          <meta name="msapplication-TileColor" content="#d56f5b" />
           <meta name="msapplication-tap-highlight" content="no" />
-          <meta name="theme-color" content="#90cdf4" />
+          <meta name="theme-color" content="#d56f5b" />
           {/* END */}
           {/* ADDED FROM GOOGLE PWA */}
           <meta
@@ -83,7 +87,7 @@ class MyDocument extends Document {
           <link
             rel="mask-icon"
             href="/icons/safari-pinned-tab.svg"
-            color="#5bbad5"
+            color="#d56f5b"
           />
           <link rel="shortcut icon" href="/favicon.ico" />
           {/* ADDED FROM NEXT-PWA */}
@@ -98,7 +102,7 @@ class MyDocument extends Document {
             name="twitter:image"
             content="https://yourdomain.com/icons/android-chrome-192x192.png"
           />
-          <meta name="twitter:creator" content="@DavidWShadow" />
+          <meta name="twitter:creator" content="@mendesbr__" />
           <meta property="og:type" content="website" />
           <meta property="og:title" content="Fasto" />
           <meta property="og:description" content="The Smartest and Fastest Way to Order" />
@@ -108,7 +112,6 @@ class MyDocument extends Document {
             property="og:image"
             content="https://yourdomain.com/icons/apple-touch-icon.png"
           />
-          {/* END */}
         </Head>
         <body>
           <Main />

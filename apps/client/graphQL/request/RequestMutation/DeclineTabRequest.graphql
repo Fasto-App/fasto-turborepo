@@ -1,0 +1,7 @@
+mutation DeclineTabRequest($input: GetById!) {
+	declineTabRequest(input: $input) {
+		_id
+		status
+		totalGuests
+	}
+}

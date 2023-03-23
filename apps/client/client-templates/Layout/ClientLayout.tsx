@@ -1,32 +1,39 @@
-import { Box, Flex } from "native-base";
 import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { Box, Flex } from "native-base";
 import { ClientNavBar } from "./ClientNavbar";
-import { TabBar } from "../../components/molecules/TabBar";
-import { colors } from "../../theme/colors";
 import { ClientTabBar } from "./ClientTabBar";
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    backgroundColor: colors.pureWhite,
-    height: "100vh",
-    justifyContent: "space-between",
-  },
-  main: {
-    height: "100%",
-  },
-});
+import { useRouter } from "next/router";
+import { HourGlassAnimation } from "../../components/SuccessAnimation";
+import { useGetTabInformation, useGetTabRequest } from "../../hooks";
+import { getClientCookies } from "../../cookies/businessCookies";
 
 const ClientLayout: React.FC = ({ children }) => {
+  const token = getClientCookies("token")
+  const route = useRouter()
+  const { productId } = route.query
+  const isHome = route.pathname === "/client/[businessId]"
+  const isCheckout = route.pathname === "/client/[businessId]/checkout/[checkoutId]"
+  const { data } = useGetTabRequest()
+  const { data: tab } = useGetTabInformation()
+
+  console.log({ tab })
+
   return (
-    <Flex flexDirection="column" justifyContent={"space-between"} h={"100%"} bg={"white"}>
-      <View style={{ flex: 10 }}>
-        <ClientNavBar />
-        <ScrollView style={styles.main}>{children}</ScrollView>
-      </View>
-      <ClientTabBar />
+    <Flex
+      flexDirection="column"
+      justifyContent={"space-between"}
+      h={"100%"}
+      bg={route.pathname === "/client/[businessId]/settings" ? "gray.100" : "white"}>
+      {isHome ? null : <ClientNavBar tableNumber={tab?.getTabByID?.table.tableNumber} />}
+      <Box flex={1}>
+        {children}
+      </Box>
+      {productId || isHome || isCheckout || !token ? null : <ClientTabBar />}
+
+      {data?.getTabRequest?.status === "Pending" ?
+        <Box position={"absolute"} zIndex={999} right={0} top={0} >
+          <HourGlassAnimation />
+        </Box> : null}
     </Flex>
   );
 };

@@ -244,7 +244,7 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
   const User = UserModel(db)
   const user = await User.findOne({ email: input })
 
-  if (!user) throw ApolloError('NotFound')
+  if (!user || !user.email || !user.name) throw ApolloError('NotFound')
 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] as string : undefined;
@@ -319,7 +319,7 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
 
     await businessFound.save()
 
-    const newToken = await tokenSigning(user._id, user.email, businessFound._id)
+    const newToken = await tokenSigning(user._id, user.email as string, businessFound._id)
 
     return {
       _id: user._id,
@@ -388,6 +388,17 @@ const passwordReset = async (_parent: any,
 
 }
 
+const getClientInformation = async (_parent: any, { input }: { input: string }, { db, client }: Context) => {
+  const User = UserModel(db)
+  const foundClient = await User.findById(client?._id)
+
+  if (!foundClient) throw ApolloError('BadRequest', 'Client not found')
+
+  return foundClient
+}
+
+
+
 
 const UserResolverMutation = {
   requestUserAccountCreation,
@@ -403,6 +414,7 @@ const UserResolverQuery = {
   getUserInformation,
   getAllUsers,
   getToken,
+  getClientInformation
 }
 
 const UserResolver = {

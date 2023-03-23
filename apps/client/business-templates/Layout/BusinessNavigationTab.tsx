@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Center, VStack } from "native-base";
-import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
-import { AppNavigation, appRoute, businessRoute, BUSINESS_ADMIN } from "../../routes";
-import { clearCookies } from "../../cookies/businessCookies";
+import { Box, Center } from "native-base";
+import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
+import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { LeftSideBar } from "../../components";
+import { HamburgerMenu } from "../MenuHamburguer";
 
 const navigationTitle = {
   dashboard: "Dashboard",
@@ -22,10 +21,6 @@ const BusinessNavigationTab = () => {
   const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
     pathname === router.pathname, [router.pathname])
 
-  const isHome = useIsPageSelected(appRoute.home)
-  const isAddProductsCategories = useIsPageSelected(businessRoute.add_products_categories)
-
-
   return (
     <LeftSideBar>
       <Center
@@ -33,63 +28,51 @@ const BusinessNavigationTab = () => {
         justifyContent={"center"}
         h={"full"}
       >
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.dashboard}
-          type={NavigationButtonType.Dashboard}
+          type={"Dashboard"}
           selected={useIsPageSelected(businessRoute.dashboard)}
           onPress={() => {
             router.push(businessRoute.dashboard);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.categories_products}
-          type={NavigationButtonType.Fork}
+          type={"Fork"}
           selected={useIsPageSelected(businessRoute.add_products_categories)}
           onPress={() => {
             router.push(businessRoute.add_products_categories);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.menu}
-          type={NavigationButtonType.Menu}
+          type={"Menu"}
           selected={useIsPageSelected(businessRoute.menu)}
           onPress={() => {
             router.push(businessRoute.menu);
           }}
         />
 
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.tables}
-          type={NavigationButtonType.Table}
+          type={"Table"}
           selected={useIsPageSelected(businessRoute.tables)}
           onPress={() => {
             router.push(businessRoute.tables);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
+        <BusinessNavigationButton
           text={navigationTitle.settings}
-          type={NavigationButtonType.Settings}
+          type={"Settings"}
           selected={useIsPageSelected(businessRoute.settings)}
           onPress={() => {
             router.push(businessRoute.settings);
           }}
         />
-        <NavigationButton
-          flexDirection={"row"}
-          text={navigationTitle.logout}
-          type={NavigationButtonType.Logout}
-          selected={useIsPageSelected(businessRoute.login)}
-          onPress={() => {
-            clearCookies();
-            router.push(businessRoute.login);
-          }}
-        />
       </Center>
+      <Box position={"absolute"} bottom={"0"} flex={1} pl={2} pb={4}>
+        <HamburgerMenu />
+      </Box>
     </LeftSideBar>
   );
 };

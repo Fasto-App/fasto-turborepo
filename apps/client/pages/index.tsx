@@ -1,27 +1,44 @@
 import React from "react"
 import Link from 'next/link';
 import { Pressable } from 'react-native'
-import { HStack, Text, Center, VStack, useBreakpointValue, } from "native-base"
+import { HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, } from "native-base"
+import { useGetAllBusinessQuery } from "../gen/generated";
+import { clientRoute } from "../routes";
 
 export default function Home() {
 
-	const HomeStack = useBreakpointValue({
-		base: VStack,
-		lg: HStack
-	});
+
+	// get all the business hereuseGetAllBusinessQuery
+	const { data, loading } = useGetAllBusinessQuery()
 
 	return (
-		<HomeStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
-			<Pressable>
-				<Link href={'/client/menu'}>
-					<Center width={{
-						base: 300,
-						sm: 400
-					}} h="20" bg="secondary.500" rounded="md" shadow={3}>
-						<Text color={"white"} fontSize="lg">Client App</Text>
-					</Center>
-				</Link>
-			</Pressable>
+		<VStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
+			{loading && <Box borderWidth={1} borderColor="coolGray.500"
+				rounded="md"
+				p={4}
+				h="20"
+				width={{
+					base: 300,
+					sm: 400
+				}}>
+				<Skeleton.Text />
+			</Box>}
+			{data?.getAllBusiness.map((business) => {
+				if (!business?._id) return null
+
+				return (
+					<Pressable key={business?._id}>
+						<Link href={clientRoute.home(business?._id)}>
+							<Center width={{
+								base: 300,
+								sm: 400
+							}} h="20" bg="secondary.500" rounded="md" shadow={3}>
+								<Text color={"white"} fontSize="lg">{business?.name}</Text>
+							</Center>
+						</Link>
+					</Pressable>
+				)
+			})}
 
 			<Pressable>
 				<Link href={'/business/login'}>
@@ -33,7 +50,7 @@ export default function Home() {
 					</Center>
 				</Link>
 			</Pressable>
-		</HomeStack>
+		</VStack>
 
 	);
 }

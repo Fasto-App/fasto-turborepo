@@ -6,9 +6,16 @@ export interface UserContext {
   business?: string;
 }
 
+export interface ClientContext {
+  _id: string;
+  business: string;
+  request: string;
+}
+
 export interface Context {
-  db: Connection
-  user?: UserContext
+  db: Connection;
+  user?: UserContext;
+  client?: ClientContext;
   business?: string
 }
 

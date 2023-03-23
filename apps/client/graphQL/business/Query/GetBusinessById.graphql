@@ -1,0 +1,6 @@
+query GetBusinessById($input: GetById) {
+	getBusinessById(input: $input) {
+		name
+		picture
+	}
+}

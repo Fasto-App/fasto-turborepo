@@ -1,13 +1,19 @@
-import React from "react";
+import React, { FC } from "react";
 import { Link as NBLink } from "native-base";
 import NextLink from 'next/link';
+import { InterfaceLinkProps } from "native-base/lib/typescript/components/primitives/Link/types";
 
-export const Link: React.FC<{ href: string }> = ({ children, href }) => {
+type LinkProps = {
+  href: string;
+  fontSize?: InterfaceLinkProps["fontSize"];
+}
+
+export const Link: FC<LinkProps> = ({ children, href, fontSize }) => {
   return (<NextLink href={href}>
     <NBLink
       alignSelf={"flex-end"}
       _text={{
-        fontSize: "sm",
+        fontSize,
         fontWeight: "500",
         color: "indigo.500"
       }}>

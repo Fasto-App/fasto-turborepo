@@ -1,26 +1,24 @@
-import React, { useMemo } from "react";
-import { StyleSheet } from "react-native";
-// import { colors } from "shared/theme";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
-import { colors } from "../../theme/colors";
-// import { NavigationButton } from "../atoms/NavigationButton";
-// import { NavigationButtonType } from "../types";
-import { AppNavigation, clientRoute } from "../../routes";
+import { clientRoute } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
+import { useGetTabRequest } from "../../hooks";
 
 
 const ClientTabBar: React.FC = (props) => {
   const router = useRouter();
+  const { businessId } = router.query
 
-  const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
-    pathname === router.pathname, [router.pathname])
+  const useIsPageSelected = useCallback((pathname: string) =>
+    pathname === router.asPath, [router.asPath])
 
-  const isMenu = useIsPageSelected(clientRoute.menu);
-  const isCart = useIsPageSelected(clientRoute.cart);
-  const isCheckout = useIsPageSelected(clientRoute.checkout);
-  const isSettings = useIsPageSelected(clientRoute.settings);
+  const isMenu = useIsPageSelected(clientRoute.menu(businessId as string));
+  const isCart = useIsPageSelected(clientRoute.cart(businessId as string));
+  const isCheckout = useIsPageSelected(clientRoute.checkout(businessId as string));
+  const isSettings = useIsPageSelected(clientRoute.settings(businessId as string));
+
+  const { data: tabData } = useGetTabRequest()
 
   const paddingX = useBreakpointValue({
     base: "8",
@@ -28,33 +26,34 @@ const ClientTabBar: React.FC = (props) => {
   });
 
   return (
-    <HStack justifyContent={"space-between"} paddingY={"2"} paddingX={paddingX} bg={"primary.500"}>
+    <HStack
+      w={"100%"}
+      justifyContent={"space-between"}
+      paddingY={"2"}
+      paddingX={paddingX}
+      bg={"primary.500"}
+    >
       <NavigationButton
-        type={NavigationButtonType.ListStar}
+        type={"ListStar"}
         selected={isMenu}
         onPress={() => {
-          router.push("/");
+          router.push(clientRoute.menu("123"));
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Bag}
+        type={"Bag"}
+        disabled={tabData?.getTabRequest?.status === "Pending"}
         selected={isCart}
+        numNotifications={9}
         onPress={() => {
-          router.push(clientRoute.menu);
+          router.push(clientRoute.cart(businessId as string));
         }}
       />
       <NavigationButton
-        type={NavigationButtonType.Payment}
-        selected={isCheckout}
-        onPress={() => {
-          router.push(clientRoute.menu);
-        }}
-      />
-      <NavigationButton
-        type={NavigationButtonType.Radio}
+        type={"Settings"}
         selected={isSettings}
         onPress={() => {
-          router.push(clientRoute.menu);
+          router.push(clientRoute.settings(businessId as string));
         }}
       />
     </HStack>
@@ -64,28 +63,3 @@ const ClientTabBar: React.FC = (props) => {
 ClientTabBar.displayName = "ClientTabBar"
 
 export { ClientTabBar };
-
-
-const styles = StyleSheet.create({
-  touchableArea: {
-    minWidth: 20,
-    minHeight: 20,
-    padding: 5,
-    alignItems: "center",
-    borderColor: colors.pureWhite,
-    // borderWidth: 1,
-  },
-  iconContainer: {
-    height: 20,
-    width: 20,
-    borderColor: colors.pureWhite,
-    // borderWidth: 1,
-  },
-  // icon: {
-  //   stroke: "blue",
-  // },
-  micro: {
-    fontSize: 12,
-    textAlign: "center",
-  },
-});

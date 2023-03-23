@@ -11,13 +11,15 @@ export const TabTypeDefinition = gql`
     createTab(input: CreateTabInput!): Tab!
     updateTab(input: UpdateTabInput!): Tab!
     deleteTab(input: GetById!): Tab
+    requestCloseTab(input: GetById!): Tab!
   }
 
   type Tab {
   _id: ID!
+  checkout: ID
   table: Table!
   admin: ID!
-  orders: [OrderDetail]!
+  orders: [OrderDetail!]!
   status: TabStatus!
   users: [User!]
   created_date: String!
@@ -36,8 +38,9 @@ export const TabTypeDefinition = gql`
   }
 
   enum TabStatus{
-    OPEN
-    CLOSED
+    Open
+    Closed  
+    Pendent
   }
 
 `

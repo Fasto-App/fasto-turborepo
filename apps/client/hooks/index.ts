@@ -1,5 +1,8 @@
 import { useBreakpointValue } from "native-base";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { getClientCookies, setClientCookies } from "../cookies/businessCookies";
+import { useGetBusinessByIdQuery, useGetClientInformationQuery, useGetTabByIdQuery, useGetTabRequestQuery } from "../gen/generated";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -50,4 +53,84 @@ export const useUploadFileHook = () => {
     imageFile,
     handleFileOnChange
   }
+}
+
+export const useGetTabRequest = () => {
+  const clientToken = getClientCookies("token")
+
+  const data = useGetTabRequestQuery({
+    skip: !clientToken,
+    onCompleted: (data) => {
+      if (data.getTabRequest.status === "Accepted" && data.getTabRequest.tab) {
+        setClientCookies("tab", data.getTabRequest.tab)
+      }
+    },
+    onError: (error) => {
+      console.log("error", error)
+      // clear cache
+    },
+  })
+
+  return data
+}
+
+export const useGetTabInformation = () => {
+  const tab = getClientCookies("tab")
+
+  // get the information of the tab and make a request
+  const data = useGetTabByIdQuery({
+    skip: !tab,
+    variables: {
+      input: {
+        _id: tab as string
+      },
+    },
+    onCompleted: (data) => {
+      console.log("data", data)
+    },
+    onError: (error) => {
+      console.log("error", error)
+      // clear cache
+    }
+  })
+
+  return data
+}
+
+export const useGetBusinessInformation = () => {
+  const route = useRouter()
+  const { businessId } = route.query
+
+  const data = useGetBusinessByIdQuery({
+    skip: !businessId,
+    variables: {
+      input: {
+        _id: businessId as string
+      }
+    },
+    onCompleted: (data) => {
+      console.log("data", data)
+    },
+    onError: (error) => {
+      console.log("error", error)
+      // clear cache
+    }
+  })
+
+  return data
+}
+
+export const useGetClientInformation = () => {
+  const data = useGetClientInformationQuery({
+    skip: !getClientCookies("token"),
+    onCompleted: (data) => {
+      console.log("data", data)
+    },
+    onError: (error) => {
+      console.log("error", error)
+      // clear cache
+    }
+  })
+
+  return data
 }

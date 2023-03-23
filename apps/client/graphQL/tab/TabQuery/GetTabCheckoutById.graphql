@@ -1,0 +1,14 @@
+query GetTabCheckoutByID($input: GetById!) {
+	getTabByID(input: $input) {
+		_id
+		status
+		users {
+			_id
+		}
+		orders {
+			user
+			_id
+			subTotal
+		}
+	}
+}

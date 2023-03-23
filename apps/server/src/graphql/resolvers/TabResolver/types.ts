@@ -1,4 +1,4 @@
-import { TabStatus } from "../../../models/types";
+import { TabStatus } from "app-helpers";
 import { z } from "zod";
 
 export const createTab = z.object({

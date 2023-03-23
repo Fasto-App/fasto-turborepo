@@ -6,19 +6,19 @@ type statStruct = {
 }
 
 export const stats: Record<TableStatus, statStruct> = {
-  OCCUPIED: {
+  Occupied: {
     number: 1,
     name: TableStatus.Occupied
   },
-  RESERVED: {
+  Reserved: {
     number: 1,
     name: TableStatus.Reserved
   },
-  AVAILABLE: {
+  Available: {
     number: 1,
     name: TableStatus.Available
   },
-  CLOSED: {
+  Closed: {
     number: 1,
     name: TableStatus.Closed
   }
@@ -26,12 +26,12 @@ export const stats: Record<TableStatus, statStruct> = {
 
 export const borderColor = (status?: TableStatus) => {
   switch (status) {
-    case "OCCUPIED":
+    case "Occupied":
       return "primary.600"
-    case "RESERVED":
+    case "Reserved":
       return "muted.300"
-    case "AVAILABLE":
-      return "success.600"
+    case "Available":
+      return "tertiary.700"
     default:
       return "tertiary.600"
   }
@@ -39,11 +39,11 @@ export const borderColor = (status?: TableStatus) => {
 
 export const badgeScheme = (status?: TableStatus) => {
   switch (status) {
-    case "OCCUPIED":
+    case "Occupied":
       return "danger"
-    case "RESERVED":
+    case "Reserved":
       return "coolGray"
-    case "AVAILABLE":
+    case "Available":
       return "success"
     default:
       return "coolGray"

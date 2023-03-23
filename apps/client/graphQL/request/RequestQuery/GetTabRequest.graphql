@@ -1,0 +1,15 @@
+query GetTabRequest {
+	getTabRequest {
+		_id
+		admin {
+			_id
+			name
+			phoneNumber
+		}
+		business
+		names
+		totalGuests
+		status
+		tab
+	}
+}

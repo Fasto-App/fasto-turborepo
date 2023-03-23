@@ -47,6 +47,8 @@ type SideBySideButtonsProps = {
   rightText: string;
   leftDisabled: boolean;
   rightDisabled: boolean;
+  leftLoading?: boolean;
+  rightLoading?: boolean;
 }
 
 export const SideBySideButtons = ({
@@ -56,6 +58,8 @@ export const SideBySideButtons = ({
   rightText,
   leftDisabled,
   rightDisabled,
+  leftLoading,
+  rightLoading
 }: SideBySideButtonsProps) => {
   return (
     <HStack space={2}>
@@ -64,6 +68,7 @@ export const SideBySideButtons = ({
         width={"100px"}
         onPress={leftAction}
         isDisabled={leftDisabled}
+        isLoading={leftLoading}
       >
         {leftText}
       </Button>
@@ -73,6 +78,7 @@ export const SideBySideButtons = ({
         colorScheme="tertiary"
         onPress={rightAction}
         isDisabled={rightDisabled}
+        isLoading={rightLoading}
       >
         {rightText}
       </Button>

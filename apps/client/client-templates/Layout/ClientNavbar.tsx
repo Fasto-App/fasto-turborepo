@@ -1,66 +1,65 @@
 import React from "react"
-import { StyleSheet } from "react-native"
 import { useRouter } from "next/router";
-import { colors } from "../../theme/colors";
-import { Box, Pressable, Text, useTheme } from "native-base";
+import { Avatar, Box, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { NavigationButtonType } from "../../components/types";
+import { clientPathName, PathNameKeys } from "../../routes";
+import { getClientCookies } from "../../cookies/businessCookies";
+import { useGetBusinessInformation } from "../../hooks";
+import { OrangeBox } from "../../components/OrangeBox";
 
-const styles = StyleSheet.create({
-  view: { height: 30, width: 30, zIndex: 9999 },
-  section: {
-    justifyContent: "center",
-    textAlign: "center",
-  },
-  // pageTitle: {
-  //   fontSize: 25,
-  //   fontWeight: "bold",
-  //   color: colors.white,
-  // },
-  logo: {
-    height: 30,
-    width: 30,
-  },
-  icon: {
-    height: 30,
-    width: 30,
-  },
-});
+const plaholderImage = "https://via.placeholder.com/150"
 
-const texts = {
-  navigationTitle: "OpenTab",
-}
+const ClientNavBar = (props: { tableNumber?: string }) => {
+  const { tableNumber } = props
 
-const ClientNavBar: React.FC = (props) => {
-  const router = useRouter();
-  let isBackButtonAvailable = true;
-
+  const token = getClientCookies("token")
+  const route = useRouter();
+  const { productId } = route.query
   const theme = useTheme();
 
+  const { data: businessInfo } = useGetBusinessInformation()
+
   return (
-    <Box bg={"primary.500"} padding={"1"} flexDirection={"row"} justifyContent={"space-between"}>
-      {isBackButtonAvailable && (
-        <NavigationButton
-          type={NavigationButtonType.ArrowBack}
-          onPress={() => {
-            router.back();
-          }}
-        />)}
-      <Pressable
-        style={styles.section}
-        onPress={() => {
-          router.push("/");
-        }}
+    <>
+      <OrangeBox height={"12"} />
+      <HStack
+        p={1}
+        my={2}
+        mx={2}
+        background={"white"}
+        borderRadius={"lg"}
+        justifyContent={"space-around"}
+        alignItems={"center"}
+        borderWidth={1}
+        borderColor={"coolGray.300"}
       >
-        <Text color={"white"} fontSize={"md"}>{texts.navigationTitle}</Text>
-      </Pressable>
-      <NavigationButton
-        type={NavigationButtonType.Logout}
-        onPress={() => {
-          router.back();
-        }}
-      />
-    </Box>
+        {/* Avatar or back button */}
+        {productId || !token ?
+          <NavigationButton
+            type={"ArrowBack"}
+            color={theme.colors.info[600]}
+            onPress={() => {
+              // this should explicitly go back to the menu page
+              route.back();
+            }}
+          />
+          : <Avatar
+            size="48px"
+            source={{ uri: businessInfo?.getBusinessById.picture ?? plaholderImage }}
+          />}
+        <Text textAlign={"center"} w={"50%"} fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
+          {clientPathName[route.pathname as PathNameKeys]}
+        </Text>
+        <VStack alignItems={"center"}>
+          <Text fontSize={"lg"} color="coolGray.800" bold>
+            Table
+          </Text>
+          <Text fontSize={"lg"} color="coolGray.800" bold>
+            {tableNumber || "-"}
+          </Text>
+        </VStack>
+      </HStack>
+    </>
   );
 };
 

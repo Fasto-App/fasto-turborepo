@@ -1,4 +1,4 @@
-import { OrderStatus } from "../../../models/types";
+import { OrderStatus } from "app-helpers"
 import { z } from "zod";
 
 export const CreateOrderDetail = z.object({

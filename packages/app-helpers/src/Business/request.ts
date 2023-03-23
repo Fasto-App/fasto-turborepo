@@ -1,0 +1,1 @@
+export type RequestStatus = "Pending" | "Accepted" | "Rejected" | "Canceled" | "Completed" | "Expired" | "Deleted";

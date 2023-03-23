@@ -2,16 +2,16 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { TabModel } from "../../../models/tab";
 import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
-import { TableStatus } from "../../../models/types";
-import { GuestUserModel } from "../../../models/guestUser";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
+import { getPercentageOfValue, TableStatus, TabStatus } from "app-helpers";
+import { BusinessModel, OrderDetailModel } from "../../../models";
+import { CheckoutModel } from "../../../models/checkout";
 
 const createTab = async (_parent: any, { input }: createTabInput, { db, business }: Context) => {
     const Tab = TabModel(db);
     const Table = TableModel(db);
     const User = UserModel(db);
-    const GuestUser = GuestUserModel(db);
 
     if (!input.totalUsers) throw Error('Specify total users for this tab.')
     if (!business) throw Error('Business not found!')
@@ -20,17 +20,24 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
 
     if (!table) throw Error('Table not found!')
 
-    if (input.admin) {
+    const allUsers = await User.insertMany(new Array(input.totalUsers).fill({ isGuest: true }))
+
+    // if admin is specified, create a tab with admin
+    const SAVED_CLIENT_FEATURE_FLAG = false;
+
+    if (input.admin && SAVED_CLIENT_FEATURE_FLAG) {
         try {
             const user = await User.findOne({ _id: input.admin });
 
             const tab = await Tab.create({
                 table: table._id,
                 admin: user?._id,
-                users: input.totalUsers,
+                // todo: can we add exsisting users this way?
+                // perhaps we need to add a new field to existing user emails or ids
+                users: allUsers.map(user => user._id),
             });
 
-            await table.updateOne({ status: TableStatus.OCCUPIED });
+            await table.updateOne({ status: TableStatus.Occupied });
 
             return tab
 
@@ -39,7 +46,8 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
         }
     }
 
-    const allUsers = await GuestUser.insertMany(new Array(input.totalUsers).fill({}))
+    // insert many guest users
+    // guest flag set to true
 
     try {
         const tab = await Tab.create({
@@ -48,7 +56,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             users: allUsers.map(user => user._id),
         });
         // change the status table to occupied
-        await table.updateOne({ status: TableStatus.OCCUPIED });
+        await table.updateOne({ status: TableStatus.Occupied });
 
         return tab
 
@@ -118,7 +126,7 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
         // if the Tab is associated with a table, change the status of the table to available
         if (tab?.table) {
             const Table = TableModel(db);
-            await Table.findByIdAndUpdate(tab.table, { status: TableStatus.AVAILABLE });
+            await Table.findByIdAndUpdate(tab.table, { status: TableStatus.Available });
         }
 
         return tab;
@@ -128,14 +136,13 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
 }
 
 const getUsersByTabID = async (parent: any, _args: any, { db }: Context) => {
-
-    console.log('getUsersByTabID', parent._id)
     const Tab = TabModel(db);
+    const User = UserModel(db);
     const tab = await Tab.findById(parent._id);
 
     if (!tab) throw ApolloError('NotFound')
 
-    return tab.users;
+    return await User.find({ _id: { $in: tab.users } });
 }
 
 const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
@@ -144,8 +151,48 @@ const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
 }
 
 
+const requestCloseTab = async (_parent: any, { input }: { input: { _id: string } }, { db, business }: Context) => {
+    const Tab = TabModel(db);
+    const OrderDetail = OrderDetailModel(db);
+    const Checkout = CheckoutModel(db);
+    const foundBusiness = await BusinessModel(db).findById(business);
+    const foundTab = await Tab.findById(input._id);
 
-const TabResolverMutation = { createTab, updateTab, deleteTab }
+    if (!foundTab) throw ApolloError('NotFound')
+
+    if (foundTab.status === TabStatus.Closed ||
+        foundTab.status === TabStatus.Pendent) {
+        return foundTab;
+    }
+
+    const foundOrderDetails = await OrderDetail.find({ tab: foundTab._id });
+    // if there are no open orders, we can close the tab
+    if (foundOrderDetails.length === 0) {
+        foundTab.status = TabStatus.Closed;
+        await foundTab.save();
+        return foundTab;
+    }
+
+    const subTotal = foundOrderDetails.reduce((acc, orderDetail) => acc + orderDetail.subTotal, 0);
+
+    const checkout = await Checkout.create({
+        tab: foundTab._id,
+        business: foundBusiness?._id,
+        orders: foundOrderDetails.map(orderDetail => orderDetail._id),
+        subTotal,
+        total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
+        tax: foundBusiness?.taxRate ?? 0,
+    })
+
+    foundTab.checkout = checkout._id;
+    foundTab.status = TabStatus.Pendent;
+
+    return await foundTab.save();;
+}
+
+
+
+const TabResolverMutation = { createTab, updateTab, deleteTab, requestCloseTab }
 const TabResolverQuery = {
     getTabByID,
     getAllOpenTabsByBusinessID,

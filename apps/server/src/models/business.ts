@@ -1,4 +1,4 @@
-import { Types, SchemaTypes, Schema, SchemaDefinition, Connection } from 'mongoose'
+import { Types, Connection } from 'mongoose'
 import { Menu } from './menu';
 import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
@@ -57,6 +57,9 @@ export class Business {
 
     @prop({ default: [] })
     public employeesPending?: Ref<Session>[];
+
+    @prop({ default: 0 })
+    public taxRate?: number;
 
     @prop({ default: Date.now() })
     public created_date!: Date;

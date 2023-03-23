@@ -1,108 +1,53 @@
-// @ts-nocheck
+import { Box, HStack, Text, Image, Pressable } from "native-base";
 import React from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-} from "react-native";
-import { colors } from "../../theme/colors";
+import { PriceTag } from "./PriceTag";
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    justifyContent: "center",
-    backgroundColor: colors.ghostWhite,
-    flex: 1,
-    display: "flex",
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    backgroundColor: colors.blue,
-    color: colors.ghostWhite,
-    padding: 10,
-  },
-  sectionItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 16,
-    display: "flex",
-    flex: 1,
-    borderBottomColor: colors.darkBlue,
-    borderBottomWidth: 1,
-  },
-  left: {
-    display: "flex",
-    flex: 3,
-    width: "100%",
-    justifyContent: "center",
-  },
-  right: {
-    display: "flex",
-    flex: 1,
-    justifyContent: "center",
-    flexWrap: "nowrap",
-    width: "30%",
-  },
-  itemName: {
-    fontSize: 18,
-    fontWeight: 500,
-    paddingBottom: 5,
-    paddingTop: 5,
-    color: colors.darkBlue,
-  },
-  ingredients: {
-    paddingBottom: 5,
-    fontStyle: "italic",
-    color: "gray",
-  },
-  price: {
-    fontsize: 16,
-    textAlign: "center",
-    justifyContent: "center",
-    fontWeight: 700,
-    display: "flex",
-    color: colors.orange,
-    position: "absolute",
-    backgroundColor: "yellow",
-    borderColor: colors.orange,
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  priceWithPhoto: {
-    float: "right",
-    top: 0,
-    right: 0,
-    marginVertical: 5,
-  },
-  logo: {
-    width: 70,
-    height: 70,
-  },
-});
+type MenuItemProps = {
+  // name: string;
+  // ingredients: string;
+  // price: number;
+  // uri: string;
+  onPress: () => void;
+};
 
-const MenuItem = (sectionCellProps) => {
+const name = "Pizza de Calabresa";
+const uri = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
 
-  const { name, ingredients, price, uri } = sectionCellProps;
-  const formatIngredients = "Tomate, Milho, Ervilha.";
-  const formatPrice = (() => {
-    // '(price) => (price / 100).toFixed(2)';
-    return "$29.00";
-  })();
+const formatIngredients = "Lorem ipsum dolor sit amet, sect consectetur adipiscing elit. Emet liu aliquam praesent libero";
+const formatPrice = (() => {
+  // '(price) => (price / 100).toFixed(2)';
+  return "$29.00";
+})();
+
+const MenuItem = ({ onPress }: MenuItemProps) => {
+  // const { name, ingredients, price, uri } = sectionCellProps;
 
   return (
-    <View style={styles.sectionItem}>
-      <View style={styles.left}>
-        <Text style={styles.itemName}>{name}</Text>
-        <Text style={styles.ingredients}>{formatIngredients}</Text>
-      </View>
-      <View style={styles.right}>
-        {uri && <Image style={styles.logo} source={{ uri: uri }} alt={"Text"} />}
-        <Text style={[styles.price, uri && styles.priceWithPhoto]}>
-          {formatPrice}
-        </Text>
-      </View>
-    </View>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1.0 }]}
+    >
+      <HStack justifyContent={"space-between"} p={2.5} space={2}>
+        <Box flex={1}>
+          <Text fontSize={"18"} fontWeight={"500"}>{name}</Text>
+          <Text
+            fontSize={"15"}
+            pt={"1"}
+            fontStyle={"italic"}
+            color={"gray.500"}
+            textAlign={"justify"}>{formatIngredients}</Text>
+        </Box>
+        <Box>
+          <Image
+            size={"xl"}
+            source={{ uri: uri }}
+            alt={""}
+            borderRadius={5}
+          />
+          <PriceTag price={formatPrice} />
+        </Box>
+      </HStack>
+    </Pressable>
   );
 };
 

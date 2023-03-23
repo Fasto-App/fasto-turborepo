@@ -11,13 +11,11 @@ import {
   Image,
   Pressable,
   Divider,
-  ScrollView,
-  PresenceTransition
+  ScrollView
 } from "native-base"
 import { Tile } from "../../components/Tile"
-import { OrderDetail, OrderStatus, useGetTabByIdQuery } from "../../gen/generated"
-import { parseToCurrency } from "../../utils"
-import { useTableScreenStore } from "./tableScreenStore"
+import { OrderDetail, OrderStatus, User } from "../../gen/generated"
+import { parseToCurrency, typedKeys } from 'app-helpers'
 import { Transition } from "../../components/Transition"
 
 const FilterOrderBy = {
@@ -36,21 +34,15 @@ const texts = {
   noOrdersYet: "No orders yet",
 }
 
-export const OccupiedModal = () => {
-  const [filter, setFilterBy] = useState<FilterOrderBy>(FilterOrderBy.patron)
-  const tableChoosen = useTableScreenStore(state => state.tableChoosen)
-  const isFilteredByPatron = filter === FilterOrderBy.patron
-  // store the id and go through the array of orders
-  // fetch information for an specific TAB 
-  // const { data } = useGetTabByIdQuery({
-  //   variables: {
-  //     input: {
-  //       _id: tableChoosen?._id
-  //     }
-  //   }
-  // })
 
-  // console.log({ data })
+// users and orders from getTabById Query
+type OccupiedModalProps = {
+  orders?: Omit<OrderDetail, "created_date">[] | null;
+  users?: Pick<User, "_id" | "name">[] | null;
+}
+export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
+  const [filter, setFilterBy] = useState<FilterOrderBy>(FilterOrderBy.patron)
+  const isFilteredByPatron = filter === FilterOrderBy.patron
 
   return (
     <Box>
@@ -82,7 +74,7 @@ export const OccupiedModal = () => {
         >
           <ScrollView horizontal={true} pb={2}>
             <HStack space={2}>
-              {tableChoosen?.users?.map((patron, index) => (
+              {users?.map((patron, index) => (
                 <Tile key={patron._id} selected={false} onPress={undefined} >
                   {`${texts.person} ${index + 1}`}
                 </Tile>
@@ -91,11 +83,11 @@ export const OccupiedModal = () => {
           </ScrollView>
         </Transition>
         <VStack space={6} pt={"5"}>
-          {!tableChoosen?.orders?.length ?
+          {!orders?.length ?
             <Center flex={1} paddingY={"10"}>
               <Heading size={"md"} textAlign={"center"}>{texts.noOrdersYet}</Heading>
             </Center>
-            : tableChoosen?.orders?.map((order) => {
+            : orders?.map((order) => {
               if (!order) return null
 
               return <OrderTile key={order._id}
@@ -143,7 +135,7 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
         placeholder={texts.orderStatus}
         accessibilityLabel={texts.chooseService}
         onValueChange={itemValue => console.log(itemValue)}>
-        {Object.keys(OrderStatus).map((status, index) => (
+        {typedKeys(OrderStatus).map((status, index) => (
           <Select.Item key={index} label={status} value={status.toUpperCase()} />)
         )}
       </Select>

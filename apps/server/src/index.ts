@@ -4,14 +4,18 @@ import express, { Express } from 'express';
 import apolloServer from './graphql';
 import { graphqlUploadExpress } from 'graphql-upload'
 import { Bugsnag } from "./bugsnag/bugsnag";
-import cors from 'cors';
+import { dbConnection } from "./dbConnection";
+// import cors from 'cors';
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
 const FRONTEND_URL = process.env.FRONTEND_URL as string
 
+export const db = dbConnection();
+
 async function main() {
   const app = express();
+
   app.use(middleware?.requestHandler!)
   app.use(middleware?.errorHandler!)
   app.use(express.static(__dirname + "/public"));
@@ -22,6 +26,7 @@ async function main() {
   console.log("process.env.FRONTEND_URL", FRONTEND_URL)
   console.log("API_KEY", process.env.API_KEY)
 
+  // todo: Configure CORS
   // app.use(cors({
   //   origin: function (origin, callback) {
   //     console.log("FRONTEND_URL", FRONTEND_URL)

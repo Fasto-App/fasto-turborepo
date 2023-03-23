@@ -43,6 +43,11 @@ const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection
   return await BusinessModel(db).find({})
 }
 
+const getBusinessById = async (_parent: any, { input }: { input: { _id: string } }, { db }: { db: Connection }) => {
+  const Business = BusinessModel(db)
+  return await Business.findById(input._id)
+}
+
 const getBusinessInformation = async (
   _parent: any,
   args: any,
@@ -365,8 +370,8 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
     await foundBusiness.save()
 
     sendExistingUserEployeeEmail({
-      email: foundAsUser.email,
-      name: foundAsUser.name,
+      email: foundAsUser.email || "",
+      name: foundAsUser.name || "",
       businessName: foundBusiness.name,
     })
 
@@ -472,6 +477,7 @@ const BusinessResolverMutation = {
   deleteBusinessEmployee
 }
 const BusinessResolverQuery = {
+  getBusinessById,
   getBusinessLocation,
   getAllBusiness,
   getAllBusinessByUser,

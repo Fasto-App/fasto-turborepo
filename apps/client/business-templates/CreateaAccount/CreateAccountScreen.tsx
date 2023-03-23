@@ -32,18 +32,22 @@ export const CreateAccountScreen = () => {
 
   const [createUser, { loading }] = useCreateUserMutation({
     onCompleted: (data) => {
-      setCookies("name", data.createUser.name);
-      setCookies("token", data.createUser.token);
-      setCookies("email", data.createUser.email);
+      const { token, email, name } = data.createUser;
+      setCookies("token", token);
+      email && setCookies("email", email);
+      name && setCookies("name", name);
+
       router.push(businessRoute.dashboard);
     }
   })
 
   const [createEmployeeAccount, { loading: employeeLoading }] = useCreateEmployeeAccountMutation({
     onCompleted: (data) => {
-      setCookies("name", data.createEmployeeAccount.name);
-      setCookies("token", data.createEmployeeAccount.token);
-      setCookies("email", data.createEmployeeAccount.email);
+      const { token, email, name } = data.createEmployeeAccount;
+      setCookies("token", token);
+      email && setCookies("email", email);
+      name && setCookies("name", name);
+
       router.push(businessRoute.dashboard);
     }
   });

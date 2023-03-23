@@ -1,0 +1,20 @@
+mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
+	makeCheckoutPayment(input: $input) {
+		_id
+		paid
+		totalPaid
+		total
+		tip
+		tax
+		tab
+		subTotal
+		status
+		payments {
+			_id
+			amount
+			patron
+			splitType
+			tip
+		}
+	}
+}

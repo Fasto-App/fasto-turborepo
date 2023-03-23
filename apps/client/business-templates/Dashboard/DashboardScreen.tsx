@@ -24,6 +24,7 @@ export const DashboardScreen = () => {
           borderWidth={0.5}
           borderColor={"gray.50"}
           shadow={"2"}
+          h={"50%"}
           w={"100%"}
           borderRadius={"md"}
           bgColor={"white"}

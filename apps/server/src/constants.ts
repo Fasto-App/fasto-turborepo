@@ -1,0 +1,1 @@
+export const MONGO_DB_URI = `mongodb+srv://dbOpenTab:${process.env.CLUSTER_PASSWORD}@cluster1.ml57r.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`

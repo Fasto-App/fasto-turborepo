@@ -5,8 +5,16 @@ import { Pressable } from "react-native"
 import { TableStatus } from "../../gen/generated"
 import { borderColor } from "./config"
 
-export const SquareTable = ({ index, status, onPress, isButton = false }:
-  { index?: number, status?: TableStatus, onPress: () => void, isButton?: boolean }) => {
+type SquareTableProps = {
+  index?: number;
+  status?: TableStatus;
+  onPress: () => void;
+  isButton?: boolean;
+  tableNumber?: string;
+}
+
+export const SquareTable = (
+  { index, status, onPress, isButton = false, tableNumber }: SquareTableProps) => {
 
   return (
     <Pressable
@@ -28,7 +36,7 @@ export const SquareTable = ({ index, status, onPress, isButton = false }:
           </Center>
           :
           <Heading color={borderColor(status)}>
-            {index ? index++ : 1}
+            {tableNumber}
           </Heading>}
       </Box>
     </Pressable>)

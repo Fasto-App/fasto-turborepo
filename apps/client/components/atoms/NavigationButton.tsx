@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AiOutlineHome,
-  AiOutlineSetting,
   AiOutlineDollar,
   AiOutlineMessage,
   AiOutlineContacts,
@@ -17,66 +16,85 @@ import {
 } from "react-icons/ai";
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
-import { BsBag, BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
-import { Box, Pressable, Text, useBreakpointValue } from "native-base";
+import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
+import { Badge, Box, Pressable, Text } from "native-base";
 import { IoIosArrowBack } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line } from "react-icons/ri"
 import { BiLogOutCircle } from "react-icons/bi"
+import { MdOutlineFrontHand } from "react-icons/md"
+import { BsTrash } from "react-icons/bs"
+import { RiUserSettingsLine } from "react-icons/ri"
+import { RiShoppingBag3Line } from "react-icons/ri"
+import { ImQrcode } from "react-icons/im"
+import { BsBag } from "react-icons/bs"
+import { BsPeopleFill } from "react-icons/bs"
+import { MdOutlinePhoneIphone } from "react-icons/md"
+
 type IconProps = {
   type: NavigationButtonType;
   color?: string;
   size?: number | string;
 };
 
-const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
+export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
-    case NavigationButtonType.Home:
+    case "Phone":
+      return <MdOutlinePhoneIphone color={color} size={size} />;
+    case "People":
+      return <BsPeopleFill color={color} size={size} />;
+    case "QRCode":
+      return <ImQrcode color={color} size={size} />;
+    case "TrashCan":
+      return <BsTrash color={color} size={size} />;
+    case "RaisedHand":
+      return <MdOutlineFrontHand color={color} size={size} />;
+    case "Home":
       return <AiOutlineHome color={color} size={size} />;
-    case NavigationButtonType.Settings:
-      return <AiOutlineSetting color={color} size={size} />;
-    case NavigationButtonType.Money:
+    case "Settings":
+      return <RiUserSettingsLine color={color} size={size} />;
+    case "Money":
       return <AiOutlineDollar color={color} size={size} />;
-    case NavigationButtonType.Message:
+    case "Message":
       return <AiOutlineMessage color={color} size={size} />;
-    case NavigationButtonType.Contacts:
+    case "Contacts":
       return <AiOutlineContacts color={color} size={size} />;
-    case NavigationButtonType.Clock:
+    case "Clock":
       return <AiOutlineClockCircle color={color} size={size} />;
-    case NavigationButtonType.Shop:
+    case "Shop":
       return <AiOutlineShop color={color} size={size} />;
-    case NavigationButtonType.Cart:
+    case "Cart":
       return <AiOutlineShoppingCart color={color} size={size} />;
-    case NavigationButtonType.Menu:
+    case "Menu":
       return <AiOutlineLayout color={color} size={size} />;
-    case NavigationButtonType.Search:
+    case "Search":
       return <AiOutlineSearch color={color} size={size} />;
-    case NavigationButtonType.Tool:
+    case "Tool":
       return <AiOutlineTool color={color} size={size} />;
-    case NavigationButtonType.UserAdd:
+    case "UserAdd":
       return <AiOutlineUserAdd color={color} size={size} />;
-    case NavigationButtonType.Plus:
+    case "Plus":
       return <AiOutlinePlus color={color} size={size} />;
-    case NavigationButtonType.Close:
+    case "Close":
       return <AiOutlineClose color={color} size={size} />;
-    case NavigationButtonType.ListStar:
+    case "ListStar":
       return <BsListStars color={color} size={size} />;
-    case NavigationButtonType.Bag:
+    case "Bag":
       return <BsBag color={color} size={size} />;
-    case NavigationButtonType.Radio:
+    case "Radio":
       return <BsUiRadiosGrid color={color} size={size} />;
-    case NavigationButtonType.Payment:
+    case "Payment":
       return <BsCreditCard2Back color={color} size={size} />;
-    case NavigationButtonType.ArrowBack:
+    case "ArrowBack":
       return <IoIosArrowBack color={color} size={size} />;
-    case NavigationButtonType.Logout:
+    case "Logout":
       return <BiLogOutCircle color={color} size={size} />;
-    case NavigationButtonType.Table:
+    case "Table":
       return <TiTabsOutline color={color} size={size} />;
-    case NavigationButtonType.Fork:
+    case "Fork":
       return <GiKnifeFork color={color} size={size} />;
-    case NavigationButtonType.Dashboard:
+    case "Dashboard":
       return <RiDashboard3Line color={color} size={size} />;
     default:
       console.error("NavigationButton: Unknown type");
@@ -89,8 +107,10 @@ const NavigationButton = ({
   selected = false,
   text,
   onPress,
-  color = colors.white,
+  color,
   flexDirection = "column",
+  numNotifications,
+  disabled = false
 }: {
   type: NavigationButtonType;
   selected?: boolean;
@@ -99,17 +119,17 @@ const NavigationButton = ({
   color?: string;
   text?: string;
   flexDirection?: "row" | "column";
+  numNotifications?: number;
+  disabled?: boolean;
 }) => {
-  const iconSize = useBreakpointValue({
-    base: "20px",
-    lg: "30px",
-  });
   const [isHovered, setIsHovered] = React.useState(false);
-  const selectedColor = selected || isHovered ? colors.yellow : colors.pureWhite;
+  const selectedColor = selected || isHovered ? colors.orange : colors.white;
   const isRow = flexDirection === "row";
 
   return (
     <Pressable
+      isDisabled={disabled}
+      _disabled={{ opacity: 0.3 }}
       onPress={onPress}
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}
@@ -119,12 +139,21 @@ const NavigationButton = ({
       borderRadius={"md"}
       padding={"2"}
     >
-      <Box justifyContent="center" alignItems="center" h={iconSize} w={iconSize}>
-        <Icon type={type} size={"100%"} color={colors.blueboard} />
-      </Box>
+      {numNotifications ?
+        <Badge
+          position={"absolute"}
+          colorScheme="fuchsia" rounded="full" mr={-2} zIndex={1} variant="solid" alignSelf="flex-end" _text={{
+            fontSize: 8,
+            bold: true
+          }}>
+          {numNotifications}
+        </Badge> : null}
+      <Icon type={type} size={"2em"} color={color ?? selectedColor} />
       <Box w={"2"} />
       <Text
         fontSize={isRow ? "lg" : "xs"}
+        textAlign={"center"}
+        color={color ?? selectedColor}
       >
         {text}
       </Text>
@@ -132,4 +161,49 @@ const NavigationButton = ({
   );
 };
 
-export { NavigationButton };
+
+
+const BusinessNavigationButton = ({
+  type,
+  selected = false,
+  text,
+  onPress,
+  color = colors.black,
+}: {
+  type: NavigationButtonType;
+  selected?: boolean;
+  hovered?: boolean;
+  onPress: () => void;
+  color?: string;
+  text?: string;
+}) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+  const selectedColor = selected || isHovered ? colors.orange : color;
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}
+      flexDirection={"row"}
+      width={"90%"}
+      borderRadius={"md"}
+      borderWidth={1}
+      borderColor={selected ? colors.orange : "transparent"}
+      padding={"2"}
+    >
+      <Icon type={type} size={"2em"} color={selectedColor} />
+      <Box w={"2"} />
+      <Text
+        fontSize={"lg"}
+        textAlign={"center"}
+        color={selectedColor}
+        alignSelf={"flex-end"}
+      >
+        {text}
+      </Text>
+    </Pressable >
+  );
+};
+
+export { NavigationButton, BusinessNavigationButton };
