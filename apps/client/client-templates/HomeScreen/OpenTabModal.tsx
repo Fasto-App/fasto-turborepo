@@ -76,7 +76,7 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
     },
   })
 
-  const { totalGuests } = watch() || {}
+  const totalGuests = watch("totalGuests")
 
   const newConfig = useMemo(() => {
     const guestConfig = guestConfigObject(totalGuests)
@@ -145,13 +145,12 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
             </Button>
           </>
         }
-        ModalBody={<Box>
+        ModalBody={
           <ControlledForm
             Config={newConfig}
             control={control}
             formState={formState}
           />
-        </Box>
         }
       />
     </>
