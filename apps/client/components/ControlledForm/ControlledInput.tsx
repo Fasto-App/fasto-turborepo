@@ -65,6 +65,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                   <TextArea
                     {...field}
                     h={16}
+                    fontSize="lg"
                     autoCompleteType={undefined}
                     placeholder={placeholder} />)
               case "Select":
@@ -72,6 +73,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                   <Select
                     selectedValue={field.value}
                     // minWidth="200"
+                    fontSize="lg"
                     accessibilityLabel={rest.accessibilityLabel}
                     placeholder={placeholder}
                     onValueChange={field.onChange}

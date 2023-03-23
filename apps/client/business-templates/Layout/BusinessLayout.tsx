@@ -29,17 +29,10 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 		return null;
 	}
 
-	// if (!isAdminRoute) return null;
 	return (
 		<BusinessScreenContainer>
 			{shouldShowSideBar ? <BusinessNavigationTab /> : null}
-			{/* <Box style={styles.rightContainer}> */}
-			{/* {isAdminRoute && 
-				<Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"}/>
-					<AppBar />
-				</Box>} */}
 			{children}
-			{/* </Box> */}
 		</BusinessScreenContainer>
 	);
 };

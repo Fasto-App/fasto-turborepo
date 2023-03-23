@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies/businessCookies'
 import { clientRoute } from '../../routes'
+import { texts } from './texts'
 
 const array1to5 = Array.from({ length: 5 }, (_, i) => i + 1).map(
   (i) => ({ name: i.toString(), _id: i.toString() })
@@ -128,29 +129,29 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
       <CustomModal
         isOpen={isOpen}
         onClose={setModalVisibility}
-        HeaderComponent={<Heading>Request Tab</Heading>}
-        ModalFooter={
-          <>
-            <Button
-              isLoading={loading}
-              onPress={handleSubmit(handleOpenTab)}
-              flex={1}>
-              Open New Tab
-            </Button>
-            <Button
-              isLoading={loading}
-              onPress={setModalVisibility}
-              colorScheme={"muted"} flex={1}>
-              Cancel
-            </Button>
-          </>
-        }
+        HeaderComponent={<Heading>{texts.requestTab}</Heading>}
         ModalBody={
           <ControlledForm
             Config={newConfig}
             control={control}
             formState={formState}
           />
+        }
+        ModalFooter={
+          <>
+            <Button
+              isLoading={loading}
+              onPress={handleSubmit(handleOpenTab)}
+              flex={1}>
+              {texts.openNewTab}
+            </Button>
+            <Button
+              isLoading={loading}
+              onPress={setModalVisibility}
+              colorScheme={"muted"} flex={1}>
+              {texts.cancel}
+            </Button>
+          </>
         }
       />
     </>

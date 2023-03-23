@@ -14,44 +14,28 @@ type QRCodeReaderProps = {
   setModalVisibility: (isOpen: boolean) => void
 }
 
-export const QRCodeReader = ({ isOpen, setModalVisibility }: QRCodeReaderProps) => {
-  const route = useRouter()
+export const QRCodeReader = () => {
   const [qrCode, setQrCode] = React.useState<string | null>(null)
   return (
-    <CustomModal
-      isOpen={isOpen}
-      HeaderComponent={"Scan the QR code to join a tab"}
-      ModalBody={
-        <Box width={"100%"} >
-          <QrReader
-            videoContainerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
-            videoStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
-            containerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
-            constraints={{ facingMode: "environment" }}
-            onResult={(result, error) => {
-              if (!!result) {
-                setQrCode(result.getText());
-                console.info(result)
-                //todo: if the QR code is valid, navigate to the tab
-                console.log("Navigating to tab")
-              }
-            }}
-          />
-          <Text>
-            {qrCode}
-          </Text>
-        </Box>
-      }
-      ModalFooter={
-        <Button
-          onPress={() => setModalVisibility(false)}
-          _text={{ bold: true }}
-          colorScheme={"trueGray"}
-        >
-          {texts.cancel}
-        </Button>
-      }
-    />
+    <Box width={"100%"} >
+      <QrReader
+        videoContainerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
+        videoStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
+        containerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
+        constraints={{ facingMode: "environment" }}
+        onResult={(result, error) => {
+          if (!!result) {
+            setQrCode(result.getText());
+            console.info(result)
+            //todo: if the QR code is valid, navigate to the tab
+            console.log("Navigating to tab")
+          }
+        }}
+      />
+      <Text>
+        {qrCode}
+      </Text>
+    </Box>
   )
 }
 

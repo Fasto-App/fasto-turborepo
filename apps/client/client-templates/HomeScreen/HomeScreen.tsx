@@ -1,34 +1,41 @@
 import { Image, Box, Button, Center, Heading, VStack } from 'native-base'
-import React, { useState } from 'react'
-import { NavigationButton } from '../../components/atoms/NavigationButton'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { texts } from './texts'
-import { QRCodeReader } from './QRCodeReader'
+import { JoinTabModal } from './JoinTabModal'
 import { OpenTabModal } from './OpenTabModal'
 import { useGetBusinessInformation, useGetTabRequest } from '../../hooks'
 import { clientRoute } from '../../routes'
 
 export const HomeScreen = () => {
-
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
   const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
   const route = useRouter()
   const { businessId } = route.query
 
-  const joinTab = () => {
+  const joinTab = useCallback(() => {
     console.log("Pressed")
     setIsJoinTabModalOpen(true)
-  }
+  }, [])
 
-  const onPress = () => {
+  const onPress = useCallback(() => {
     route.push(clientRoute.menu(businessId as string))
-  }
+  }, [businessId, route])
 
   const { data: tabData } = useGetTabRequest()
   const { data: businessInfo } = useGetBusinessInformation()
 
   const image = businessInfo?.getBusinessById?.picture
   const name = businessInfo?.getBusinessById?.name
+
+
+
+  useEffect(() => {
+    if (route.query.tabId) {
+      setIsJoinTabModalOpen(true)
+    }
+  }, [route.query.tabId, tabData])
+
 
   return (
     <Center h={"100%"} backgroundColor={"white"}>
@@ -63,21 +70,7 @@ export const HomeScreen = () => {
           _text={{ bold: true }}
           colorScheme={"tertiary"}>{texts.viewMenu}</Button>
       </VStack>
-      <Box
-        position={"absolute"}
-        bottom={0}
-        w={"100%"}
-        pr={6}
-        pb={4}
-        alignItems={"flex-end"}
-      >
-        <NavigationButton
-          text={"Help"}
-          type={"RaisedHand"}
-          onPress={() => console.log("Home")}
-        />
-      </Box>
-      <QRCodeReader
+      <JoinTabModal
         isOpen={isJoinTabModalOpen}
         setModalVisibility={setIsJoinTabModalOpen}
       />

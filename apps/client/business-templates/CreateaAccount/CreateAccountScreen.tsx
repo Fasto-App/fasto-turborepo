@@ -60,7 +60,9 @@ export const CreateAccountScreen = () => {
   } = useCreateAccountFormHook(email as string)
 
   useEffect(() => {
-    setValue("email", email as string)
+    if (typeof email === "string") {
+      setValue("email", email)
+    }
   }, [email, setValue])
 
   const onSignUpSubmit = async (formData: CreateAccountField) => {
