@@ -52,7 +52,7 @@ export const TablesScreen = () => {
   });
 
   // use reduce
-  const allTables = useMemo(() => {
+  const allTablesFromSpace = useMemo(() => {
     return data?.getSpacesFromBusiness?.reduce((acc, space) => {
       if (space._id !== selectedSpaceId) return acc
 
@@ -67,10 +67,10 @@ export const TablesScreen = () => {
   }, [data?.getSpacesFromBusiness, selectedSpaceId])
 
   const availableTables = useMemo(() => {
-    return allTables?.
+    return allTablesFromSpace?.
       filter(table => table.status === TableStatus.Available).
       map(table => table._id)
-  }, [allTables])
+  }, [allTablesFromSpace])
 
   const [createTable] = useCreateTableMutation({
     refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
@@ -112,6 +112,10 @@ export const TablesScreen = () => {
     )
   }, [selectedSpaceId, setSelectedSpace])
 
+  const occupiedTables = useMemo(() => {
+    return allTablesFromSpace?.filter(table => table.status === TableStatus.Occupied)
+  }, [allTablesFromSpace])
+
   return (
     <Box flex={1}>
       <AddTableModal
@@ -139,25 +143,33 @@ export const TablesScreen = () => {
             {texts.space}
           </Heading>
 
-          <HStack space={2} mt={2}>
-            <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
-            {spaceLoading ? <TileLoading /> : <FlatList
-              horizontal
-              data={data?.getSpacesFromBusiness}
-              renderItem={renderSpaces}
-              ItemSeparatorComponent={() => <Box w={4} />}
-              keyExtractor={(item, index) => `${item?._id}-${index}`}
-            />}
+          <HStack flex={1} space={2} mt={2}>
+            <HStack flex={1} space={4}>
+              <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
+              {spaceLoading ? <TileLoading /> : (
+                <FlatList
+                  horizontal
+                  data={data?.getSpacesFromBusiness}
+                  renderItem={renderSpaces}
+                  ItemSeparatorComponent={() => <Box w={4} />}
+                  keyExtractor={(item, index) => `${item?._id}-${index}`}
+                />)}
+            </HStack>
 
             <Divider orientation="vertical" />
-            <Stats />
+            <Stats
+              Available={availableTables?.length || 0}
+              Occupied={occupiedTables?.length || 0}
+              Reserved={0}
+              Closed={0}
+            />
           </HStack>
         </UpperSection>
         {selectedSpaceId ?
           <BottomSection>
             <Box flex={1} >
-              <HStack space={32} pb={"6"}>
-                <Heading>{texts.tables}</Heading>
+              <HStack space={30} pb={"6"}>
+                <Heading alignSelf={"center"}>{texts.tables}</Heading>
                 <ButtonWithBadge
                   onPress={() => setIsRequestModalOpen(true)}
                   badgeCount={pendingRequestsData?.getTabRequests.length}>
@@ -166,7 +178,7 @@ export const TablesScreen = () => {
               </HStack>
               <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
                 <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
-                {allTables?.map((table, index) =>
+                {allTablesFromSpace?.map((table, index) =>
                   <SquareTable
                     key={table?._id}
                     index={index}

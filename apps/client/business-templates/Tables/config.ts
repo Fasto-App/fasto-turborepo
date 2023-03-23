@@ -1,11 +1,12 @@
 import { TableStatus } from "../../gen/generated"
+import { TableStatusType } from "app-helpers"
 
 type statStruct = {
   number: number,
   name: TableStatus,
 }
 
-export const stats: Record<TableStatus, statStruct> = {
+export const stats: Record<TableStatusType, statStruct> = {
   Occupied: {
     number: 1,
     name: TableStatus.Occupied
@@ -24,7 +25,7 @@ export const stats: Record<TableStatus, statStruct> = {
   }
 }
 
-export const borderColor = (status?: TableStatus) => {
+export const borderColor = (status?: TableStatusType) => {
   switch (status) {
     case "Occupied":
       return "primary.600"

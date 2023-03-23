@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Modal } from "native-base";
@@ -8,7 +8,9 @@ import { ControlledForm } from "../../components/ControlledForm/ControlledForm";
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL";
 
 const spaceSchema = z.object({
-  space_name: z.string().min(2, "Please, enter a Space Name. Min 2 chars").max(15, "15 characters max")
+  space_name: z.string().
+    min(2, "Please, enter a Space Name. Min 2 chars").
+    max(15, "15 characters max")
 })
 
 type spaceSchemaInput = z.infer<typeof spaceSchema>
@@ -29,31 +31,33 @@ export const SpaceModal = ({ isModalOpen, setIsModalOpen }: SpaceModalProps) => 
     defaultValues: {
       space_name: "",
     },
-    resolver: zodResolver(z.object({
-      space_name: z.string().min(2, "Please, enter a Space Name. Min 2 chars").max(15, "15 characters max")
-    }))
+    resolver: zodResolver(spaceSchema)
   })
 
   const {
     createSpace,
   } = useSpacesMutationHook();
 
-  const onSubmit = async (data: spaceSchemaInput) => {
-    setIsModalOpen(false)
+  const onSubmit = useCallback(
+    async (data: spaceSchemaInput) => {
+      setIsModalOpen(false)
 
-    await createSpace({
-      variables: {
-        input: { name: data.space_name, }
-      }
-    })
-    reset()
-  }
+      await createSpace({
+        variables: {
+          input: { name: data.space_name, }
+        }
+      })
+      reset()
+    },
+    [createSpace, reset, setIsModalOpen],
+  )
 
-  const onCancel = () => {
+
+  const onCancel = useCallback(() => {
     setIsModalOpen(false)
     reset()
     clearErrors()
-  }
+  }, [clearErrors, reset, setIsModalOpen])
 
   return <Modal isOpen={isModalOpen} onClose={onCancel}>
     <Modal.CloseButton />

@@ -2,23 +2,34 @@ import React from "react"
 import { HStack, Heading, VStack, Text } from "native-base";
 import { stats, borderColor } from "./config";
 import { typedKeys } from "app-helpers";
+import { TableStatus } from "../../gen/generated";
+import { texts } from "./texts";
 
-export const Stats = () => (
-  <HStack space={4} mr={8}>
-    <Heading size={"md"} alignSelf={"center"}>TABLES</Heading>
-    <VStack >
-      {typedKeys(stats).map(stat =>
-        <Text flex={1} key={stat} color={borderColor(stat)}>
-          {stats[stat].name}
-        </Text>
-      )}
-    </VStack>
-    <VStack >
-      {typedKeys(stats).map(key =>
-        <Text flex={1} key={key}>
-          {stats[key].number}
-        </Text>
-      )}
-    </VStack>
-  </HStack>
-)
+type StatsProps = {
+  [key in keyof typeof TableStatus]: number
+}
+
+export const Stats = (props: StatsProps) => {
+
+  return (
+    <HStack space={4} mr={8}>
+      <Heading
+        size={"md"}
+        alignSelf={"center"}>{texts.tables.toUpperCase()}</Heading>
+      <VStack >
+        {typedKeys(props).map(stat =>
+          <HStack
+            key={stat}
+            space={4} flex={1}>
+            <Text flex={1} key={stat} color={borderColor(stat)}>
+              {stats[stat].name}
+            </Text>
+            <Text key={stat}>
+              {props[stat]}
+            </Text>
+          </HStack>
+        )}
+      </VStack>
+    </HStack>
+  )
+}
