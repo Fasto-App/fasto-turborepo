@@ -9,8 +9,16 @@ export const RequestTypeDefinition = gql`
 
   extend type Mutation {
     openTabRequest(input: OpenTabRequestInput!): String
+    requestJoinTab(input: JoinTabForm!): String
     acceptTabRequest(input: AcceptTabRequestInput!): Request
     declineTabRequest(input: GetById!): Request
+  }
+
+  input JoinTabForm {
+    name: String!
+    phoneNumber: String!
+    tab: ID!
+    userId: ID!
   }
 
   input GetTabRequestInput {

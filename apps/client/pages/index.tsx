@@ -5,47 +5,49 @@ import { HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, } from
 import { useGetAllBusinessQuery } from "../gen/generated";
 import { clientRoute } from "../routes";
 
+const width = {
+	base: 300,
+	sm: 400
+}
+
+const LoadingTiles = () => {
+	return (
+		<VStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
+			{[1, 2, 3].map((i) => {
+				return (
+					<Box key={i} width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
+						<Skeleton w="100%" h="100%" rounded="md" />
+					</Box>
+				)
+			})}
+		</VStack>
+	)
+}
+
+
 export default function Home() {
-
-
-	// get all the business hereuseGetAllBusinessQuery
-	const { data, loading } = useGetAllBusinessQuery()
+	const { data, loading, error } = useGetAllBusinessQuery()
 
 	return (
 		<VStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
-			{loading && <Box borderWidth={1} borderColor="coolGray.500"
-				rounded="md"
-				p={4}
-				h="20"
-				width={{
-					base: 300,
-					sm: 400
-				}}>
-				<Skeleton.Text />
-			</Box>}
+			{error ? <Text>{error.message}</Text> : null}
+			{loading ? <LoadingTiles /> : null}
 			{data?.getAllBusiness.map((business) => {
 				if (!business?._id) return null
 
 				return (
 					<Pressable key={business?._id}>
 						<Link href={clientRoute.home(business?._id)}>
-							<Center width={{
-								base: 300,
-								sm: 400
-							}} h="20" bg="secondary.500" rounded="md" shadow={3}>
+							<Center width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
 								<Text color={"white"} fontSize="lg">{business?.name}</Text>
 							</Center>
 						</Link>
 					</Pressable>
 				)
 			})}
-
 			<Pressable>
 				<Link href={'/business/login'}>
-					<Center width={{
-						base: 300,
-						sm: 400
-					}} h="20" bg="secondary.800" rounded="md" shadow={3}>
+					<Center width={width} h="20" bg="tertiary.500" rounded="md" shadow={3}>
 						<Text color={"white"} fontSize="lg">Business Dashboard</Text>
 					</Center>
 				</Link>

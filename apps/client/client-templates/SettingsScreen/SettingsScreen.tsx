@@ -1,5 +1,5 @@
-import React, { FC, useCallback } from "react";
-import { Avatar, Badge, Box, Center, ChevronRightIcon, HStack, Text, VStack, Pressable } from "native-base";
+import React, { FC, useCallback, useMemo } from "react";
+import { Avatar, Badge, Box, Center, ChevronRightIcon, HStack, Text, VStack, Pressable, Heading, Button } from "native-base";
 import { DICE_BEAR_INITIALS_URL } from "app-helpers";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { NavigationButtonType } from "../../components/types";
@@ -39,28 +39,31 @@ const settingsTiles: SettingsTileProps[] = [
   {
     _id: "qrcode",
     icon: "QRCode",
-    title: "Share QR Code",
+    title: "Invite Guest With QR QR Code",
     iconBackgroundColor: "blueGray.500"
   },
-  {
-    _id: "message",
-    icon: "Message",
-    title: "Message Staff",
-    iconBackgroundColor: "amber.500"
-  },
-  {
-    _id: "contacts",
-    icon: "Contacts",
-    title: "Invite User",
-    iconBackgroundColor: "indigo.500"
-  },
-  {
-    _id: "settings",
-    icon: "Settings",
-    title: "Message Staff",
-    iconBackgroundColor: "emerald.500"
-  }
+  // {
+  //   _id: "message",
+  //   icon: "Message",
+  //   title: "Message Staff",
+  //   iconBackgroundColor: "amber.500"
+  // },
+  // {
+  //   _id: "contacts",
+  //   icon: "Contacts",
+  //   title: "Invite User",
+  //   iconBackgroundColor: "indigo.500"
+  // },
+  // {
+  //   _id: "settings",
+  //   icon: "Settings",
+  //   title: "Message Staff",
+  //   iconBackgroundColor: "emerald.500"
+  // }
 ]
+
+console.log(process.env.FRONTEND_URL)
+const FE_URL = new URL(process.env.FRONTEND_URL ?? "http://localhost:3000")
 
 const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor, onPress, disabled }) => {
   return (
@@ -83,13 +86,27 @@ const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor,
 
 
 const SettingsScreen = () => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
+
   const router = useRouter()
   const { businessId } = router.query
+
   const { data } = useGetClientInformation()
   const { data: tabInfo } = useGetTabInformation()
+
   const isAdmin = tabInfo?.getTabByID?.admin === data?.getClientInformation?._id
   const tabId = tabInfo?.getTabByID?._id
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
+
+  const QR_CODE = useMemo(() => {
+    if (typeof businessId !== "string" || !tabId || !data?.getClientInformation.name) return undefined
+
+    FE_URL.pathname = clientRoute.home(businessId)
+    FE_URL.searchParams.append("tabId", tabId)
+    FE_URL.searchParams.append("name", data?.getClientInformation.name)
+    return FE_URL.toString()
+  }, [businessId, data?.getClientInformation.name, tabId])
+
+  console.log(QR_CODE)
 
   const handlePress = (title: string) => {
     switch (title) {
@@ -124,7 +141,7 @@ const SettingsScreen = () => {
             </Badge>
           </VStack>
         </HStack>
-        <ChevronRightIcon color={"secondary.900"} />
+        {/* <ChevronRightIcon color={"secondary.900"} /> */}
       </ListBorderTile>
       {settingsTiles.map((tile, index) => (
         <SettingsTile
@@ -141,15 +158,24 @@ const SettingsScreen = () => {
         size={"xl"}
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
+        HeaderComponent={<Heading textAlign={"center"} fontSize={"2xl"}>
+          Invite Guest With QR Code
+        </Heading>}
         ModalBody={
           <Center flex={1}>
             <QRCode
-              value={`${process.env.FRONTEND_URL}${clientRoute.home(businessId as string)}/?tab=${tabInfo?.getTabByID?._id}`}
+              value={QR_CODE || ""}
               size={300}
               level={"L"}
             />
           </Center>
         }
+        ModalFooter={<Button
+          colorScheme={"tertiary"}
+          w={"100%"}
+          onPress={() => setIsModalOpen(false)}>
+          Close
+        </Button>}
       />
     </VStack>
 

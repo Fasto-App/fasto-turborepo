@@ -1,4 +1,4 @@
-import { NewTabForm, newTabSchema, RequestStatus } from "app-helpers";
+import { JoinTabForm, NewTabForm, newTabSchema, RequestStatus } from "app-helpers";
 import { BusinessModel, UserModel, RequestModel, TabModel, TableModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types"
@@ -54,12 +54,10 @@ const openTabRequest = async (
     })
   }
 
-  const status: RequestStatus[] = ['Pending', 'Accepted']
-
   // the status should be either pending or accepted
   const foundRequest = await Request.findOne({
     admin: foundUserByPhone._id,
-    status: { $in: status }
+    status: { $in: ['Pending', 'Accepted'] as RequestStatus[] }
   })
 
   if (foundRequest) {
@@ -96,13 +94,19 @@ const acceptTabRequest = async (
 
   const foundRequest = await Request.findOne({ _id: input.request })
 
-  if (!foundRequest) throw ApolloError('BadRequest', "Request Not Found")
+  if (!foundRequest) {
+    throw ApolloError('BadRequest', "Request Not Found")
+  }
 
   // check if the request belongs to the business
-  if (foundRequest.business.toString() !== business) throw ApolloError('BadRequest', "Request Not Found")
+  if (foundRequest.business.toString() !== business) {
+    throw ApolloError('BadRequest', "Request Not Found")
+  }
 
   // check if the request is pending
-  if (foundRequest.status !== 'Pending') throw ApolloError('BadRequest', "Request Not Pending")
+  if (foundRequest.status !== 'Pending') {
+    throw ApolloError('BadRequest', "Request Not Pending")
+  }
 
   const table = await Table.findOne({ _id: input.table, business });
 
@@ -145,20 +149,66 @@ const declineTabRequest = async (
   if (!foundRequest) throw ApolloError('BadRequest', "Request Not Found")
 
   // check if the request belongs to the business
-  if (foundRequest.business.toString() !== business) throw ApolloError('BadRequest', "Request Not Found")
+  if (foundRequest.business.toString() !== business) {
+    throw ApolloError('BadRequest', "Request Not Found")
+  }
 
   // check if the request is pending
-  if (foundRequest.status !== 'Pending') throw ApolloError('BadRequest', "Request Not Pending")
+  if (foundRequest.status !== 'Pending') {
+    throw ApolloError('BadRequest', "Request Not Pending")
+  }
 
   foundRequest.status = 'Rejected';
 
   return await foundRequest.save();
 }
 
+const requestJoinTab = async (
+  _parent: any,
+  { input }: { input: JoinTabForm & { tab: string, userId: string } },
+  { db, business }: Context
+) => {
+  const Tab = TabModel(db)
+  const User = UserModel(db)
+
+  const foundTab = await Tab.findOne({ _id: input.tab })
+  const inviteeUser = await User.findOne({ _id: input.userId })
+
+  if (!inviteeUser) throw ApolloError('BadRequest', "User Not Found")
+  if (!foundTab) throw ApolloError('BadRequest', "Request Not Found")
+
+  if (foundTab.status !== 'Open') {
+    throw ApolloError('BadRequest', "Tab Not Open Yet")
+  }
+
+  const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
+
+  if (!foundUser) {
+
+    const newUser = await User.create({
+      name: input.name,
+      phoneNumber: input.phoneNumber,
+    })
+
+    foundTab.users.push(newUser._id)
+    await foundTab.save()
+
+    // return await tokenClient({
+    //   _id: newUser._id,
+    //   request: foundTab._id,
+    //   business: foundTab.business,
+    // })
+
+    return newUser._id
+  }
+
+}
+
 export const RequestResolverMutation = {
   openTabRequest,
   acceptTabRequest,
   declineTabRequest,
+  requestJoinTab,
 }
 
 

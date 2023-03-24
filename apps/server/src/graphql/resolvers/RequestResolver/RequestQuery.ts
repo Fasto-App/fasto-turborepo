@@ -36,10 +36,10 @@ const getTabRequests = async (
   },
   { db, business }: Context
 ) => {
-
   const Request = RequestModel(db)
   const foundRequests = await Request.find({
     business: business,
+    tab: undefined,
     ...(input?.filterBy ? { status: input.filterBy } : {})
   })
 

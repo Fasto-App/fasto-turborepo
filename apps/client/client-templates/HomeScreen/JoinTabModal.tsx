@@ -55,17 +55,19 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
 
   return (
     <CustomModal
+      onClose={() => setModalVisibility(false)}
       isOpen={isOpen}
       HeaderComponent={<Heading>{
         tabId && typeof name === "string" ? texts.yourAboutToJoin(name) : texts.scanTheCode
       }</Heading>}
-      ModalBody={!tabId || !name ? <QRCodeReader /> : (
-        <ControlledForm
-          Config={Config}
-          control={control}
-          formState={formState}
-        />
-      )}
+      ModalBody={!tabId || !name ?
+        <QRCodeReader /> : (
+          <ControlledForm
+            Config={Config}
+            control={control}
+            formState={formState}
+          />
+        )}
       ModalFooter={
         <Button.Group flex={1}>
           <Box flex={1}>

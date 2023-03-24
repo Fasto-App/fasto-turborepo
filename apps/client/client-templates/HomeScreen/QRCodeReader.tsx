@@ -19,6 +19,8 @@ export const QRCodeReader = () => {
   const [qrCodeError, setQrCodeError] = React.useState<boolean>(false)
   const router = useRouter()
 
+  console.log({ router })
+
   const onResult = useCallback((result: any, error: any) => {
 
     if (!!result) {
@@ -37,7 +39,9 @@ export const QRCodeReader = () => {
           return
         };
 
-        router.push(`/?tabId=${tabId}&name=${name}`, undefined, { shallow: true })
+        router.push({
+          query: { ...router.query, tabId, name }
+        }, undefined, { shallow: true })
 
       } catch (err) {
         console.log("Error parsing url", err)

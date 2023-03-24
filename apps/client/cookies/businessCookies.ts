@@ -20,7 +20,9 @@ export const clearCookies = () => {
 }
 
 export const setCookies = (cookie: CookieKey, value: string) => {
-  setCookie(businessCookies[cookie], value, {})
+  setCookie(businessCookies[cookie], value, {
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24) // 1 day
+  })
 }
 
 export const getCookies = (cookie: CookieKey) => {
@@ -29,7 +31,7 @@ export const getCookies = (cookie: CookieKey) => {
 
 export const setClientCookies = (cookie: ClientCookieKey, value: string) => {
   setCookie(clientCookies[cookie], value, {
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24) // 1 day
   })
 }
 

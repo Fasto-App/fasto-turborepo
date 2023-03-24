@@ -264,6 +264,13 @@ export type HoursOfOperationInput = {
   Wednesday?: InputMaybe<WorkingHoursInput>;
 };
 
+export type JoinTabForm = {
+  name: Scalars['String'];
+  phoneNumber: Scalars['String'];
+  tab: Scalars['ID'];
+  userId: Scalars['ID'];
+};
+
 export type LinkCategoryToProductInput = {
   category: Scalars['ID'];
   products: Array<InputMaybe<Scalars['String']>>;
@@ -335,6 +342,7 @@ export type Mutation = {
   postUserLogin: User;
   recoverPassword?: Maybe<RequestResponseOk>;
   requestCloseTab: Tab;
+  requestJoinTab?: Maybe<Scalars['String']>;
   requestUserAccountCreation: AccountCreationResponse;
   updateAddress?: Maybe<Address>;
   updateBusinessInformation: Business;
@@ -504,6 +512,11 @@ export type MutationRecoverPasswordArgs = {
 
 export type MutationRequestCloseTabArgs = {
   input: GetById;
+};
+
+
+export type MutationRequestJoinTabArgs = {
+  input: JoinTabForm;
 };
 
 
