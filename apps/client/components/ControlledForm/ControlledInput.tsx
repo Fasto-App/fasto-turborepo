@@ -175,7 +175,6 @@ export const ControlledInput = <T extends Record<string, string>>({
                     placeholder={placeholder}
                     InputRightElement={rightElement}
                     onChangeText={(value) => {
-                      console.log("value", value)
                       if (formatOnChange) {
                         formatOnChange(value, field.onChange)
                         return

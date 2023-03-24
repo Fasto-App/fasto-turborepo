@@ -1,6 +1,6 @@
 import { Box, Button, Text } from 'native-base';
 import { useRouter } from 'next/router';
-import React from 'react'
+import React, { useCallback } from 'react'
 import { QrReader } from 'react-qr-reader';
 import { CustomModal } from '../../components/CustomModal/CustomModal';
 import { texts } from './texts';
@@ -16,26 +16,49 @@ type QRCodeReaderProps = {
 
 export const QRCodeReader = () => {
   const [qrCode, setQrCode] = React.useState<string | null>(null)
+  const [qrCodeError, setQrCodeError] = React.useState<boolean>(false)
+  const router = useRouter()
+
+  const onResult = useCallback((result: any, error: any) => {
+
+    if (!!result) {
+      setQrCodeError(false)
+      setQrCode(result.getText());
+
+      try {
+        const url = new URL(result.getText());
+        const searchParams = new URLSearchParams(url.search);
+
+        const tabId = searchParams.get("tabId");
+        const name = searchParams.get("name");
+
+        if (!tabId || !name) {
+          setQrCodeError(true)
+          return
+        };
+
+        router.push(`/?tabId=${tabId}&name=${name}`, undefined, { shallow: true })
+
+      } catch (err) {
+        console.log("Error parsing url", err)
+        setQrCodeError(true)
+      }
+    }
+  }, [router])
+
   return (
-    <Box width={"100%"} >
+    <>
       <QrReader
-        videoContainerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
-        videoStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
-        containerStyle={{ borderRadius: 10, borderWidth: 1, borderColor: "black" }}
         constraints={{ facingMode: "environment" }}
-        onResult={(result, error) => {
-          if (!!result) {
-            setQrCode(result.getText());
-            console.info(result)
-            //todo: if the QR code is valid, navigate to the tab
-            console.log("Navigating to tab")
-          }
-        }}
+        onResult={onResult}
       />
       <Text>
         {qrCode}
       </Text>
-    </Box>
+      {qrCodeError ? <Text color={"error.500"}>
+        {texts.pleaseScanAValidCode}
+      </Text> : null}
+    </>
   )
 }
 

@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Box, Button, Heading } from 'native-base'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { QRCodeReader } from './QRCodeReader'
 import { texts } from './texts'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { joinTabSchema } from 'app-helpers'
+import { JoinTabForm, joinTabSchema } from 'app-helpers'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, SideBySideInputConfig } from '../../components/ControlledForm'
 
@@ -34,9 +34,6 @@ const Config: SideBySideInputConfig = {
 }
 
 export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) => {
-
-  // we should have another form asking for the name and number of the guest
-  // we can also ask if the person know the person who opened the tab
   const router = useRouter()
   const { tabId, name } = router.query
 
@@ -48,6 +45,13 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
     },
   })
 
+  const handleJoinTab = useCallback((data: JoinTabForm) => {
+    console.log("clicked")
+
+    console.log(data)
+  }, [])
+
+
 
   return (
     <CustomModal
@@ -55,20 +59,19 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
       HeaderComponent={<Heading>{
         tabId && typeof name === "string" ? texts.yourAboutToJoin(name) : texts.scanTheCode
       }</Heading>}
-      ModalBody={!tabId ? <QRCodeReader /> : (
+      ModalBody={!tabId || !name ? <QRCodeReader /> : (
         <ControlledForm
           Config={Config}
           control={control}
           formState={formState}
         />
-      )
-      }
+      )}
       ModalFooter={
         <Button.Group flex={1}>
           <Box flex={1}>
             {tabId && typeof name === "string" ?
               <Button
-                onPress={() => setModalVisibility(false)}
+                onPress={handleSubmit(handleJoinTab)}
                 _text={{ bold: true }}
                 w={"100%"}
               >
