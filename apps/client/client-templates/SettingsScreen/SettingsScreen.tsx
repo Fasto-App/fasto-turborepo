@@ -111,7 +111,7 @@ const SettingsScreen = () => {
 
   console.log(QR_CODE)
 
-  const handlePress = (title: string) => {
+  const handlePress = useCallback((title: string) => {
     switch (title) {
       case "qrcode":
         setIsModalOpen(true)
@@ -119,7 +119,7 @@ const SettingsScreen = () => {
       default:
         break;
     }
-  }
+  }, [])
 
   const shouldBeDisabled = useCallback((title: string) => {
     switch (title) {
