@@ -10,6 +10,9 @@ import { CustomModal } from "../../components/CustomModal/CustomModal";
 import QRCode from "react-qr-code";
 import { clientRoute } from "../../routes";
 import { useRouter } from "next/router";
+import { texts } from "./texts";
+import { PendingInvitationModal } from "./PendingInvitationModal";
+import { QRCodeReaderModal } from "./QRCodeReaderModal";
 
 const ListBorderTile: React.FC = ({ children }) => {
   return (
@@ -35,11 +38,11 @@ type SettingsTileProps = {
   disabled?: boolean;
 }
 
-const settingsTiles: SettingsTileProps[] = [
+const settingsTiles = [
   {
     _id: "qrcode",
     icon: "QRCode",
-    title: "Invite Guest With QR QR Code",
+    title: "Invite Guest With QR Code",
     iconBackgroundColor: "blueGray.500"
   },
   // {
@@ -54,13 +57,16 @@ const settingsTiles: SettingsTileProps[] = [
   //   title: "Invite User",
   //   iconBackgroundColor: "indigo.500"
   // },
-  // {
-  //   _id: "settings",
-  //   icon: "Settings",
-  //   title: "Message Staff",
-  //   iconBackgroundColor: "emerald.500"
-  // }
-]
+  {
+    _id: "invitations",
+    icon: "People",
+    title: "Pending Invitations",
+    iconBackgroundColor: "violet.500"
+  }
+] as const
+
+// extract types from the _id field of the Array above
+type SettingsTileId = typeof settingsTiles[number]["_id"]
 
 console.log(process.env.FRONTEND_URL)
 const FE_URL = new URL(process.env.FRONTEND_URL ?? "http://localhost:3000")
@@ -87,6 +93,7 @@ const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor,
 
 const SettingsScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const [isModalOpen2, setIsModalOpen2] = React.useState(false)
 
   const router = useRouter()
   const { businessId } = router.query
@@ -111,17 +118,20 @@ const SettingsScreen = () => {
 
   console.log(QR_CODE)
 
-  const handlePress = useCallback((title: string) => {
+  const handlePress = useCallback((title: SettingsTileId) => {
     switch (title) {
       case "qrcode":
         setIsModalOpen(true)
+        break;
+      case "invitations":
+        setIsModalOpen2(true)
         break;
       default:
         break;
     }
   }, [])
 
-  const shouldBeDisabled = useCallback((title: string) => {
+  const shouldBeDisabled = useCallback((title: SettingsTileId) => {
     switch (title) {
       case "qrcode":
         return !isAdmin || !tabId
@@ -157,28 +167,13 @@ const SettingsScreen = () => {
           disabled={shouldBeDisabled(tile._id)}
         />
       ))}
-      <CustomModal
-        size={"xl"}
-        onClose={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        HeaderComponent={<Heading textAlign={"center"} fontSize={"2xl"}>
-          Invite Guest With QR Code
-        </Heading>}
-        ModalBody={
-          <Center flex={1}>
-            <QRCode
-              value={QR_CODE || ""}
-              size={300}
-              level={"L"}
-            />
-          </Center>
-        }
-        ModalFooter={<Button
-          colorScheme={"tertiary"}
-          w={"100%"}
-          onPress={() => setIsModalOpen(false)}>
-          Close
-        </Button>}
+      <QRCodeReaderModal QR_CODE={QR_CODE || ""}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
+      <PendingInvitationModal
+        isModalOpen={isModalOpen2}
+        setIsModalOpen={setIsModalOpen2}
       />
     </VStack>
 

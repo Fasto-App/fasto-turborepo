@@ -1,0 +1,3 @@
+mutation RequestJoinTab($input: JoinTabForm!) {
+	requestJoinTab(input: $input)
+}

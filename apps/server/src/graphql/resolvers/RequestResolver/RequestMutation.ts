@@ -113,7 +113,7 @@ const acceptTabRequest = async (
   if (!table) throw ApolloError('BadRequest', "Table Not Found")
   if (table.status !== 'Available') throw ApolloError('BadRequest', "Table Not Available")
 
-  const numGuests = foundRequest.totalGuests - 1;
+  const numGuests = (foundRequest.totalGuests ?? 1) - 1;
   const allUsers = await User.insertMany(new Array(numGuests).fill({ isGuest: true }))
   const usersId = allUsers.map(user => user._id)
 
@@ -172,6 +172,7 @@ const requestJoinTab = async (
 ) => {
   const Tab = TabModel(db)
   const User = UserModel(db)
+  const Request = RequestModel(db)
 
   const foundTab = await Tab.findOne({ _id: input.tab })
   const tabAdmin = await User.findOne({ _id: input.admin })
@@ -183,6 +184,8 @@ const requestJoinTab = async (
     throw ApolloError('BadRequest', "Tab Not Open Yet")
   }
 
+  console.log('foundTab', foundTab)
+
   const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
 
   if (!foundUser) {
@@ -192,14 +195,13 @@ const requestJoinTab = async (
       phoneNumber: input.phoneNumber,
     })
 
-    // create a request and send to the admin
-    const Request = RequestModel(db)
     const newRequest = await Request.create({
       requestor: newUser._id,
       admin: tabAdmin._id,
       tab: foundTab._id,
       status: 'Pending',
     })
+    console.log('newRequest', newRequest)
 
     return await tokenClient({
       _id: newUser._id,
@@ -207,6 +209,22 @@ const requestJoinTab = async (
       business: input.business,
     })
   }
+
+  console.log('foundUser', foundUser)
+
+  const newRequest = await Request.create({
+    requestor: foundUser._id,
+    admin: tabAdmin._id,
+    tab: foundTab._id,
+    status: 'Pending',
+  })
+  //todo: logic for existing user
+
+  return await tokenClient({
+    _id: foundUser._id,
+    request: newRequest._id,
+    business: input.business,
+  })
 
 }
 

@@ -15,8 +15,8 @@ export class Request {
   @prop()
   public tab?: Types.ObjectId;
 
-  @prop({ required: true })
-  public totalGuests!: number;
+  @prop()
+  public totalGuests?: number;
 
   @prop()
   public names?: string[];

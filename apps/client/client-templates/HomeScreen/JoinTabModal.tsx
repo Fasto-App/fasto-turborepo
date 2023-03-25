@@ -8,6 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { JoinTabForm, joinTabSchema } from 'app-helpers'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, SideBySideInputConfig } from '../../components/ControlledForm'
+import { useRequestJoinTabMutation } from '../../gen/generated'
+import { setClientCookies } from '../../cookies/businessCookies'
+import { clientRoute } from '../../routes'
 
 type JoinTabModalProps = {
   isOpen: boolean
@@ -35,7 +38,7 @@ const Config: SideBySideInputConfig = {
 
 export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) => {
   const router = useRouter()
-  const { tabId, name } = router.query
+  const { tabId, name, adminId, businessId } = router.query
 
   const { control, formState, handleSubmit } = useForm({
     resolver: zodResolver(joinTabSchema),
@@ -45,12 +48,41 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
     },
   })
 
-  const handleJoinTab = useCallback((data: JoinTabForm) => {
+  const [requestJoinTab, { loading }] = useRequestJoinTabMutation({
+    onError: (error) => {
+      console.log(error)
+    },
+    onCompleted: (data) => {
+      // get the token back and store in the cookies
+      console.log("Tab Request Completed")
+      if (!data?.requestJoinTab) return
+
+      setClientCookies("token", data?.requestJoinTab)
+      router.push(clientRoute.menu(businessId as string))
+    }
+  })
+
+  const handleJoinTab = useCallback(async (data: JoinTabForm) => {
     console.log("clicked")
-
     console.log(data)
-  }, [])
 
+    if (!tabId || !adminId || typeof adminId !== "string") return
+
+    await requestJoinTab({
+      variables: {
+        input: {
+          tab: tabId as string,
+          name: data.name,
+          phoneNumber: data.phoneNumber,
+          admin: adminId,
+          business: router.query.businessId as string,
+        }
+      }
+    })
+
+    setModalVisibility(false)
+
+  }, [adminId, requestJoinTab, router.query.businessId, setModalVisibility, tabId])
 
 
   return (

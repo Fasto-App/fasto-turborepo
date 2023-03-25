@@ -36,7 +36,11 @@ const TileRequest = ({ name,
   array }: TileProps) => {
   const [selectedValue, setSelectedValue] = useState<string | undefined>(undefined)
 
-  return (<HStack borderRadius={"md"} borderWidth={1} paddingY={1} paddingX={2}>
+  return (<HStack
+    borderRadius={"md"}
+    borderWidth={1}
+    paddingY={1}
+    paddingX={2}>
     <Box flex={1}>
       <Text fontSize={"20"}>{name}</Text>
       <HStack alignItems={"center"} space={1}>
@@ -124,7 +128,7 @@ export const RequestsModal = ({
       size={"xl"}
       isOpen={isOpen}
       onClose={onClose}
-      HeaderComponent={<Heading>Pending Requests</Heading>}
+      HeaderComponent={<Heading>{texts.pendingRequests}</Heading>}
       ModalBody={
         <>
           {isLoading ? <Text>Loading</Text> : <FlatList
@@ -143,11 +147,11 @@ export const RequestsModal = ({
               />}
             keyExtractor={(item, index) => index.toString()}
             ItemSeparatorComponent={() => <Box h={4} />}
-            ListEmptyComponent={() => <Text textAlign="center">No pending requests</Text>}
+            ListEmptyComponent={() => <Text textAlign="center">{texts.noPendingRequests}</Text>}
           />}
         </>
       }
-      ModalFooter={<Button onPress={onClose} flex={1} colorScheme={"gray"}>Close</Button>}
+      ModalFooter={<Button onPress={onClose} flex={1} colorScheme={"gray"}>{texts.close}</Button>}
     />
   )
 }

@@ -31,16 +31,17 @@ const ClientLayout: React.FC = ({ children }) => {
       justifyContent={"space-between"}
       h={"100%"}
       bg={route.pathname === "/client/[businessId]/settings" ? "gray.100" : "white"}>
-      {isHome ? null : <ClientNavBar tableNumber={tab?.getTabByID?.table.tableNumber} />}
-      <Box flex={1}>
-        {children}
-      </Box>
-      {productId || isHome || isCheckout || !token ? null : <ClientTabBar />}
-
       {data?.getTabRequest?.status === "Pending" ?
         <Box position={"absolute"} zIndex={999} right={0} top={0} >
           <HourGlassAnimation />
         </Box> : null}
+      {isHome ? null :
+        <ClientNavBar tableNumber={tab?.getTabByID?.table.tableNumber} />}
+      <Box flex={1}>
+        {children}
+      </Box>
+      {productId || isHome || isCheckout || !token ? null :
+        <ClientTabBar />}
     </Flex>
   );
 };

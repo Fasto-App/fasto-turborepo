@@ -4,4 +4,7 @@ export const texts = {
   requests: "Requests",
   accept: "Accept",
   decline: "Decline",
+  pendingRequests: "Pending Requests",
+  noPendingRequests: "No pending requests",
+  close: "Close",
 }

@@ -25,6 +25,8 @@ const ClientTabBar: React.FC = (props) => {
     lg: "16"
   });
 
+  if (!businessId || typeof businessId !== "string") return null;
+
   return (
     <HStack
       w={"100%"}
@@ -37,7 +39,7 @@ const ClientTabBar: React.FC = (props) => {
         type={"ListStar"}
         selected={isMenu}
         onPress={() => {
-          router.push(clientRoute.menu("123"));
+          router.push(clientRoute.menu(businessId));
         }}
       />
       <NavigationButton
@@ -46,14 +48,14 @@ const ClientTabBar: React.FC = (props) => {
         selected={isCart}
         numNotifications={9}
         onPress={() => {
-          router.push(clientRoute.cart(businessId as string));
+          router.push(clientRoute.cart(businessId));
         }}
       />
       <NavigationButton
         type={"Settings"}
         selected={isSettings}
         onPress={() => {
-          router.push(clientRoute.settings(businessId as string));
+          router.push(clientRoute.settings(businessId));
         }}
       />
     </HStack>
