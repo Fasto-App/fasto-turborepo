@@ -18,7 +18,8 @@ export const RequestTypeDefinition = gql`
     name: String!
     phoneNumber: String!
     tab: ID!
-    userId: ID!
+    admin: ID!
+    business: ID!
   }
 
   input GetTabRequestInput {

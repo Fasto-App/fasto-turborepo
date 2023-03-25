@@ -31,16 +31,18 @@ export const QRCodeReader = () => {
         const url = new URL(result.getText());
         const searchParams = new URLSearchParams(url.search);
 
+        // todo: get the business id from the url and compare to what we have
         const tabId = searchParams.get("tabId");
         const name = searchParams.get("name");
+        const adminId = searchParams.get("adminId");
 
-        if (!tabId || !name) {
+        if (!tabId || !name || !adminId) {
           setQrCodeError(true)
           return
         };
 
         router.push({
-          query: { ...router.query, tabId, name }
+          query: { ...router.query, tabId, name, adminId }
         }, undefined, { shallow: true })
 
       } catch (err) {

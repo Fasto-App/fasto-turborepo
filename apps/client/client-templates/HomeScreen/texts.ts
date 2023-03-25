@@ -5,7 +5,7 @@ export const texts = {
   cancel: 'Cancel',
   requestTab: 'Request a Tab',
   yourAboutToJoin: (name: string) => `You are about to join ${name}'s tab`,
-  joinTabName: (name: string) => `Join ${name}'s tab`,
+  join: "Join",
   scanTheCode: 'Scan the code to join the tab',
   pleaseScanAValidCode: 'Please, scan a valid code',
 }

@@ -103,8 +103,11 @@ const SettingsScreen = () => {
     FE_URL.pathname = clientRoute.home(businessId)
     FE_URL.searchParams.append("tabId", tabId)
     FE_URL.searchParams.append("name", data?.getClientInformation.name)
+    FE_URL.searchParams.append("adminId", data?.getClientInformation._id)
     return FE_URL.toString()
-  }, [businessId, data?.getClientInformation.name, tabId])
+  }, [businessId,
+    data?.getClientInformation._id,
+    data?.getClientInformation.name, tabId])
 
   console.log(QR_CODE)
 

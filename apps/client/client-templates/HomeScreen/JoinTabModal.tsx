@@ -77,7 +77,7 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
                 _text={{ bold: true }}
                 w={"100%"}
               >
-                {texts.joinTabName(name)}
+                {texts.join}
               </Button> : null}
           </Box>
           <Box flex={1}>

@@ -3,11 +3,14 @@ import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { RequestStatus } from 'app-helpers';
 
 export class Request {
-  @prop({ required: true })
-  public business!: Types.ObjectId;
+  @prop()
+  public business?: Types.ObjectId;
+
+  @prop()
+  public admin?: Types.ObjectId;
 
   @prop({ required: true })
-  public admin!: Types.ObjectId;
+  public requestor!: Types.ObjectId;
 
   @prop()
   public tab?: Types.ObjectId;
@@ -20,8 +23,6 @@ export class Request {
 
   @prop({ default: "Pending" })
   public status?: RequestStatus;
-
-
 
   @prop({ default: Date.now() })
   public created_date!: Date;

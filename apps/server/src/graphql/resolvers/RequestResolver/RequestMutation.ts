@@ -99,7 +99,7 @@ const acceptTabRequest = async (
   }
 
   // check if the request belongs to the business
-  if (foundRequest.business.toString() !== business) {
+  if (foundRequest.business?.toString() !== business) {
     throw ApolloError('BadRequest', "Request Not Found")
   }
 
@@ -119,8 +119,8 @@ const acceptTabRequest = async (
 
   const tab = await Tab.create({
     table: table?._id,
-    admin: foundRequest?.admin,
-    users: [foundRequest.admin._id, ...usersId],
+    admin: foundRequest?.requestor,
+    users: [foundRequest.requestor._id, ...usersId],
   });
 
   table.status = 'Occupied';
@@ -149,7 +149,7 @@ const declineTabRequest = async (
   if (!foundRequest) throw ApolloError('BadRequest', "Request Not Found")
 
   // check if the request belongs to the business
-  if (foundRequest.business.toString() !== business) {
+  if (foundRequest.business?.toString() !== business) {
     throw ApolloError('BadRequest', "Request Not Found")
   }
 
@@ -163,18 +163,20 @@ const declineTabRequest = async (
   return await foundRequest.save();
 }
 
+
+// todo: Create a new Request, from a guest to an requestee
 const requestJoinTab = async (
   _parent: any,
-  { input }: { input: JoinTabForm & { tab: string, userId: string } },
-  { db, business }: Context
+  { input }: { input: JoinTabForm & { tab: string, admin: string, business: string } },
+  { db }: Context
 ) => {
   const Tab = TabModel(db)
   const User = UserModel(db)
 
   const foundTab = await Tab.findOne({ _id: input.tab })
-  const inviteeUser = await User.findOne({ _id: input.userId })
+  const tabAdmin = await User.findOne({ _id: input.admin })
 
-  if (!inviteeUser) throw ApolloError('BadRequest', "User Not Found")
+  if (!tabAdmin) throw ApolloError('BadRequest', "User Not Found")
   if (!foundTab) throw ApolloError('BadRequest', "Request Not Found")
 
   if (foundTab.status !== 'Open') {
@@ -190,16 +192,20 @@ const requestJoinTab = async (
       phoneNumber: input.phoneNumber,
     })
 
-    foundTab.users.push(newUser._id)
-    await foundTab.save()
+    // create a request and send to the admin
+    const Request = RequestModel(db)
+    const newRequest = await Request.create({
+      requestor: newUser._id,
+      admin: tabAdmin._id,
+      tab: foundTab._id,
+      status: 'Pending',
+    })
 
-    // return await tokenClient({
-    //   _id: newUser._id,
-    //   request: foundTab._id,
-    //   business: foundTab.business,
-    // })
-
-    return newUser._id
+    return await tokenClient({
+      _id: newUser._id,
+      request: newRequest._id,
+      business: input.business,
+    })
   }
 
 }

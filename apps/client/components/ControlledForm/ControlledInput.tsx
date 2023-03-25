@@ -64,7 +64,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                 return (
                   <TextArea
                     {...field}
-                    h={16}
+                    h={"48"}
                     fontSize="lg"
                     autoCompleteType={undefined}
                     placeholder={placeholder} />)

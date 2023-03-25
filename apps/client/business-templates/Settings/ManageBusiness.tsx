@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { HStack, Box, Button, Text } from "native-base"
+import { HStack, Box, Button, Text, Center } from "native-base"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { ManageBusinessConfig, uploadPicture } from "./Config"
 import { useManageBusinessFormHook } from "./hooks"
@@ -99,17 +99,27 @@ export const ManageBusiness = () => {
   return (
     <HStack flex={1} flexDir={"column"} space={"4"}>
       <DevTool control={control} />
-      <ControlledForm
-        control={control}
-        formState={formState}
-        Config={ManageBusinessConfig}
-      />
-      <ControlledInput
-        {...uploadPicture}
-        handleOnChange={handleFileOnChange}
-        src={imageSrc || data?.getBusinessInformation?.picture}
-        control={control}
-      />
+      <Box
+        flexDirection={{
+          base: "column",
+          "2xl": "row"
+        }}>
+        <Box mr={8} flex={1}>
+          <ControlledForm
+            control={control}
+            formState={formState}
+            Config={ManageBusinessConfig}
+          />
+        </Box>
+        <Box w={"xs"}>
+          <ControlledInput
+            {...uploadPicture}
+            handleOnChange={handleFileOnChange}
+            src={imageSrc || data?.getBusinessInformation?.picture}
+            control={control}
+          />
+        </Box>
+      </Box>
       {/* Data should populate the component, but zustand should override locally */}
       {false ? <WeeklySchedule /> : null}
       {scheduleError ? <Text color={"red.500"}>{scheduleError}</Text> : null}
