@@ -11,7 +11,7 @@ import { clientRoute } from "../../routes";
 const ClientLayout: React.FC = ({ children }) => {
   const token = getClientCookies("token")
   const route = useRouter()
-  const { productId } = route.query
+  const { productId, businessId } = route.query
   const isHome = route.pathname === "/client/[businessId]"
   const isCheckout = route.pathname === "/client/[businessId]/checkout/[checkoutId]"
   const isSettings = route.pathname === "/client/[businessId]/settings"
@@ -21,9 +21,13 @@ const ClientLayout: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (!token && (isSettings || isCart)) {
-      route.push(clientRoute.home(route.query.businessId as string))
+      if (!businessId || typeof businessId !== "string") throw new Error("Business ID is not defined")
+
+      route.push(clientRoute.home(businessId))
     }
-  }, [isCart, isSettings, route, token])
+  }, [isCart, isSettings, businessId, token, route])
+
+  console.log(tab)
 
   return (
     <Flex

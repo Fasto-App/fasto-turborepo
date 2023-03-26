@@ -122,6 +122,7 @@ export const resolvers = {
     product: ProductResolver.getProductByOrderDetails,
   },
   Request: {
-    admin: RequestResolver.getUserFromRequest,
+    admin: RequestResolver.getAdminFromRequest,
+    requestor: RequestResolver.getRequestorFromRequest,
   },
 };

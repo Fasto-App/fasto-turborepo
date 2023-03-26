@@ -3,12 +3,18 @@ import { Context } from "../types"
 
 
 // from the parent Request, get information about the user
-const getUserFromRequest = async (parent: any, _args: any, { db }: Context) => {
+const getAdminFromRequest = async (parent: any, _args: any, { db }: Context) => {
   const User = UserModel(db)
   const foundUser = await User.findOne({ _id: parent.admin })
   return foundUser
 }
 
+const getRequestorFromRequest = async (parent: any, _args: any, { db }: Context) => {
+  const User = UserModel(db)
+  return await User.findOne({ _id: parent.requestor })
+}
+
 export const RequestResolver = {
-  getUserFromRequest
+  getAdminFromRequest,
+  getRequestorFromRequest,
 }

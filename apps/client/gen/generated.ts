@@ -228,6 +228,10 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type GetPendingInvitationsInput = {
+  tab: Scalars['ID'];
+};
+
 export type GetTabRequestInput = {
   filterBy?: InputMaybe<RequestStatus>;
 };
@@ -311,6 +315,7 @@ export type Menu = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  acceptInvitation: Request;
   acceptTabRequest?: Maybe<Request>;
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
@@ -324,7 +329,8 @@ export type Mutation = {
   createTab: Tab;
   createTable: Table;
   createUser: User;
-  declineTabRequest?: Maybe<Request>;
+  declineInvitation: Request;
+  declineTabRequest: Request;
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
   deleteBusinessEmployee: Scalars['ID'];
   deleteCategory?: Maybe<RequestResponseOk>;
@@ -358,6 +364,11 @@ export type Mutation = {
   updateTab: Tab;
   updateUserInformation: User;
   uploadFile: Scalars['String'];
+};
+
+
+export type MutationAcceptInvitationArgs = {
+  input: GetById;
 };
 
 
@@ -423,6 +434,11 @@ export type MutationCreateTableArgs = {
 
 export type MutationCreateUserArgs = {
   input?: InputMaybe<UserInput>;
+};
+
+
+export type MutationDeclineInvitationArgs = {
+  input: GetById;
 };
 
 
@@ -667,6 +683,7 @@ export type Query = {
   getClientInformation: User;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
+  getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getTabByID?: Maybe<Tab>;
@@ -714,6 +731,11 @@ export type QueryGetOrderDetailByIdArgs = {
 };
 
 
+export type QueryGetPendingInvitationsArgs = {
+  input: GetPendingInvitationsInput;
+};
+
+
 export type QueryGetProductByIdArgs = {
   productID: Scalars['ID'];
 };
@@ -741,13 +763,13 @@ export type QueryGetTablesFromSpaceArgs = {
 export type Request = {
   __typename?: 'Request';
   _id: Scalars['ID'];
-  admin: User;
-  business: Scalars['ID'];
-  createdAt: Scalars['String'];
+  admin?: Maybe<User>;
+  business?: Maybe<Scalars['ID']>;
   names?: Maybe<Array<Maybe<Scalars['String']>>>;
+  requestor?: Maybe<User>;
   status: RequestStatus;
   tab?: Maybe<Scalars['ID']>;
-  totalGuests: Scalars['Int'];
+  totalGuests?: Maybe<Scalars['Int']>;
 };
 
 export type RequestResponseOk = {
@@ -1126,19 +1148,33 @@ export type UploadFileMutationVariables = Exact<{
 
 export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
 
+export type AcceptInvitationMutationVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type AcceptInvitationMutation = { __typename?: 'Mutation', acceptInvitation: { __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null } };
+
 export type AcceptTabRequestMutationVariables = Exact<{
   input: AcceptTabRequestInput;
 }>;
 
 
-export type AcceptTabRequestMutation = { __typename?: 'Mutation', acceptTabRequest?: { __typename?: 'Request', _id: string, totalGuests: number, status: RequestStatus } | null };
+export type AcceptTabRequestMutation = { __typename?: 'Mutation', acceptTabRequest?: { __typename?: 'Request', _id: string, totalGuests?: number | null, status: RequestStatus } | null };
+
+export type DeclineInvitationMutationVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type DeclineInvitationMutation = { __typename?: 'Mutation', declineInvitation: { __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null } };
 
 export type DeclineTabRequestMutationVariables = Exact<{
   input: GetById;
 }>;
 
 
-export type DeclineTabRequestMutation = { __typename?: 'Mutation', declineTabRequest?: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests: number } | null };
+export type DeclineTabRequestMutation = { __typename?: 'Mutation', declineTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null } };
 
 export type OpenTabRequestMutationVariables = Exact<{
   input: OpenTabRequestInput;
@@ -1154,17 +1190,24 @@ export type RequestJoinTabMutationVariables = Exact<{
 
 export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
 
+export type GetPendingInvitationsQueryVariables = Exact<{
+  input: GetPendingInvitationsInput;
+}>;
+
+
+export type GetPendingInvitationsQuery = { __typename?: 'Query', getPendingInvitations: Array<{ __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null, requestor?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null }> };
+
 export type GetTabRequestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest: { __typename?: 'Request', _id: string, business: string, names?: Array<string | null> | null, totalGuests: number, status: RequestStatus, tab?: string | null, admin: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } } };
+export type GetTabRequestQuery = { __typename?: 'Query', getTabRequest: { __typename?: 'Request', _id: string, business?: string | null, names?: Array<string | null> | null, totalGuests?: number | null, status: RequestStatus, tab?: string | null, admin?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null } };
 
 export type GetTabRequestsQueryVariables = Exact<{
   input?: InputMaybe<GetTabRequestInput>;
 }>;
 
 
-export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests: number, admin: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
+export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, admin?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null }> };
 
 export type CreateSpaceMutationVariables = Exact<{
   input?: InputMaybe<CreateSpaceInput>;
@@ -2389,6 +2432,44 @@ export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
 export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
 export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
+export const AcceptInvitationDocument = gql`
+    mutation AcceptInvitation($input: GetById!) {
+  acceptInvitation(input: $input) {
+    _id
+    business
+    totalGuests
+    names
+    status
+    tab
+  }
+}
+    `;
+export type AcceptInvitationMutationFn = Apollo.MutationFunction<AcceptInvitationMutation, AcceptInvitationMutationVariables>;
+
+/**
+ * __useAcceptInvitationMutation__
+ *
+ * To run a mutation, you first call `useAcceptInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptInvitationMutation, { data, loading, error }] = useAcceptInvitationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAcceptInvitationMutation(baseOptions?: Apollo.MutationHookOptions<AcceptInvitationMutation, AcceptInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptInvitationMutation, AcceptInvitationMutationVariables>(AcceptInvitationDocument, options);
+      }
+export type AcceptInvitationMutationHookResult = ReturnType<typeof useAcceptInvitationMutation>;
+export type AcceptInvitationMutationResult = Apollo.MutationResult<AcceptInvitationMutation>;
+export type AcceptInvitationMutationOptions = Apollo.BaseMutationOptions<AcceptInvitationMutation, AcceptInvitationMutationVariables>;
 export const AcceptTabRequestDocument = gql`
     mutation AcceptTabRequest($input: AcceptTabRequestInput!) {
   acceptTabRequest(input: $input) {
@@ -2424,6 +2505,44 @@ export function useAcceptTabRequestMutation(baseOptions?: Apollo.MutationHookOpt
 export type AcceptTabRequestMutationHookResult = ReturnType<typeof useAcceptTabRequestMutation>;
 export type AcceptTabRequestMutationResult = Apollo.MutationResult<AcceptTabRequestMutation>;
 export type AcceptTabRequestMutationOptions = Apollo.BaseMutationOptions<AcceptTabRequestMutation, AcceptTabRequestMutationVariables>;
+export const DeclineInvitationDocument = gql`
+    mutation DeclineInvitation($input: GetById!) {
+  declineInvitation(input: $input) {
+    _id
+    business
+    totalGuests
+    names
+    status
+    tab
+  }
+}
+    `;
+export type DeclineInvitationMutationFn = Apollo.MutationFunction<DeclineInvitationMutation, DeclineInvitationMutationVariables>;
+
+/**
+ * __useDeclineInvitationMutation__
+ *
+ * To run a mutation, you first call `useDeclineInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeclineInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [declineInvitationMutation, { data, loading, error }] = useDeclineInvitationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeclineInvitationMutation(baseOptions?: Apollo.MutationHookOptions<DeclineInvitationMutation, DeclineInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeclineInvitationMutation, DeclineInvitationMutationVariables>(DeclineInvitationDocument, options);
+      }
+export type DeclineInvitationMutationHookResult = ReturnType<typeof useDeclineInvitationMutation>;
+export type DeclineInvitationMutationResult = Apollo.MutationResult<DeclineInvitationMutation>;
+export type DeclineInvitationMutationOptions = Apollo.BaseMutationOptions<DeclineInvitationMutation, DeclineInvitationMutationVariables>;
 export const DeclineTabRequestDocument = gql`
     mutation DeclineTabRequest($input: GetById!) {
   declineTabRequest(input: $input) {
@@ -2521,6 +2640,51 @@ export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptio
 export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
 export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
 export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
+export const GetPendingInvitationsDocument = gql`
+    query GetPendingInvitations($input: GetPendingInvitationsInput!) {
+  getPendingInvitations(input: $input) {
+    _id
+    business
+    totalGuests
+    names
+    status
+    tab
+    requestor {
+      _id
+      name
+      phoneNumber
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPendingInvitationsQuery__
+ *
+ * To run a query within a React component, call `useGetPendingInvitationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPendingInvitationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPendingInvitationsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetPendingInvitationsQuery(baseOptions: Apollo.QueryHookOptions<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>(GetPendingInvitationsDocument, options);
+      }
+export function useGetPendingInvitationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>(GetPendingInvitationsDocument, options);
+        }
+export type GetPendingInvitationsQueryHookResult = ReturnType<typeof useGetPendingInvitationsQuery>;
+export type GetPendingInvitationsLazyQueryHookResult = ReturnType<typeof useGetPendingInvitationsLazyQuery>;
+export type GetPendingInvitationsQueryResult = Apollo.QueryResult<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>;
 export const GetTabRequestDocument = gql`
     query GetTabRequest {
   getTabRequest {

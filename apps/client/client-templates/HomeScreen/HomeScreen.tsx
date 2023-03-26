@@ -6,6 +6,7 @@ import { JoinTabModal } from './JoinTabModal'
 import { OpenTabModal } from './OpenTabModal'
 import { useGetBusinessInformation, useGetTabRequest } from '../../hooks'
 import { clientRoute } from '../../routes'
+import { Link } from '../../components/atoms/Link'
 
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
@@ -69,6 +70,10 @@ export const HomeScreen = () => {
         <Button onPress={onPress}
           _text={{ bold: true }}
           colorScheme={"tertiary"}>{texts.viewMenu}</Button>
+
+        {/* <Link href='client/login'>
+          Re-enter existing tab
+        </Link> */}
       </VStack>
       <JoinTabModal
         isOpen={isJoinTabModalOpen}

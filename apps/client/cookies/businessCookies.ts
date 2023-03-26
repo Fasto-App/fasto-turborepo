@@ -43,6 +43,7 @@ export const clearClientCookies = () => {
   removeCookies(clientCookies.token);
   removeCookies(clientCookies.name);
   removeCookies(clientCookies.phoneNumber);
+  removeCookies(clientCookies.tab);
 }
 
 type ClientCookieKey = keyof typeof clientCookies

@@ -76,10 +76,10 @@ export const useGetTabRequest = () => {
 
 export const useGetTabInformation = () => {
   const tab = getClientCookies("tab")
-
+  const clientToken = getClientCookies("token")
   // get the information of the tab and make a request
   const data = useGetTabByIdQuery({
-    skip: !tab,
+    skip: !tab || !clientToken,
     variables: {
       input: {
         _id: tab as string

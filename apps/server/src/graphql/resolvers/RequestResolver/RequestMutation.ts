@@ -188,6 +188,8 @@ const requestJoinTab = async (
 
   const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
 
+  console.log('foundUser', foundUser)
+
   if (!foundUser) {
 
     const newUser = await User.create({
@@ -228,11 +230,73 @@ const requestJoinTab = async (
 
 }
 
+const declineInvitation = async (
+  _parent: any,
+  { input }: {
+    input: {
+      _id: string,
+    }
+  },
+  { db }: Context
+) => {
+  const Request = RequestModel(db)
+  const foundRequest = await Request.findOne({ _id: input._id })
+
+  console.log("request id", input._id)
+
+  if (!foundRequest) throw ApolloError('BadRequest', "Request Not Found")
+
+  // check if the request is pending
+  if (foundRequest.status !== 'Pending') {
+    throw ApolloError('BadRequest', "Request Not Pending")
+  }
+
+  foundRequest.status = 'Rejected';
+
+  return await foundRequest.save();
+}
+
+const acceptInvitation = async (
+  _parent: any,
+  { input }: {
+    input: {
+      _id: string,
+    }
+  },
+  { db }: Context
+) => {
+  const Tab = TabModel(db);
+  const Request = RequestModel(db)
+  const foundrequest = await Request.findOne({ _id: input._id })
+
+  if (!foundrequest) {
+    throw ApolloError('BadRequest', "Request Not Found")
+  }
+
+  const foundTab = await Tab.findOne({ _id: foundrequest.tab })
+
+  if (!foundTab) {
+    throw ApolloError('BadRequest', "Tab Not Found")
+  }
+
+  // change Request status to accepted
+  foundrequest.status = 'Accepted';
+  await foundrequest.save();
+
+  // add user to tab
+  foundTab.users.push(foundrequest.requestor)
+  await foundTab.save();
+
+  return foundrequest;
+}
+
 export const RequestResolverMutation = {
   openTabRequest,
   acceptTabRequest,
   declineTabRequest,
   requestJoinTab,
+  declineInvitation,
+  acceptInvitation,
 }
 
 

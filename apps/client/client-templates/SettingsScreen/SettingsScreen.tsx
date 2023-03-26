@@ -1,16 +1,13 @@
 import React, { FC, useCallback, useMemo } from "react";
-import { Avatar, Badge, Box, Center, ChevronRightIcon, HStack, Text, VStack, Pressable, Heading, Button } from "native-base";
+import { Avatar, Badge, Box, ChevronRightIcon, ChevronDownIcon, HStack, Text, VStack, Pressable } from "native-base";
 import { DICE_BEAR_INITIALS_URL } from "app-helpers";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { NavigationButtonType } from "../../components/types";
 import { ILinearGradientProps } from "native-base/lib/typescript/components/primitives/Box/types";
 import { ResponsiveValue, ColorType } from "native-base/lib/typescript/components/types";
 import { useGetClientInformation, useGetTabInformation } from "../../hooks";
-import { CustomModal } from "../../components/CustomModal/CustomModal";
-import QRCode from "react-qr-code";
 import { clientRoute } from "../../routes";
 import { useRouter } from "next/router";
-import { texts } from "./texts";
 import { PendingInvitationModal } from "./PendingInvitationModal";
 import { QRCodeReaderModal } from "./QRCodeReaderModal";
 
@@ -104,6 +101,8 @@ const SettingsScreen = () => {
   const isAdmin = tabInfo?.getTabByID?.admin === data?.getClientInformation?._id
   const tabId = tabInfo?.getTabByID?._id
 
+  console.log({ tabInfo })
+
   const QR_CODE = useMemo(() => {
     if (typeof businessId !== "string" || !tabId || !data?.getClientInformation.name) return undefined
 
@@ -156,6 +155,10 @@ const SettingsScreen = () => {
         </HStack>
         {/* <ChevronRightIcon color={"secondary.900"} /> */}
       </ListBorderTile>
+      <Box backgroundColor={"white"} borderRadius={"md"}>
+        <UsersAccordion users={tabInfo?.getTabByID?.users} />
+      </Box>
+
       {settingsTiles.map((tile, index) => (
         <SettingsTile
           _id={tile._id}
@@ -181,3 +184,51 @@ const SettingsScreen = () => {
 };
 
 export { SettingsScreen };
+
+const UsersAccordion = (props: { users?: { _id: string; name?: string | null, __typename?: "User" }[] | null }) => {
+  const { users } = props
+  const [collapsed, setCollapsed] = React.useState(true)
+
+  if (!users || users?.length === 0) return null
+
+  return (
+    <Pressable onPress={() => setCollapsed(!collapsed)}>
+      <VStack pb={2}>
+        <ListBorderTile>
+          <HStack space={2}>
+            <Avatar.Group
+              _avatar={{
+                size: "sm",
+              }}
+              max={3}
+            >
+              {users.map((user, i) => (<Avatar key={i} bg="green.500" source={{
+                uri: DICE_BEAR_INITIALS_URL(user.name ?? "?")
+              }}>
+                {user.name}
+              </Avatar>))}
+            </Avatar.Group>
+            <Text fontSize={"16"} alignSelf={"center"}>
+              Guests
+            </Text>
+          </HStack>
+          {collapsed ? <ChevronDownIcon color={"secondary.900"} /> :
+            <ChevronRightIcon color={"secondary.900"} />}
+        </ListBorderTile>
+        {collapsed ? <VStack backgroundColor={"white"} space={2} borderRadius={"md"}>
+          {users?.map((user, i) => <HStack key={i} space={4} >
+            <Avatar size={"sm"} bg="green.500" source={{
+              uri: DICE_BEAR_INITIALS_URL(user.name ?? "?")
+            }}>
+              {user.name}
+            </Avatar>
+            <Text fontSize={"16"} alignSelf={"center"}>
+              {user.name}
+            </Text>
+          </HStack>)}
+
+        </VStack> : null}
+      </VStack>
+    </Pressable>
+  )
+};

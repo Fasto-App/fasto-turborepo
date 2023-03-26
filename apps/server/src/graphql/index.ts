@@ -73,10 +73,9 @@ const server = new ApolloServer({
     const userFromToken = await getUserFromToken(bearerToken?.split(' ')[1]);
     const clientFromToken = await getClientFromToken(clientBearerToken?.split(' ')[1]);
 
-    console.log("🔐 User clientBearerToken: ", clientBearerToken)
-    console.log("clientFromToken", clientFromToken)
-
-    logUserCredentialsValid(!!userFromToken?.business);
+    // console.log("🔐 User clientBearerToken: ")
+    // console.log("clientFromToken", clientFromToken)
+    // logUserCredentialsValid(!!userFromToken?.business);
 
     return {
       db,

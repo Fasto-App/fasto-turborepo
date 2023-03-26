@@ -5,13 +5,20 @@ export const RequestTypeDefinition = gql`
   extend type Query {
     getTabRequest: Request!
     getTabRequests(input: GetTabRequestInput): [Request!]!
+    getPendingInvitations(input: GetPendingInvitationsInput!): [Request!]!
   }
 
   extend type Mutation {
     openTabRequest(input: OpenTabRequestInput!): String
     requestJoinTab(input: JoinTabForm!): String
     acceptTabRequest(input: AcceptTabRequestInput!): Request
-    declineTabRequest(input: GetById!): Request
+    declineTabRequest(input: GetById!): Request!
+    declineInvitation(input: GetById!): Request!
+    acceptInvitation(input: GetById!): Request!
+  }
+
+  input GetPendingInvitationsInput {
+    tab: ID!
   }
 
   input JoinTabForm {
@@ -41,11 +48,11 @@ export const RequestTypeDefinition = gql`
 
   type Request {
     _id: ID!
-    business: ID!
-    admin: User!
-    totalGuests: Int!
+    requestor: User
+    business: ID
+    admin: User
+    totalGuests: Int
     names: [String]
-    createdAt: String!
     status: RequestStatus!
     tab: ID
   }

@@ -4,4 +4,5 @@ export const texts = {
   accept: 'Accept',
   decline: 'Decline',
   pendingInvitations: 'Pending Invitations',
+  noPendingInvitations: 'No pending invitations',
 }
