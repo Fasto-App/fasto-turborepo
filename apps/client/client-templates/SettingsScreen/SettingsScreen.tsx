@@ -187,13 +187,13 @@ export { SettingsScreen };
 
 const UsersAccordion = (props: { users?: { _id: string; name?: string | null, __typename?: "User" }[] | null }) => {
   const { users } = props
-  const [collapsed, setCollapsed] = React.useState(true)
+  const [collapsed, setCollapsed] = React.useState(false)
 
   if (!users || users?.length === 0) return null
 
   return (
     <Pressable onPress={() => setCollapsed(!collapsed)}>
-      <VStack pb={2}>
+      <VStack>
         <ListBorderTile>
           <HStack space={2}>
             <Avatar.Group
@@ -215,8 +215,14 @@ const UsersAccordion = (props: { users?: { _id: string; name?: string | null, __
           {collapsed ? <ChevronDownIcon color={"secondary.900"} /> :
             <ChevronRightIcon color={"secondary.900"} />}
         </ListBorderTile>
-        {collapsed ? <VStack backgroundColor={"white"} space={2} borderRadius={"md"}>
-          {users?.map((user, i) => <HStack key={i} space={4} >
+        {collapsed ? <VStack
+          backgroundColor={"white"}
+          space={2}
+          borderRadius={"md"}
+          px={2}
+          pb={2}
+        >
+          {users.map((user, i) => <HStack key={i} space={4} >
             <Avatar size={"sm"} bg="green.500" source={{
               uri: DICE_BEAR_INITIALS_URL(user.name ?? "?")
             }}>
@@ -226,7 +232,6 @@ const UsersAccordion = (props: { users?: { _id: string; name?: string | null, __
               {user.name}
             </Text>
           </HStack>)}
-
         </VStack> : null}
       </VStack>
     </Pressable>
