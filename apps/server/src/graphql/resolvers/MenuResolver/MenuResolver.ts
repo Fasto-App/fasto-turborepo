@@ -156,6 +156,39 @@ const deleteMenu = async (_parent: any, args: { id: string }, { db, user, busine
     }
 }
 
+const getClientMenu = async (_parent: any, args: {
+    input: {
+        _id?: string,
+        business: string
+    }
+}, { db }: { db: Connection }) => {
+    const Menu = MenuModel(db);
+
+    console.log("input", args.input)
+
+    if (!args.input._id) {
+        console.log("no _id provided")
+
+        const favoriteMenu = await Menu.findOne({
+            business: args.input.business,
+            isFavorite: true
+        })
+
+        if (!favoriteMenu) {
+            throw ApolloError('BadRequest', 'No Favorite Menu Set');
+        }
+
+        return favoriteMenu
+    }
+
+    const menu = await Menu.findOne({ _id: args.input._id });
+    if (!menu) throw ApolloError('BadRequest', 'Menu not found');
+
+    console.log("retuning menu")
+
+    return menu
+}
+
 
 const MenuResolverMutation = {
     createMenu,
@@ -166,6 +199,7 @@ const MenuResolverMutation = {
 const MenuResolverQuery = {
     getAllMenusByBusinessID,
     getMenuByID,
+    getClientMenu
 }
 
 const getSectionsByMenu = async (_parent: any, args: any, { db }: { db: Connection }) => {

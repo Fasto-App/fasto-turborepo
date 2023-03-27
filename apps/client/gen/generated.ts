@@ -224,6 +224,11 @@ export type GetById = {
   _id: Scalars['ID'];
 };
 
+export type GetMenu = {
+  _id?: InputMaybe<Scalars['ID']>;
+  business: Scalars['ID'];
+};
+
 export type GetMenuById = {
   id: Scalars['ID'];
 };
@@ -682,6 +687,7 @@ export type Query = {
   getCategoryByID?: Maybe<Category>;
   getCheckoutByID: Checkout;
   getClientInformation: User;
+  getClientMenu: Menu;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getPendingInvitations: Array<Request>;
@@ -719,6 +725,11 @@ export type QueryGetCategoryByIdArgs = {
 
 export type QueryGetCheckoutByIdArgs = {
   input: GetById;
+};
+
+
+export type QueryGetClientMenuArgs = {
+  input: GetMenu;
 };
 
 
@@ -1084,18 +1095,6 @@ export type DeleteMenuMutationVariables = Exact<{
 
 export type DeleteMenuMutation = { __typename?: 'Mutation', deleteMenu: { __typename?: 'Menu', _id: string, name: string } };
 
-export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> | null }> | null }> };
-
-export type GetMenuByIdQueryVariables = Exact<{
-  input?: InputMaybe<GetMenuById>;
-}>;
-
-
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number }> | null }> | null } };
-
 export type UpdateMenuInfoMutationVariables = Exact<{
   input?: InputMaybe<UpdateMenuInfoInput>;
 }>;
@@ -1109,6 +1108,25 @@ export type UpdateMenuMutationVariables = Exact<{
 
 
 export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string }> | null }> | null } | null };
+
+export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> | null }> | null }> };
+
+export type GetClientMenuQueryVariables = Exact<{
+  input: GetMenu;
+}>;
+
+
+export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null } | null> | null } }> | null } };
+
+export type GetMenuByIdQueryVariables = Exact<{
+  input?: InputMaybe<GetMenuById>;
+}>;
+
+
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number }> | null }> | null } };
 
 export type CreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<CreateOrderInput> | CreateOrderInput;
@@ -2042,103 +2060,6 @@ export function useDeleteMenuMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteMenuMutationHookResult = ReturnType<typeof useDeleteMenuMutation>;
 export type DeleteMenuMutationResult = Apollo.MutationResult<DeleteMenuMutation>;
 export type DeleteMenuMutationOptions = Apollo.BaseMutationOptions<DeleteMenuMutation, DeleteMenuMutationVariables>;
-export const GetAllMenusByBusinessIdDocument = gql`
-    query GetAllMenusByBusinessID {
-  getAllMenusByBusinessID {
-    _id
-    name
-    isFavorite
-    sections {
-      category {
-        _id
-        name
-      }
-      products {
-        _id
-        name
-        description
-        imageUrl
-        price
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetAllMenusByBusinessIdQuery__
- *
- * To run a query within a React component, call `useGetAllMenusByBusinessIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllMenusByBusinessIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllMenusByBusinessIdQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllMenusByBusinessIdQuery(baseOptions?: Apollo.QueryHookOptions<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>(GetAllMenusByBusinessIdDocument, options);
-      }
-export function useGetAllMenusByBusinessIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>(GetAllMenusByBusinessIdDocument, options);
-        }
-export type GetAllMenusByBusinessIdQueryHookResult = ReturnType<typeof useGetAllMenusByBusinessIdQuery>;
-export type GetAllMenusByBusinessIdLazyQueryHookResult = ReturnType<typeof useGetAllMenusByBusinessIdLazyQuery>;
-export type GetAllMenusByBusinessIdQueryResult = Apollo.QueryResult<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>;
-export const GetMenuByIdDocument = gql`
-    query GetMenuByID($input: GetMenuById) {
-  getMenuByID(input: $input) {
-    _id
-    name
-    sections {
-      category {
-        _id
-        name
-      }
-      products {
-        _id
-        name
-        imageUrl
-        price
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetMenuByIdQuery__
- *
- * To run a query within a React component, call `useGetMenuByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMenuByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMenuByIdQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useGetMenuByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
-      }
-export function useGetMenuByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
-        }
-export type GetMenuByIdQueryHookResult = ReturnType<typeof useGetMenuByIdQuery>;
-export type GetMenuByIdLazyQueryHookResult = ReturnType<typeof useGetMenuByIdLazyQuery>;
-export type GetMenuByIdQueryResult = Apollo.QueryResult<GetMenuByIdQuery, GetMenuByIdQueryVariables>;
 export const UpdateMenuInfoDocument = gql`
     mutation UpdateMenuInfo($input: UpdateMenuInfoInput) {
   updateMenuInfo(input: $input) {
@@ -2218,6 +2139,152 @@ export function useUpdateMenuMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateMenuMutationHookResult = ReturnType<typeof useUpdateMenuMutation>;
 export type UpdateMenuMutationResult = Apollo.MutationResult<UpdateMenuMutation>;
 export type UpdateMenuMutationOptions = Apollo.BaseMutationOptions<UpdateMenuMutation, UpdateMenuMutationVariables>;
+export const GetAllMenusByBusinessIdDocument = gql`
+    query GetAllMenusByBusinessID {
+  getAllMenusByBusinessID {
+    _id
+    name
+    isFavorite
+    sections {
+      category {
+        _id
+        name
+      }
+      products {
+        _id
+        name
+        description
+        imageUrl
+        price
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllMenusByBusinessIdQuery__
+ *
+ * To run a query within a React component, call `useGetAllMenusByBusinessIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllMenusByBusinessIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllMenusByBusinessIdQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllMenusByBusinessIdQuery(baseOptions?: Apollo.QueryHookOptions<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>(GetAllMenusByBusinessIdDocument, options);
+      }
+export function useGetAllMenusByBusinessIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>(GetAllMenusByBusinessIdDocument, options);
+        }
+export type GetAllMenusByBusinessIdQueryHookResult = ReturnType<typeof useGetAllMenusByBusinessIdQuery>;
+export type GetAllMenusByBusinessIdLazyQueryHookResult = ReturnType<typeof useGetAllMenusByBusinessIdLazyQuery>;
+export type GetAllMenusByBusinessIdQueryResult = Apollo.QueryResult<GetAllMenusByBusinessIdQuery, GetAllMenusByBusinessIdQueryVariables>;
+export const GetClientMenuDocument = gql`
+    query GetClientMenu($input: GetMenu!) {
+  getClientMenu(input: $input) {
+    _id
+    name
+    sections {
+      category {
+        _id
+        name
+        products {
+          _id
+          name
+          description
+          price
+          imageUrl
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetClientMenuQuery__
+ *
+ * To run a query within a React component, call `useGetClientMenuQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClientMenuQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClientMenuQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetClientMenuQuery(baseOptions: Apollo.QueryHookOptions<GetClientMenuQuery, GetClientMenuQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClientMenuQuery, GetClientMenuQueryVariables>(GetClientMenuDocument, options);
+      }
+export function useGetClientMenuLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientMenuQuery, GetClientMenuQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClientMenuQuery, GetClientMenuQueryVariables>(GetClientMenuDocument, options);
+        }
+export type GetClientMenuQueryHookResult = ReturnType<typeof useGetClientMenuQuery>;
+export type GetClientMenuLazyQueryHookResult = ReturnType<typeof useGetClientMenuLazyQuery>;
+export type GetClientMenuQueryResult = Apollo.QueryResult<GetClientMenuQuery, GetClientMenuQueryVariables>;
+export const GetMenuByIdDocument = gql`
+    query GetMenuByID($input: GetMenuById) {
+  getMenuByID(input: $input) {
+    _id
+    name
+    sections {
+      category {
+        _id
+        name
+      }
+      products {
+        _id
+        name
+        imageUrl
+        price
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMenuByIdQuery__
+ *
+ * To run a query within a React component, call `useGetMenuByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenuByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMenuByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetMenuByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
+      }
+export function useGetMenuByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
+        }
+export type GetMenuByIdQueryHookResult = ReturnType<typeof useGetMenuByIdQuery>;
+export type GetMenuByIdLazyQueryHookResult = ReturnType<typeof useGetMenuByIdLazyQuery>;
+export type GetMenuByIdQueryResult = Apollo.QueryResult<GetMenuByIdQuery, GetMenuByIdQueryVariables>;
 export const CreateMultipleOrderDetailsDocument = gql`
     mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
   createMultipleOrderDetails(input: $input) {

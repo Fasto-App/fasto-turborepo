@@ -6,6 +6,7 @@ export const MenuTypeDefinition = gql`
     getAllMenusByBusinessID: [Menu!]!
     getMenuByID(input: GetMenuById): Menu!
     getAllMenus: [Menu!]!
+    getClientMenu(input: GetMenu!): Menu!
   }
 
   extend type Mutation {
@@ -13,6 +14,11 @@ export const MenuTypeDefinition = gql`
     updateMenu(input: UpdateMenuInput): Menu
     updateMenuInfo(input: UpdateMenuInfoInput): Menu!
     deleteMenu(id: ID!): Menu!
+  }
+
+  input GetMenu {
+    _id: ID
+    business: ID!
   }
 
   input CreateMenuInput {

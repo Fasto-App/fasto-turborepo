@@ -1,0 +1,19 @@
+query GetClientMenu($input: GetMenu!) {
+	getClientMenu(input: $input) {
+		_id
+		name
+		sections {
+			category {
+				_id
+				name
+				products {
+					_id
+					name
+					description
+					price
+					imageUrl
+				}
+			}
+		}
+	}
+}

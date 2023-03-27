@@ -117,11 +117,20 @@ const acceptTabRequest = async (
   const allUsers = await User.insertMany(new Array(numGuests).fill({ isGuest: true }))
   const usersId = allUsers.map(user => user._id)
 
+  //todo: fix this
+  console.log({
+    table: table?._id,
+    admin: foundRequest?.requestor, // found request was coming back empty
+    users: [foundRequest.requestor?._id, ...usersId],
+  })
+
   const tab = await Tab.create({
     table: table?._id,
     admin: foundRequest?.requestor,
     users: [foundRequest.requestor._id, ...usersId],
   });
+
+  if (!tab) throw ApolloError('BadRequest', "Tab Not Created")
 
   table.status = 'Occupied';
   table.tab = tab._id;
