@@ -32,12 +32,14 @@ export const MenuTypeDefinition = gql`
     _id: ID!
     name: String
     sections: [UpdateSectionInput]
+    isFavorite: Boolean
   }
 
   type Menu {
     _id: ID!
     name: String!
     sections: [Section!]
+    isFavorite: Boolean
   } 
 
   input UpdateSectionInput {

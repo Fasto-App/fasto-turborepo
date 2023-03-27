@@ -2,6 +2,7 @@ query GetAllMenusByBusinessID {
 	getAllMenusByBusinessID {
 		_id
 		name
+		isFavorite
 		sections {
 			category {
 				_id

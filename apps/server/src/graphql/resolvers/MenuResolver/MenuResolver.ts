@@ -77,10 +77,26 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
     const menu = await Menu.findById(input._id);
     if (!menu) throw Error('Menu not found')
 
+    if (input.name) {
+        menu.name = input.name
+    }
+
+    console.log("Updating isFavorite")
+
+    if (input.isFavorite) {
+        const currentFavorite = await Menu.findOne({ isFavorite: true })
+
+        if (currentFavorite) {
+            currentFavorite.isFavorite = false
+            await currentFavorite.save()
+        }
+    }
+
+    menu.isFavorite = input.isFavorite
+
     if (input.sections.length === 0) {
-        return await menu.update({
-            sections: []
-        })
+        menu.sections = [];
+        return await menu.save();
     }
 
     const newSections = input.sections.map(async (section) => {
@@ -113,12 +129,9 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
 
     menu.sections = allSectionsResolved
 
-    if (input.name) {
-        menu.name = input.name
-    }
+    console.log({ menu })
 
-    await menu.save()
-    return menu
+    return await menu.save()
 }
 
 

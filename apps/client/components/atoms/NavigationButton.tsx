@@ -31,6 +31,7 @@ import { ImQrcode } from "react-icons/im"
 import { BsBag } from "react-icons/bs"
 import { BsPeopleFill } from "react-icons/bs"
 import { MdOutlinePhoneIphone } from "react-icons/md"
+import { AiFillStar, AiOutlineStar } from "react-icons/ai"
 
 type IconProps = {
   type: NavigationButtonType;
@@ -40,6 +41,10 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "StarFill":
+      return <AiFillStar color={color} size={size} />;
+    case "StarOutline":
+      return <AiOutlineStar color={color} size={size} />;
     case "Phone":
       return <MdOutlinePhoneIphone color={color} size={size} />;
     case "People":

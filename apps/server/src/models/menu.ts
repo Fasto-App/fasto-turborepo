@@ -26,7 +26,10 @@ export class Menu {
     public sections?: Section[];
 
     @prop({ ref: () => Business })
-    public business!: Types.ObjectId;;
+    public business!: Types.ObjectId;
+
+    @prop({ default: false })
+    public isFavorite?: boolean
 
     @prop({ default: Date.now() })
     public created_date!: Date;

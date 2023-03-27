@@ -2,6 +2,7 @@ mutation UpdateMenu($input: UpdateMenuInput) {
 	updateMenu(input: $input) {
 		_id
 		name
+		isFavorite
 		sections {
 			category {
 				_id

@@ -308,6 +308,7 @@ export type ManageBusinessEmployeesInput = {
 export type Menu = {
   __typename?: 'Menu';
   _id: Scalars['ID'];
+  isFavorite?: Maybe<Scalars['Boolean']>;
   name: Scalars['String'];
   sections?: Maybe<Array<Section>>;
 };
@@ -888,6 +889,7 @@ export type UpdateMenuInfoInput = {
 
 export type UpdateMenuInput = {
   _id: Scalars['ID'];
+  isFavorite?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   sections?: InputMaybe<Array<InputMaybe<UpdateSectionInput>>>;
 };
@@ -1085,7 +1087,7 @@ export type DeleteMenuMutation = { __typename?: 'Mutation', deleteMenu: { __type
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> | null }> | null }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> | null }> | null }> };
 
 export type GetMenuByIdQueryVariables = Exact<{
   input?: InputMaybe<GetMenuById>;
@@ -1106,7 +1108,7 @@ export type UpdateMenuMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string }> | null }> | null } | null };
+export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string }> | null }> | null } | null };
 
 export type CreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<CreateOrderInput> | CreateOrderInput;
@@ -2045,6 +2047,7 @@ export const GetAllMenusByBusinessIdDocument = gql`
   getAllMenusByBusinessID {
     _id
     name
+    isFavorite
     sections {
       category {
         _id
@@ -2175,6 +2178,7 @@ export const UpdateMenuDocument = gql`
   updateMenu(input: $input) {
     _id
     name
+    isFavorite
     sections {
       category {
         _id

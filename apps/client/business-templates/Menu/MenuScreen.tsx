@@ -28,9 +28,7 @@ const MenuScreen = () => {
       <VStack flex={1} m={"4"} space={"4"}>
         <MenuList menusData={data?.getAllMenusByBusinessID ?? []} />
         {data?.getAllMenusByBusinessID ? (
-          <MenuProducts
-            menusData={data?.getAllMenusByBusinessID}
-          />
+          <MenuProducts />
         ) : null}
       </VStack>
       <Loading isLoading={loadingQuery} />
