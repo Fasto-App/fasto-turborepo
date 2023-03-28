@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Box, SectionList, HStack, ScrollView, Skeleton, Spacer, VStack, Text, Divider } from "native-base"
 import { MenuItem } from "../../components/molecules/MenuItem";
 import { Tab } from "./Tab";
@@ -11,6 +11,8 @@ export const MenuScreen = () => {
   const { businessId, menuId } = router.query;
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const sectionListRef = useRef<typeof SectionList | null>(null);
+  const scrollViewRef = useRef<typeof ScrollView | null>(null);
+
   // function that fetchs either an specific menu or the default one
   const { data, loading: loadingQuery, error: errorQuery } = useGetClientMenuQuery({
     skip: !businessId,
@@ -37,6 +39,14 @@ export const MenuScreen = () => {
     })
   }, [data?.getClientMenu.sections])
 
+  useEffect(() => {
+    if (selectedCategory && scrollViewRef.current) {
+      const index = formatToSectionData.findIndex((item) => item.title._id === selectedCategory)
+      // @ts-ignore
+      scrollViewRef.current.scrollTo({ x: index * 100, animated: true })
+    }
+  }, [formatToSectionData, selectedCategory])
+
   return (
     errorQuery ? <Text fontSize={"lg"} textAlign={"center"}>Error</Text> :
       loadingQuery ? <LoadingMenu /> :
@@ -48,6 +58,7 @@ export const MenuScreen = () => {
               borderColor={"red.300"}
               backgroundColor={"white"}
               showsHorizontalScrollIndicator={false}
+              ref={scrollViewRef}
             >
               {formatToSectionData.map((item, index) => (
                 <Tab
@@ -77,8 +88,9 @@ export const MenuScreen = () => {
             ref={sectionListRef}
             viewabilityConfig={{
               itemVisiblePercentThreshold: 100, //means if 50% of the item is visible
-              waitForInteraction: true,
-              minimumViewTime: 30000
+              // waitForInteraction: true,
+              // viewAreaCoveragePercentThreshold: 100, //means if 50% of the item is visible
+              minimumViewTime: 1000
             }}
             onViewableItemsChanged={info => {
               if (info.viewableItems[0].section.title._id !== selectedCategory) {

@@ -175,7 +175,9 @@ const getClientMenu = async (_parent: any, args: {
         })
 
         if (!favoriteMenu) {
-            throw ApolloError('BadRequest', 'No Favorite Menu Set');
+            return await Menu.findOne({
+                business: args.input.business
+            })
         }
 
         return favoriteMenu

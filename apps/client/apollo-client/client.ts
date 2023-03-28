@@ -39,7 +39,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const httpLink = createUploadLink({
-  uri: process.env.BACKEND_URL,
+  uri: "http://192.168.15.46:4000/graphql",
 })
 
 
