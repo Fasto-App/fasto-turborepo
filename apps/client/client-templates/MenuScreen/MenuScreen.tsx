@@ -2,34 +2,9 @@ import React, { useMemo, useRef, useState } from "react";
 import { Box, SectionList, HStack, ScrollView, Skeleton, Spacer, VStack, Text, Divider } from "native-base"
 import { MenuItem } from "../../components/molecules/MenuItem";
 import { Tab } from "./Tab";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { clientRoute } from "../../routes";
 import { useGetClientMenuQuery } from "../../gen/generated";
-
-// create array with 10 items
-const items = Array.from(Array(10).keys());
-
-// create an array with 10 names of food categories
-const categories = ["Wines", "Beers", "Cocktails", "Spirits", "Soft Drinks", "Juices", "Water", "Coffee", "Tea", "Desserts"];
-
-const DATA = [
-  {
-    title: 'Main dishes',
-    data: ['Pizza', 'Burger', 'Risotto'],
-  },
-  {
-    title: 'Sides',
-    data: ['French Fries', 'Onion Rings', 'Fried Shrimps'],
-  },
-  {
-    title: 'Drinks',
-    data: ['Water', 'Coke', 'Beer'],
-  },
-  {
-    title: 'Desserts',
-    data: ['Cheese Cake', 'Ice Cream'],
-  },
-];
 
 export const MenuScreen = () => {
   const router = useRouter();
@@ -101,7 +76,9 @@ export const MenuScreen = () => {
           <SectionList
             ref={sectionListRef}
             viewabilityConfig={{
-              itemVisiblePercentThreshold: 100 //means if 50% of the item is visible
+              itemVisiblePercentThreshold: 100, //means if 50% of the item is visible
+              waitForInteraction: true,
+              minimumViewTime: 30000
             }}
             onViewableItemsChanged={info => {
               if (info.viewableItems[0].section.title._id !== selectedCategory) {

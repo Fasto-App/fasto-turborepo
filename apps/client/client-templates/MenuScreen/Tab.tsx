@@ -13,7 +13,7 @@ export const Tab = (props: TabProps) => {
 
   return (
     <Pressable onPress={onPress}>
-      <Box backgroundColor={selected ? "red.200" : "white"} >
+      <Box backgroundColor={selected ? "red.100" : "white"} >
         <Text fontSize={"lg"} paddingX={4} paddingY={1}>{title}</Text>
       </Box>
     </Pressable>
