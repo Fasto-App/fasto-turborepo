@@ -9,6 +9,8 @@ export const PriceTag = ({ price }: { price: string }) => {
       top={1}
       right={1}
       p={0.5}
+      borderColor={"muted.100"}
+      borderWidth={1}
     >
       <Text
         fontSize={"16"}

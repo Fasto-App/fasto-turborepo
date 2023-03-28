@@ -8,6 +8,10 @@ import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons
 import { parseToCurrency } from "app-helpers";
 import { texts } from "./texts";
 import { getClientCookies } from "../../cookies/businessCookies";
+import { useGetProductByIdQuery } from "../../gen/generated";
+import { LoadingPDP } from "./LoadingPDP";
+
+const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
 const AnimatedBox = animated(Box);
 
@@ -17,33 +21,21 @@ const addons = [
   { _id: "1236", name: "Peperoni", price: 350 },
 ]
 
-const item = {
-  restaurant_id: 3456789876543,
-  id: Math.floor(Math.random() * 999999),
-  status: "pending",
-  customer_id: null,
-  uri:
-    "https://assets.bonappetit.com/photos/597f6564e85ce178131a6475/master/w_1200,c_limit/0817-murray-mancini-dried-tomato-pie.jpg",
-  name: "Regular Coffee",
-  description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  quantity: 1,
-  subtotal: 1.5,
-  pricing: [
-    {
-      price: 2.25,
-      currency: "USD",
-      priceString: "$2.25",
-    },
-  ],
-  price: 2.25,
-};
-
 export const ProductDescriptionScreen = () => {
-  const route = useRouter();
   const [quantity, setQuantity] = useState(1);
-  const [text, setText] = useState();
+  const [text, setText] = useState("");
   const token = getClientCookies("token")
+
+  const route = useRouter();
+  const { businessId, productId } = route.query;
+
+  // function to query product by id
+  const { data, loading, error } = useGetProductByIdQuery({
+    skip: !productId,
+    variables: {
+      productId: productId as string,
+    }
+  })
 
   const springProps = useSpring({
     to: { opacity: 1, marginTop: 0 },
@@ -68,55 +60,65 @@ export const ProductDescriptionScreen = () => {
 
   return (
     <AnimatedBox style={springProps} flex={1}>
-      <ScrollView h="100%" px={4}>
-        <Box>
-          <Image
-            w={"100%"}
-            h={"200"}
-            maxW={"425"}
-            alt="logo"
-            source={{ uri: item.uri }}
-            borderRadius={5}
-          />
-          <PriceTag price={"$12.34"} />
-        </Box>
-        <Box pt={"4"}>
-          <Text fontWeight={"semibold"} fontSize={"25"}>{item.name}</Text>
-          <Text pt={"2"}>{item.description}</Text>
-        </Box>
-        <Box pt={"4"}>
-          <IncrementButtons
-            quantity={quantity}
-            onPlusPress={increaseQuantity}
-            onMinusPress={decreaseQuantity}
-            disabled={!token}
-          />
-        </Box>
-        <Divider my={"3"} backgroundColor={"gray.300"} />
-        <VStack space={"1"} mb={"4"}>
-          <Text fontWeight={"semibold"} fontSize={"25"}>{texts.extras}</Text>
-          {addons.map((addon, index) => (
-            <Addon
-              isDisabled={!token}
-              key={index}
-              name={addon.name}
-              price={parseToCurrency(addon.price)}
-              value={addon._id}
-              onChange={() => console.log("Checked")}
+      {loading ? <LoadingPDP /> : error ? (
+        <Text
+          flex={1}
+          p={8}
+          fontSize={"2xl"}
+          textAlign={"center"}>{texts.errorPDP}</Text>
+      ) :
+        <ScrollView h="100%" px={4}>
+          <Box>
+            {/* todo: add aspect ration */}
+            <Image
+              w={"100%"}
+              h={"200"}
+              alt="logo"
+              resizeMode="cover"
+              source={{ uri: data?.getProductByID?.imageUrl ?? PLACEHOLDER_IMAGE }}
+              borderRadius={5}
             />
-          ))}
-        </VStack>
-        <TextArea
-          isDisabled={!token}
-          borderWidth={1}
-          onChange={() => console.log("text")}
-          value={text}
-          placeholder="Add a note to your order"
-          color="primary"
-          autoCompleteType={"none"}
-          fontSize={"16"}
-        />
-      </ScrollView>
+            <PriceTag price={"$12.34"} />
+          </Box>
+          <Box pt={"4"}>
+            <Text fontWeight={"semibold"} fontSize={"25"}>{data?.getProductByID?.name}</Text>
+            <Text pt={"2"}>{data?.getProductByID?.description}</Text>
+          </Box>
+          <Box pt={"4"}>
+            <IncrementButtons
+              quantity={quantity}
+              onPlusPress={increaseQuantity}
+              onMinusPress={decreaseQuantity}
+              disabled={!token}
+            />
+          </Box>
+          <Divider my={"5"} backgroundColor={"gray.300"} />
+          {true ? null : <VStack space={"1"} mb={"4"}>
+            <Text fontWeight={"semibold"} fontSize={"25"}>{texts.extras}</Text>
+            {addons.map((addon, index) => (
+              <Addon
+                isDisabled={!token}
+                key={index}
+                name={addon.name}
+                price={parseToCurrency(addon.price)}
+                value={addon._id}
+                onChange={() => console.log("Checked")}
+              />
+            ))}
+          </VStack>}
+          <TextArea
+            h={"32"}
+            isDisabled={!token}
+            borderWidth={1}
+            onChangeText={(text) => setText(text)}
+            value={text}
+            placeholder="Add a note to your order"
+            color="primary"
+            autoCompleteType={"none"}
+            fontSize={"16"}
+          />
+        </ScrollView>
+      }
       <Box padding={4}>
         <Button
           isDisabled={!token}
@@ -131,3 +133,4 @@ export const ProductDescriptionScreen = () => {
     </AnimatedBox>
   );
 };
+

@@ -5,6 +5,7 @@ import { Tab } from "./Tab";
 import { useRouter } from "next/router";
 import { clientRoute } from "../../routes";
 import { useGetClientMenuQuery } from "../../gen/generated";
+import { texts } from "./texts";
 
 export const MenuScreen = () => {
   const router = useRouter();
@@ -48,7 +49,12 @@ export const MenuScreen = () => {
   }, [formatToSectionData, selectedCategory])
 
   return (
-    errorQuery ? <Text fontSize={"lg"} textAlign={"center"}>Error</Text> :
+    errorQuery ? (
+      <Text
+        fontSize={"lg"}
+        textAlign={"center"}>
+        {texts.errorText}
+      </Text>) :
       loadingQuery ? <LoadingMenu /> :
         <>
           <Box>
@@ -93,7 +99,9 @@ export const MenuScreen = () => {
               minimumViewTime: 1000
             }}
             onViewableItemsChanged={info => {
-              if (info.viewableItems[0].section.title._id !== selectedCategory) {
+              if (
+                info.viewableItems?.[0]?.section?.title._id && selectedCategory &&
+                info.viewableItems[0].section?.title._id !== selectedCategory) {
                 setSelectedCategory(info.viewableItems[0].section.title._id)
               }
             }}
@@ -104,7 +112,10 @@ export const MenuScreen = () => {
                 price={item.price}
                 description={item.description}
                 uri={item.imageUrl}
-                onPress={() => router.push(clientRoute.production_description(item._id))}
+                onPress={() => {
+                  if (typeof businessId !== "string") return
+                  businessId && router.push(clientRoute.production_description(businessId, item._id))
+                }}
               />)}
             renderSectionHeader={({ section: { title } }) => (
               <Box px={4} backgroundColor={"white"}>
@@ -113,9 +124,13 @@ export const MenuScreen = () => {
               </Box>
             )}
             keyExtractor={(item) => item._id}
-            ListEmptyComponent={<Text>No items</Text>}
+            ListEmptyComponent={
+              <Text
+                textAlign={"center"}
+                fontSize={"xl"}>
+                {texts.noItems}
+              </Text>}
           />
-
         </>
   );
 };
