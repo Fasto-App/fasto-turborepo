@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
-import { clientRoute } from "../../routes";
+import { clientRoute, ClientRouteKeys } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { useGetTabRequest } from "../../hooks";
@@ -8,15 +8,20 @@ import { useGetTabRequest } from "../../hooks";
 
 const ClientTabBar: React.FC = (props) => {
   const router = useRouter();
-  const { businessId } = router.query
+  const { businessId, cartId, menuId } = router.query
 
-  const useIsPageSelected = useCallback((pathname: string) =>
-    pathname === router.asPath, [router.asPath])
+  const useIsPageSelected = useCallback((pathname: ClientRouteKeys, slug?: string) => {
+    if (typeof businessId !== "string") return false;
 
-  const isMenu = useIsPageSelected(clientRoute.menu(businessId as string));
-  const isCart = useIsPageSelected(clientRoute.cart(businessId as string));
-  const isCheckout = useIsPageSelected(clientRoute.checkout(businessId as string));
-  const isSettings = useIsPageSelected(clientRoute.settings(businessId as string));
+    const pathName = clientRoute[pathname](businessId, slug as string);
+    return router.asPath === pathName;
+
+  }, [businessId, router.asPath])
+
+  const isMenu = useIsPageSelected("menu", menuId as string);
+  const isCart = useIsPageSelected("cart", cartId as string);
+  const isSettings = useIsPageSelected("settings");
+
 
   const { data: tabData } = useGetTabRequest()
 
@@ -48,7 +53,7 @@ const ClientTabBar: React.FC = (props) => {
         selected={isCart}
         numNotifications={9}
         onPress={() => {
-          router.push(clientRoute.cart(businessId));
+          typeof cartId === "string" && router.push(clientRoute.cart(businessId, cartId));
         }}
       />
       <NavigationButton

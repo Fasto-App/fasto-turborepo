@@ -9,6 +9,8 @@ export const clientRoute = {
   settings: (businessId: string) => `${CLIENT}/${businessId}/settings`,
 } as const
 
+export type ClientRouteKeys = keyof typeof clientRoute;
+
 export const clientPathName = {
   [`/client/[businessId]`]: 'Home',
   [`/client/[businessId]/cart/[cartId]`]: 'Cart',
