@@ -6,13 +6,13 @@ query GetClientMenu($input: GetMenu!) {
 			category {
 				_id
 				name
-				products {
-					_id
-					name
-					description
-					price
-					imageUrl
-				}
+			}
+			products {
+				_id
+				name
+				description
+				price
+				imageUrl
 			}
 		}
 	}

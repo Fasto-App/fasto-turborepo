@@ -1,5 +1,5 @@
-import React, { } from "react";
-import { Box, FlatList, HStack, ScrollView, Skeleton, Spacer, VStack, Text } from "native-base"
+import React, { useMemo, useRef, useState } from "react";
+import { Box, SectionList, HStack, ScrollView, Skeleton, Spacer, VStack, Text, Divider } from "native-base"
 import { MenuItem } from "../../components/molecules/MenuItem";
 import { Tab } from "./Tab";
 import router, { useRouter } from "next/router";
@@ -12,14 +12,30 @@ const items = Array.from(Array(10).keys());
 // create an array with 10 names of food categories
 const categories = ["Wines", "Beers", "Cocktails", "Spirits", "Soft Drinks", "Juices", "Water", "Coffee", "Tea", "Desserts"];
 
-const renderItem = ({ item }: { item: number }) => (
-  <MenuItem
-    onPress={() => router.push(clientRoute.production_description("123"))}
-  />)
+const DATA = [
+  {
+    title: 'Main dishes',
+    data: ['Pizza', 'Burger', 'Risotto'],
+  },
+  {
+    title: 'Sides',
+    data: ['French Fries', 'Onion Rings', 'Fried Shrimps'],
+  },
+  {
+    title: 'Drinks',
+    data: ['Water', 'Coke', 'Beer'],
+  },
+  {
+    title: 'Desserts',
+    data: ['Cheese Cake', 'Ice Cream'],
+  },
+];
 
 export const MenuScreen = () => {
   const router = useRouter();
   const { businessId, menuId } = router.query;
+  const [selectedCategory, setSelectedCategory] = useState<string>()
+  const sectionListRef = useRef<typeof SectionList | null>(null);
   // function that fetchs either an specific menu or the default one
   const { data, loading: loadingQuery, error: errorQuery } = useGetClientMenuQuery({
     skip: !businessId,
@@ -28,42 +44,90 @@ export const MenuScreen = () => {
         business: businessId as string,
         _id: menuId as string,
       }
+    },
+    onCompleted: (data) => {
+      if (data.getClientMenu.sections) {
+        setSelectedCategory(data.getClientMenu.sections[0].category._id)
+      }
     }
   });
+
+  const formatToSectionData = useMemo(() => {
+    if (!data?.getClientMenu.sections) return []
+    return data?.getClientMenu.sections.map((section) => {
+      return {
+        title: section.category,
+        data: section.products
+      }
+    })
+  }, [data?.getClientMenu.sections])
 
   return (
     errorQuery ? <Text fontSize={"lg"} textAlign={"center"}>Error</Text> :
       loadingQuery ? <LoadingMenu /> :
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <ScrollView
-                horizontal
-                borderWidth={1}
-                borderColor={"red.300"}
-                backgroundColor={"white"}
-                showsHorizontalScrollIndicator={false}
-              >
-                {categories.map((item, index) => (
-                  <Tab
-                    key={`$${item}_${index}`}
-                    title={item}
-                    index={index}
-                    onPress={() => console.log("setSelectedIndex")}
-                    last={true}
-                    selected={index === 1}
-                  />
-                ))}
-              </ScrollView>
-              <Spacer size={"2"} />
-            </>
-          }
-          data={items}
-          renderItem={renderItem}
-          stickyHeaderIndices={[0]}
-          keyExtractor={(item) => item.toString()}
-          ListEmptyComponent={<Text>No items</Text>}
-        />
+        <>
+          <Box>
+            <ScrollView
+              horizontal
+              borderWidth={1}
+              borderColor={"red.300"}
+              backgroundColor={"white"}
+              showsHorizontalScrollIndicator={false}
+            >
+              {formatToSectionData.map((item, index) => (
+                <Tab
+                  key={item.title._id}
+                  title={item.title.name}
+                  index={index}
+                  onPress={() => {
+                    setSelectedCategory(item.title._id)
+                    // scroll to the section
+                    console.log("scroll to section", item.title._id)
+                    if (sectionListRef.current) {
+                      // @ts-ignore
+                      sectionListRef.current.scrollToLocation({
+                        sectionIndex: index,
+                        itemIndex: 0,
+                        animated: true,
+                      })
+                    }
+                  }}
+                  selected={selectedCategory === item.title._id}
+                />
+              ))}
+            </ScrollView>
+            <Spacer size={"4"} />
+          </Box>
+          <SectionList
+            ref={sectionListRef}
+            viewabilityConfig={{
+              itemVisiblePercentThreshold: 100 //means if 50% of the item is visible
+            }}
+            onViewableItemsChanged={info => {
+              if (info.viewableItems[0].section.title._id !== selectedCategory) {
+                setSelectedCategory(info.viewableItems[0].section.title._id)
+              }
+            }}
+            sections={formatToSectionData}
+            renderItem={({ item }) => (
+              <MenuItem
+                name={item.name}
+                price={item.price}
+                description={item.description}
+                uri={item.imageUrl}
+                onPress={() => router.push(clientRoute.production_description(item._id))}
+              />)}
+            renderSectionHeader={({ section: { title } }) => (
+              <Box px={4} backgroundColor={"white"}>
+                <Text fontSize={"22"} fontWeight={"500"}>{title.name}</Text>
+                <Divider />
+              </Box>
+            )}
+            keyExtractor={(item) => item._id}
+            ListEmptyComponent={<Text>No items</Text>}
+          />
+
+        </>
   );
 };
 

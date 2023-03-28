@@ -4,18 +4,17 @@ import { Box, Pressable, Text } from "native-base";
 type TabProps = {
   title: string;
   index: number;
-  onPress: (index: number) => void;
-  last: boolean;
   selected: boolean;
+  onPress: () => void;
 };
 
 export const Tab = (props: TabProps) => {
-  const { title, index, onPress, selected } = props;
+  const { title, onPress, selected } = props;
 
   return (
-    <Pressable onPress={() => onPress(index)}>
+    <Pressable onPress={onPress}>
       <Box backgroundColor={selected ? "red.200" : "white"} >
-        <Text paddingX={4} paddingY={1}>{title}</Text>
+        <Text fontSize={"lg"} paddingX={4} paddingY={1}>{title}</Text>
       </Box>
     </Pressable>
   );

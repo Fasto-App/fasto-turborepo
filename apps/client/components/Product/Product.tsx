@@ -34,7 +34,7 @@ const texts = {
 	editItem: 'Edit Item',
 }
 
-const maxLength = 115;
+const maxLength = 100;
 
 const IMAGE_PLACEHOLDER = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJtmXoCwCBNSm0w3SLD1aWW9m6kpRUoCFp2qmT7i5TTKE_KMRIfZUNReWEyJ6QWtx3Iww&usqp=CAU"
 
@@ -50,13 +50,11 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 
 	return (
 		<Box
-			w={"280px"}
-			h={"320px"}
+			w={"72"}
 			rounded="lg"
 			overflow="hidden"
 			borderColor="coolGray.200"
 			backgroundColor="white"
-			justifyContent={"space-between"}
 			shadow="4"
 			mr={"4"}
 			mb={"4"}
@@ -68,21 +66,20 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 					}} alt="image" borderRadius={"sm"} />
 				</AspectRatio>
 			</Box>
-			<Stack p="3" space={2}>
+			<Stack pt={8} p={2} space={2}>
 				<Heading size="md" textAlign={"center"}>
 					{name}
 				</Heading>
-				<Text fontWeight="400" h={"75"} overflow="hidden" textAlign={"center"}>
+				<Text fontWeight="400" textAlign={"center"}>
 					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
 				</Text>
-				<VStack alignItems="center" space={2} justifyContent="space-between">
+				<VStack alignItems="center" space={2} justifyContent="space-between" pb={2}>
 					{singleButton ?? <Price price={price} />}
 					<HStack alignItems="center" space={2} justifyContent="space-between">
 						{singleButton ? <Price price={price} /> : <Button w={"100"}>{texts.addToMenu}</Button>}
 						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{texts.editItem}</Button>
 					</HStack>
 				</VStack>
-
 			</Stack>
 		</Box>)
 };

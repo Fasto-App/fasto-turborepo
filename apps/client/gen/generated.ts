@@ -811,7 +811,7 @@ export type ResetPasswordInput = {
 export type Section = {
   __typename?: 'Section';
   category: Category;
-  products?: Maybe<Array<Product>>;
+  products: Array<Product>;
 };
 
 export type SectionInput = {
@@ -1086,7 +1086,7 @@ export type CreateMenuMutationVariables = Exact<{
 }>;
 
 
-export type CreateMenuMutation = { __typename?: 'Mutation', createMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', name: string }, products?: Array<{ __typename?: 'Product', _id: string }> | null }> | null } };
+export type CreateMenuMutation = { __typename?: 'Mutation', createMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', name: string }, products: Array<{ __typename?: 'Product', _id: string }> }> | null } };
 
 export type DeleteMenuMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -1107,26 +1107,26 @@ export type UpdateMenuMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string }> | null }> | null } | null };
+export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string }> }> | null } | null };
 
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> | null }> | null }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> }> | null }> };
 
 export type GetClientMenuQueryVariables = Exact<{
   input: GetMenu;
 }>;
 
 
-export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string, products?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null } | null> | null } }> | null } };
+export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null }> }> | null } };
 
 export type GetMenuByIdQueryVariables = Exact<{
   input?: InputMaybe<GetMenuById>;
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products?: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number }> | null }> | null } };
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number }> }> | null } };
 
 export type CreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<CreateOrderInput> | CreateOrderInput;
@@ -2197,13 +2197,13 @@ export const GetClientMenuDocument = gql`
       category {
         _id
         name
-        products {
-          _id
-          name
-          description
-          price
-          imageUrl
-        }
+      }
+      products {
+        _id
+        name
+        description
+        price
+        imageUrl
       }
     }
   }
