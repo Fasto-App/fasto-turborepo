@@ -48,7 +48,7 @@ export const RequestTypeDefinition = gql`
 
   type Request {
     _id: ID!
-    requestor: User
+    requestor: User!
     business: ID
     admin: User
     totalGuests: Int

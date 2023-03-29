@@ -27,8 +27,6 @@ const ClientLayout: React.FC = ({ children }) => {
     }
   }, [isCart, isSettings, businessId, token, route])
 
-  console.log(tab)
-
   return (
     <Flex
       flexDirection="column"

@@ -88,14 +88,13 @@ export const MenuScreen = () => {
                 />
               ))}
             </ScrollView>
-            <Spacer size={"4"} />
           </Box>
           <SectionList
             ref={sectionListRef}
             viewabilityConfig={{
               itemVisiblePercentThreshold: 50, //means if 50% of the item is visible
-              // waitForInteraction: true,
-              // viewAreaCoveragePercentThreshold: 100, //means if 50% of the item is visible
+              waitForInteraction: false,
+              // viewAreaCoveragePercentThreshold: 50, //means if 50% of the item is visible
               minimumViewTime: 500
             }}
             onViewableItemsChanged={info => {
@@ -118,7 +117,7 @@ export const MenuScreen = () => {
                 }}
               />)}
             renderSectionHeader={({ section: { title } }) => (
-              <Box px={4} backgroundColor={"white"}>
+              <Box px={4} pt={4} backgroundColor={"white"}>
                 <Text fontSize={"22"} fontWeight={"500"}>{title.name}</Text>
                 <Divider />
               </Box>

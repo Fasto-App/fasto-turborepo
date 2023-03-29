@@ -1,7 +1,7 @@
 query GetTabRequests($input: GetTabRequestInput) {
 	getTabRequests(input: $input) {
 		_id
-		admin {
+		requestor {
 			_id
 			name
 			phoneNumber

@@ -1,4 +1,4 @@
-import { Image, Box, Button, Center, Heading, VStack } from 'native-base'
+import { Image, Box, Button, Center, Heading, VStack, Text } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { texts } from './texts'
@@ -23,7 +23,7 @@ export const HomeScreen = () => {
     route.push(clientRoute.menu(businessId as string))
   }, [businessId, route])
 
-  const { data: tabData } = useGetTabRequest()
+  const { data: tabData, loading, error } = useGetTabRequest()
   const { data: businessInfo } = useGetBusinessInformation()
 
   const image = businessInfo?.getBusinessById?.picture
@@ -35,7 +35,7 @@ export const HomeScreen = () => {
     if (route.query.tabId) {
       setIsJoinTabModalOpen(true)
     }
-  }, [route.query.tabId, tabData])
+  }, [route.query.tabId])
 
 
   return (

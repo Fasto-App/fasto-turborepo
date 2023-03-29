@@ -24,7 +24,7 @@ export class User {
     @prop()
     public picture?: string;
 
-    @prop({ default: false })
+    @prop({ default: true })
     public isGuest!: boolean;
 
     @prop({ default: Date.now() })

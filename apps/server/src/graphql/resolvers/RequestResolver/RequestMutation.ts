@@ -32,7 +32,7 @@ const openTabRequest = async (
     // creating a new request
     return await Request.create({
       business,
-      admin: client,
+      requestor: client,
       totalGuests,
       names: input.names,
     })
@@ -56,7 +56,7 @@ const openTabRequest = async (
 
   // the status should be either pending or accepted
   const foundRequest = await Request.findOne({
-    admin: foundUserByPhone._id,
+    requestor: foundUserByPhone._id,
     status: { $in: ['Pending', 'Accepted'] as RequestStatus[] }
   })
 

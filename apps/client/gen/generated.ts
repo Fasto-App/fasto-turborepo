@@ -778,7 +778,7 @@ export type Request = {
   admin?: Maybe<User>;
   business?: Maybe<Scalars['ID']>;
   names?: Maybe<Array<Maybe<Scalars['String']>>>;
-  requestor?: Maybe<User>;
+  requestor: User;
   status: RequestStatus;
   tab?: Maybe<Scalars['ID']>;
   totalGuests?: Maybe<Scalars['Int']>;
@@ -1222,7 +1222,7 @@ export type GetPendingInvitationsQueryVariables = Exact<{
 }>;
 
 
-export type GetPendingInvitationsQuery = { __typename?: 'Query', getPendingInvitations: Array<{ __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null, requestor?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null }> };
+export type GetPendingInvitationsQuery = { __typename?: 'Query', getPendingInvitations: Array<{ __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
 
 export type GetTabRequestQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1234,7 +1234,7 @@ export type GetTabRequestsQueryVariables = Exact<{
 }>;
 
 
-export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, admin?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null }> };
+export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
 
 export type CreateSpaceMutationVariables = Exact<{
   input?: InputMaybe<CreateSpaceInput>;
@@ -2850,7 +2850,7 @@ export const GetTabRequestsDocument = gql`
     query GetTabRequests($input: GetTabRequestInput) {
   getTabRequests(input: $input) {
     _id
-    admin {
+    requestor {
       _id
       name
       phoneNumber

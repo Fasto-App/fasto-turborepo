@@ -88,6 +88,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
       name: validInput.name,
       email: validInput.email.toLowerCase(),
       password: hashedPassword,
+      isGuest: false,
     })
 
     const savedUser = await user.save()
@@ -305,6 +306,7 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
       name,
       email,
       password: hashedPassword,
+      isGuest: false,
       businesses: {
         [businessFound._id]: {
           privilege,
