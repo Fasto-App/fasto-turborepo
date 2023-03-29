@@ -1,6 +1,7 @@
 import { getFixedPointPercentage, typedKeys } from 'app-helpers';
 import { create, StateCreator } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { SelectData } from '../../components/FDSSelect';
 
 const percentagesAndValues = {
   "0%": 0,
@@ -14,6 +15,10 @@ const percentagesAndValues = {
 export type Percentages = keyof typeof percentagesAndValues
 export const percentages = typedKeys(percentagesAndValues)
 
+export const percentageSelectData: SelectData[] = percentages.map(percentage => ({
+  _id: percentage,
+  value: percentage,
+}))
 // have an object with keys that point to custom subtotal values
 // at first these values are 0 or null, but at users onChange event
 // update the values in the object

@@ -1,9 +1,9 @@
 import { formatAsPercentage, getPercentageOfValue } from 'app-helpers'
 import { Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
 import React, { useCallback, useMemo } from 'react'
-import { FDSSelect } from '../../components/FDSSelect'
+import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { parseToCurrency } from 'app-helpers'
-import { Percentages, percentages, useCheckoutStore } from './checkoutStore'
+import { Percentages, percentages, percentageSelectData, useCheckoutStore } from './checkoutStore'
 import { texts } from './texts'
 import { Checkout } from './types'
 import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
@@ -31,7 +31,10 @@ export const PayInFull = ({
     },
   })
 
-  const allUsersFromTab = useMemo(() => data?.getTabByID?.users?.map(user => user._id) ?? [], [data?.getTabByID?.users])
+  const allUsersFromTab = useMemo(() => data?.getTabByID?.users?.map(user => ({
+    _id: user._id,
+    value: user._id
+  })) ?? [], [data?.getTabByID?.users])
 
 
   const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
@@ -128,7 +131,7 @@ export const PayInFull = ({
           <Text fontSize={"2xl"}>{texts.discount}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
-              array={percentages}
+              array={percentageSelectData}
               selectedValue={formatedDiscount}
               setSelectedValue={(string) => setSelectedDiscount(string as Percentages)}
             />
@@ -146,7 +149,7 @@ export const PayInFull = ({
           <Text fontSize={"2xl"}>{texts.tip}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
-              array={percentages}
+              array={percentageSelectData}
               selectedValue={formatedTip}
               setSelectedValue={(string) => setSelectedTip(string as Percentages)}
             />

@@ -7,4 +7,5 @@ export const texts = {
   pendingRequests: "Pending Requests",
   noPendingRequests: "No pending requests",
   close: "Close",
+  selectTable: "Select table",
 }

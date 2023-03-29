@@ -1,5 +1,6 @@
 import { HStack, Divider, Text } from 'native-base'
 import React from 'react'
+import { percentageSelectData } from '../../business-templates/Checkout/checkoutStore'
 import { FDSSelect } from '../../components/FDSSelect'
 
 export const PayTable = () => {
@@ -18,8 +19,8 @@ export const PayTable = () => {
 
         <HStack space={2}>
           <FDSSelect
-            array={["0", "1", "2"]}
-            selectedValue={"2"}
+            array={percentageSelectData}
+            selectedValue={undefined}
             setSelectedValue={() => { console.log("setSelectedValue") }}
           />
           <Text fontSize={"lg"}>{"$19.00"}</Text>

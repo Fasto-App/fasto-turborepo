@@ -53,7 +53,8 @@ const ClientTabBar: React.FC = (props) => {
         selected={isCart}
         numNotifications={9}
         onPress={() => {
-          typeof cartId === "string" && router.push(clientRoute.cart(businessId, cartId));
+          // todo: get the cart ID from the server
+          router.push(clientRoute.cart(businessId, "cartId"));
         }}
       />
       <NavigationButton

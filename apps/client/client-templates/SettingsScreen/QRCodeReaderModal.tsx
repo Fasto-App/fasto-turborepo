@@ -17,7 +17,7 @@ export const QRCodeReaderModal = ({
 }: QRCodeReaderModalProps) => {
   return (
     <CustomModal
-      size={"xl"}
+      size={"full"}
       onClose={() => setIsModalOpen(false)}
       isOpen={isModalOpen}
       HeaderComponent={<Heading textAlign={"center"} fontSize={"2xl"}>
@@ -27,7 +27,7 @@ export const QRCodeReaderModal = ({
         <Center flex={1}>
           <QRCode
             value={QR_CODE}
-            size={300}
+            size={320}
             level={"L"}
           />
         </Center>

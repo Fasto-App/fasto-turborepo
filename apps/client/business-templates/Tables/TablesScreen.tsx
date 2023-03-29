@@ -67,9 +67,14 @@ export const TablesScreen = () => {
   }, [data?.getSpacesFromBusiness, selectedSpaceId])
 
   const availableTables = useMemo(() => {
-    return allTablesFromSpace?.
-      filter(table => table.status === TableStatus.Available).
-      map(table => table._id)
+    return allTablesFromSpace?.reduce((acc, table) => {
+
+      if (table.status === TableStatus.Available) {
+        acc.push({ _id: table._id, value: table.tableNumber })
+      }
+
+      return acc
+    }, [] as { _id: string, value: string }[])
   }, [allTablesFromSpace])
 
   const [createTable] = useCreateTableMutation({

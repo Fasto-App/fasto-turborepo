@@ -2,7 +2,7 @@ import { Box, Button, FlatList, Heading, HStack, Text } from 'native-base'
 import React, { useCallback, useState } from 'react'
 import { Icon } from '../../components/atoms/NavigationButton'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
-import { FDSSelect } from '../../components/FDSSelect'
+import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { GetSpacesFromBusinessDocument, GetTabRequestsDocument, RequestStatus, useAcceptTabRequestMutation, useDeclineTabRequestMutation } from '../../gen/generated'
 import { texts } from './texts'
 
@@ -15,7 +15,7 @@ type TileProps = {
   onPress2: (_id: string) => void,
   isLoading?: boolean;
   status: RequestStatus;
-  array: string[];
+  array: SelectData[];
 }
 
 const refetchQueries = [{
@@ -52,6 +52,7 @@ const TileRequest = ({ name,
         <Text fontSize={"20"}>{people}</Text>
         <FDSSelect
           array={array}
+          placeholder={texts.selectTable}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
         />
@@ -85,7 +86,7 @@ const TileRequest = ({ name,
 type RequestsModalProps = {
   isOpen: boolean,
   onClose: () => void,
-  availableTables?: string[];
+  availableTables?: SelectData[];
   requests?: any[];
   isLoading?: boolean;
 }
