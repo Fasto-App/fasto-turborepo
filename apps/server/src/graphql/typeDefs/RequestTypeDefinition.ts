@@ -17,6 +17,10 @@ export const RequestTypeDefinition = gql`
     acceptInvitation(input: GetById!): Request!
   }
 
+  extend type Subscription {
+    onTabRequest: Request!
+  }
+
   input GetPendingInvitationsInput {
     tab: ID!
   }
@@ -45,7 +49,7 @@ export const RequestTypeDefinition = gql`
     request: ID!
     table: String
   }
-
+ 
   type Request {
     _id: ID!
     requestor: User!

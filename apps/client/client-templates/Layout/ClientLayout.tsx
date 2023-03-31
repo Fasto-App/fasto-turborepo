@@ -21,7 +21,7 @@ const ClientLayout: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (!token && (isSettings || isCart)) {
-      if (!businessId || typeof businessId !== "string") throw new Error("Business ID is not defined")
+      if (!businessId || typeof businessId !== "string") return
 
       route.push(clientRoute.home(businessId))
     }

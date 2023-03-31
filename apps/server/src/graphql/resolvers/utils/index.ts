@@ -58,7 +58,7 @@ export const getClientFromToken = async (token?: string): Promise<ClientContext 
   if (!tokenSecret) throw new Error('Token secret not found');
 
   if (!token) {
-    console.log("🟡 No Tab");
+    // console.log("🟡 No Tab");
     return null
   }
 

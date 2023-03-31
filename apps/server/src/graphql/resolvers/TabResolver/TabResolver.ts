@@ -169,6 +169,17 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
     // if there are no open orders, we can close the tab
     if (foundOrderDetails.length === 0) {
         foundTab.status = TabStatus.Closed;
+        // upadate the table status to available
+        if (foundTab.table) {
+            const Table = TableModel(db);
+
+            const foundTable = await Table.findById(foundTab.table);
+            if (foundTable) {
+                foundTable.status = TableStatus.Available;
+                await foundTable.save();
+            }
+        }
+
         await foundTab.save();
         return foundTab;
     }
@@ -187,7 +198,7 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
     foundTab.checkout = checkout._id;
     foundTab.status = TabStatus.Pendent;
 
-    return await foundTab.save();;
+    return await foundTab.save();
 }
 
 

@@ -12,6 +12,10 @@ export const typeDefinitions = gql`
     uploadFile(file: Upload!): String!
   }
 
+  type Subscription {
+    _empty: String
+  }
+
   type RequestResponseOK {
     ok: Boolean
   }

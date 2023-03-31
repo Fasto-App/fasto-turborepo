@@ -1,6 +1,8 @@
 import { JoinTabForm, NewTabForm, newTabSchema, RequestStatus } from "app-helpers";
+import { withFilter } from "graphql-subscriptions";
 import { BusinessModel, UserModel, RequestModel, TabModel, TableModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { NUMBER_INCREMENTED, pubsub, TAB_REQUEST } from "../pubSub";
 import { Context } from "../types"
 import { tokenClient } from "../utils";
 
@@ -47,6 +49,8 @@ const openTabRequest = async (
 
     const newRequest = await createNewRequest(newClient._id)
 
+    pubsub.publish(TAB_REQUEST, { onTabRequest: newRequest })
+
     return await tokenClient({
       _id: newClient._id,
       request: newRequest._id,
@@ -69,6 +73,8 @@ const openTabRequest = async (
   }
 
   const newRequest = await createNewRequest(foundUserByPhone._id)
+
+  pubsub.publish(TAB_REQUEST, { onTabRequest: newRequest })
 
   return await tokenClient({
     _id: foundUserByPhone._id,
@@ -139,7 +145,11 @@ const acceptTabRequest = async (
   foundRequest.status = 'Accepted';
   foundRequest.tab = tab._id;
 
-  return await foundRequest.save();
+  await foundRequest.save();
+
+  pubsub.publish(TAB_REQUEST, { onTabRequest: foundRequest })
+
+  return foundRequest
 }
 
 const declineTabRequest = async (
@@ -173,7 +183,7 @@ const declineTabRequest = async (
 }
 
 
-// todo: Create a new Request, from a guest to an requestee
+// todo: Create a new Request, from a guest to a requestee
 const requestJoinTab = async (
   _parent: any,
   { input }: { input: JoinTabForm & { tab: string, admin: string, business: string } },
@@ -306,6 +316,28 @@ export const RequestResolverMutation = {
   requestJoinTab,
   declineInvitation,
   acceptInvitation,
+}
+
+export const RequestSubscription = {
+  onTabRequest: {
+    subscribe: withFilter(
+      () => pubsub.asyncIterator(TAB_REQUEST),
+      (payload, _, { client, business }: Context) => {
+
+        if (client) {
+
+          return payload.onTabRequest.requestor?.toString() === client._id ||
+            payload.onTabRequest.admin?.toString() === client._id
+        }
+
+        if (business) {
+          return payload.onTabRequest.business?.toString() === business
+        }
+
+        return false
+      }
+    )
+  },
 }
 
 

@@ -6,8 +6,7 @@ import { Badge, Button, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { OrderDetail, Table, useGetAllMenusByBusinessIdQuery, useGetTabByIdQuery, useGetTableByIdQuery, User } from "../../gen/generated";
-import { useTabMutationHook } from "../../graphQL/TabQL";
+import { GetSpacesFromBusinessDocument, useCreateTabMutation, useGetAllMenusByBusinessIdQuery, useGetTableByIdQuery } from "../../gen/generated";
 import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
@@ -57,7 +56,6 @@ const texts = {
 
 export const TableModal = () => {
   const router = useRouter()
-  const { createTab } = useTabMutationHook();
 
   const tableId = useTableScreenStore(state => state.tableChoosen)
   const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
@@ -78,6 +76,19 @@ export const TableModal = () => {
   const isReservedTable = tableChoosen?.status === "Reserved"
 
   const { data: menusData, loading: loadingGetMenus } = useGetAllMenusByBusinessIdQuery();
+
+  const [createTab] = useCreateTabMutation({
+    refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
+    onCompleted: (data) => {
+      const menuId = menusData?.getAllMenusByBusinessID[0]._id
+      if (!menuId) throw ("Menu id is undefined")
+
+      router.push(businessRoute.add_to_order(`${data?.createTab._id}`, menuId))
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
 
   const {
     control,
@@ -100,26 +111,25 @@ export const TableModal = () => {
 
     switch (tableChoosen?.status) {
       case "Available":
-        try {
 
-          if (!tableChoosen?._id) throw ("Table id is undefined")
+        if (!tableChoosen?._id) throw ("Table id is undefined")
 
-          const result = await createTab({
-            variables: {
-              input: {
-                table: tableChoosen?._id,
-                admin: data.admin,
-                totalUsers: data.totalUsers
-              }
+        createTab({
+          variables: {
+            input: {
+              table: tableChoosen?._id,
+              admin: data.admin,
+              totalUsers: data.totalUsers
             }
-          })
+          }
+        })
 
-          router.push(businessRoute.add_to_order(`${result.data?.createTab._id}`, menuId))
-        } catch { }
         break;
 
       case "Occupied":
         console.log(tableChoosen)
+
+        if (!tableChoosen?.tab?._id) throw ("Tab id is undefined")
         router.push(businessRoute.add_to_order(`${tableChoosen?.tab?._id}`, menuId))
         break;
     }
