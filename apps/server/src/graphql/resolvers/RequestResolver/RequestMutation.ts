@@ -338,6 +338,9 @@ export const RequestSubscription = {
       }
     )
   },
+  numberIncremented: {
+    subscribe: () => pubsub.asyncIterator(['NUMBER_INCREMENTED']),
+  },
 }
 
 

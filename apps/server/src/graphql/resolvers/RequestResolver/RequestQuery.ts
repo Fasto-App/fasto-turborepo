@@ -43,8 +43,6 @@ const getTabRequests = async (
     ...(input?.filterBy ? { status: input.filterBy } : {})
   })
 
-  console.log('foundRequests', foundRequests)
-
   return foundRequests
 }
 
@@ -58,8 +56,6 @@ const getPendingInvitations = async (
   // no business id will be needed
 
   // todo: add the tab to the token
-
-  console.log('client', client)
   if (!client) throw ApolloError("Unauthorized", "You're no one", "client");
 
   const Request = RequestModel(db)
@@ -68,8 +64,6 @@ const getPendingInvitations = async (
     admin: client?._id,
     status: "Pending"
   })
-
-  console.log('foundRequests', foundRequests)
 
   return foundRequests
 }

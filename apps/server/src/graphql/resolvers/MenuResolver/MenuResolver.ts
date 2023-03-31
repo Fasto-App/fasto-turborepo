@@ -162,12 +162,11 @@ const getClientMenu = async (_parent: any, args: {
         business: string
     }
 }, { db }: { db: Connection }) => {
+    console.log("getClientMenu")
+
     const Menu = MenuModel(db);
 
-    console.log("input", args.input)
-
     if (!args.input._id) {
-        console.log("no _id provided")
 
         const favoriteMenu = await Menu.findOne({
             business: args.input.business,

@@ -19,6 +19,7 @@ export const RequestTypeDefinition = gql`
 
   extend type Subscription {
     onTabRequest: Request!
+    numberIncremented: Int!,
   }
 
   input GetPendingInvitationsInput {

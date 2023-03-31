@@ -14,6 +14,7 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { getClientFromToken, getUserFromToken } from "./graphql/resolvers/utils";
 import { ApolloError } from "./graphql/ApolloErrorExtended/ApolloErrorExtended";
 import { dbConnection } from "./dbConnection";
+import { pubsub } from "./graphql/resolvers/pubSub";
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
@@ -75,7 +76,7 @@ const serverCleanup = useServer({
       clientToken: clientBearerToken
     });
   },
-
+  onError: (err) => console.log("Error: ", err),
   onDisconnect: () => console.log("Disconnected"),
   onConnect: async () => {
     console.log("Connected");
@@ -139,3 +140,13 @@ async function proccessContext(
     client: clientFromToken
   };
 }
+
+let currentNumber = 0;
+function incrementNumber() {
+  currentNumber++;
+  pubsub.publish('NUMBER_INCREMENTED', { numberIncremented: currentNumber });
+  setTimeout(incrementNumber, 1000);
+}
+
+// Start incrementing
+incrementNumber();
