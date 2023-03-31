@@ -1,0 +1,12 @@
+subscription OnTabRequest {
+	onTabRequest {
+		_id
+		requestor {
+			_id
+			name
+			phoneNumber
+		}
+		status
+		totalGuests
+	}
+}

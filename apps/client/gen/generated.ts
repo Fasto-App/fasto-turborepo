@@ -833,6 +833,12 @@ export enum SplitType {
   Equally = 'Equally'
 }
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  _empty?: Maybe<Scalars['String']>;
+  onTabRequest: Request;
+};
+
 export type Tab = {
   __typename?: 'Tab';
   _id: Scalars['ID'];
@@ -1235,6 +1241,11 @@ export type GetTabRequestsQueryVariables = Exact<{
 
 
 export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
+
+export type OnTabRequestSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OnTabRequestSubscription = { __typename?: 'Subscription', onTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } } };
 
 export type CreateSpaceMutationVariables = Exact<{
   input?: InputMaybe<CreateSpaceInput>;
@@ -2888,6 +2899,42 @@ export function useGetTabRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetTabRequestsQueryHookResult = ReturnType<typeof useGetTabRequestsQuery>;
 export type GetTabRequestsLazyQueryHookResult = ReturnType<typeof useGetTabRequestsLazyQuery>;
 export type GetTabRequestsQueryResult = Apollo.QueryResult<GetTabRequestsQuery, GetTabRequestsQueryVariables>;
+export const OnTabRequestDocument = gql`
+    subscription OnTabRequest {
+  onTabRequest {
+    _id
+    requestor {
+      _id
+      name
+      phoneNumber
+    }
+    status
+    totalGuests
+  }
+}
+    `;
+
+/**
+ * __useOnTabRequestSubscription__
+ *
+ * To run a query within a React component, call `useOnTabRequestSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOnTabRequestSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOnTabRequestSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOnTabRequestSubscription(baseOptions?: Apollo.SubscriptionHookOptions<OnTabRequestSubscription, OnTabRequestSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<OnTabRequestSubscription, OnTabRequestSubscriptionVariables>(OnTabRequestDocument, options);
+      }
+export type OnTabRequestSubscriptionHookResult = ReturnType<typeof useOnTabRequestSubscription>;
+export type OnTabRequestSubscriptionResult = Apollo.SubscriptionResult<OnTabRequestSubscription>;
 export const CreateSpaceDocument = gql`
     mutation CreateSpace($input: CreateSpaceInput) {
   createSpace(input: $input) {
