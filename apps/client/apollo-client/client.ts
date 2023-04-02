@@ -26,7 +26,7 @@ const params = () => {
 // todo change on Doppler
 const wsLink = typeof window === 'undefined' ? null :
   new GraphQLWsLink(createClient({
-    url: 'ws://localhost:4000/graphql' || process.env.BACKEND_URL,
+    url: process.env.SUBSCRIPTION_URL || 'ws://localhost:4000/graphql',
     connectionParams: params(),
   }));
 

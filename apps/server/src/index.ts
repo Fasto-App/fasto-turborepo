@@ -71,6 +71,8 @@ const serverCleanup = useServer({
     const headersAPIKey = ctx?.connectionParams?.["x-api-key"] as string | undefined;
 
     console.log("ctx?.connectionParams", ctx?.connectionParams)
+    console.log("🔐 User clientBearerToken: ")
+    console.log("clientFromToken", clientBearerToken)
 
     return await proccessContext({
       headersAPIKey,
@@ -130,9 +132,6 @@ async function proccessContext(
 
   const userFromToken = await getUserFromToken(businessToken?.split(' ')[1]);
   const clientFromToken = await getClientFromToken(clientToken?.split(' ')[1]);
-
-  console.log("🔐 User clientBearerToken: ")
-  console.log("clientFromToken", clientFromToken)
 
   return {
     db,
