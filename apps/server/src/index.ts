@@ -70,6 +70,8 @@ const serverCleanup = useServer({
     const clientBearerToken = ctx?.connectionParams?.clientauthorization as string | undefined;
     const headersAPIKey = ctx?.connectionParams?.["x-api-key"] as string | undefined;
 
+    console.log("ctx?.connectionParams", ctx?.connectionParams)
+
     return await proccessContext({
       headersAPIKey,
       businessToken: bearerToken,
@@ -129,15 +131,15 @@ async function proccessContext(
   const userFromToken = await getUserFromToken(businessToken?.split(' ')[1]);
   const clientFromToken = await getClientFromToken(clientToken?.split(' ')[1]);
 
-  // console.log("🔐 User clientBearerToken: ")
-  // console.log("clientFromToken", clientFromToken)
-  // console.log("userFromToken", userFromToken)
+  console.log("🔐 User clientBearerToken: ")
+  console.log("clientFromToken", clientFromToken)
 
   return {
     db,
     user: userFromToken,
     business: userFromToken?.business,
-    client: clientFromToken
+    client: clientFromToken,
+    chama: 10
   };
 }
 

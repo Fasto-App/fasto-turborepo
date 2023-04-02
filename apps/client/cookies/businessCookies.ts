@@ -1,4 +1,4 @@
-import { removeCookies, setCookie, getCookie } from "cookies-next";
+import { setCookie, getCookie, deleteCookie } from "cookies-next";
 
 export const businessCookies = {
   token: "fasto-cookies-token",
@@ -14,9 +14,9 @@ export const clientCookies = {
 }
 
 export const clearCookies = () => {
-  removeCookies(businessCookies.token);
-  removeCookies(businessCookies.name);
-  removeCookies(businessCookies.email);
+  deleteCookie(businessCookies.token);
+  deleteCookie(businessCookies.name);
+  deleteCookie(businessCookies.email);
 }
 
 export const setCookies = (cookie: CookieKey, value: string) => {
@@ -40,10 +40,10 @@ export const getClientCookies = (cookie: ClientCookieKey) => {
 }
 
 export const clearClientCookies = () => {
-  removeCookies(clientCookies.token);
-  removeCookies(clientCookies.name);
-  removeCookies(clientCookies.phoneNumber);
-  removeCookies(clientCookies.tab);
+  deleteCookie(clientCookies.token);
+  deleteCookie(clientCookies.name);
+  deleteCookie(clientCookies.phoneNumber);
+  deleteCookie(clientCookies.tab);
 }
 
 type ClientCookieKey = keyof typeof clientCookies

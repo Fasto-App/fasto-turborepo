@@ -12,7 +12,7 @@ export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
   const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
   const route = useRouter()
-  const { businessId } = route.query
+  const { businessId, tabId, adminId, name } = route.query
 
   const joinTab = useCallback(() => {
     console.log("Pressed")
@@ -27,15 +27,15 @@ export const HomeScreen = () => {
   const { data: businessInfo } = useGetBusinessInformation()
 
   const image = businessInfo?.getBusinessById?.picture
-  const name = businessInfo?.getBusinessById?.name
-
-
+  const businessName = businessInfo?.getBusinessById?.name
 
   useEffect(() => {
-    if (route.query.tabId) {
+    if (tabId &&
+      name &&
+      adminId) {
       setIsJoinTabModalOpen(true)
     }
-  }, [route.query.tabId])
+  }, [adminId, name, tabId])
 
 
   return (
@@ -50,7 +50,7 @@ export const HomeScreen = () => {
       >
         <Image src="/images/Asset.svg" alt="me" width={"100"} height={"31"} />
       </Box>
-      <Heading size={"2xl"}>{name}</Heading>
+      <Heading size={"2xl"}>{businessName}</Heading>
       <Image
         my={2}
         size="xl"
@@ -59,11 +59,11 @@ export const HomeScreen = () => {
       />
       <VStack space={6} mt={"10"} w={"80%"}>
         <Button
-          isDisabled={tabData?.getTabRequest?.status === "Pending"}
+          isDisabled={loading || tabData?.getTabRequest?.status === "Pending"}
           onPress={() => setIsOpenTabModalOpen(true)}
           _text={{ bold: true }}>{texts.openNewTab}</Button>
         <Button
-          isDisabled={tabData?.getTabRequest?.status === "Pending"}
+          isDisabled={loading || tabData?.getTabRequest?.status === "Pending"}
           onPress={joinTab}
           _text={{ bold: true }}
           colorScheme={"secondary"}>{texts.joinTab}</Button>

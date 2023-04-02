@@ -1,5 +1,5 @@
 import { Box, Button, FlatList, Heading, HStack, Text } from 'native-base'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Icon } from '../../components/atoms/NavigationButton'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { FDSSelect, SelectData } from '../../components/FDSSelect'
@@ -89,6 +89,7 @@ type RequestsModalProps = {
   availableTables?: SelectData[];
   requests?: any[];
   isLoading?: boolean;
+  subscribeToRequests?: () => void;
 }
 
 
@@ -98,6 +99,7 @@ export const RequestsModal = ({
   requests,
   isLoading,
   availableTables,
+  subscribeToRequests
 }: RequestsModalProps) => {
 
   const [decline, { loading: loadingDecline }] = useDeclineTabRequestMutation({ refetchQueries })
@@ -123,6 +125,11 @@ export const RequestsModal = ({
       }
     })
   }, [accept])
+
+  useEffect(() => {
+    subscribeToRequests?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <CustomModal

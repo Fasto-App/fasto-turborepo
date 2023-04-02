@@ -2,7 +2,7 @@ import { JoinTabForm, NewTabForm, newTabSchema, RequestStatus } from "app-helper
 import { withFilter } from "graphql-subscriptions";
 import { BusinessModel, UserModel, RequestModel, TabModel, TableModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
-import { NUMBER_INCREMENTED, pubsub, TAB_REQUEST } from "../pubSub";
+import { NUMBER_INCREMENTED, pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from "../pubSub";
 import { Context } from "../types"
 import { tokenClient } from "../utils";
 
@@ -124,11 +124,6 @@ const acceptTabRequest = async (
   const usersId = allUsers.map(user => user._id)
 
   //todo: fix this
-  console.log({
-    table: table?._id,
-    admin: foundRequest?.requestor, // found request was coming back empty
-    users: [foundRequest.requestor?._id, ...usersId],
-  })
 
   const tab = await Tab.create({
     table: table?._id,
@@ -147,7 +142,7 @@ const acceptTabRequest = async (
 
   await foundRequest.save();
 
-  pubsub.publish(TAB_REQUEST, { onTabRequest: foundRequest })
+  pubsub.publish(TAB_REQUEST_RESPONSE, { onTabRequestResponse: foundRequest })
 
   return foundRequest
 }
@@ -178,6 +173,8 @@ const declineTabRequest = async (
   }
 
   foundRequest.status = 'Rejected';
+
+  pubsub.publish(TAB_REQUEST_RESPONSE, { onTabRequestResponse: foundRequest })
 
   return await foundRequest.save();
 }
@@ -322,13 +319,7 @@ export const RequestSubscription = {
   onTabRequest: {
     subscribe: withFilter(
       () => pubsub.asyncIterator(TAB_REQUEST),
-      (payload, _, { client, business }: Context) => {
-
-        if (client) {
-
-          return payload.onTabRequest.requestor?.toString() === client._id ||
-            payload.onTabRequest.admin?.toString() === client._id
-        }
+      (payload, _, { business }: Context) => {
 
         if (business) {
           return payload.onTabRequest.business?.toString() === business
@@ -339,7 +330,39 @@ export const RequestSubscription = {
     )
   },
   numberIncremented: {
-    subscribe: () => pubsub.asyncIterator(['NUMBER_INCREMENTED']),
+    subscribe: withFilter(() => pubsub.asyncIterator(['NUMBER_INCREMENTED']),
+      (payload, _, { client, }: Context) => {
+
+        console.log('client', client)
+        console.log('payload', payload)
+
+        // if (client) {
+
+        //   return payload.onTabRequestResponse.requestor?.toString() === client._id ||
+        //     payload.onTabRequestResponse.admin?.toString() === client._id
+        // }
+
+        return true
+      })
+  },
+  onTabRequestResponse: {
+    subscribe: withFilter(
+      () => pubsub.asyncIterator(TAB_REQUEST_RESPONSE),
+      (payload, _, { client }: Context) => {
+
+        console.log('payload', payload)
+        console.log('client', client)
+
+
+        if (client) {
+
+          return payload.onTabRequestResponse.requestor?.toString() === client._id ||
+            payload.onTabRequestResponse.admin?.toString() === client._id
+        }
+
+        return false
+      }
+    )
   },
 }
 

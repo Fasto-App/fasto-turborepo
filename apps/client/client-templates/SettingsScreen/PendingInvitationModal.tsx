@@ -1,6 +1,6 @@
 import { onError } from '@apollo/client/link/error'
 import { Heading, HStack, Box, Button, Text, FlatList } from 'native-base'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { getClientCookies } from '../../cookies/businessCookies'
 import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument } from '../../gen/generated'
@@ -16,7 +16,7 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
   const tabId = getClientCookies("tab")
   const token = getClientCookies("token")
 
-  const { data, loading } = useGetPendingInvitationsQuery({
+  const { data, loading, subscribeToMore } = useGetPendingInvitationsQuery({
     skip: !tabId || !token,
     variables: {
       input: {
@@ -62,6 +62,11 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
       }
     })
   }, [acceptInvitation])
+
+
+  useEffect(() => {
+    // const subscribe = subscribeToMore()
+  }, [])
 
   return (
     <CustomModal

@@ -82,11 +82,7 @@ const getCategoryByProduct = async (parent: any, { productID }: { productID: str
 }
 
 const getAllProductsByBusinessID = async (_parent: any, _: any, { db, business }: { db: Connection, business: string }) => {
-
     console.log("Getting all products by business ID")
-    console.log("business", business)
-
-
 
     const Product = ProductModel(db);
     const allProductsByBusiness = await Product.find<Product>({ business });

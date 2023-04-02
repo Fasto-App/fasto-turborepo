@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react"
-import { Badge, Box, Button, Divider, FlatList, Heading, HStack, Skeleton, VStack } from "native-base"
+import { Badge, Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
 import { SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
@@ -9,7 +9,7 @@ import { texts } from "./texts"
 import { useTableScreenStore } from "./tableScreenStore"
 import { shallow } from 'zustand/shallow'
 import { MoreButton } from "../../components/MoreButton"
-import { useCreateTableMutation, GetSpacesFromBusinessDocument, useGetSpacesFromBusinessQuery, useGetTablesFromSpaceQuery, TableStatus, RequestStatus, useGetTabRequestsQuery } from "../../gen/generated"
+import { useCreateTableMutation, GetSpacesFromBusinessDocument, useGetSpacesFromBusinessQuery, TableStatus, RequestStatus, useGetTabRequestsQuery, OnTabRequestDocument } from "../../gen/generated"
 import { useAppStore } from "../UseAppStore"
 import { RequestsModal } from "./RequestsModal"
 import { BottomSection } from "../../components/BottomSection"
@@ -87,7 +87,10 @@ export const TablesScreen = () => {
     }
   });
 
-  const { data: pendingRequestsData, loading: pendingResquestLoading } = useGetTabRequestsQuery({
+  const { data: pendingRequestsData,
+    loading: pendingResquestLoading,
+    subscribeToMore: subscribeToMoreRequests
+  } = useGetTabRequestsQuery({
     variables: {
       input: {
         filterBy: RequestStatus.Pending
@@ -96,7 +99,6 @@ export const TablesScreen = () => {
   })
 
   const postNewTable = async () => {
-
     if (!selectedSpaceId) return;
 
     await createTable({
@@ -139,6 +141,33 @@ export const TablesScreen = () => {
         availableTables={availableTables}
         requests={pendingRequestsData?.getTabRequests}
         isLoading={pendingResquestLoading}
+        subscribeToRequests={() => {
+          subscribeToMoreRequests({
+            document: OnTabRequestDocument,
+            variables: {
+              input: {
+                filterBy: RequestStatus.Pending
+              }
+            },
+            updateQuery: (prev, { subscriptionData }) => {
+
+              console.log("prev", prev)
+              console.log("subscriptionData", subscriptionData)
+
+              if (!subscriptionData.data) return prev;
+
+
+              console.log("subscriptionData.data.onTabRequest", subscriptionData.data)
+              // @ts-ignore
+              const newRequest = subscriptionData.data.onTabRequest;
+
+              return {
+                ...prev,
+                getTabRequests: [...prev.getTabRequests, newRequest]
+              }
+            }
+          })
+        }}
       />
       <OrangeBox height={150} />
       <VStack m={"4"} space={"4"} flex={1}>

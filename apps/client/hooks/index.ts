@@ -2,7 +2,7 @@ import { useBreakpointValue } from "native-base";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getClientCookies, setClientCookies } from "../cookies/businessCookies";
-import { useGetBusinessByIdQuery, useGetClientInformationQuery, useGetTabByIdQuery, useGetTabRequestQuery } from "../gen/generated";
+import { OnTabRequestResponseDocument, useGetBusinessByIdQuery, useGetClientInformationQuery, useGetTabByIdQuery, useGetTabRequestQuery, useSubscriptionSubscription } from "../gen/generated";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -58,7 +58,11 @@ export const useUploadFileHook = () => {
 export const useGetTabRequest = () => {
   const clientToken = getClientCookies("token")
 
-  const data = useGetTabRequestQuery({
+  // const { data: subData } = useSubscriptionSubscription()
+
+  // console.group({ subData })
+
+  const { subscribeToMore, ...data } = useGetTabRequestQuery({
     skip: !clientToken,
     onCompleted: (data) => {
       if (data.getTabRequest.status === "Accepted" && data.getTabRequest.tab) {
@@ -70,6 +74,34 @@ export const useGetTabRequest = () => {
       // clear cache
     },
   })
+
+  useEffect(() => {
+    const unsubscribe = () => subscribeToMore({
+      document: OnTabRequestResponseDocument,
+      updateQuery: (prev, { subscriptionData }) => {
+
+        console.log("subscriptionData", subscriptionData)
+        console.log("prev", prev)
+
+        if (!subscriptionData.data) return prev;
+        // @ts-ignore
+        const newTabRequest = subscriptionData.data.onTabRequestResponse;
+
+        if (newTabRequest.tab) {
+          setClientCookies("tab", newTabRequest.tab)
+        }
+
+        return {
+          ...prev,
+          getTabRequest: newTabRequest
+        }
+      }
+    })
+
+    unsubscribe()
+
+  }, [subscribeToMore])
+
 
   return data
 }

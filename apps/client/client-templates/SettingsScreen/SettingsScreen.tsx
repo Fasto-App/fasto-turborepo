@@ -65,7 +65,6 @@ const settingsTiles = [
 // extract types from the _id field of the Array above
 type SettingsTileId = typeof settingsTiles[number]["_id"]
 
-console.log(process.env.FRONTEND_URL)
 const FE_URL = new URL(process.env.FRONTEND_URL ?? "http://localhost:3000")
 
 const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor, onPress, disabled }) => {

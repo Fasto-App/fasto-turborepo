@@ -90,20 +90,22 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
       onClose={() => setModalVisibility(false)}
       isOpen={isOpen}
       HeaderComponent={<Heading>{
-        tabId && typeof name === "string" ? texts.yourAboutToJoin(name) : texts.scanTheCode
+        tabId && name ? texts.yourAboutToJoin(
+          typeof name === "string" ? name : name?.[0]
+        ) : texts.scanTheCode
       }</Heading>}
-      ModalBody={!tabId || !name ?
-        <QRCodeReader /> : (
-          <ControlledForm
-            Config={Config}
-            control={control}
-            formState={formState}
-          />
-        )}
+      ModalBody={tabId && name ? (
+        <ControlledForm
+          Config={Config}
+          control={control}
+          formState={formState}
+        />
+      ) :
+        <QRCodeReader />}
       ModalFooter={
         <Button.Group flex={1}>
           <Box flex={1}>
-            {tabId && typeof name === "string" ?
+            {tabId && name ?
               <Button
                 onPress={handleSubmit(handleJoinTab)}
                 _text={{ bold: true }}

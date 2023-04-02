@@ -65,7 +65,7 @@ const updateMenuInfo = async (_parent: any, args: { input: UpdateMenuInfo }, { d
 }
 
 const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, { db, user, business }: Context) => {
-    console.log(input)
+
     if (!user) throw Error('User not found');
     if (!business) throw Error('Business not found');
 
@@ -128,8 +128,6 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
     const allSectionsResolved = await Promise.all(newSections);
 
     menu.sections = allSectionsResolved
-
-    console.log({ menu })
 
     return await menu.save()
 }
@@ -204,8 +202,6 @@ const MenuResolverQuery = {
 }
 
 const getSectionsByMenu = async (_parent: any, args: any, { db }: { db: Connection }) => {
-    console.log(_parent)
-
     return _parent;
 }
 
@@ -216,8 +212,6 @@ const getProductsBySection = async (_parent: any, args: any, { db }: { db: Conne
 }
 
 const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
-
-    console.log(_parent)
     const Category = CategoryModel(db);
     const category = await Category.findById(_parent.category)
     return category;
