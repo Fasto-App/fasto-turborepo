@@ -7,10 +7,13 @@ import { OpenTabModal } from './OpenTabModal'
 import { useGetBusinessInformation, useGetTabRequest } from '../../hooks'
 import { clientRoute } from '../../routes'
 import { Link } from '../../components/atoms/Link'
+import { TakeoutDeliveryModal } from './TakeoutDeliveryModal'
 
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
   const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
+  const [isTakeoutDeliveryModalOpen, setIsTakeoutDeliveryModalOpen] = useState(false)
+
   const route = useRouter()
   const { businessId, tabId, adminId, name } = route.query
 
@@ -62,14 +65,17 @@ export const HomeScreen = () => {
           isDisabled={loading || tabData?.getTabRequest?.status === "Pending"}
           onPress={() => setIsOpenTabModalOpen(true)}
           _text={{ bold: true }}>{texts.openNewTab}</Button>
+        <Button onPress={() => setIsTakeoutDeliveryModalOpen(true)}
+          _text={{ bold: true }}
+          colorScheme={"secondary"}>{texts.takeoutOrDelivery}</Button>
         <Button
           isDisabled={loading || tabData?.getTabRequest?.status === "Pending"}
           onPress={joinTab}
           _text={{ bold: true }}
-          colorScheme={"secondary"}>{texts.joinTab}</Button>
+          colorScheme={"tertiary"}>{texts.joinTab}</Button>
         <Button onPress={onPress}
           _text={{ bold: true }}
-          colorScheme={"tertiary"}>{texts.viewMenu}</Button>
+          colorScheme={"blueGray"}>{texts.viewMenu}</Button>
 
         {/* <Link href='client/login'>
           Re-enter existing tab
@@ -82,6 +88,10 @@ export const HomeScreen = () => {
       <OpenTabModal
         isOpen={isOpenTabModalOpen}
         setModalVisibility={() => setIsOpenTabModalOpen(false)}
+      />
+      <TakeoutDeliveryModal
+        isOpen={isTakeoutDeliveryModalOpen}
+        setModalVisibility={() => setIsTakeoutDeliveryModalOpen(false)}
       />
     </Center>
   )

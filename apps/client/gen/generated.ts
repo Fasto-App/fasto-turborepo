@@ -138,6 +138,12 @@ export type CreateMenuInput = {
   name: Scalars['String'];
 };
 
+export type CreateNewTakeoutOrDeliveryInput = {
+  business: Scalars['ID'];
+  name: Scalars['String'];
+  phoneNumber: Scalars['String'];
+};
+
 export type CreateOrderInput = {
   message?: InputMaybe<Scalars['String']>;
   product: Scalars['ID'];
@@ -329,6 +335,7 @@ export type Mutation = {
   createEmployeeAccount: User;
   createMenu: Menu;
   createMultipleOrderDetails?: Maybe<Array<OrderDetail>>;
+  createNewTakeoutOrDelivery: Scalars['String'];
   createOrderDetail?: Maybe<OrderDetail>;
   createProduct: Product;
   createSpace: Space;
@@ -410,6 +417,11 @@ export type MutationCreateMenuArgs = {
 
 export type MutationCreateMultipleOrderDetailsArgs = {
   input: Array<CreateOrderInput>;
+};
+
+
+export type MutationCreateNewTakeoutOrDeliveryArgs = {
+  input: CreateNewTakeoutOrDeliveryInput;
 };
 
 
@@ -850,7 +862,7 @@ export type Tab = {
   created_date: Scalars['String'];
   orders: Array<OrderDetail>;
   status: TabStatus;
-  table: Table;
+  table?: Maybe<Table>;
   users?: Maybe<Array<User>>;
 };
 
@@ -1197,6 +1209,13 @@ export type AcceptTabRequestMutationVariables = Exact<{
 
 export type AcceptTabRequestMutation = { __typename?: 'Mutation', acceptTabRequest?: { __typename?: 'Request', _id: string, totalGuests?: number | null, status: RequestStatus } | null };
 
+export type CreateNewTakeoutOrDeliveryMutationVariables = Exact<{
+  input: CreateNewTakeoutOrDeliveryInput;
+}>;
+
+
+export type CreateNewTakeoutOrDeliveryMutation = { __typename?: 'Mutation', createNewTakeoutOrDelivery: string };
+
 export type DeclineInvitationMutationVariables = Exact<{
   input: GetById;
 }>;
@@ -1276,7 +1295,7 @@ export type CreateTabMutationVariables = Exact<{
 }>;
 
 
-export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, status: TabStatus, table: { __typename?: 'Table', _id: string, tableNumber: string } } };
+export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, status: TabStatus, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null } };
 
 export type RequestCloseTabMutationVariables = Exact<{
   input: GetById;
@@ -1290,7 +1309,7 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, table: { __typename?: 'Table', _id: string, tableNumber: string }, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } }> } | null };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } }> } | null };
 
 export type GetTabCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -2645,6 +2664,37 @@ export function useAcceptTabRequestMutation(baseOptions?: Apollo.MutationHookOpt
 export type AcceptTabRequestMutationHookResult = ReturnType<typeof useAcceptTabRequestMutation>;
 export type AcceptTabRequestMutationResult = Apollo.MutationResult<AcceptTabRequestMutation>;
 export type AcceptTabRequestMutationOptions = Apollo.BaseMutationOptions<AcceptTabRequestMutation, AcceptTabRequestMutationVariables>;
+export const CreateNewTakeoutOrDeliveryDocument = gql`
+    mutation CreateNewTakeoutOrDelivery($input: CreateNewTakeoutOrDeliveryInput!) {
+  createNewTakeoutOrDelivery(input: $input)
+}
+    `;
+export type CreateNewTakeoutOrDeliveryMutationFn = Apollo.MutationFunction<CreateNewTakeoutOrDeliveryMutation, CreateNewTakeoutOrDeliveryMutationVariables>;
+
+/**
+ * __useCreateNewTakeoutOrDeliveryMutation__
+ *
+ * To run a mutation, you first call `useCreateNewTakeoutOrDeliveryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewTakeoutOrDeliveryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNewTakeoutOrDeliveryMutation, { data, loading, error }] = useCreateNewTakeoutOrDeliveryMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateNewTakeoutOrDeliveryMutation(baseOptions?: Apollo.MutationHookOptions<CreateNewTakeoutOrDeliveryMutation, CreateNewTakeoutOrDeliveryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateNewTakeoutOrDeliveryMutation, CreateNewTakeoutOrDeliveryMutationVariables>(CreateNewTakeoutOrDeliveryDocument, options);
+      }
+export type CreateNewTakeoutOrDeliveryMutationHookResult = ReturnType<typeof useCreateNewTakeoutOrDeliveryMutation>;
+export type CreateNewTakeoutOrDeliveryMutationResult = Apollo.MutationResult<CreateNewTakeoutOrDeliveryMutation>;
+export type CreateNewTakeoutOrDeliveryMutationOptions = Apollo.BaseMutationOptions<CreateNewTakeoutOrDeliveryMutation, CreateNewTakeoutOrDeliveryMutationVariables>;
 export const DeclineInvitationDocument = gql`
     mutation DeclineInvitation($input: GetById!) {
   declineInvitation(input: $input) {

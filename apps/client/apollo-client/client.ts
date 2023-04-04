@@ -27,6 +27,15 @@ const params = () => {
 const wsLink = typeof window === 'undefined' ? null :
   new GraphQLWsLink(createClient({
     url: process.env.SUBSCRIPTION_URL || 'ws://localhost:4000/graphql',
+    retryAttempts: 5,
+    on: {
+      ping: () => console.log('ping'),
+      pong: () => console.log('pong'),
+      connecting: () => console.log('connecting'),
+      connected: () => console.log('connected'),
+      closed: () => console.log('closed'),
+      error: () => console.log('error'),
+    },
     connectionParams: params(),
   }));
 
@@ -57,6 +66,7 @@ const client = new ApolloClient({
   // @ts-ignore
   link: errorLink.concat(authLink.concat(splitLink)),
   cache: new InMemoryCache(),
+  connectToDevTools: true,
 });
 
 export { client }

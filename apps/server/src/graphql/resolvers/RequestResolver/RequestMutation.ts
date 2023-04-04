@@ -129,6 +129,7 @@ const acceptTabRequest = async (
     table: table?._id,
     admin: foundRequest?.requestor,
     users: [foundRequest.requestor._id, ...usersId],
+    type: 'DineIn',
   });
 
   if (!tab) throw ApolloError('BadRequest', "Tab Not Created")
@@ -306,6 +307,93 @@ const acceptInvitation = async (
   return foundrequest;
 }
 
+const createNewTakeoutOrDelivery = async (
+  _parent: any,
+  { input }: { input: JoinTabForm & { business: string } },
+  { db, client }: Context
+) => {
+  // 
+
+  //create new request with accepted status
+
+  const Request = RequestModel(db)
+  const User = UserModel(db)
+  const Tab = TabModel(db)
+
+  // get the user if exists
+
+  const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
+
+  if (!foundUser) {
+
+    const newUser = await User.create({
+      name: input.name,
+      phoneNumber: input.phoneNumber,
+    })
+
+    const newTab = await Tab.create({
+      business: input.business,
+      admin: newUser._id,
+      users: [newUser._id],
+      status: 'Open',
+    })
+
+    const newRequest = await Request.create({
+      requestor: newUser._id,
+      admin: newUser._id,
+      tab: newTab._id,
+      status: 'Accepted',
+    })
+
+    return await tokenClient({
+      _id: newUser._id,
+      request: newRequest._id,
+      business: input.business,
+    })
+  }
+
+  // see if the user has a request and/or a tab
+  const foundRequest = await Request.findOne({
+    requestor: foundUser._id,
+    // status either pending or accepted
+    $or: [
+      { status: 'Pending' },
+      { status: 'Accepted' }
+    ]
+  })
+
+  if (foundRequest) {
+
+    return await tokenClient({
+      _id: foundUser._id,
+      request: foundRequest._id,
+      business: input.business,
+    })
+  }
+
+  const newTab = await Tab.create({
+    business: input.business,
+    admin: foundUser._id,
+    status: 'Open',
+    type: 'Takeout',
+  })
+
+  const newRequest = await Request.create({
+    requestor: foundUser._id,
+    admin: foundUser._id,
+    tab: newTab._id,
+    status: 'Accepted',
+  })
+
+  return await tokenClient({
+    _id: foundUser._id,
+    request: newRequest._id,
+    business: input.business,
+  })
+
+}
+
+
 export const RequestResolverMutation = {
   openTabRequest,
   acceptTabRequest,
@@ -313,6 +401,7 @@ export const RequestResolverMutation = {
   requestJoinTab,
   declineInvitation,
   acceptInvitation,
+  createNewTakeoutOrDelivery
 }
 
 export const RequestSubscription = {

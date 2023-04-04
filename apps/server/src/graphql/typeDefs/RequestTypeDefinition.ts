@@ -15,6 +15,7 @@ export const RequestTypeDefinition = gql`
     declineTabRequest(input: GetById!): Request!
     declineInvitation(input: GetById!): Request!
     acceptInvitation(input: GetById!): Request!
+    createNewTakeoutOrDelivery(input: CreateNewTakeoutOrDeliveryInput!): String!
   }
 
   extend type Subscription {
@@ -25,6 +26,12 @@ export const RequestTypeDefinition = gql`
 
   input GetPendingInvitationsInput {
     tab: ID!
+  }
+
+  input CreateNewTakeoutOrDeliveryInput {
+    business: ID!
+    phoneNumber: String!
+    name: String!
   }
 
   input JoinTabForm {

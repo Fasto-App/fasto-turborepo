@@ -17,7 +17,7 @@ export const TabTypeDefinition = gql`
   type Tab {
   _id: ID!
   checkout: ID
-  table: Table!
+  table: Table
   admin: ID!
   orders: [OrderDetail!]!
   status: TabStatus!

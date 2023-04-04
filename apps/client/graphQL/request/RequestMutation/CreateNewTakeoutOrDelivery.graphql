@@ -1,0 +1,3 @@
+mutation CreateNewTakeoutOrDelivery($input: CreateNewTakeoutOrDeliveryInput!) {
+	createNewTakeoutOrDelivery(input: $input)
+}

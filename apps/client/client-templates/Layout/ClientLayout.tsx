@@ -38,7 +38,7 @@ const ClientLayout: React.FC = ({ children }) => {
           <HourGlassAnimation />
         </Box> : null}
       {isHome ? null :
-        <ClientNavBar tableNumber={tab?.getTabByID?.table.tableNumber} />}
+        <ClientNavBar tableNumber={tab?.getTabByID?.table?.tableNumber} />}
       <Box flex={1}>
         {children}
       </Box>

@@ -5,7 +5,7 @@ import { User } from './user';
 import { Table } from './table';
 import { OrderDetail } from './orderDetail';
 import { TabStatus } from 'app-helpers';
-import type { TabStatusType } from 'app-helpers';
+import type { TabStatusType, TabTypeType } from 'app-helpers';
 
 export class Tab {
     @prop()
@@ -17,8 +17,11 @@ export class Tab {
     @prop({ default: TabStatus.Open })
     public status?: TabStatusType;
 
-    @prop({ required: true })
-    public table!: Ref<Table>;
+    @prop()
+    public table?: Ref<Table>;
+
+    @prop()
+    public type?: TabTypeType;
 
     @prop({ required: true, default: [] })
     public orders!: Ref<OrderDetail>[];
