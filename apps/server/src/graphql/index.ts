@@ -17,7 +17,8 @@ import {
   SpaceTypeDefinition,
   CheckoutTypeDefinition,
   PaymentTypeDefinition,
-  RequestTypeDefinition
+  RequestTypeDefinition,
+  CartItemTypeDefinition
 } from "./typeDefs";
 
 export const schema = makeExecutableSchema({
@@ -36,6 +37,7 @@ export const schema = makeExecutableSchema({
     OrderDetailsTypeDefinition,
     TableTypeDefinition,
     SpaceTypeDefinition,
-    RequestTypeDefinition
+    RequestTypeDefinition,
+    CartItemTypeDefinition
   ],
 })

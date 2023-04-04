@@ -7,4 +7,5 @@ export const texts = {
   seePastOrders: "See Past Orders",
   modalCta1: "Back",
   modalTitle: "Past Orders",
+  error: "Something went wrong. Please try again later.",
 }

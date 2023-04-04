@@ -8,8 +8,9 @@ import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons
 import { parseToCurrency } from "app-helpers";
 import { texts } from "./texts";
 import { getClientCookies } from "../../cookies/businessCookies";
-import { useGetProductByIdQuery } from "../../gen/generated";
+import { useAddItemToCartMutation, useGetProductByIdQuery } from "../../gen/generated";
 import { LoadingPDP } from "./LoadingPDP";
+import { clientRoute } from "../../routes";
 
 const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
@@ -24,7 +25,7 @@ const addons = [
 export const ProductDescriptionScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const [text, setText] = useState("");
-  const token = getClientCookies("token")
+  const tab = getClientCookies("tab")
 
   const route = useRouter();
   const { businessId, productId } = route.query;
@@ -36,6 +37,17 @@ export const ProductDescriptionScreen = () => {
       productId: productId as string,
     }
   })
+
+  const [addItemToCart, { loading: addToCartLoading }] = useAddItemToCartMutation({
+    onCompleted: () => {
+      console.log("Completed");
+
+      route.push(clientRoute.home(businessId as string));
+    },
+    onError: (err) => {
+      console.log("Error", err);
+    },
+  });
 
   const springProps = useSpring({
     to: { opacity: 1, marginTop: 0 },
@@ -51,11 +63,26 @@ export const ProductDescriptionScreen = () => {
     setQuantity(quantity - 1);
   }, [quantity]);
 
-  const onButtonPress = useCallback(() => {
+  const onAddToCartPress = useCallback(() => {
     console.log("Pressed");
 
-    alert(`Added to cart ${quantity} items`)
-  }, [quantity]);
+    if (typeof productId !== "string" || typeof tab !== "string") {
+      throw new Error("Product id is not defined")
+    };
+
+    addItemToCart({
+      variables: {
+        input: {
+          product: productId,
+          quantity,
+          notes: text,
+          tab,
+        }
+      }
+    })
+
+
+  }, [addItemToCart, productId, quantity, tab, text]);
 
 
   return (
@@ -89,15 +116,16 @@ export const ProductDescriptionScreen = () => {
               quantity={quantity}
               onPlusPress={increaseQuantity}
               onMinusPress={decreaseQuantity}
-              disabled={!token}
+              disabled={!tab || addToCartLoading}
             />
           </Box>
           <Divider my={"5"} backgroundColor={"gray.300"} />
+          {/* todo */}
           {true ? null : <VStack space={"1"} mb={"4"}>
             <Text fontWeight={"semibold"} fontSize={"25"}>{texts.extras}</Text>
             {addons.map((addon, index) => (
               <Addon
-                isDisabled={!token}
+                isDisabled={!tab}
                 key={index}
                 name={addon.name}
                 price={parseToCurrency(addon.price)}
@@ -108,7 +136,7 @@ export const ProductDescriptionScreen = () => {
           </VStack>}
           <TextArea
             h={"32"}
-            isDisabled={!token}
+            isDisabled={!tab}
             borderWidth={1}
             onChangeText={(text) => setText(text)}
             value={text}
@@ -121,13 +149,14 @@ export const ProductDescriptionScreen = () => {
       }
       <Box padding={4}>
         <Button
-          isDisabled={!token}
-          onPress={onButtonPress}
+          isDisabled={!tab}
+          isLoading={addToCartLoading}
+          onPress={onAddToCartPress}
           size={"lg"}
           colorScheme="primary"
           _text={{ fontSize: "18", bold: true }}
         >
-          {"Add to cart"}
+          {texts.addToCart}
         </Button>
       </Box>
     </AnimatedBox>

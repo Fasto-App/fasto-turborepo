@@ -6,6 +6,7 @@ import { Table } from './table';
 import { OrderDetail } from './orderDetail';
 import { TabStatus } from 'app-helpers';
 import type { TabStatusType, TabTypeType } from 'app-helpers';
+import { CartItem } from './cartItem';
 
 export class Tab {
     @prop()
@@ -22,6 +23,10 @@ export class Tab {
 
     @prop()
     public type?: TabTypeType;
+
+
+    @prop({ required: true, default: [] })
+    public cartItems!: Ref<CartItem>[];
 
     @prop({ required: true, default: [] })
     public orders!: Ref<OrderDetail>[];

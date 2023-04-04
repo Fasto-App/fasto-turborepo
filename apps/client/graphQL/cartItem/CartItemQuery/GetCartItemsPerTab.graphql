@@ -1,0 +1,13 @@
+query GetCartItemsPerTab($input: getCartItemsPerTabInput!) {
+	getCartItemsPerTab(input: $input) {
+		_id
+		product {
+			_id
+			name
+			imageUrl
+		}
+		quantity
+		notes
+		subTotal
+	}
+}

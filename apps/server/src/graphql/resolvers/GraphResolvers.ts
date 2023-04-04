@@ -45,6 +45,7 @@ import {
 import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
 import { CheckoutResolverMutation, CheckoutResolverQuery, CheckoutResolver } from './CheckoutResolver';
 import { RequestResolver, RequestResolverMutation, RequestResolverQuery, RequestSubscription } from './RequestResolver';
+import { CartItemResolver, CartItemResolverMutation, CartItemResolverQuery } from './CartItemResolver';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -61,6 +62,7 @@ export const resolvers = {
     ...CheckoutResolverQuery,
     ...RequestResolverQuery,
     ...TableResolverQuery,
+    ...CartItemResolverQuery
   },
   Mutation: {
     ...AddressResolverMutation,
@@ -75,6 +77,7 @@ export const resolvers = {
     ...UserResolverMutation,
     ...CheckoutResolverMutation,
     ...RequestResolverMutation,
+    ...CartItemResolverMutation
   },
   Subscription: {
     ...RequestSubscription,
@@ -123,6 +126,9 @@ export const resolvers = {
     // order: OrderDetailsResolver.getOrderDetailsByOrderID,
     // tab: OrderDetailsResolver.getTabByOrderDetails,
     product: ProductResolver.getProductByOrderDetails,
+  },
+  CartItem: {
+    product: CartItemResolver.getProductByCartItem,
   },
   Request: {
     admin: RequestResolver.getAdminFromRequest,

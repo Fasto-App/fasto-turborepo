@@ -1,21 +1,86 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
+import React, { useCallback } from "react";
 import { Box, HStack, Image, Pressable, Text } from "native-base";
 import { IncrementButtons } from "../OrderSummary/IncrementButtons";
-import { Icon } from "../atoms/NavigationButton";
-
-const uri = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
+import debounce from 'lodash/debounce';
+import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
+import { getClientCookies } from "../../cookies/businessCookies";
 
 export type CartTileProps = {
   index: number;
   name: string;
   price: string;
+  url: string;
+  quantity: number;
+  _id: string;
 };
 
 const states = ["✅", "⏳"];
 
+// for both funtions we should refetch the cart
+const refetchQueries = [{
+  query: GetCartItemsPerTabDocument,
+  variables: {
+    input: {
+      tab: getClientCookies("tab"),
+    }
+  },
+}]
+
+
 export const CartTile = (props: CartTileProps) => {
-  const { name, index, price } = props;
+  const { name, index, price, quantity, url, _id } = props;
+  const [localQuantity, setLocalQuantity] = React.useState(quantity || 1);
+
+  const [updateItem, { loading: loadingUpdate, error: errorUpdate }] = useUpdateItemFromCartMutation({
+    refetchQueries: refetchQueries
+  })
+
+  const [deleteitem, { loading: deleteLoading, error: deleteError }] = useDeleteItemFromCartMutation({
+    refetchQueries: refetchQueries
+  })
+
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debounceditemUpdate = useCallback(debounce((qnt: number) => {
+    console.log("sending patch request");
+
+    const tab = getClientCookies("tab")
+    if (typeof tab !== "string") return
+
+    updateItem({
+      variables: {
+        input: {
+          quantity: qnt,
+          cartItem: _id,
+          tab
+        }
+      }
+    })
+
+  }, 1000), [])
+
+  const handleDeleteItem = () => {
+    const tab = getClientCookies("tab")
+    if (typeof tab !== "string") return
+
+    deleteitem({
+      variables: {
+        input: {
+          cartItem: _id,
+          tab
+        }
+      }
+    })
+  }
+
+
+
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity < 1) return;
+
+    setLocalQuantity(newQuantity);
+    debounceditemUpdate(newQuantity)
+  }
 
   return (
     <HStack
@@ -23,12 +88,14 @@ export const CartTile = (props: CartTileProps) => {
       p={2}
       backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
       justifyContent={"space-between"}
-      alignItems={"center"}>
-      <HStack space={2}>
+      alignItems={"center"}
+      space={6}
+    >
+      <HStack space={2} flex={1}>
         <Box>
           <Image
             size={"xs"}
-            source={{ uri: uri }}
+            source={{ uri: url }}
             alt={""}
             borderRadius={5}
           />
@@ -39,16 +106,18 @@ export const CartTile = (props: CartTileProps) => {
       <Text>{price}</Text>
       <Box>
         <IncrementButtons
-          quantity={10}
-          onPlusPress={() => { }}
-          onMinusPress={() => { }}
+          quantity={localQuantity}
+          onPlusPress={() => handleQuantityChange(localQuantity + 1)}
+          onMinusPress={() => handleQuantityChange(localQuantity - 1)}
+          disabled={loadingUpdate || deleteLoading}
         />
       </Box>
       <Box style={{ flexDirection: "row" }}>
         <Pressable
+          isDisabled={loadingUpdate || deleteLoading}
           backgroundColor={"tertiary.300"}
           borderRadius={"md"}
-          onPress={() => console.log("")}
+          onPress={handleDeleteItem}
           p={2}
         >
           <Text fontSize={"18"}>
@@ -62,7 +131,7 @@ export const CartTile = (props: CartTileProps) => {
 };
 
 export const PastOrdersTile = (props: CartTileProps) => {
-  const { name, index, price } = props;
+  const { name, index, price, url } = props;
 
   return (
     <HStack
@@ -75,7 +144,7 @@ export const PastOrdersTile = (props: CartTileProps) => {
         <Box>
           <Image
             size={"xs"}
-            source={{ uri: uri }}
+            source={{ uri: url }}
             alt={""}
             borderRadius={5}
           />

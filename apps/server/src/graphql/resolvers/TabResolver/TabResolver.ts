@@ -203,7 +203,12 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
 
 
 
-const TabResolverMutation = { createTab, updateTab, deleteTab, requestCloseTab }
+const TabResolverMutation = {
+    createTab,
+    updateTab,
+    deleteTab,
+    requestCloseTab,
+}
 const TabResolverQuery = {
     getTabByID,
     getAllOpenTabsByBusinessID,
