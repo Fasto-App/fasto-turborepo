@@ -157,7 +157,6 @@ const SettingsScreen = () => {
       <Box backgroundColor={"white"} borderRadius={"md"}>
         <UsersAccordion users={tabInfo?.getTabByID?.users} />
       </Box>
-
       {settingsTiles.map((tile, index) => (
         <SettingsTile
           _id={tile._id}
