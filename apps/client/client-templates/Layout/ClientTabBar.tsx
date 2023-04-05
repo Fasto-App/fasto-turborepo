@@ -8,7 +8,7 @@ import { useGetTabRequest } from "../../hooks";
 
 const ClientTabBar: React.FC = (props) => {
   const router = useRouter();
-  const { businessId, cartId, menuId } = router.query
+  const { businessId } = router.query
 
   const useIsPageSelected = useCallback((pathname: ClientRouteKeys, slug?: string) => {
     if (typeof businessId !== "string") return false;
@@ -18,8 +18,8 @@ const ClientTabBar: React.FC = (props) => {
 
   }, [businessId, router.asPath])
 
-  const isMenu = useIsPageSelected("menu", menuId as string);
-  const isCart = useIsPageSelected("cart", cartId as string);
+  const isMenu = useIsPageSelected("menu");
+  const isCart = useIsPageSelected("cart");
   const isSettings = useIsPageSelected("settings");
 
 
@@ -53,8 +53,7 @@ const ClientTabBar: React.FC = (props) => {
         selected={isCart}
         numNotifications={9}
         onPress={() => {
-          // todo: get the cart ID from the server
-          router.push(clientRoute.cart(businessId, "cartId"));
+          router.push(clientRoute.cart(businessId));
         }}
       />
       <NavigationButton
@@ -71,3 +70,4 @@ const ClientTabBar: React.FC = (props) => {
 ClientTabBar.displayName = "ClientTabBar"
 
 export { ClientTabBar };
+//miscelanious

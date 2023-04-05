@@ -6,6 +6,7 @@ import { NUMBER_INCREMENTED, pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from ".
 import { Context } from "../types"
 import { tokenClient } from "../utils";
 
+// client request a table
 const openTabRequest = async (
   _parent: any,
   { input }: {
@@ -83,6 +84,7 @@ const openTabRequest = async (
   })
 }
 
+// business accepts table request
 const acceptTabRequest = async (
   _parent: any,
   { input }: {
@@ -148,6 +150,7 @@ const acceptTabRequest = async (
   return foundRequest
 }
 
+// business decline tab request
 const declineTabRequest = async (
   _parent: any,
   { input }: {
@@ -300,8 +303,7 @@ const acceptInvitation = async (
   foundrequest.status = 'Accepted';
   await foundrequest.save();
 
-  // add user to tab
-  foundTab.users.push(foundrequest.requestor)
+  foundTab.users = [...foundTab.users, foundrequest.requestor]
   await foundTab.save();
 
   return foundrequest;

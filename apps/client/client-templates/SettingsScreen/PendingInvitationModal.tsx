@@ -3,7 +3,7 @@ import { Heading, HStack, Box, Button, Text, FlatList } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { getClientCookies } from '../../cookies/businessCookies'
-import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument } from '../../gen/generated'
+import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument, GetTabByIdDocument } from '../../gen/generated'
 import { texts } from './texts'
 
 type PendingInvitationModalProps = {
@@ -27,6 +27,9 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
 
   const refetchOptions = [{
     query: GetPendingInvitationsDocument,
+    variables: { input: { tab: tabId as string } }
+  }, {
+    query: GetTabByIdDocument,
     variables: { input: { tab: tabId as string } }
   }]
 

@@ -42,7 +42,7 @@ export const ProductDescriptionScreen = () => {
     onCompleted: () => {
       console.log("Completed");
 
-      route.push(clientRoute.home(businessId as string));
+      route.push(clientRoute.menu(businessId as string));
     },
     onError: (err) => {
       console.log("Error", err);
@@ -105,7 +105,7 @@ export const ProductDescriptionScreen = () => {
               source={{ uri: data?.getProductByID?.imageUrl ?? PLACEHOLDER_IMAGE }}
               borderRadius={5}
             />
-            <PriceTag price={"$12.34"} />
+            <PriceTag price={parseToCurrency(data?.getProductByID?.price)} />
           </Box>
           <Box pt={"4"}>
             <Text fontWeight={"semibold"} fontSize={"25"}>{data?.getProductByID?.name}</Text>
