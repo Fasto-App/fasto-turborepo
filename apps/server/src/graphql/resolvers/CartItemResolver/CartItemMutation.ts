@@ -1,12 +1,11 @@
 
 
-import { TabModel, ProductModel } from "../../../models";
+import { TabModel, ProductModel, RequestModel } from "../../../models";
 import { CartItemModel } from "../../../models/cartItem";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 
 type addItemToCartInput = {
-  tab: string,
   product: string,
   quantity: number,
   notes: string,
@@ -14,14 +13,17 @@ type addItemToCartInput = {
 }
 
 const addItemToCart = async (_parent: any, { input }: { input: addItemToCartInput }, { db, client }: Context) => {
+  if (!client) throw ApolloError('Unauthorized', "Invalid token", "client")
 
   const Tab = TabModel(db);
   const CartItem = CartItemModel(db);
   const Product = ProductModel(db);
+  const Request = RequestModel(db);
 
-  if (!client?._id) throw ApolloError('Unauthorized', "Invalid token", "client")
+  const foundRequest = await Request.findById(client.request);
+  if (!foundRequest) throw ApolloError('NotFound')
 
-  const foundTab = await Tab.findById(input.tab);
+  const foundTab = await Tab.findById(foundRequest.tab);
   if (!foundTab) throw ApolloError('NotFound')
 
   const foundProduct = await Product.findById(input.product);
@@ -49,9 +51,9 @@ const addItemToCart = async (_parent: any, { input }: { input: addItemToCartInpu
     notes: input.notes,
     options: input.options,
     subTotal: input.quantity * foundProduct.price,
-  })
+  });
 
-  foundTab.cartItems.push(cartItem._id);
+  foundTab.cartItems = [...foundTab.cartItems, cartItem._id]
   await foundTab.save();
 
   return cartItem;
@@ -59,16 +61,22 @@ const addItemToCart = async (_parent: any, { input }: { input: addItemToCartInpu
 
 type updateItemFromCartInput = {
   cartItem: string,
-  tab: string,
   quantity: number,
 }
 
 // resolver to update item from cart
 const updateItemFromCart = async (_parent: any, { input }: { input: updateItemFromCartInput }, { db, client }: Context) => {
+  if (!client) throw ApolloError('Unauthorized', "Invalid token", "client")
+
+  const Request = RequestModel(db);
+
+  const foundRequest = await Request.findById(client.request);
+  if (!foundRequest) throw ApolloError('NotFound')
+
   const CartItem = CartItemModel(db);
   const Tab = TabModel(db);
 
-  const foundTab = await Tab.findById(input.tab);
+  const foundTab = await Tab.findById(foundRequest.tab);
   const foundCartItem = await CartItem.findById(input.cartItem);
 
   if (!foundTab) throw ApolloError('NotFound', 'Tab not found')
@@ -92,12 +100,18 @@ type deleteItemFromCartInput = {
 }
 
 const deleteItemFromCart = async (_parent: any, { input }: { input: deleteItemFromCartInput }, { db, client }: Context) => {
+  if (!client) throw ApolloError('Unauthorized', "Invalid token", "client")
+
+  const Request = RequestModel(db);
+
+  const foundRequest = await Request.findById(client.request);
+  if (!foundRequest) throw ApolloError('NotFound')
 
   const CartItem = CartItemModel(db);
   const Tab = TabModel(db);
 
   // from the input get the tab id and the cart item id
-  const foundTab = await Tab.findById(input.tab);
+  const foundTab = await Tab.findById(foundRequest.tab);
   const foundCartItem = await CartItem.findById(input.cartItem);
 
   if (!foundTab) throw ApolloError('NotFound')

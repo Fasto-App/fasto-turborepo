@@ -5,7 +5,7 @@ import { Icon } from "../../components/atoms/NavigationButton";
 import { NavigationButtonType } from "../../components/types";
 import { ILinearGradientProps } from "native-base/lib/typescript/components/primitives/Box/types";
 import { ResponsiveValue, ColorType } from "native-base/lib/typescript/components/types";
-import { useGetClientInformation, useGetTabInformation } from "../../hooks";
+import { useGetClientInformation, useGetClientSession } from "../../hooks";
 import { clientRoute } from "../../routes";
 import { useRouter } from "next/router";
 import { PendingInvitationModal } from "./PendingInvitationModal";
@@ -95,10 +95,10 @@ const SettingsScreen = () => {
   const { businessId } = router.query
 
   const { data } = useGetClientInformation()
-  const { data: tabInfo } = useGetTabInformation()
+  const { data: tabInfo } = useGetClientSession()
 
-  const isAdmin = tabInfo?.getTabByID?.admin === data?.getClientInformation?._id
-  const tabId = tabInfo?.getTabByID?._id
+  const isAdmin = tabInfo?.getClientSession?.tab?.admin === data?.getClientInformation?._id
+  const tabId = tabInfo?.getClientSession.tab?._id
 
   console.log({ tabInfo })
 
@@ -155,7 +155,7 @@ const SettingsScreen = () => {
         {/* <ChevronRightIcon color={"secondary.900"} /> */}
       </ListBorderTile>
       <Box backgroundColor={"white"} borderRadius={"md"}>
-        <UsersAccordion users={tabInfo?.getTabByID?.users} />
+        <UsersAccordion users={tabInfo?.getClientSession.tab?.users} />
       </Box>
       {settingsTiles.map((tile, index) => (
         <SettingsTile

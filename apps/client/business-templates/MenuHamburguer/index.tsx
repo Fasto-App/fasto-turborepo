@@ -3,7 +3,7 @@ import { Divider, Menu, Text, Pressable, HStack, Avatar, VStack } from "native-b
 import { BusinessNavigationButton, NavigationButton } from "../../components/atoms/NavigationButton";
 import { businessRoute } from "../../routes";
 import { useRouter } from "next/router";
-import { clearCookies } from "../../cookies/businessCookies";
+import { clearBusinessCookies } from "../../cookies";
 
 const AccountTile = ({ isActive = false }: { isActive?: boolean }) => {
   return (
@@ -41,7 +41,7 @@ export function HamburgerMenu() {
         text={"Logout"}
         type={"Logout"}
         onPress={() => {
-          clearCookies();
+          clearBusinessCookies();
           router.push(businessRoute.login);
         }}
       />

@@ -2,36 +2,33 @@ import { onError } from '@apollo/client/link/error'
 import { Heading, HStack, Box, Button, Text, FlatList } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
-import { getClientCookies } from '../../cookies/businessCookies'
-import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument, GetTabByIdDocument } from '../../gen/generated'
+import { getClientCookies } from '../../cookies'
+import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument, GetTabByIdDocument, GetClientSessionDocument } from '../../gen/generated'
 import { texts } from './texts'
+import { useRouter } from 'next/router'
 
 type PendingInvitationModalProps = {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
 }
 
+const refetchOptions = [
+  { query: GetPendingInvitationsDocument, },
+  { query: GetClientSessionDocument }]
+
 export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
   const { isModalOpen, setIsModalOpen } = props
-  const tabId = getClientCookies("tab")
-  const token = getClientCookies("token")
 
-  const { data, loading, subscribeToMore } = useGetPendingInvitationsQuery({
-    skip: !tabId || !token,
-    variables: {
-      input: {
-        tab: tabId as string,
-      }
-    }
+  const { query } = useRouter()
+  const { businessId } = query
+
+  const token = getClientCookies(businessId as string)
+
+  const { data, loading } = useGetPendingInvitationsQuery({
+    skip: !token,
+    pollInterval: 1000,
+    fetchPolicy: "network-only"
   })
-
-  const refetchOptions = [{
-    query: GetPendingInvitationsDocument,
-    variables: { input: { tab: tabId as string } }
-  }, {
-    query: GetTabByIdDocument,
-    variables: { input: { tab: tabId as string } }
-  }]
 
   const [acceptInvitation, { loading: acceptLoading }] = useAcceptInvitationMutation({
     refetchQueries: refetchOptions,

@@ -138,7 +138,6 @@ async function proccessContext(
     user: userFromToken,
     business: userFromToken?.business,
     client: clientFromToken,
-    chama: 10
   };
 }
 

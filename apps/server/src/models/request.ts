@@ -1,6 +1,6 @@
 import { Types, Connection } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import type { RequestStatus } from 'app-helpers';
+import type { RequestStatus, RequestStatusType } from 'app-helpers';
 
 export class Request {
   @prop()
@@ -22,7 +22,7 @@ export class Request {
   public names?: string[];
 
   @prop({ default: "Pending" })
-  public status?: RequestStatus;
+  public status?: RequestStatusType;
 
   @prop({ default: Date.now() })
   public created_date!: Date;

@@ -131,6 +131,13 @@ export enum CheckoutStatusKeys {
   Pending = 'Pending'
 }
 
+export type ClientSession = {
+  __typename?: 'ClientSession';
+  request: Request;
+  tab?: Maybe<Tab>;
+  user: User;
+};
+
 export type CreateBusinessPayload = {
   __typename?: 'CreateBusinessPayload';
   business: Business;
@@ -248,10 +255,6 @@ export type GetMenu = {
 
 export type GetMenuById = {
   id: Scalars['ID'];
-};
-
-export type GetPendingInvitationsInput = {
-  tab: Scalars['ID'];
 };
 
 export type GetTabRequestInput = {
@@ -730,6 +733,7 @@ export type Query = {
   getCheckoutByID: Checkout;
   getClientInformation: User;
   getClientMenu: Menu;
+  getClientSession: ClientSession;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getPendingInvitations: Array<Request>;
@@ -760,11 +764,6 @@ export type QueryGetBusinessByIdArgs = {
 };
 
 
-export type QueryGetCartItemsPerTabArgs = {
-  input: GetCartItemsPerTabInput;
-};
-
-
 export type QueryGetCategoryByIdArgs = {
   id: Scalars['ID'];
 };
@@ -787,11 +786,6 @@ export type QueryGetMenuByIdArgs = {
 
 export type QueryGetOrderDetailByIdArgs = {
   orderDetailID: Scalars['ID'];
-};
-
-
-export type QueryGetPendingInvitationsArgs = {
-  input: GetPendingInvitationsInput;
 };
 
 
@@ -1046,22 +1040,15 @@ export type AddItemToCartInput = {
   options?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   product: Scalars['ID'];
   quantity: Scalars['Int'];
-  tab: Scalars['ID'];
 };
 
 export type DeleteItemFromCartInput = {
   cartItem: Scalars['ID'];
-  tab: Scalars['ID'];
-};
-
-export type GetCartItemsPerTabInput = {
-  tab: Scalars['ID'];
 };
 
 export type UpdateItemFromCartInput = {
   cartItem: Scalars['ID'];
   quantity: Scalars['Int'];
-  tab: Scalars['ID'];
 };
 
 export type DeleteBusinessEmployeeMutationVariables = Exact<{
@@ -1140,9 +1127,7 @@ export type UpdateItemFromCartMutationVariables = Exact<{
 
 export type UpdateItemFromCartMutation = { __typename?: 'Mutation', updateItemFromCart: { __typename?: 'CartItem', _id: string, quantity: number, notes?: string | null, options?: Array<string | null> | null, subTotal: number } };
 
-export type GetCartItemsPerTabQueryVariables = Exact<{
-  input: GetCartItemsPerTabInput;
-}>;
+export type GetCartItemsPerTabQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCartItemsPerTabQuery = { __typename?: 'Query', getCartItemsPerTab: Array<{ __typename?: 'CartItem', _id: string, quantity: number, notes?: string | null, subTotal: number, product: { __typename?: 'Product', _id: string, name: string, imageUrl?: string | null } }> };
@@ -1330,9 +1315,12 @@ export type RequestJoinTabMutationVariables = Exact<{
 
 export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
 
-export type GetPendingInvitationsQueryVariables = Exact<{
-  input: GetPendingInvitationsInput;
-}>;
+export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { __typename?: 'ClientSession', user: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null }, request: { __typename?: 'Request', _id: string, status: RequestStatus }, tab?: { __typename?: 'Tab', _id: string, status: TabStatus, admin: string, table?: { __typename?: 'Table', tableNumber: string } | null, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, orders: Array<{ __typename?: 'OrderDetail', _id: string }> } | null } };
+
+export type GetPendingInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetPendingInvitationsQuery = { __typename?: 'Query', getPendingInvitations: Array<{ __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
@@ -1993,8 +1981,8 @@ export type UpdateItemFromCartMutationHookResult = ReturnType<typeof useUpdateIt
 export type UpdateItemFromCartMutationResult = Apollo.MutationResult<UpdateItemFromCartMutation>;
 export type UpdateItemFromCartMutationOptions = Apollo.BaseMutationOptions<UpdateItemFromCartMutation, UpdateItemFromCartMutationVariables>;
 export const GetCartItemsPerTabDocument = gql`
-    query GetCartItemsPerTab($input: getCartItemsPerTabInput!) {
-  getCartItemsPerTab(input: $input) {
+    query GetCartItemsPerTab {
+  getCartItemsPerTab {
     _id
     product {
       _id
@@ -2020,11 +2008,10 @@ export const GetCartItemsPerTabDocument = gql`
  * @example
  * const { data, loading, error } = useGetCartItemsPerTabQuery({
  *   variables: {
- *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetCartItemsPerTabQuery(baseOptions: Apollo.QueryHookOptions<GetCartItemsPerTabQuery, GetCartItemsPerTabQueryVariables>) {
+export function useGetCartItemsPerTabQuery(baseOptions?: Apollo.QueryHookOptions<GetCartItemsPerTabQuery, GetCartItemsPerTabQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetCartItemsPerTabQuery, GetCartItemsPerTabQueryVariables>(GetCartItemsPerTabDocument, options);
       }
@@ -3072,9 +3059,66 @@ export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptio
 export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
 export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
 export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
+export const GetClientSessionDocument = gql`
+    query GetClientSession {
+  getClientSession {
+    user {
+      _id
+      name
+      phoneNumber
+    }
+    request {
+      _id
+      status
+    }
+    tab {
+      _id
+      status
+      admin
+      table {
+        tableNumber
+      }
+      users {
+        _id
+        name
+      }
+      orders {
+        _id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetClientSessionQuery__
+ *
+ * To run a query within a React component, call `useGetClientSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClientSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClientSessionQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetClientSessionQuery(baseOptions?: Apollo.QueryHookOptions<GetClientSessionQuery, GetClientSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClientSessionQuery, GetClientSessionQueryVariables>(GetClientSessionDocument, options);
+      }
+export function useGetClientSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientSessionQuery, GetClientSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClientSessionQuery, GetClientSessionQueryVariables>(GetClientSessionDocument, options);
+        }
+export type GetClientSessionQueryHookResult = ReturnType<typeof useGetClientSessionQuery>;
+export type GetClientSessionLazyQueryHookResult = ReturnType<typeof useGetClientSessionLazyQuery>;
+export type GetClientSessionQueryResult = Apollo.QueryResult<GetClientSessionQuery, GetClientSessionQueryVariables>;
 export const GetPendingInvitationsDocument = gql`
-    query GetPendingInvitations($input: GetPendingInvitationsInput!) {
-  getPendingInvitations(input: $input) {
+    query GetPendingInvitations {
+  getPendingInvitations {
     _id
     business
     totalGuests
@@ -3102,11 +3146,10 @@ export const GetPendingInvitationsDocument = gql`
  * @example
  * const { data, loading, error } = useGetPendingInvitationsQuery({
  *   variables: {
- *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetPendingInvitationsQuery(baseOptions: Apollo.QueryHookOptions<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>) {
+export function useGetPendingInvitationsQuery(baseOptions?: Apollo.QueryHookOptions<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetPendingInvitationsQuery, GetPendingInvitationsQueryVariables>(GetPendingInvitationsDocument, options);
       }

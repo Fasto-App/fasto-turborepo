@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { clientRoute, ClientRouteKeys } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { useGetTabRequest } from "../../hooks";
+import { useGetClientSession } from "../../hooks";
 
 
 const ClientTabBar: React.FC = (props) => {
@@ -23,7 +23,7 @@ const ClientTabBar: React.FC = (props) => {
   const isSettings = useIsPageSelected("settings");
 
 
-  const { data: tabData } = useGetTabRequest()
+  const { data: tabData } = useGetClientSession()
 
   const paddingX = useBreakpointValue({
     base: "8",
@@ -49,9 +49,9 @@ const ClientTabBar: React.FC = (props) => {
       />
       <NavigationButton
         type={"Bag"}
-        disabled={tabData?.getTabRequest?.status === "Pending"}
+        disabled={!tabData?.getClientSession.tab}
         selected={isCart}
-        numNotifications={9}
+        numNotifications={tabData?.getClientSession.tab?.orders?.length}
         onPress={() => {
           router.push(clientRoute.cart(businessId));
         }}

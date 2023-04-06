@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { LoginConfig, useLoginFormHook } from './hooks';
 import { usePostUserLoginMutation } from '../../gen/generated';
-import { setCookies } from '../../cookies/businessCookies';
+import { setBusinessCookies } from '../../cookies';
 import { businessRoute } from '../../routes';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 import { Link } from '../../components/atoms/Link';
@@ -40,9 +40,7 @@ export const LoginForm = () => {
 				throw new Error("Invalid data returned from server")
 			}
 
-			setCookies("name", name);
-			setCookies("token", token);
-			setCookies("email", email);
+			setBusinessCookies("token", token);
 			router.push(businessRoute.dashboard);
 		},
 		onError: (error) => {

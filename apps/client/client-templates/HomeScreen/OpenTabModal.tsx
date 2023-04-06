@@ -8,7 +8,7 @@ import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { GetTabRequestDocument, GetTabRequestsDocument, useOpenTabRequestMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
-import { setClientCookies } from '../../cookies/businessCookies'
+import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
 import { texts } from './texts'
 
@@ -93,9 +93,9 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
       { query: GetTabRequestsDocument }],
     onCompleted: (data) => {
       console.log("Tab Request Completed")
-      if (!data?.openTabRequest) return
+      if (!data?.openTabRequest || typeof businessId !== "string") return
 
-      setClientCookies("token", data.openTabRequest)
+      setClientCookies(businessId, data.openTabRequest)
       router.push(clientRoute.menu(businessId as string))
     },
     onError: (err) => {

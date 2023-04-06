@@ -19,7 +19,7 @@ export async function tokenClient({ _id, business, request }: ClientContext) {
   return await new jose.SignJWT({ _id, business, request })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('2h')
+    .setExpirationTime('24h')
     .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 

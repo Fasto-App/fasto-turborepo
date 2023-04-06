@@ -1,3 +1,4 @@
+import { typedKeys } from "app-helpers";
 import { CLIENT } from "./appRoute";
 
 export const clientRoute = {
@@ -19,5 +20,9 @@ export const clientPathName = {
   [`/client/[businessId]/product-description/[productId]`]: 'Product Description',
   [`/client/[businessId]/settings`]: 'Settings',
 } as const
+
+// keys from pathname
+
+export const clientPathNameKeys = typedKeys(clientPathName)
 
 export type PathNameKeys = keyof typeof clientPathName;

@@ -1,0 +1,28 @@
+query GetClientSession {
+	getClientSession {
+		user {
+			_id
+			name
+			phoneNumber
+		}
+		request {
+			_id
+			status
+		}
+		tab {
+			_id
+			status
+			admin
+			table {
+				tableNumber
+			}
+			users {
+				_id
+				name
+			}
+			orders {
+				_id
+			}
+		}
+	}
+}

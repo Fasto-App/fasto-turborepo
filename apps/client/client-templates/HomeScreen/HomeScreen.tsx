@@ -4,10 +4,11 @@ import { useRouter } from 'next/router'
 import { texts } from './texts'
 import { JoinTabModal } from './JoinTabModal'
 import { OpenTabModal } from './OpenTabModal'
-import { useGetBusinessInformation, useGetTabRequest } from '../../hooks'
+import { useGetBusinessInformation, useGetClientSession } from '../../hooks'
 import { clientRoute } from '../../routes'
 import { Link } from '../../components/atoms/Link'
 import { TakeoutDeliveryModal } from './TakeoutDeliveryModal'
+import { getClientCookies } from '../../cookies'
 
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
@@ -26,7 +27,7 @@ export const HomeScreen = () => {
     route.push(clientRoute.menu(businessId as string))
   }, [businessId, route])
 
-  const { data: tabData, loading, error } = useGetTabRequest()
+  const { data: tabData, loading, error } = useGetClientSession()
   const { data: businessInfo } = useGetBusinessInformation()
 
   const image = businessInfo?.getBusinessById?.picture
@@ -39,6 +40,13 @@ export const HomeScreen = () => {
       setIsJoinTabModalOpen(true)
     }
   }, [adminId, name, tabId])
+
+  useEffect(() => {
+    const token = getClientCookies(businessId as string)
+    if (token) {
+      route.push(clientRoute.menu(businessId as string))
+    }
+  }, [businessId, route])
 
 
   return (
@@ -62,14 +70,14 @@ export const HomeScreen = () => {
       />
       <VStack space={6} mt={"10"} w={"80%"}>
         <Button
-          isDisabled={loading || tabData?.getTabRequest?.status === "Pending"}
+          isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
           onPress={() => setIsOpenTabModalOpen(true)}
           _text={{ bold: true }}>{texts.openNewTab}</Button>
         <Button onPress={() => setIsTakeoutDeliveryModalOpen(true)}
           _text={{ bold: true }}
           colorScheme={"secondary"}>{texts.takeoutOrDelivery}</Button>
         <Button
-          isDisabled={loading || tabData?.getTabRequest?.status === "Pending"}
+          isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
           onPress={joinTab}
           _text={{ bold: true }}
           colorScheme={"tertiary"}>{texts.joinTab}</Button>

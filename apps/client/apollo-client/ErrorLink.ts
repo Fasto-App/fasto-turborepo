@@ -1,6 +1,6 @@
 import { onError } from "@apollo/client/link/error";
 import Router from "next/router";
-import { clearCookies, clearClientCookies } from "../cookies/businessCookies";
+import { clearBusinessCookies, clearClientCookies } from "../cookies";
 import { businessRoute } from "../routes";
 
 export const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -14,12 +14,15 @@ export const errorLink = onError(({ graphQLErrors, networkError }) => {
 
     for (let err of graphQLErrors) {
       if (err.extensions?.httpStatus === 'Unauthorized' && err.extensions?.app === 'business') {
-        clearCookies()
+        clearBusinessCookies()
         Router.push(businessRoute.login)
       }
 
       if (err.extensions?.httpStatus === 'Unauthorized' && err.extensions?.app === 'client') {
-        clearClientCookies()
+        const businessId = Router.query.businessId as string
+        if (businessId) {
+          clearClientCookies(businessId)
+        }
       }
 
       console.log("code", err.extensions?.code)

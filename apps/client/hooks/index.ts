@@ -1,8 +1,8 @@
 import { useBreakpointValue } from "native-base";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getClientCookies, setClientCookies } from "../cookies/businessCookies";
-import { OnTabRequestResponseDocument, useGetBusinessByIdQuery, useGetClientInformationQuery, useGetTabByIdQuery, useGetTabRequestQuery, useSubscriptionSubscription } from "../gen/generated";
+import { getClientCookies } from "../cookies";
+import { useGetBusinessByIdQuery, useGetClientInformationQuery, useGetClientSessionQuery } from "../gen/generated";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -55,78 +55,18 @@ export const useUploadFileHook = () => {
   }
 }
 
-export const useGetTabRequest = () => {
-  const clientToken = getClientCookies("token")
+export const useGetClientSession = () => {
+  const route = useRouter()
+  const { businessId } = route.query
+  const token = getClientCookies(businessId as string)
 
-  // const { data: subData } = useSubscriptionSubscription()
-
-  // console.group({ subData })
-
-  const { subscribeToMore, ...data } = useGetTabRequestQuery({
-    skip: !clientToken,
+  return useGetClientSessionQuery({
+    skip: !token,
     onCompleted: (data) => {
-      if (data.getTabRequest.status === "Accepted" && data.getTabRequest.tab) {
-        setClientCookies("tab", data.getTabRequest.tab)
-      }
-    },
-    onError: (error) => {
-      console.log("error", error)
-      // clear cache
+      // if the data has the request is successfull but the tab is not there
+      // then we need to get a new token
     },
   })
-
-  useEffect(() => {
-    const unsubscribe = () => subscribeToMore({
-      document: OnTabRequestResponseDocument,
-      updateQuery: (prev, { subscriptionData }) => {
-
-        console.log("subscriptionData", subscriptionData)
-        console.log("prev", prev)
-
-        if (!subscriptionData.data) return prev;
-        // @ts-ignore
-        const newTabRequest = subscriptionData.data.onTabRequestResponse;
-
-        if (newTabRequest.tab) {
-          setClientCookies("tab", newTabRequest.tab)
-        }
-
-        return {
-          ...prev,
-          getTabRequest: newTabRequest
-        }
-      }
-    })
-
-    unsubscribe()
-
-  }, [subscribeToMore])
-
-
-  return data
-}
-
-export const useGetTabInformation = () => {
-  const tab = getClientCookies("tab")
-  const clientToken = getClientCookies("token")
-  // get the information of the tab and make a request
-  const data = useGetTabByIdQuery({
-    skip: !tab || !clientToken,
-    variables: {
-      input: {
-        _id: tab as string
-      },
-    },
-    onCompleted: (data) => {
-      console.log("data", data)
-    },
-    onError: (error) => {
-      console.log("error", error)
-      // clear cache
-    }
-  })
-
-  return data
 }
 
 export const useGetBusinessInformation = () => {
@@ -153,8 +93,11 @@ export const useGetBusinessInformation = () => {
 }
 
 export const useGetClientInformation = () => {
+  const { query } = useRouter()
+  const { businessId } = query
+
   const data = useGetClientInformationQuery({
-    skip: !getClientCookies("token"),
+    skip: !getClientCookies(businessId as string),
     onCompleted: (data) => {
       console.log("data", data)
     },

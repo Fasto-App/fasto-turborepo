@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export const CartItemTypeDefinition = gql`
 
   extend type Query {
-    getCartItemsPerTab(input: getCartItemsPerTabInput!): [CartItem!]!
+    getCartItemsPerTab: [CartItem!]!
   }
 
   extend type Mutation {
@@ -14,21 +14,14 @@ export const CartItemTypeDefinition = gql`
 
   input updateItemFromCartInput {
     cartItem: ID!
-    tab: ID!
     quantity: Int!
   }
 
   input deleteItemFromCartInput {
     cartItem: ID!
-    tab: ID!
-  }
-
-  input getCartItemsPerTabInput {
-    tab: ID!
   }
 
   input addItemToCartInput {
-    tab: ID!
     product: ID!
     quantity: Int!
     notes: String
@@ -37,6 +30,7 @@ export const CartItemTypeDefinition = gql`
 
   type CartItem {
     _id: ID!
+    user: User!
     tab: Tab!
     product: Product!
     quantity: Int!

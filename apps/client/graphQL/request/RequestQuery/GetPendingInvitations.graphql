@@ -1,5 +1,5 @@
-query GetPendingInvitations($input: GetPendingInvitationsInput!) {
-	getPendingInvitations(input: $input) {
+query GetPendingInvitations {
+	getPendingInvitations {
 		_id
 		business
 		totalGuests

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Center, Box, Heading, VStack, HStack, Button, Pressable, Text } from "native-base";
 import { businessRoute } from '../../routes';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
-import { setCookies } from '../../cookies/businessCookies';
+import { setBusinessCookies } from '../../cookies';
 import { useRouter } from 'next/router';
 import { Link } from '../../components/atoms/Link';
 import { CreateAccountConfig, useCreateAccountFormHook } from './hooks';
@@ -33,9 +33,7 @@ export const CreateAccountScreen = () => {
   const [createUser, { loading }] = useCreateUserMutation({
     onCompleted: (data) => {
       const { token, email, name } = data.createUser;
-      setCookies("token", token);
-      email && setCookies("email", email);
-      name && setCookies("name", name);
+      setBusinessCookies("token", token);
 
       router.push(businessRoute.dashboard);
     }
@@ -43,10 +41,8 @@ export const CreateAccountScreen = () => {
 
   const [createEmployeeAccount, { loading: employeeLoading }] = useCreateEmployeeAccountMutation({
     onCompleted: (data) => {
-      const { token, email, name } = data.createEmployeeAccount;
-      setCookies("token", token);
-      email && setCookies("email", email);
-      name && setCookies("name", name);
+      const { token } = data.createEmployeeAccount;
+      setBusinessCookies("token", token);
 
       router.push(businessRoute.dashboard);
     }

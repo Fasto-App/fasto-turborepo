@@ -1,4 +1,4 @@
-import { JoinTabForm, NewTabForm, newTabSchema, RequestStatus } from "app-helpers";
+import { JoinTabForm, NewTabForm, newTabSchema, RequestStatusType, RequestStatus } from "app-helpers";
 import { withFilter } from "graphql-subscriptions";
 import { BusinessModel, UserModel, RequestModel, TabModel, TableModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
@@ -62,7 +62,7 @@ const openTabRequest = async (
   // the status should be either pending or accepted
   const foundRequest = await Request.findOne({
     requestor: foundUserByPhone._id,
-    status: { $in: ['Pending', 'Accepted'] as RequestStatus[] }
+    status: { $in: ['Pending', 'Accepted'] as RequestStatusType[] }
   })
 
   if (foundRequest) {
@@ -204,11 +204,7 @@ const requestJoinTab = async (
     throw ApolloError('BadRequest', "Tab Not Open Yet")
   }
 
-  console.log('foundTab', foundTab)
-
   const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
-
-  console.log('foundUser', foundUser)
 
   if (!foundUser) {
 
@@ -220,7 +216,6 @@ const requestJoinTab = async (
     const newRequest = await Request.create({
       requestor: newUser._id,
       admin: tabAdmin._id,
-      tab: foundTab._id,
       status: 'Pending',
     })
     console.log('newRequest', newRequest)
@@ -232,12 +227,23 @@ const requestJoinTab = async (
     })
   }
 
-  console.log('foundUser', foundUser)
+  // does the user already have a request to this tab?
+  const foundRequest = await Request.findOne({
+    requestor: foundUser._id,
+    status: { $in: ['Pending', 'Accepted'] as RequestStatusType[] }
+  })
+
+  if (foundRequest) {
+    return await tokenClient({
+      _id: foundUser._id,
+      request: foundRequest._id,
+      business: input.business,
+    })
+  }
 
   const newRequest = await Request.create({
     requestor: foundUser._id,
     admin: tabAdmin._id,
-    tab: foundTab._id,
     status: 'Pending',
   })
   //todo: logic for existing user
@@ -283,8 +289,12 @@ const acceptInvitation = async (
       _id: string,
     }
   },
-  { db }: Context
+  { db, client }: Context
 ) => {
+  if (!client) {
+    throw ApolloError('Unauthorized', "Client Not Found", "client")
+  }
+
   const Tab = TabModel(db);
   const Request = RequestModel(db)
   const foundrequest = await Request.findOne({ _id: input._id })
@@ -293,7 +303,13 @@ const acceptInvitation = async (
     throw ApolloError('BadRequest', "Request Not Found")
   }
 
-  const foundTab = await Tab.findOne({ _id: foundrequest.tab })
+  const adminRequest = await Request.findById(client?.request)
+
+  if (!adminRequest) {
+    throw ApolloError('BadRequest', "Request Not Found")
+  }
+
+  const foundTab = await Tab.findOne({ _id: adminRequest?.tab })
 
   if (!foundTab) {
     throw ApolloError('BadRequest', "Tab Not Found")
@@ -301,6 +317,7 @@ const acceptInvitation = async (
 
   // change Request status to accepted
   foundrequest.status = 'Accepted';
+  foundrequest.tab = foundTab._id;
   await foundrequest.save();
 
   foundTab.users = [...foundTab.users, foundrequest.requestor]
@@ -346,6 +363,8 @@ const createNewTakeoutOrDelivery = async (
       tab: newTab._id,
       status: 'Accepted',
     })
+
+    console.log("newTab", newTab)
 
     return await tokenClient({
       _id: newUser._id,

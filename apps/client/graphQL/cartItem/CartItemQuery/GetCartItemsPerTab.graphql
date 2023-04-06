@@ -1,5 +1,5 @@
-query GetCartItemsPerTab($input: getCartItemsPerTabInput!) {
-	getCartItemsPerTab(input: $input) {
+query GetCartItemsPerTab {
+	getCartItemsPerTab {
 		_id
 		product {
 			_id
@@ -9,5 +9,9 @@ query GetCartItemsPerTab($input: getCartItemsPerTabInput!) {
 		quantity
 		notes
 		subTotal
+		user {
+			_id
+			name
+		}
 	}
 }

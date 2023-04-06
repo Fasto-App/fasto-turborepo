@@ -9,7 +9,7 @@ import { JoinTabForm, joinTabSchema } from 'app-helpers'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, SideBySideInputConfig } from '../../components/ControlledForm'
 import { useRequestJoinTabMutation } from '../../gen/generated'
-import { setClientCookies } from '../../cookies/businessCookies'
+import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
 
 type JoinTabModalProps = {
@@ -55,10 +55,10 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
     onCompleted: (data) => {
       // get the token back and store in the cookies
       console.log("Tab Request Completed")
-      if (!data?.requestJoinTab) return
+      if (!data?.requestJoinTab || typeof businessId !== "string") return
 
-      setClientCookies("token", data?.requestJoinTab)
-      router.push(clientRoute.menu(businessId as string))
+      setClientCookies(businessId, data?.requestJoinTab)
+      router.push(clientRoute.menu(businessId))
     }
   })
 

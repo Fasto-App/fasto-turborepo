@@ -6,7 +6,7 @@ import { ResetPasswordConfig, useResetPasswordHook } from './hook';
 import { useRouter } from 'next/router';
 import { usePasswordResetMutation } from '../../gen/generated';
 import { ResetPasswordSchemaInput } from 'app-helpers';
-import { setCookies } from '../../cookies/businessCookies';
+import { setBusinessCookies } from '../../cookies';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 
@@ -32,10 +32,8 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
     onCompleted: (data) => {
       console.log("Reset password completed")
 
-      const { token, email, name } = data.passwordReset;
-      setCookies("token", token);
-      email && setCookies("email", email);
-      name && setCookies("name", name);
+      const { token } = data.passwordReset;
+      setBusinessCookies("token", token);
 
       router.push(businessRoute.dashboard);
     }

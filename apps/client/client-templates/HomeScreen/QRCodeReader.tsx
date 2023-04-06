@@ -29,17 +29,19 @@ export const QRCodeReader = () => {
 
       try {
         const url = new URL(result.getText());
-        const searchParams = new URLSearchParams(url.search);
+        console.log({ url })
 
         // todo: get the business id from the url and compare to what we have
-        const tabId = searchParams.get("tabId");
-        const name = searchParams.get("name");
-        const adminId = searchParams.get("adminId");
+        const tabId = url.searchParams.get("tabId");
+        const name = url.searchParams.get("name");
+        const adminId = url.searchParams.get("adminId");
 
         if (!tabId || !name || !adminId) {
           setQrCodeError(true)
           return
         };
+
+        console.log({ ...router.query })
 
         router.push({
           query: { ...router.query, tabId, name, adminId }

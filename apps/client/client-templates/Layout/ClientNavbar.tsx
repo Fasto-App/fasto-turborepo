@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Avatar, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { clientPathName, PathNameKeys } from "../../routes";
-import { getClientCookies } from "../../cookies/businessCookies";
+import { getClientCookies } from "../../cookies";
 import { useGetBusinessInformation } from "../../hooks";
 import { OrangeBox } from "../../components/OrangeBox";
 
@@ -12,9 +12,9 @@ const plaholderImage = "https://via.placeholder.com/150"
 const ClientNavBar = (props: { tableNumber?: string }) => {
   const { tableNumber } = props
 
-  const token = getClientCookies("token")
   const route = useRouter();
-  const { productId } = route.query
+  const { productId, businessId } = route.query
+  const token = getClientCookies(businessId as string)
   const theme = useTheme();
 
   const { data: businessInfo } = useGetBusinessInformation()

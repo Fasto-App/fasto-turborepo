@@ -3,9 +3,10 @@ import { gql } from "apollo-server-express";
 export const RequestTypeDefinition = gql`
 
   extend type Query {
+    getClientSession: ClientSession!
     getTabRequest: Request!
     getTabRequests(input: GetTabRequestInput): [Request!]!
-    getPendingInvitations(input: GetPendingInvitationsInput!): [Request!]!
+    getPendingInvitations: [Request!]!
   }
 
   extend type Mutation {
@@ -24,8 +25,10 @@ export const RequestTypeDefinition = gql`
     numberIncremented: Int!,
   }
 
-  input GetPendingInvitationsInput {
-    tab: ID!
+  type ClientSession {
+    user: User!
+    request: Request!
+    tab: Tab
   }
 
   input CreateNewTakeoutOrDeliveryInput {

@@ -6,13 +6,22 @@ export class CartItem {
     public product!: Types.ObjectId;
 
     @prop({ required: true })
-    public user?: Types.ObjectId;
+    public user!: Types.ObjectId;
 
     @prop({ required: true, default: 1 })
     public quantity!: number;
 
     @prop({ required: true, default: 0 })
     public subTotal!: number;
+
+    @prop({ required: true })
+    public tab!: Types.ObjectId;
+
+    @prop()
+    public options?: Types.ObjectId[];
+
+    @prop()
+    public notes?: string;
 
     @prop({ default: Date.now() })
     public created_date!: Date;

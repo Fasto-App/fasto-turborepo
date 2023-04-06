@@ -7,7 +7,7 @@ import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
 import { parseToCurrency } from "app-helpers";
 import { texts } from "./texts";
-import { getClientCookies } from "../../cookies/businessCookies";
+import { getClientCookies } from "../../cookies";
 import { useAddItemToCartMutation, useGetProductByIdQuery } from "../../gen/generated";
 import { LoadingPDP } from "./LoadingPDP";
 import { clientRoute } from "../../routes";
@@ -23,12 +23,13 @@ const addons = [
 ]
 
 export const ProductDescriptionScreen = () => {
-  const [quantity, setQuantity] = useState(1);
-  const [text, setText] = useState("");
-  const tab = getClientCookies("tab")
-
   const route = useRouter();
   const { businessId, productId } = route.query;
+
+  const [quantity, setQuantity] = useState(1);
+  const [text, setText] = useState("");
+
+  const tab = getClientCookies(businessId as string)
 
   // function to query product by id
   const { data, loading, error } = useGetProductByIdQuery({
@@ -76,7 +77,6 @@ export const ProductDescriptionScreen = () => {
           product: productId,
           quantity,
           notes: text,
-          tab,
         }
       }
     })

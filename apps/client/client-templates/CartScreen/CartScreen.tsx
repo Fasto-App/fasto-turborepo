@@ -7,7 +7,8 @@ import { CartTile } from "../../components/organisms/CartTile";
 import { clientRoute } from "../../routes";
 import { texts } from "./texts";
 import { useGetCartItemsPerTabQuery } from "../../gen/generated";
-import { getClientCookies } from "../../cookies/businessCookies";
+import { getClientCookies } from "../../cookies";
+import { PastOrdersModal } from "./PastOrdersModal";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
@@ -18,15 +19,12 @@ export const CartScreen = () => {
   const route = useRouter();
   const { businessId, checkoutId } = route.query;
 
-  const tab = getClientCookies("tab")
+  const token = getClientCookies(businessId as string)
 
   const { data, loading, error } = useGetCartItemsPerTabQuery({
-    skip: !tab,
-    variables: {
-      input: {
-        tab: tab as string,
-      }
-    }
+    skip: !token,
+    pollInterval: 10000,
+    fetchPolicy: "network-only"
   })
 
   const theme = useTheme();
@@ -90,6 +88,9 @@ export const CartScreen = () => {
             />
         }
       </Box>
+      <PastOrdersModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen} />
       <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button
           flex={1}

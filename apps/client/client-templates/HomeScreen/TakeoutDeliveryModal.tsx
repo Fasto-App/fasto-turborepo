@@ -8,9 +8,10 @@ import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { GetTabRequestsDocument, useCreateNewTakeoutOrDeliveryMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
-import { setClientCookies } from '../../cookies/businessCookies'
+import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
 import { texts } from './texts'
+import { string } from 'zod'
 
 const Config: SideBySideInputConfig = {
   name: {
@@ -53,10 +54,11 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
       { query: GetTabRequestsDocument }],
     onCompleted: (data) => {
       console.log("Tab Request Completed")
-      if (!data?.createNewTakeoutOrDelivery) return
+      if (!data?.createNewTakeoutOrDelivery ||
+        typeof businessId !== "string") return
 
-      setClientCookies("token", data.createNewTakeoutOrDelivery)
-      setClientCookies("token", data.createNewTakeoutOrDelivery)
+      setClientCookies(businessId, data.createNewTakeoutOrDelivery)
+      setClientCookies(businessId, data.createNewTakeoutOrDelivery)
       router.push(clientRoute.menu(businessId as string))
     },
     onError: (err) => {

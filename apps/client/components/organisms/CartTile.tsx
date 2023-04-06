@@ -3,7 +3,6 @@ import { Box, HStack, Image, Pressable, Text } from "native-base";
 import { IncrementButtons } from "../OrderSummary/IncrementButtons";
 import debounce from 'lodash/debounce';
 import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
-import { getClientCookies } from "../../cookies/businessCookies";
 
 export type CartTileProps = {
   index: number;
@@ -19,11 +18,6 @@ const states = ["✅", "⏳"];
 // for both funtions we should refetch the cart
 const refetchQueries = [{
   query: GetCartItemsPerTabDocument,
-  variables: {
-    input: {
-      tab: getClientCookies("tab"),
-    }
-  },
 }]
 
 
@@ -44,15 +38,11 @@ export const CartTile = (props: CartTileProps) => {
   const debounceditemUpdate = useCallback(debounce((qnt: number) => {
     console.log("sending patch request");
 
-    const tab = getClientCookies("tab")
-    if (typeof tab !== "string") return
-
     updateItem({
       variables: {
         input: {
           quantity: qnt,
           cartItem: _id,
-          tab
         }
       }
     })
@@ -60,14 +50,11 @@ export const CartTile = (props: CartTileProps) => {
   }, 1000), [])
 
   const handleDeleteItem = () => {
-    const tab = getClientCookies("tab")
-    if (typeof tab !== "string") return
 
     deleteitem({
       variables: {
         input: {
           cartItem: _id,
-          tab
         }
       }
     })
