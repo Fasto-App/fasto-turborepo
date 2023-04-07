@@ -125,10 +125,10 @@ const PendingInvitationTile = ({ index, onDecline, onAccept, name, phone, loadin
         </Text>
       </Box>
       <Button.Group h={"10"} flex={1} justifyContent={"space-between"} space={4}>
-        <Button flex={1} onPress={onAccept} isLoading={loading}>
+        <Button flex={1} colorScheme={"tertiary"} onPress={onAccept} isLoading={loading}>
           {texts.accept}
         </Button>
-        <Button flex={1} colorScheme={"tertiary"} onPress={onDecline} isLoading={loading}>
+        <Button flex={1} onPress={onDecline} isLoading={loading}>
           {texts.decline}
         </Button>
       </Button.Group>

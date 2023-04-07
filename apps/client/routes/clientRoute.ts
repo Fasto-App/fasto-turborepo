@@ -13,14 +13,12 @@ export type ClientRouteKeys = keyof typeof clientRoute;
 
 export const clientPathName = {
   [`/client/[businessId]`]: 'Home',
-  [`/client/[businessId]/cart/`]: 'Cart',
+  [`/client/[businessId]/cart`]: 'Cart',
   [`/client/[businessId]/menu`]: 'Menu',
   [`/client/[businessId]/checkout/[checkoutId]`]: 'Checkout',
   [`/client/[businessId]/product-description/[productId]`]: 'Product Description',
   [`/client/[businessId]/settings`]: 'Settings',
 } as const
-
-// keys from pathname
 
 export const clientPathNameKeys = Object.keys(clientPathName) as (keyof typeof clientPathName)[];
 
