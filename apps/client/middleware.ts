@@ -22,7 +22,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   const DASHBOARD_URL = getDashboardUrl()
 
   const requestCookiesToken = request.cookies.get(businessCookies.token)
-  const requestCookiesEmail = request.cookies.get(businessCookies.email)
 
   if (process.env.NEXT_PUBLIC_ENVIRONMENT !== "development" &&
     request.headers.get("x-forwarded-proto") !== "https") {
@@ -87,8 +86,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   if (request.nextUrl.pathname.startsWith(BUSINESS_ADMIN)) {
     if (requestCookiesToken) {
       console.log("token", requestCookiesToken)
-      console.log("email", requestCookiesEmail)
-
 
       try {
         // const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))
