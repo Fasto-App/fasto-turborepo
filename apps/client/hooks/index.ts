@@ -1,8 +1,9 @@
 import { useBreakpointValue } from "native-base";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getClientCookies } from "../cookies";
-import { useGetBusinessByIdQuery, useGetClientInformationQuery, useGetClientSessionQuery } from "../gen/generated";
+import { clearClientCookies, getClientCookies } from "../cookies";
+import { RequestStatus, useGetBusinessByIdQuery, useGetClientInformationQuery, useGetClientSessionQuery } from "../gen/generated";
+import { clientRoute } from "../routes";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -58,13 +59,24 @@ export const useUploadFileHook = () => {
 export const useGetClientSession = () => {
   const route = useRouter()
   const { businessId } = route.query
+
   const token = getClientCookies(businessId as string)
+
 
   return useGetClientSessionQuery({
     skip: !token,
+    // fetchPolicy: "network-only",
+    pollInterval: 1000 * 60 * 2, // 2 minutes
     onCompleted: (data) => {
       // if the data has the request is successfull but the tab is not there
       // then we need to get a new token
+      if (data.getClientSession.request.status === RequestStatus.Rejected) {
+        if (businessId) {
+          const business = typeof businessId === "string" ? businessId : businessId[0]
+          clearClientCookies(business)
+          route.push(clientRoute.home(business))
+        }
+      }
     },
   })
 }
