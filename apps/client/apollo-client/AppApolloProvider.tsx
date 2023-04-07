@@ -68,7 +68,7 @@ export const AppApolloProvider: React.FC = ({ children }) => {
 
   const client = new ApolloClient({
     // @ts-ignore
-    link: errorLink?.concat(authLink.concat(splitLink)),
+    link: errorLink.concat(authLink.concat(splitLink)),
     cache: new InMemoryCache(),
     connectToDevTools: true,
   });
