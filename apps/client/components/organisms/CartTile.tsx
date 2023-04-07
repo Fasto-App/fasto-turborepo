@@ -4,6 +4,7 @@ import { IncrementButtons } from "../OrderSummary/IncrementButtons";
 import debounce from 'lodash/debounce';
 import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
 import { showToast } from "../showToast";
+import { texts } from "./texts";
 
 const IMAGE_PLACEHOLDER = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGhlYWx0aHklMjBmb29kfGVufDB8fDB8fA%3D%3D&w=1000&q=80";
 
