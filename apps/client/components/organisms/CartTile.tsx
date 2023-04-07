@@ -4,6 +4,8 @@ import { IncrementButtons } from "../OrderSummary/IncrementButtons";
 import debounce from 'lodash/debounce';
 import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
 
+const IMAGE_PLACEHOLDER = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGhlYWx0aHklMjBmb29kfGVufDB8fDB8fA%3D%3D&w=1000&q=80";
+
 export type CartTileProps = {
   index: number;
   name: string;
@@ -118,7 +120,7 @@ export const CartTile = (props: CartTileProps) => {
 };
 
 export const PastOrdersTile = (props: CartTileProps) => {
-  const { name, index, price, url } = props;
+  const { name, index, price, url, quantity } = props;
 
   return (
     <HStack
@@ -131,22 +133,17 @@ export const PastOrdersTile = (props: CartTileProps) => {
         <Box>
           <Image
             size={"xs"}
-            source={{ uri: url }}
+            source={{ uri: url || IMAGE_PLACEHOLDER }}
             alt={""}
             borderRadius={5}
           />
         </Box>
-        <Text alignSelf={"center"} maxW={100}>{name}</Text>
+        <Text alignSelf={"center"} maxW={200}>{name}</Text>
       </HStack>
-
+      <Text>{`X${quantity}`}</Text>
       <Text>{price}</Text>
-
-      <Text>{"x3"}</Text>
-
       <Text fontSize={"18"}>
-
         {index > 5 ? states[0] : states[1]}
-
       </Text>
     </HStack>
 

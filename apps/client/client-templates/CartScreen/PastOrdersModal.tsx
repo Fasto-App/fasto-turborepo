@@ -4,7 +4,7 @@ import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { FDSTab, TabsType } from '../../components/FDSTab'
 import { texts } from './texts'
 import { parseToCurrency } from 'app-helpers'
-import { PastOrdersTile } from '../../components/organisms/CartTile'
+import { CartTileProps, PastOrdersTile } from '../../components/organisms/CartTile'
 
 type PastOrdersModalProps = {
   isModalOpen: boolean
@@ -12,12 +12,13 @@ type PastOrdersModalProps = {
 }
 
 const orders = new Array(10).fill({
-  id: "1",
+  _id: "1",
   status: "pending",
   name: "Pizza de Alho Poro",
-  price: 1000,
-  uri: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80",
-});
+  price: "$400",
+  uri: "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png",
+  quantity: 4,
+}) as CartTileProps[];
 
 // 01. add tab from Business dashboard
 const tabs: TabsType = {
@@ -25,13 +26,13 @@ const tabs: TabsType = {
   tableOrders: "Past Orders",
 }
 
-const renderPastOrderItem = ({ item, index }: { item: any, index: number }) =>
+const renderPastOrderItem = ({ item, index }: { item: CartTileProps, index: number }) =>
   <PastOrdersTile
     key={index}
     index={index}
     name={item.name}
     url=""
-    price={parseToCurrency(item.price)}
+    price={item.price}
     quantity={item.quantity}
     _id={item._id}
   />
@@ -52,6 +53,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
       ModalBody={
         <FlatList
           data={orders}
+          renderItem={renderPastOrderItem}
           ListHeaderComponent={
             <>
               <FDSTab
@@ -62,7 +64,6 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
               <Box h={"2"} />
             </>
           }
-          renderItem={renderPastOrderItem}
         />
       }
       ModalFooter={

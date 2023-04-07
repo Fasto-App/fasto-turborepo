@@ -158,20 +158,24 @@ const SettingsScreen = () => {
         <UsersAccordion users={tabInfo?.getClientSession.tab?.users} />
       </Box>
       {settingsTiles.map((tile, index) => (
-        <SettingsTile
-          _id={tile._id}
-          key={index}
-          icon={tile.icon}
-          title={tile.title}
-          iconBackgroundColor={tile.iconBackgroundColor}
-          onPress={() => handlePress(tile._id)}
-          disabled={shouldBeDisabled(tile._id)}
-        />
+        // if not admin, disable the QR Code tile and the Pending Invitations tile
+        !isAdmin && tile._id === "qrcode" || tile._id === "invitations" ? null :
+
+          <SettingsTile
+            _id={tile._id}
+            key={index}
+            icon={tile.icon}
+            title={tile.title}
+            iconBackgroundColor={tile.iconBackgroundColor}
+            onPress={() => handlePress(tile._id)}
+            disabled={shouldBeDisabled(tile._id)}
+          />
       ))}
       <QRCodeReaderModal QR_CODE={QR_CODE || ""}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
+      {/* If the user is not an admin neither the QR Code nor the Pending Modal should display */}
       <PendingInvitationModal
         isModalOpen={isModalOpen2}
         setIsModalOpen={setIsModalOpen2}

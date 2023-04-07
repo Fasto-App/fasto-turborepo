@@ -26,7 +26,7 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
 
   const { data, loading } = useGetPendingInvitationsQuery({
     skip: !token,
-    pollInterval: 1000,
+    pollInterval: 1000 * 60,
     fetchPolicy: "network-only"
   })
 

@@ -29,7 +29,7 @@ export const getUserFromToken = async (token?: string): Promise<UserContext | nu
   if (!tokenSecret) throw new Error('Token secret not found');
 
   if (!token) {
-    console.log("🚯 No Token: Limited Access");
+    // console.log("🚯 No Token: Limited Access");
     return null
   }
 

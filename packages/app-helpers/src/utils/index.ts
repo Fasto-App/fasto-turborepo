@@ -37,3 +37,17 @@ export const getFixedPointPercentage = (percentage?: number) => {
 }
 
 export const DICE_BEAR_INITIALS_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
+
+let loggingEnabled = process.env.ENVIRONMENT === 'development';
+
+type LogArgument = string | { color: string };
+
+export function log(...args: LogArgument[]) {
+  const lastArg = args[args.length - 1];
+  const options = typeof lastArg === 'object' && lastArg !== null ? args.pop() : {};
+  // @ts-ignore
+  const { color = 'black' } = options || { color: 'black' };
+  if (loggingEnabled) {
+    console.log(...args.map(message => `%c${message}`), `color: ${color}`);
+  }
+}
