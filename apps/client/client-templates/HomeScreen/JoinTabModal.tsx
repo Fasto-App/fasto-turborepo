@@ -66,15 +66,18 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
     console.log("clicked")
     console.log(data)
 
-    if (!tabId || !adminId || typeof adminId !== "string") return
+    if (!tabId || !adminId) {
+      alert("Error: COuld not read QR Code properly")
+      return
+    }
 
     await requestJoinTab({
       variables: {
         input: {
-          tab: tabId as string,
+          tab: typeof tabId === "string" ? tabId : tabId[0],
+          admin: typeof adminId === "string" ? adminId : adminId[0],
           name: data.name,
           phoneNumber: data.phoneNumber,
-          admin: adminId,
           business: router.query.businessId as string,
         }
       }
