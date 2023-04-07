@@ -88,6 +88,7 @@ export type CartItem = {
   quantity: Scalars['Int'];
   subTotal: Scalars['Float'];
   tab: Tab;
+  user: User;
 };
 
 export type Category = {
@@ -1130,7 +1131,7 @@ export type UpdateItemFromCartMutation = { __typename?: 'Mutation', updateItemFr
 export type GetCartItemsPerTabQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCartItemsPerTabQuery = { __typename?: 'Query', getCartItemsPerTab: Array<{ __typename?: 'CartItem', _id: string, quantity: number, notes?: string | null, subTotal: number, product: { __typename?: 'Product', _id: string, name: string, imageUrl?: string | null } }> };
+export type GetCartItemsPerTabQuery = { __typename?: 'Query', getCartItemsPerTab: Array<{ __typename?: 'CartItem', _id: string, quantity: number, notes?: string | null, subTotal: number, product: { __typename?: 'Product', _id: string, name: string, imageUrl?: string | null }, user: { __typename?: 'User', _id: string, name?: string | null } }> };
 
 export type CreateCategoryMutationVariables = Exact<{
   input: CategoryInput;
@@ -1992,6 +1993,10 @@ export const GetCartItemsPerTabDocument = gql`
     quantity
     notes
     subTotal
+    user {
+      _id
+      name
+    }
   }
 }
     `;

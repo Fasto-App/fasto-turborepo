@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
-import { parseToCurrency } from "app-helpers";
-import { Box, Button, FlatList, HStack, Skeleton, Text, useTheme } from "native-base";
+import { parseToCurrency, typedKeys } from "app-helpers";
+import { Box, Button, Divider, FlatList, HStack, SectionList, Skeleton, Text, useTheme } from "native-base";
 import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
@@ -14,7 +14,6 @@ const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/de
 
 export const CartScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-
 
   const route = useRouter();
   const { businessId, checkoutId } = route.query;
@@ -39,6 +38,29 @@ export const CartScreen = () => {
     route.push(clientRoute.checkout(businessId, checkoutId));
   }, [businessId, checkoutId, route]);
 
+  const groupedData = data?.getCartItemsPerTab.reduce((acc, item) => {
+    const user = item.user;
+
+    if (acc[user?._id]) {
+      acc[user._id] = [...acc[user._id], item]
+    } else {
+      acc[user._id] = [item];
+    }
+
+    return acc;
+
+  }, {} as { [key: string]: any[] });
+
+  const transformedData = typedKeys(groupedData).map((key) => {
+    return {
+      title: key,
+      data: groupedData?.[key] as any[]
+    }
+  })
+
+  console.log("transformedData", transformedData);
+
+
   return (
     <>
       <Box flex={1}>
@@ -50,8 +72,13 @@ export const CartScreen = () => {
               textAlign={"center"}
               alignContent={"center"}
             >{texts.error}</Text> :
-            <FlatList
-              data={data?.getCartItemsPerTab}
+            <SectionList
+              sections={transformedData || []}
+              renderSectionHeader={({ section: { title } }) => (
+                <Box px={4} backgroundColor={"white"}>
+                  <Text fontSize={"22"} fontWeight={"500"}>{title}</Text>
+                </Box>
+              )}
               renderItem={({ item, index }) =>
                 <CartTile
                   _id={item._id}
