@@ -4,15 +4,15 @@ import React, { Fragment, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { BusinessLayout } from '../business-templates/Layout/BusinessLayout';
 import { ClientLayout } from '../client-templates/Layout';
-import { ClientNavBar } from '../client-templates/Layout/ClientNavbar';
 import { AppProvider } from '../appProvider';
 import { BUSINESS, CLIENT } from '../routes';
 import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
-import { Box, useTheme } from 'native-base';
+import { useTheme } from 'native-base';
 import { ModalFeedback } from '../components/ModalFeedback';
 import { View } from 'react-native';
+import { ErrorBanner } from '../components/ErrorBanner';
 
 
 const LandingWrapper: React.FC = ({ children }) => (
@@ -51,6 +51,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 	return (
 		<View style={{ height: "100%" }}>
 			<ThemeProvider >
+				<ErrorBanner />
 				<AppApolloProvider>
 					<AppProvider>
 						<Wrapper>

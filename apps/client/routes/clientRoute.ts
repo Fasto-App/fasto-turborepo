@@ -20,6 +20,17 @@ export const clientPathName = {
   [`/client/[businessId]/settings`]: 'Settings',
 } as const
 
-export const clientPathNameKeys = Object.keys(clientPathName) as (keyof typeof clientPathName)[];
+export const clientTitlePath = {
+  Home: `/client/[businessId]`,
+  Cart: `/client/[businessId]/cart`,
+  Menu: `/client/[businessId]/menu`,
+  Checkout: `/client/[businessId]/checkout/[checkoutId]`,
+  'Product Description': `/client/[businessId]/product-description/[productId]`,
+  Settings: `/client/[businessId]/settings`,
+} as const;
 
 export type PathNameKeys = keyof typeof clientPathName;
+export type ClientTitlePathKeys = keyof typeof clientTitlePath;
+
+export const clientPathNameKeys = Object.keys(clientPathName) as PathNameKeys[];
+export const clientTitlePathKeys = Object.keys(clientTitlePath) as ClientTitlePathKeys[];

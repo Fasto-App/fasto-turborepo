@@ -1,11 +1,11 @@
-import { onError } from '@apollo/client/link/error'
 import { Heading, HStack, Box, Button, Text, FlatList } from 'native-base'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { getClientCookies } from '../../cookies'
-import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument, GetTabByIdDocument, GetClientSessionDocument } from '../../gen/generated'
+import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument, GetClientSessionDocument } from '../../gen/generated'
 import { texts } from './texts'
 import { useRouter } from 'next/router'
+import { showToast } from '../../components/showToast'
 
 type PendingInvitationModalProps = {
   isModalOpen: boolean;
@@ -32,14 +32,32 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
 
   const [acceptInvitation, { loading: acceptLoading }] = useAcceptInvitationMutation({
     refetchQueries: refetchOptions,
+    onCompleted: () => {
+      showToast({
+        message: texts.invitationAccepted,
+      })
+    },
     onError: (error) => {
-      console.log(error)
+      showToast({
+        message: texts.errorAcceptingInvitation,
+        subMessage: error.message,
+        status: "error"
+      })
     }
   })
   const [declineInvitation, { loading: declineLoading }] = useDeclineInvitationMutation({
     refetchQueries: refetchOptions,
+    onCompleted: () => {
+      showToast({
+        message: texts.invitationDeclined,
+      })
+    },
     onError: (error) => {
-      console.log(error)
+      showToast({
+        message: texts.errorDecliningInvitation,
+        subMessage: error.message,
+        status: "error"
+      })
     }
   })
 
@@ -62,11 +80,6 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
       }
     })
   }, [acceptInvitation])
-
-
-  useEffect(() => {
-    // const subscribe = subscribeToMore()
-  }, [])
 
   return (
     <CustomModal

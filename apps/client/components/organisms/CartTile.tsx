@@ -3,6 +3,7 @@ import { Box, HStack, Image, Pressable, Text } from "native-base";
 import { IncrementButtons } from "../OrderSummary/IncrementButtons";
 import debounce from 'lodash/debounce';
 import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
+import { showToast } from "../showToast";
 
 const IMAGE_PLACEHOLDER = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGhlYWx0aHklMjBmb29kfGVufDB8fDB8fA%3D%3D&w=1000&q=80";
 
@@ -27,12 +28,32 @@ export const CartTile = (props: CartTileProps) => {
   const { name, index, price, quantity, url, _id } = props;
   const [localQuantity, setLocalQuantity] = React.useState(quantity || 1);
 
-  const [updateItem, { loading: loadingUpdate, error: errorUpdate }] = useUpdateItemFromCartMutation({
-    refetchQueries: refetchQueries
+  const [updateItem, { loading: loadingUpdate }] = useUpdateItemFromCartMutation({
+    refetchQueries: refetchQueries,
+    onCompleted: () => {
+      showToast({ message: texts.itemUpdated })
+    },
+    onError: (err) => {
+      showToast({
+        message: texts.errorUpdatingItem,
+        subMessage: err.message,
+        status: "error"
+      })
+    }
   })
 
-  const [deleteitem, { loading: deleteLoading, error: deleteError }] = useDeleteItemFromCartMutation({
-    refetchQueries: refetchQueries
+  const [deleteitem, { loading: deleteLoading }] = useDeleteItemFromCartMutation({
+    refetchQueries: refetchQueries,
+    onCompleted: () => {
+      showToast({ message: texts.itemDeleted })
+    },
+    onError: (err) => {
+      showToast({
+        message: texts.errorDeletingItem,
+        subMessage: err.message,
+        status: "error"
+      })
+    }
   })
 
 

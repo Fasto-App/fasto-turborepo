@@ -5,4 +5,9 @@ export const texts = {
   decline: 'Decline',
   pendingInvitations: 'Pending Invitations',
   noPendingInvitations: 'No pending invitations',
+  loading: 'Loading',
+  errorDecliningInvitation: 'Error declining invitation',
+  invitationDeclined: 'Invitation declined',
+  errorAcceptingInvitation: 'Error accepting invitation',
+  invitationAccepted: 'Invitation accepted',
 }

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { parseToCurrency, typedKeys } from "app-helpers";
-import { Box, Button, Divider, FlatList, HStack, SectionList, Skeleton, Text, useTheme } from "native-base";
+import { Box, Button, Divider, FlatList, HStack, SectionList, Skeleton, Text, useTheme, useToast } from "native-base";
 import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
@@ -9,8 +9,10 @@ import { texts } from "./texts";
 import { useGetCartItemsPerTabQuery } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
+import { showToast } from "../../components/showToast";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
+
 
 export const CartScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -144,7 +146,8 @@ const LoadingCartItems = () => {
           key={i}
           p={1}
           borderRadius={"md"}
-          startColor={i % 2 === 0 ? "secondary.200" : "gray.200"} />
+          startColor={i % 2 === 0 ? "secondary.200" : "gray.200"}
+        />
       )
       )}
     </Box>

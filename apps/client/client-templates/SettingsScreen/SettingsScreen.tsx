@@ -35,34 +35,25 @@ type SettingsTileProps = {
   disabled?: boolean;
 }
 
+const texts = {
+  guests: "Guests",
+}
+
 const settingsTiles = [
   {
     _id: "qrcode",
     icon: "QRCode",
     title: "Invite Guest With QR Code",
-    iconBackgroundColor: "blueGray.500"
+    iconBackgroundColor: "blueGray.500" //"amber.500"
   },
-  // {
-  //   _id: "message",
-  //   icon: "Message",
-  //   title: "Message Staff",
-  //   iconBackgroundColor: "amber.500"
-  // },
-  // {
-  //   _id: "contacts",
-  //   icon: "Contacts",
-  //   title: "Invite User",
-  //   iconBackgroundColor: "indigo.500"
-  // },
   {
     _id: "invitations",
     icon: "People",
     title: "Pending Invitations",
-    iconBackgroundColor: "violet.500"
+    iconBackgroundColor: "violet.500" //"indigo.500"
   }
 ] as const
 
-// extract types from the _id field of the Array above
 type SettingsTileId = typeof settingsTiles[number]["_id"]
 
 const FE_URL = new URL(process.env.FRONTEND_URL ?? "http://localhost:3000")
@@ -100,8 +91,6 @@ const SettingsScreen = () => {
   const isAdmin = tabInfo?.getClientSession?.tab?.admin === data?.getClientInformation?._id
   const tabId = tabInfo?.getClientSession.tab?._id
 
-  console.log({ tabInfo })
-
   const QR_CODE = useMemo(() => {
     if (typeof businessId !== "string" || !tabId || !data?.getClientInformation.name) return undefined
 
@@ -113,8 +102,6 @@ const SettingsScreen = () => {
   }, [businessId,
     data?.getClientInformation._id,
     data?.getClientInformation.name, tabId])
-
-  console.log(QR_CODE)
 
   const handlePress = useCallback((title: SettingsTileId) => {
     switch (title) {
@@ -158,7 +145,7 @@ const SettingsScreen = () => {
         <UsersAccordion users={tabInfo?.getClientSession.tab?.users} />
       </Box>
       {settingsTiles.map((tile, index) => (
-        // if not admin, disable the QR Code tile and the Pending Invitations tile
+        // if not admin, disable the QR Code and the Pending Invitations tiles
         !isAdmin && tile._id === "qrcode" || tile._id === "invitations" ? null :
 
           <SettingsTile
@@ -175,7 +162,6 @@ const SettingsScreen = () => {
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
-      {/* If the user is not an admin neither the QR Code nor the Pending Modal should display */}
       <PendingInvitationModal
         isModalOpen={isModalOpen2}
         setIsModalOpen={setIsModalOpen2}
@@ -211,7 +197,7 @@ const UsersAccordion = (props: { users?: { _id: string; name?: string | null, __
               </Avatar>))}
             </Avatar.Group>
             <Text fontSize={"16"} alignSelf={"center"}>
-              Guests
+              {texts.guests}
             </Text>
           </HStack>
           {collapsed ? <ChevronDownIcon color={"secondary.900"} /> :

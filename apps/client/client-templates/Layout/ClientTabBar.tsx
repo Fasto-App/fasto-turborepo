@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
-import { clientRoute, ClientRouteKeys } from "../../routes";
+import { clientPathName, clientRoute, ClientTitlePathKeys, clientTitlePath } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { useGetClientSession } from "../../hooks";
@@ -10,17 +10,18 @@ const ClientTabBar: React.FC = (props) => {
   const router = useRouter();
   const { businessId } = router.query
 
-  const useIsPageSelected = useCallback((pathname: ClientRouteKeys, slug?: string) => {
+  const useIsPageSelected = useCallback((pathname: ClientTitlePathKeys, slug?: string) => {
     if (typeof businessId !== "string") return false;
 
-    const pathName = clientRoute[pathname](businessId, slug as string);
-    return router.asPath === pathName;
+    const pathName = clientTitlePath[pathname]
 
-  }, [businessId, router.asPath])
+    return router.pathname === pathName;
 
-  const isMenu = useIsPageSelected("menu");
-  const isCart = useIsPageSelected("cart");
-  const isSettings = useIsPageSelected("settings");
+  }, [businessId, router.pathname])
+
+  const isMenu = useIsPageSelected("Menu");
+  const isCart = useIsPageSelected("Cart");
+  const isSettings = useIsPageSelected("Settings");
 
 
   const { data: tabData } = useGetClientSession()

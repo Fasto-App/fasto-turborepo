@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { clearClientCookies, getClientCookies } from "../cookies";
 import { RequestStatus, useGetBusinessByIdQuery, useGetClientInformationQuery, useGetClientSessionQuery } from "../gen/generated";
 import { clientRoute } from "../routes";
+import { showToast } from "../components/showToast";
+import { texts } from "./texts";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -96,8 +98,11 @@ export const useGetBusinessInformation = () => {
       console.log("data", data)
     },
     onError: (error) => {
-      console.log("error", error)
-      // clear cache
+      showToast({
+        message: texts.thereWasAnError,
+        subMessage: error.message,
+        status: "error"
+      })
     }
   })
 
@@ -115,7 +120,11 @@ export const useGetClientInformation = () => {
     },
     onError: (error) => {
       console.log("error", error)
-      // clear cache
+      showToast({
+        message: texts.errorGettingInfo,
+        subMessage: error.message,
+        status: "error"
+      })
     }
   })
 

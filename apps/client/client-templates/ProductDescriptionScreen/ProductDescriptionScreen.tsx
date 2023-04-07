@@ -11,6 +11,7 @@ import { getClientCookies } from "../../cookies";
 import { useAddItemToCartMutation, useGetProductByIdQuery } from "../../gen/generated";
 import { LoadingPDP } from "./LoadingPDP";
 import { clientRoute } from "../../routes";
+import { showToast } from "../../components/showToast";
 
 const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
@@ -41,12 +42,18 @@ export const ProductDescriptionScreen = () => {
 
   const [addItemToCart, { loading: addToCartLoading }] = useAddItemToCartMutation({
     onCompleted: () => {
-      console.log("Completed");
+      showToast({
+        message: texts.addedToCart,
+      })
 
       route.push(clientRoute.menu(businessId as string));
     },
     onError: (err) => {
-      console.log("Error", err);
+      showToast({
+        message: texts.errorAddingToCart,
+        subMessage: err.message,
+        status: "error"
+      })
     },
   });
 
