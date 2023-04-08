@@ -99,7 +99,6 @@ export const CartTile = (props: CartTileProps) => {
       backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
       justifyContent={"space-between"}
       alignItems={"center"}
-      space={6}
       flex={1}
     >
       <Pressable onPress={navegateTo}>
@@ -112,19 +111,17 @@ export const CartTile = (props: CartTileProps) => {
               borderRadius={5}
             />
           </Box>
-          <Text alignSelf={"center"} w={100}>{name}</Text>
+          <Text alignSelf={"center"} w={70}>{name}</Text>
         </HStack>
       </Pressable>
       <Text>{price}</Text>
-      <Box>
+      <HStack space={4}>
         <IncrementButtons
           quantity={localQuantity}
           onPlusPress={() => handleQuantityChange(localQuantity + 1)}
           onMinusPress={() => handleQuantityChange(localQuantity - 1)}
           disabled={!editable || loadingUpdate || deleteLoading}
         />
-      </Box>
-      <Box style={{ flexDirection: "row" }}>
         <Pressable
           isDisabled={!editable || deleteLoading || loadingUpdate}
           _disabled={{ opacity: 0.5, }}
@@ -137,7 +134,7 @@ export const CartTile = (props: CartTileProps) => {
             🗑
           </Text>
         </Pressable>
-      </Box>
+      </HStack>
     </HStack>
 
   );
