@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { parseToCurrency, typedKeys } from "app-helpers";
-import { Box, Button, Divider, FlatList, HStack, SectionList, Skeleton, Text, useTheme, useToast } from "native-base";
+import { Box, Button, HStack, SectionList, Skeleton, Text, useTheme } from "native-base";
 import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
@@ -9,7 +9,6 @@ import { texts } from "./texts";
 import { useGetCartItemsPerTabQuery } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
-import { showToast } from "../../components/showToast";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
@@ -40,28 +39,32 @@ export const CartScreen = () => {
     route.push(clientRoute.checkout(businessId, checkoutId));
   }, [businessId, checkoutId, route]);
 
-  const groupedData = data?.getCartItemsPerTab.reduce((acc, item) => {
-    const user = item.user;
+  const groupedData = useMemo(() => {
+    return data?.getCartItemsPerTab.reduce((acc, item) => {
+      const user = item.user;
 
-    if (acc[user?._id]) {
-      acc[user._id] = [...acc[user._id], item]
-    } else {
-      acc[user._id] = [item];
-    }
+      if (acc[user._id]) {
+        acc[user._id].data.push(item);
+        acc[user._id].name = user.name;
+      } else {
+        acc[user._id] = {
+          name: user.name,
+          data: [item]
+        }
+      }
 
-    return acc;
+      return acc;
+    }, {} as { [key: string]: { name?: string | null, data: any[] } });
+  }, [data?.getCartItemsPerTab])
 
-  }, {} as { [key: string]: any[] });
-
-  const transformedData = typedKeys(groupedData).map((key) => {
-    return {
-      title: key,
-      data: groupedData?.[key] as any[]
-    }
-  })
-
-  console.log("transformedData", transformedData);
-
+  const transformedData = useMemo(() => {
+    return typedKeys(groupedData).map((key, i) => {
+      return {
+        title: groupedData?.[key].name || `Guest ${++i}`,
+        data: groupedData?.[key].data as any[]
+      }
+    })
+  }, [groupedData])
 
   return (
     <>
@@ -76,10 +79,10 @@ export const CartScreen = () => {
             >{texts.error}</Text> :
             <SectionList
               sections={transformedData || []}
-              renderSectionHeader={({ section: { title } }) => (
-                <Box px={4} backgroundColor={"white"}>
-                  <Text fontSize={"22"} fontWeight={"500"}>{title}</Text>
-                </Box>
+              renderSectionHeader={({ section: { title, } }) => (
+                <HStack pt={"4"} px={4} pb={2} space={2} backgroundColor={"white"}>
+                  <Text alignSelf={"center"} fontSize={"18"} fontWeight={"500"}>{title}</Text>
+                </HStack>
               )}
               renderItem={({ item, index }) =>
                 <CartTile

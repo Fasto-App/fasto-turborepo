@@ -17,17 +17,10 @@ const getCartItemsPerTab = async (_parent: any, args: any, { db, client }: Conte
   const CartItem = CartItemModel(db);
   const Tab = TabModel(db);
 
-
   const foundTab = await Tab.findById(foundRequest.tab);
   if (!foundTab) throw ApolloError('NotFound')
 
-  console.log('foundRequest', foundRequest)
-  console.log('foundTab', foundTab)
-
   const cartItems = await CartItem.find({ tab: foundTab._id });
-
-  console.log('cartItems', cartItems)
-
 
   return cartItems;
 }

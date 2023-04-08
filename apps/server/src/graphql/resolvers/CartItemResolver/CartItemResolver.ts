@@ -1,4 +1,4 @@
-import { ProductModel } from "../../../models";
+import { ProductModel, UserModel } from "../../../models";
 import { Context } from "../types";
 
 const getProductByCartItem = async (parent: any, args: any, { db }: Context) => {
@@ -7,6 +7,15 @@ const getProductByCartItem = async (parent: any, args: any, { db }: Context) => 
   return product;
 }
 
+const getUserByCartItem = async (parent: any, args: any, { db }: Context) => {
+  const User = UserModel(db);
+
+  const foundUser = await User.findById(parent.user);
+  return foundUser;
+}
+
+
 export const CartItemResolver = {
-  getProductByCartItem
+  getProductByCartItem,
+  getUserByCartItem
 }

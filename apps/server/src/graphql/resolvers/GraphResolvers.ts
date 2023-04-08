@@ -129,6 +129,7 @@ export const resolvers = {
   },
   CartItem: {
     product: CartItemResolver.getProductByCartItem,
+    user: CartItemResolver.getUserByCartItem,
   },
   Request: {
     admin: RequestResolver.getAdminFromRequest,
