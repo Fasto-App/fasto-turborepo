@@ -118,6 +118,9 @@ export const CartScreen = () => {
                   price={parseToCurrency(item.subTotal)}
                   quantity={item.quantity}
                   editable={item.user._id === clientInfo?.getClientInformation._id}
+                  navegateTo={() => {
+                    route.push(clientRoute.production_description(businessId as string, item.product._id))
+                  }}
                 />}
               contentContainerStyle={{ paddingHorizontal: 4 }}
               ListEmptyComponent={

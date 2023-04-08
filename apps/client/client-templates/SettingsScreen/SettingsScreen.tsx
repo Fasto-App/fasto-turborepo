@@ -146,8 +146,7 @@ const SettingsScreen = () => {
       </Box>
       {settingsTiles.map((tile, index) => (
         // if not admin, disable the QR Code and the Pending Invitations tiles
-        !isAdmin && tile._id === "qrcode" || tile._id === "invitations" ? null :
-
+        !isAdmin && tile._id === "qrcode" || !isAdmin && tile._id === "invitations" ? null : (
           <SettingsTile
             _id={tile._id}
             key={index}
@@ -157,6 +156,7 @@ const SettingsScreen = () => {
             onPress={() => handlePress(tile._id)}
             disabled={shouldBeDisabled(tile._id)}
           />
+        )
       ))}
       <QRCodeReaderModal QR_CODE={QR_CODE || ""}
         isModalOpen={isModalOpen}

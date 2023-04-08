@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Box, HStack, Image, Pressable, Text } from "native-base";
+import { Box, HStack, Image, Pressable, Text, } from "native-base";
 import { IncrementButtons } from "../OrderSummary/IncrementButtons";
 import debounce from 'lodash/debounce';
 import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
@@ -16,18 +16,18 @@ export type CartTileProps = {
   quantity: number;
   _id: string;
   editable?: boolean;
+  navegateTo?: () => void;
 };
 
 const states = ["✅", "⏳"];
 
-// for both funtions we should refetch the cart
 const refetchQueries = [{
   query: GetCartItemsPerTabDocument,
 }]
 
 
 export const CartTile = (props: CartTileProps) => {
-  const { name, index, price, quantity, url, _id, editable } = props;
+  const { name, index, price, quantity, url, _id, editable, navegateTo } = props;
   const [localQuantity, setLocalQuantity] = React.useState(quantity || 1);
 
   const [updateItem, { loading: loadingUpdate }] = useUpdateItemFromCartMutation({
@@ -100,19 +100,21 @@ export const CartTile = (props: CartTileProps) => {
       justifyContent={"space-between"}
       alignItems={"center"}
       space={6}
+      flex={1}
     >
-      <HStack space={2} flex={1}>
-        <Box>
-          <Image
-            size={"xs"}
-            source={{ uri: url }}
-            alt={""}
-            borderRadius={5}
-          />
-        </Box>
-        <Text alignSelf={"center"} maxW={100}>{name}</Text>
-      </HStack>
-
+      <Pressable onPress={navegateTo}>
+        <HStack space={2}>
+          <Box>
+            <Image
+              size={"xs"}
+              source={{ uri: url }}
+              alt={""}
+              borderRadius={5}
+            />
+          </Box>
+          <Text alignSelf={"center"} w={100}>{name}</Text>
+        </HStack>
+      </Pressable>
       <Text>{price}</Text>
       <Box>
         <IncrementButtons
