@@ -4,7 +4,7 @@ export const texts = {
   andStartOrdering: "and start ordering!",
   cta1: "Place Order",
   cta2: "Pay Bill",
-  seePastOrders: "See Past Orders",
+  placedOrders: "See Placed Orders",
   modalCta1: "Back",
   modalTitle: "Past Orders",
   error: "Something went wrong. Please try again later.",

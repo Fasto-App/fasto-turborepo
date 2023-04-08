@@ -15,6 +15,7 @@ export type CartTileProps = {
   url: string;
   quantity: number;
   _id: string;
+  editable?: boolean;
 };
 
 const states = ["✅", "⏳"];
@@ -26,7 +27,7 @@ const refetchQueries = [{
 
 
 export const CartTile = (props: CartTileProps) => {
-  const { name, index, price, quantity, url, _id } = props;
+  const { name, index, price, quantity, url, _id, editable } = props;
   const [localQuantity, setLocalQuantity] = React.useState(quantity || 1);
 
   const [updateItem, { loading: loadingUpdate }] = useUpdateItemFromCartMutation({
@@ -84,8 +85,6 @@ export const CartTile = (props: CartTileProps) => {
     })
   }
 
-
-
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity < 1) return;
 
@@ -120,12 +119,13 @@ export const CartTile = (props: CartTileProps) => {
           quantity={localQuantity}
           onPlusPress={() => handleQuantityChange(localQuantity + 1)}
           onMinusPress={() => handleQuantityChange(localQuantity - 1)}
-          disabled={loadingUpdate || deleteLoading}
+          disabled={!editable || loadingUpdate || deleteLoading}
         />
       </Box>
       <Box style={{ flexDirection: "row" }}>
         <Pressable
-          isDisabled={loadingUpdate || deleteLoading}
+          isDisabled={!editable || deleteLoading || loadingUpdate}
+          _disabled={{ opacity: 0.5, }}
           backgroundColor={"tertiary.300"}
           borderRadius={"md"}
           onPress={handleDeleteItem}

@@ -9,6 +9,7 @@ import { texts } from "./texts";
 import { useGetCartItemsPerTabQuery } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
+import { useGetClientInformation } from "../../hooks";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
@@ -21,9 +22,11 @@ export const CartScreen = () => {
 
   const token = getClientCookies(businessId as string)
 
+  const { data: clientInfo } = useGetClientInformation()
+
   const { data, loading, error } = useGetCartItemsPerTabQuery({
     skip: !token,
-    pollInterval: 10000,
+    pollInterval: 1000 * 60, // 1 minute
     fetchPolicy: "network-only"
   })
 
@@ -42,29 +45,38 @@ export const CartScreen = () => {
   const groupedData = useMemo(() => {
     return data?.getCartItemsPerTab.reduce((acc, item) => {
       const user = item.user;
+      const name = user._id === clientInfo?.getClientInformation._id ? "Me" : user.name;
 
       if (acc[user._id]) {
         acc[user._id].data.push(item);
-        acc[user._id].name = user.name;
+        acc[user._id].name = name;
       } else {
         acc[user._id] = {
-          name: user.name,
-          data: [item]
+          name,
+          data: [item],
         }
       }
 
       return acc;
-    }, {} as { [key: string]: { name?: string | null, data: any[] } });
-  }, [data?.getCartItemsPerTab])
+    }, {} as { [key: string]: { name?: string | null, data: any[], } });
+  }, [clientInfo?.getClientInformation._id, data?.getCartItemsPerTab])
+
+  const sortedData = useMemo(() => {
+    return typedKeys(groupedData).sort((a, b) => {
+      if (a === clientInfo?.getClientInformation._id) return -1;
+      if (b === clientInfo?.getClientInformation._id) return 1;
+      return 0;
+    })
+  }, [clientInfo?.getClientInformation._id, groupedData])
 
   const transformedData = useMemo(() => {
-    return typedKeys(groupedData).map((key, i) => {
+    return sortedData.map((key, i) => {
       return {
         title: groupedData?.[key].name || `Guest ${++i}`,
         data: groupedData?.[key].data as any[]
       }
     })
-  }, [groupedData])
+  }, [groupedData, sortedData])
 
   return (
     <>
@@ -78,9 +90,21 @@ export const CartScreen = () => {
               alignContent={"center"}
             >{texts.error}</Text> :
             <SectionList
+              ListHeaderComponent={
+                <Box alignItems={"flex-end"} px={2}>
+                  <Button
+                    size="sm"
+                    variant="link"
+                    colorScheme={"info"}
+                    _text={{ fontSize: "lg" }}
+                    onPress={() => setIsModalOpen(true)}>
+                    {texts.placedOrders}
+                  </Button>
+                </Box>
+              }
               sections={transformedData || []}
-              renderSectionHeader={({ section: { title, } }) => (
-                <HStack pt={"4"} px={4} pb={2} space={2} backgroundColor={"white"}>
+              renderSectionHeader={({ section: { title } }) => (
+                <HStack pt={title === "Me" ? "0" : "4"} px={4} pb={2} space={2} backgroundColor={"white"}>
                   <Text alignSelf={"center"} fontSize={"18"} fontWeight={"500"}>{title}</Text>
                 </HStack>
               )}
@@ -93,19 +117,9 @@ export const CartScreen = () => {
                   url={item.product.imageUrl || IMAGE_PLACEHOLDER}
                   price={parseToCurrency(item.subTotal)}
                   quantity={item.quantity}
+                  editable={item.user._id === clientInfo?.getClientInformation._id}
                 />}
               contentContainerStyle={{ paddingHorizontal: 4 }}
-              ListHeaderComponent={
-                <Box alignItems={"flex-end"} px={2}>
-                  <Button
-                    size="sm"
-                    variant="link"
-                    colorScheme={"info"}
-                    onPress={() => setIsModalOpen(true)}>
-                    {texts.seePastOrders}
-                  </Button>
-                </Box>
-              }
               ListEmptyComponent={
                 <Box>
                   <Text justifyContent={"center"} alignItems={"flex-end"} pt={"8"} textAlign={"center"}>
