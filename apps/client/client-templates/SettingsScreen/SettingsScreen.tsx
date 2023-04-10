@@ -6,7 +6,7 @@ import { NavigationButtonType } from "../../components/types";
 import { ILinearGradientProps } from "native-base/lib/typescript/components/primitives/Box/types";
 import { ResponsiveValue, ColorType } from "native-base/lib/typescript/components/types";
 import { useGetClientInformation, useGetClientSession } from "../../hooks";
-import { clientRoute } from "../../routes";
+import { clientRoute, clientRouteParams } from "../../routes";
 import { useRouter } from "next/router";
 import { PendingInvitationModal } from "./PendingInvitationModal";
 import { QRCodeReaderModal } from "./QRCodeReaderModal";
@@ -76,8 +76,6 @@ const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor,
   );
 };
 
-
-
 const SettingsScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false)
   const [isModalOpen2, setIsModalOpen2] = React.useState(false)
@@ -88,20 +86,20 @@ const SettingsScreen = () => {
   const { data } = useGetClientInformation()
   const { data: tabInfo } = useGetClientSession()
 
-  const isAdmin = tabInfo?.getClientSession?.tab?.admin === data?.getClientInformation?._id
-  const tabId = tabInfo?.getClientSession.tab?._id
+  const isAdmin = !!data?.getClientInformation?._id && !!tabInfo?.getClientSession?.tab?.admin && tabInfo?.getClientSession?.tab?.admin === data?.getClientInformation?._id
 
   const QR_CODE = useMemo(() => {
-    if (typeof businessId !== "string" || !tabId || !data?.getClientInformation.name) return undefined
+    if (!businessId ||
+      !tabInfo?.getClientSession.tab?._id ||
+      !data?.getClientInformation.name ||
+      !tabInfo?.getClientSession?.tab?.admin) return undefined
 
-    FE_URL.pathname = clientRoute.home(businessId)
-    FE_URL.searchParams.append("tabId", tabId)
-    FE_URL.searchParams.append("name", data?.getClientInformation.name)
-    FE_URL.searchParams.append("adminId", data?.getClientInformation._id)
+    FE_URL.pathname = clientRoute.home(typeof businessId === "string" ? businessId : businessId[0])
+    FE_URL.searchParams.append(clientRouteParams.tabId, tabInfo?.getClientSession.tab?._id)
+    FE_URL.searchParams.append(clientRouteParams.name, data?.getClientInformation.name)
+    FE_URL.searchParams.append(clientRouteParams.adminId, tabInfo?.getClientSession?.tab?.admin)
     return FE_URL.toString()
-  }, [businessId,
-    data?.getClientInformation._id,
-    data?.getClientInformation.name, tabId])
+  }, [businessId, data?.getClientInformation.name, tabInfo?.getClientSession.tab?._id, tabInfo?.getClientSession?.tab?.admin])
 
   const handlePress = useCallback((title: SettingsTileId) => {
     switch (title) {
@@ -119,11 +117,12 @@ const SettingsScreen = () => {
   const shouldBeDisabled = useCallback((title: SettingsTileId) => {
     switch (title) {
       case "qrcode":
-        return !isAdmin || !tabId
+        return tabInfo?.getClientSession?.tab?.admin === data?.getClientInformation?._id &&
+          !!data?.getClientInformation?._id && !!tabInfo?.getClientSession?.tab?.admin
       default:
         return false
     }
-  }, [isAdmin, tabId])
+  }, [data?.getClientInformation?._id, tabInfo?.getClientSession?.tab?.admin])
 
   return (
     <VStack space="4" px={"2"}>

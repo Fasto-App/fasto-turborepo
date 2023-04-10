@@ -4,6 +4,7 @@ import React, { useCallback } from 'react'
 import { QrReader } from 'react-qr-reader';
 import { CustomModal } from '../../components/CustomModal/CustomModal';
 import { texts } from './texts';
+import { clientRouteParams } from '../../routes';
 
 // todo - do some exploration  on using html5 code reader
 // import { useHtml5QrCodeScanner } from 'react-html5-qrcode-reader';
@@ -19,8 +20,6 @@ export const QRCodeReader = () => {
   const [qrCodeError, setQrCodeError] = React.useState<boolean>(false)
   const router = useRouter()
 
-  console.log({ router })
-
   const onResult = useCallback((result: any, error: any) => {
 
     if (!!result) {
@@ -29,12 +28,10 @@ export const QRCodeReader = () => {
 
       try {
         const url = new URL(result.getText());
-        console.log({ url })
-
         // todo: get the business id from the url and compare to what we have
-        const tabId = url.searchParams.get("tabId");
-        const name = url.searchParams.get("name");
-        const adminId = url.searchParams.get("adminId");
+        const tabId = url.searchParams.get(clientRouteParams.tabId);
+        const name = url.searchParams.get(clientRouteParams.name);
+        const adminId = url.searchParams.get(clientRouteParams.adminId);
 
         if (!tabId || !name || !adminId) {
           setQrCodeError(true)

@@ -161,7 +161,7 @@ export const CartScreen = () => {
 const LoadingCartItems = () => {
   return (
     <Box>
-      {new Array(6).fill({}).map((_, i) => (
+      {new Array(15).fill({}).map((_, i) => (
         <Skeleton
           key={i}
           p={1}

@@ -29,6 +29,15 @@ export const clientTitlePath = {
   Settings: `/client/[businessId]/settings`,
 } as const;
 
+export const clientRouteParams = {
+  tabId: 'tabId',
+  businessId: 'businessId',
+  checkoutId: 'checkoutId',
+  productId: 'productId',
+  adminId: 'adminId',
+  name: 'name',
+}
+
 export type PathNameKeys = keyof typeof clientPathName;
 export type ClientTitlePathKeys = keyof typeof clientTitlePath;
 
