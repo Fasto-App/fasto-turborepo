@@ -9,6 +9,7 @@ import {
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMultipleOrdersDetail, CreateMultipleOrdersDetailInput, CreateOrderDetail, CreateOrderDetailInput, UpdateOrderDetailInput } from "./types";
+import { MutationResolvers } from '../../../generated/graphql';
 
 const createOrderDetail = async (_parent: any,
     { input }: CreateOrderDetailInput,
@@ -93,26 +94,29 @@ const createMultipleOrderDetails = async (_parent: any,
 }
 
 // todo: hopefully have types generated from the schema
-const clientCreateMultipleOrderDetails = async (_parent: any,
-    { input }: { input: any },
-    { db, client }: Context) => {
 
-    const OrderDetail = OrderDetailModel(db);
-    const Product = ProductModel(db);
-    const Tab = TabModel(db);
-    const User = UserModel(db);
-    const Request = RequestModel(db);
+const clientCreateMultipleOrderDetails:
+    MutationResolvers["clientCreateMultipleOrderDetails"] = async (_parent,
+        { input },
+        { db, client }) => {
 
-    console.log("createClientMultipleOrderDetails")
-    console.log({ input })
+        const OrderDetail = OrderDetailModel(db);
+        const Product = ProductModel(db);
+        const Tab = TabModel(db);
+        const User = UserModel(db);
+        const Request = RequestModel(db);
 
-    // order made by a client
-    // product, quantity, message, tab, user
-    // tab is comming from the Request
-    // make sure all of the cart items are from the same tab
+        console.log("createClientMultipleOrderDetails")
+        console.log({ input })
 
-    return []
-}
+
+        // order made by a client
+        // product, quantity, message, tab, user
+        // tab is comming from the Request
+        // make sure all of the cart items are from the same tab
+
+        return []
+    }
 
 
 const updateOrderDetail = async (_parent: any,

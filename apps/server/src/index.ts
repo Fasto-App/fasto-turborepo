@@ -15,6 +15,7 @@ import { getClientFromToken, getUserFromToken } from "./graphql/resolvers/utils"
 import { ApolloError } from "./graphql/ApolloErrorExtended/ApolloErrorExtended";
 import { dbConnection } from "./dbConnection";
 import { pubsub } from "./graphql/resolvers/pubSub";
+import { Context } from "./graphql/resolvers/types";
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
@@ -23,7 +24,7 @@ const app = express();
 const httpServer = createServer(app);
 const db = dbConnection();
 
-const apolloServer = new ApolloServer({
+const apolloServer = new ApolloServer<Context>({
   schema,
   plugins: [
     ApolloServerPluginDrainHttpServer({ httpServer }),
@@ -108,7 +109,7 @@ async function main() {
       return await proccessContext({
         headersAPIKey,
         businessToken: bearerToken,
-        clientToken: clientBearerToken
+        clientToken: clientBearerToken,
       });
     }
   }));

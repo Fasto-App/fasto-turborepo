@@ -1,43 +1,14 @@
-import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { ApolloError } from "./ApolloErrorExtended/ApolloErrorExtended";
 import { resolvers } from "./resolvers/GraphResolvers";
-import { getClientFromToken, getUserFromToken } from "./resolvers/utils";
-import { typeDefinitions } from "./typeDefs/typeDefinitions";
-import {
-  UserTypeDefinition,
-  BusinessTypeDefinition,
-  ProductTypeDefinition,
-  CategoryTypeDefinition,
-  TabTypeDefinition,
-  MenuTypeDefinition,
-  AddressTypeDefinition,
-  OrderDetailsTypeDefinition,
-  TableTypeDefinition,
-  SpaceTypeDefinition,
-  CheckoutTypeDefinition,
-  PaymentTypeDefinition,
-  RequestTypeDefinition,
-  CartItemTypeDefinition
-} from "./typeDefs";
+import path from 'path'
+import { loadFilesSync } from '@graphql-tools/load-files'
+import { mergeTypeDefs } from '@graphql-tools/merge'
+
+const DIRECTORY_NAME = path.join(__dirname, './typeDefs')
+const typesArray = loadFilesSync(DIRECTORY_NAME, { extensions: ['graphql'] })
+const typeDefs = mergeTypeDefs(typesArray)
 
 export const schema = makeExecutableSchema({
   resolvers,
-  typeDefs: [
-    typeDefinitions,
-    CheckoutTypeDefinition,
-    PaymentTypeDefinition,
-    TabTypeDefinition,
-    UserTypeDefinition,
-    BusinessTypeDefinition,
-    ProductTypeDefinition,
-    CategoryTypeDefinition,
-    MenuTypeDefinition,
-    AddressTypeDefinition,
-    OrderDetailsTypeDefinition,
-    TableTypeDefinition,
-    SpaceTypeDefinition,
-    RequestTypeDefinition,
-    CartItemTypeDefinition
-  ],
+  typeDefs,
 })

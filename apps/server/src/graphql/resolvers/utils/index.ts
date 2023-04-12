@@ -23,14 +23,14 @@ export async function tokenClient({ _id, business, request }: ClientContext) {
     .sign(new TextEncoder().encode(process.env.TOKEN_SECRET))
 }
 
-export const getUserFromToken = async (token?: string): Promise<UserContext | null> => {
+export const getUserFromToken = async (token?: string): Promise<UserContext | undefined> => {
   const tokenSecret = process.env.TOKEN_SECRET;
 
   if (!tokenSecret) throw new Error('Token secret not found');
 
   if (!token) {
     // console.log("🚯 No Token: Limited Access");
-    return null
+    return undefined
   }
 
   try {
@@ -52,14 +52,14 @@ export const getUserFromToken = async (token?: string): Promise<UserContext | nu
   }
 }
 
-export const getClientFromToken = async (token?: string): Promise<ClientContext | null> => {
+export const getClientFromToken = async (token?: string): Promise<ClientContext | undefined> => {
   const tokenSecret = process.env.TOKEN_SECRET;
 
   if (!tokenSecret) throw new Error('Token secret not found');
 
   if (!token) {
     // console.log("🟡 No Tab");
-    return null
+    return undefined
   }
 
   try {
@@ -77,7 +77,6 @@ export const getClientFromToken = async (token?: string): Promise<ClientContext 
   } catch (error) {
 
     console.log("⚛️ Invalid Client Token");
-    return null
   }
 }
 

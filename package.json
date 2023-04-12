@@ -19,7 +19,7 @@
 		"deploy": "git add . && git commit -m Heroku && git push heroku main",
 		"deploy:client": "heroku git:remote -a opentab-frontend && yarn run deploy",
 		"deploy:api": "heroku git:remote -a opentab-backend && yarn run deploy",
-		"generate": "yarn workspace client generate",
+		"generate": "cd apps/client && yarn run generate && cd ../server && yarn run generate",
 		"storybook": "cd apps/client && yarn run storybook"
 	},
 	"devDependencies": {
