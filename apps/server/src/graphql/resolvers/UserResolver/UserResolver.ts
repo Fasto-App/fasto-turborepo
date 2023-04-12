@@ -9,7 +9,6 @@ import {
 } from "../utils"
 import { Connection } from "mongoose"
 import { Context } from "../types";
-import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
 import { typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation, ResetPasswordSchemaInput, CreateEmployeeAccountInput, createEmployeeAccountSchema } from "app-helpers";
 import {
@@ -29,7 +28,7 @@ export const requestUserAccountCreation = async (_parent: any,
   { db }: Context) => {
 
   if (!validateEmail(input.email)) {
-    throw new UserInputError("Invalid email");
+    throw ApolloError("BadRequest", "Invalid email");
   }
 
   const Session = SessionModel(db)
@@ -79,7 +78,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
     const Business = BusinessModel(db)
     const findSession = await Session.findOne({ email: validInput.email })
 
-    if (!findSession) throw new UserInputError('Session not found. Check you email again or request a new access token.');
+    if (!findSession) throw ApolloError('NotFound', 'Session not found. Check you email again or request a new access token.');
 
     const hashedPassword = hashPassword(validInput.password)
     const User = UserModel(db)

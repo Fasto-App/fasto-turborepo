@@ -7,7 +7,7 @@
 		"start": "ts-node --transpile-only src/index.ts",
 		"dev": "doppler run -- nodemon src/index.ts",
 		"build": "rm -rf build && tsc",
-		"generate": "graphql-codegen --config codegen.ts"
+		"generate": "graphql-codegen --config src/codegen.ts"
 	},
 	"dependencies": {
 		"@apollo/server": "^4.5.0",
@@ -17,8 +17,6 @@
 		"@graphql-tools/merge": "^8.4.0",
 		"@graphql-tools/schema": "^9.0.17",
 		"@typegoose/typegoose": "^9.9.0",
-		"@types/bcryptjs": "^2.4.2",
-		"@types/graphql-upload": "^8.0.12",
 		"apollo-server-express": "^3.9.0",
 		"app-helpers": "*",
 		"aws-sdk": "^2.1156.0",
@@ -41,9 +39,8 @@
 		"@graphql-codegen/cli": "3.3.0",
 		"@graphql-codegen/typescript": "3.0.3",
 		"@graphql-codegen/typescript-resolvers": "3.2.0",
+		"@types/graphql-upload": "8.0.12",
 		"@types/nodemailer": "^6.4.7",
-		"nodemon": "^2.0.16",
-		"@graphql-codegen/typescript-mongodb": "2.4.6",
-		"@graphql-codegen/introspection": "3.0.1"
+		"nodemon": "^2.0.16"
 	}
 }
