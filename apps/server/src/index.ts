@@ -10,6 +10,7 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { ApolloServer } from "@apollo/server";
 import cors from "cors";
+import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 import { expressMiddleware } from '@apollo/server/express4';
 import { getClientFromToken, getUserFromToken } from "./graphql/resolvers/utils";
 import { ApolloError } from "./graphql/ApolloErrorExtended/ApolloErrorExtended";
@@ -53,10 +54,7 @@ const apolloServer = new ApolloServer<Context>({
 
 // Creating the WebSocket server
 const wsServer = new WebSocketServer({
-  // This is the `httpServer` we created in a previous step.
   server: httpServer,
-  // Pass a different path here if app.use
-  // serves expressMiddleware at a different path
   path: '/graphql',
 });
 
@@ -113,6 +111,15 @@ async function main() {
       });
     }
   }));
+
+  if (process.env.ENVIRONMENT === "development") {
+    app.use('/voyager', voyagerMiddleware({
+      endpointUrl: '/graphql',
+      headersJS: JSON.stringify({
+        ["x-api-key"]: process.env.API_KEY || "",
+      })
+    }));
+  }
 
   httpServer.listen(PORT, () => {
     console.log(`[🚀 GraphQL SERVER] ready at http://localhost:${PORT}/graphql`);

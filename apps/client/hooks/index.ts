@@ -2,7 +2,7 @@ import { useBreakpointValue } from "native-base";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { clearClientCookies, getClientCookies } from "../cookies";
-import { RequestStatus, useGetBusinessByIdQuery, useGetClientInformationQuery, useGetClientSessionQuery } from "../gen/generated";
+import { RequestStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from "../gen/generated";
 import { clientRoute } from "../routes";
 import { showToast } from "../components/showToast";
 import { texts } from "./texts";
@@ -100,28 +100,6 @@ export const useGetBusinessInformation = () => {
     onError: (error) => {
       showToast({
         message: texts.thereWasAnError,
-        subMessage: error.message,
-        status: "error"
-      })
-    }
-  })
-
-  return data
-}
-
-export const useGetClientInformation = () => {
-  const { query } = useRouter()
-  const { businessId } = query
-
-  const data = useGetClientInformationQuery({
-    skip: !getClientCookies(businessId as string),
-    onCompleted: (data) => {
-      console.log("data", data)
-    },
-    onError: (error) => {
-      console.log("error", error)
-      showToast({
-        message: texts.errorGettingInfo,
         subMessage: error.message,
         status: "error"
       })

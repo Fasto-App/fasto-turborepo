@@ -9,7 +9,7 @@ import { texts } from "./texts";
 import { useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
-import { useGetClientInformation } from "../../hooks";
+import { useGetClientSession } from "../../hooks";
 import { showToast } from "../../components/showToast";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
@@ -22,13 +22,15 @@ export const CartScreen = () => {
 
   const token = getClientCookies(businessId as string)
 
-  const { data: clientInfo } = useGetClientInformation()
+  const { data: clientSession } = useGetClientSession()
 
   const { data, loading, error } = useGetCartItemsPerTabQuery({
     skip: !token,
     pollInterval: 1000 * 60, // 1 minute
     fetchPolicy: "network-only"
   })
+
+  const isAdmin = !!clientSession?.getClientSession.user._id && !!clientSession?.getClientSession?.tab?.admin && clientSession?.getClientSession?.tab?.admin === clientSession?.getClientSession.user._id
 
   const [createOrder, { loading: loadingCreateOrder }] =
     useClientCreateMultipleOrderDetailsMutation({
@@ -82,7 +84,7 @@ export const CartScreen = () => {
   const groupedData = useMemo(() => {
     return data?.getCartItemsPerTab.reduce((acc, item) => {
       const user = item.user;
-      const name = user._id === clientInfo?.getClientInformation._id ? texts.me : user.name;
+      const name = user._id === clientSession?.getClientSession.user._id ? texts.me : user.name;
 
       if (acc[user._id]) {
         acc[user._id].data.push(item);
@@ -96,15 +98,15 @@ export const CartScreen = () => {
 
       return acc;
     }, {} as { [key: string]: { name?: string | null, data: any[], } });
-  }, [clientInfo?.getClientInformation._id, data?.getCartItemsPerTab])
+  }, [clientSession?.getClientSession.user._id, data?.getCartItemsPerTab])
 
   const sortedData = useMemo(() => {
     return typedKeys(groupedData).sort((a, b) => {
-      if (a === clientInfo?.getClientInformation._id) return -1;
-      if (b === clientInfo?.getClientInformation._id) return 1;
+      if (a === clientSession?.getClientSession.user._id) return -1;
+      if (b === clientSession?.getClientSession.user._id) return 1;
       return 0;
     })
-  }, [clientInfo?.getClientInformation._id, groupedData])
+  }, [clientSession?.getClientSession.user._id, groupedData])
 
   const transformedData = useMemo(() => {
     return sortedData.map((key, i) => {
@@ -154,7 +156,7 @@ export const CartScreen = () => {
                   url={item.product.imageUrl || IMAGE_PLACEHOLDER}
                   price={parseToCurrency(item.subTotal)}
                   quantity={item.quantity}
-                  editable={item.user._id === clientInfo?.getClientInformation._id}
+                  editable={item.user._id === clientSession?.getClientSession.user._id}
                   navegateTo={() => {
                     route.push(clientRoute.production_description(businessId as string, item.product._id))
                   }}
@@ -177,7 +179,9 @@ export const CartScreen = () => {
       <PastOrdersModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen} />
-      <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
+      {!isAdmin ? <Box backgroundColor={"white"} p='4' textAlign={"center"}>
+        *Ask the tab admin to submit the orders
+      </Box> : <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button
           flex={1}
           isLoading={loading || loadingCreateOrder}
@@ -190,7 +194,7 @@ export const CartScreen = () => {
           flex={1}
           colorScheme={"tertiary"}
           onPress={payBill}>{texts.cta2}</Button>
-      </HStack>
+      </HStack>}
     </>
   );
 };
@@ -198,7 +202,7 @@ export const CartScreen = () => {
 const LoadingCartItems = () => {
   return (
     <Box>
-      {new Array(15).fill({}).map((_, i) => (
+      {new Array(10).fill({}).map((_, i) => (
         <Skeleton
           key={i}
           p={1}

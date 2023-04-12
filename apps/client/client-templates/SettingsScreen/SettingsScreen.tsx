@@ -5,7 +5,7 @@ import { Icon } from "../../components/atoms/NavigationButton";
 import { NavigationButtonType } from "../../components/types";
 import { ILinearGradientProps } from "native-base/lib/typescript/components/primitives/Box/types";
 import { ResponsiveValue, ColorType } from "native-base/lib/typescript/components/types";
-import { useGetClientInformation, useGetClientSession } from "../../hooks";
+import { useGetClientSession } from "../../hooks";
 import { clientRoute, clientRouteParams } from "../../routes";
 import { useRouter } from "next/router";
 import { PendingInvitationModal } from "./PendingInvitationModal";
@@ -83,23 +83,22 @@ const SettingsScreen = () => {
   const router = useRouter()
   const { businessId } = router.query
 
-  const { data } = useGetClientInformation()
-  const { data: tabInfo } = useGetClientSession()
+  const { data: clientSession } = useGetClientSession()
 
-  const isAdmin = !!data?.getClientInformation?._id && !!tabInfo?.getClientSession?.tab?.admin && tabInfo?.getClientSession?.tab?.admin === data?.getClientInformation?._id
+  const isAdmin = !!clientSession?.getClientSession.user._id && !!clientSession?.getClientSession?.tab?.admin && clientSession?.getClientSession?.tab?.admin === clientSession?.getClientSession.user._id
 
   const QR_CODE = useMemo(() => {
     if (!businessId ||
-      !tabInfo?.getClientSession.tab?._id ||
-      !data?.getClientInformation.name ||
-      !tabInfo?.getClientSession?.tab?.admin) return undefined
+      !clientSession?.getClientSession.tab?._id ||
+      !clientSession?.getClientSession.user.name ||
+      !clientSession?.getClientSession?.tab?.admin) return undefined
 
     FE_URL.pathname = clientRoute.home(typeof businessId === "string" ? businessId : businessId[0])
-    FE_URL.searchParams.append(clientRouteParams.tabId, tabInfo?.getClientSession.tab?._id)
-    FE_URL.searchParams.append(clientRouteParams.name, data?.getClientInformation.name)
-    FE_URL.searchParams.append(clientRouteParams.adminId, tabInfo?.getClientSession?.tab?.admin)
+    FE_URL.searchParams.append(clientRouteParams.tabId, clientSession?.getClientSession.tab?._id)
+    FE_URL.searchParams.append(clientRouteParams.name, clientSession?.getClientSession.user.name)
+    FE_URL.searchParams.append(clientRouteParams.adminId, clientSession?.getClientSession?.tab?.admin)
     return FE_URL.toString()
-  }, [businessId, data?.getClientInformation.name, tabInfo?.getClientSession.tab?._id, tabInfo?.getClientSession?.tab?.admin])
+  }, [businessId, clientSession?.getClientSession.tab?._id, clientSession?.getClientSession.tab?.admin, clientSession?.getClientSession.user.name])
 
   const handlePress = useCallback((title: SettingsTileId) => {
     switch (title) {
@@ -117,23 +116,22 @@ const SettingsScreen = () => {
   const shouldBeDisabled = useCallback((title: SettingsTileId) => {
     switch (title) {
       case "qrcode":
-        return !isAdmin
-
+        return !isAdmin || !QR_CODE
       default:
         return false
     }
-  }, [isAdmin])
+  }, [QR_CODE, isAdmin])
 
   return (
     <VStack space="4" px={"2"}>
       <ListBorderTile>
         <HStack space={4}>
-          <Avatar source={{ uri: DICE_BEAR_INITIALS_URL(data?.getClientInformation?.name ?? "?") }} />
+          <Avatar source={{ uri: DICE_BEAR_INITIALS_URL(clientSession?.getClientSession.user.name ?? "?") }} />
           <VStack space={1}>
             <Text fontSize={"16"}>
-              {data?.getClientInformation?.name}
+              {clientSession?.getClientSession.user.name}
             </Text>
-            <Badge colorScheme="warning" alignSelf="center" variant={"outline"}>
+            <Badge colorScheme="warning" variant={"outline"} w={"20"}>
               {`Tab ${isAdmin ? "Admin" : "Guest"}`}
             </Badge>
           </VStack>
@@ -141,7 +139,7 @@ const SettingsScreen = () => {
         {/* <ChevronRightIcon color={"secondary.900"} /> */}
       </ListBorderTile>
       <Box backgroundColor={"white"} borderRadius={"md"}>
-        <UsersAccordion users={tabInfo?.getClientSession.tab?.users} />
+        <UsersAccordion users={clientSession?.getClientSession.tab?.users} />
       </Box>
       {settingsTiles.map((tile, index) => (
         // if not admin, disable the QR Code and the Pending Invitations tiles
