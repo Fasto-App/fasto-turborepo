@@ -133,8 +133,7 @@ export enum CheckoutStatusKeys {
 }
 
 export type ClientCreateOrderInput = {
-  message?: InputMaybe<Scalars['String']>;
-  product: Scalars['ID'];
+  cartItem: Scalars['ID'];
   quantity: Scalars['Int'];
   user: Scalars['ID'];
 };
@@ -681,7 +680,6 @@ export type OpenTabRequestInput = {
 export type OrderDetail = {
   __typename?: 'OrderDetail';
   _id: Scalars['ID'];
-  created_date: Scalars['String'];
   message?: Maybe<Scalars['String']>;
   product: Product;
   quantity: Scalars['Int'];
@@ -1526,7 +1524,6 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 
 export type OrderDetailResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OrderDetail'] = ResolversParentTypes['OrderDetail']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  created_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   product?: Resolver<ResolversTypes['Product'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;

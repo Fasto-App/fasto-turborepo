@@ -133,8 +133,7 @@ export enum CheckoutStatusKeys {
 }
 
 export type ClientCreateOrderInput = {
-  message?: InputMaybe<Scalars['String']>;
-  product: Scalars['ID'];
+  cartItem: Scalars['ID'];
   quantity: Scalars['Int'];
   user: Scalars['ID'];
 };
@@ -681,7 +680,6 @@ export type OpenTabRequestInput = {
 export type OrderDetail = {
   __typename?: 'OrderDetail';
   _id: Scalars['ID'];
-  created_date: Scalars['String'];
   message?: Maybe<Scalars['String']>;
   product: Product;
   quantity: Scalars['Int'];

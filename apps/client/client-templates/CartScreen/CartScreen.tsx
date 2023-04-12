@@ -38,7 +38,8 @@ export const CartScreen = () => {
       onError: (error) => {
         showToast({
           message: "Error placing order",
-          subMessage: error.message
+          subMessage: error.message,
+          status: "error"
         });
       },
     })
@@ -50,7 +51,7 @@ export const CartScreen = () => {
 
     const mappedOrders = data?.getCartItemsPerTab.map((item) => {
       return {
-        product: item.product._id,
+        cartItem: item._id,
         quantity: item.quantity,
         user: item.user._id,
       }

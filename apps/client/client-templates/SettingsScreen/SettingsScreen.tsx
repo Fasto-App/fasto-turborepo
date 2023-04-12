@@ -117,12 +117,12 @@ const SettingsScreen = () => {
   const shouldBeDisabled = useCallback((title: SettingsTileId) => {
     switch (title) {
       case "qrcode":
-        return tabInfo?.getClientSession?.tab?.admin === data?.getClientInformation?._id &&
-          !!data?.getClientInformation?._id && !!tabInfo?.getClientSession?.tab?.admin
+        return !isAdmin
+
       default:
         return false
     }
-  }, [data?.getClientInformation?._id, tabInfo?.getClientSession?.tab?.admin])
+  }, [isAdmin])
 
   return (
     <VStack space="4" px={"2"}>

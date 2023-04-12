@@ -10,6 +10,7 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMultipleOrdersDetail, CreateMultipleOrdersDetailInput, CreateOrderDetail, CreateOrderDetailInput, UpdateOrderDetailInput } from "./types";
 import { MutationResolvers } from '../../../generated/graphql';
+import { CartItemModel } from '../../../models/cartItem';
 
 const createOrderDetail = async (_parent: any,
     { input }: CreateOrderDetailInput,
@@ -93,29 +94,65 @@ const createMultipleOrderDetails = async (_parent: any,
     }
 }
 
-// todo: hopefully have types generated from the schema
-
+//@ts-ignore
 const clientCreateMultipleOrderDetails:
     MutationResolvers["clientCreateMultipleOrderDetails"] = async (_parent,
         { input },
         { db, client }) => {
+        console.log("createClientMultipleOrderDetails")
 
         const OrderDetail = OrderDetailModel(db);
         const Product = ProductModel(db);
         const Tab = TabModel(db);
         const User = UserModel(db);
         const Request = RequestModel(db);
+        const CartItem = CartItemModel(db);
+        const foundRequest = await Request.findOne({ _id: client?.request });
 
-        console.log("createClientMultipleOrderDetails")
-        console.log({ input })
+        if (!foundRequest) throw ApolloError("NotFound");
 
+        const tab = await Tab.findOne({ _id: foundRequest?.tab });
 
-        // order made by a client
-        // product, quantity, message, tab, user
-        // tab is comming from the Request
-        // make sure all of the cart items are from the same tab
+        if (!tab) throw ApolloError("NotFound");
+        if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
 
-        return []
+        const foundCartItems = await Promise.all(input.map(async (item) => {
+            const foundCartItem = await CartItem.findOne({
+                _id: item.cartItem,
+                user: item.user,
+                quantity: item.quantity,
+            });
+
+            if (!foundCartItem) throw ApolloError("BadRequest", "Cart item is not valid");
+
+            return foundCartItem;
+        }))
+
+        const orderDetails = await Promise.all(foundCartItems.map(async (parsedInput) => {
+            const user = await User.findOne({ _id: parsedInput.user });
+            const product = await Product.findOne({ _id: parsedInput.product });
+
+            if (!product) throw ApolloError("NotFound");
+
+            const orderDetails = await OrderDetail.create({
+                ...parsedInput,
+                product: parsedInput.product,
+                subTotal: (product?.price || 0) * parsedInput.quantity,
+                user: user?._id,
+                tab: tab._id,
+                createdByUser: client?._id
+            });
+
+            tab.orders = [...tab?.orders, orderDetails._id]
+            tab.cartItems = tab.cartItems.filter((item) => item?.toString() !== parsedInput._id.toString());
+
+            await CartItem.findOneAndDelete({ _id: parsedInput._id });
+            await tab.save();
+
+            return orderDetails
+        }));
+
+        return orderDetails;
     }
 
 

@@ -13,9 +13,8 @@ extend type Mutation {
 
 input ClientCreateOrderInput {
 	user: ID!
-	product: ID!
+	cartItem: ID!
 	quantity: Int!
-	message: String
 }
 
 input CreateOrderInput {
@@ -47,7 +46,6 @@ type OrderDetail {
 	subTotal: Int!
 	status: OrderStatus!
 	message: String
-	created_date: String!
 }
 
 enum OrderStatus {
