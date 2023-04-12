@@ -60,8 +60,12 @@ const createMultipleOrderDetails = async (_parent: any,
 
         const parsedInputArray = CreateMultipleOrdersDetail.parse(input);
 
+        // todo: we don't have to look for the same tab inside this loop
+        const tab = await Tab.findOne({ _id: parsedInputArray[0].tab });
+
+        if (!tab) throw ApolloError("NotFound");
+
         const orderDetails = await Promise.all(parsedInputArray.map(async (parsedInput) => {
-            const tab = await Tab.findOne({ _id: parsedInput.tab });
             const user = await User.findOne({ _id: parsedInput.user });
             const product = await Product.findOne({ _id: parsedInput.product });
 
@@ -74,18 +78,18 @@ const createMultipleOrderDetails = async (_parent: any,
             const orderDetails = await OrderDetail.create({
                 ...parsedInput,
                 subTotal: (product?.price || 0) * parsedInput.quantity,
-                // null users means it's for the table
+                // undefined users means it's for the table
                 user: user?._id,
                 tab: tab._id,
                 createdByUser: businessUser?._id
             });
 
             tab.orders.push(orderDetails._id);
-            await tab.save();
 
             return orderDetails
         }));
 
+        await tab.save();
         return orderDetails;
 
     } catch (err) {
@@ -147,10 +151,11 @@ const clientCreateMultipleOrderDetails:
             tab.cartItems = tab.cartItems.filter((item) => item?.toString() !== parsedInput._id.toString());
 
             await CartItem.findOneAndDelete({ _id: parsedInput._id });
-            await tab.save();
 
             return orderDetails
         }));
+
+        await tab.save();
 
         return orderDetails;
     }

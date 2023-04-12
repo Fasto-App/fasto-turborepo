@@ -6,7 +6,7 @@ import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
 import { clientRoute } from "../../routes";
 import { texts } from "./texts";
-import { useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery } from "../../gen/generated";
+import { GetCartItemsPerTabDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
 import { useGetClientSession } from "../../hooks";
@@ -34,6 +34,7 @@ export const CartScreen = () => {
 
   const [createOrder, { loading: loadingCreateOrder }] =
     useClientCreateMultipleOrderDetailsMutation({
+      refetchQueries: [{ query: GetCartItemsPerTabDocument }],
       onCompleted: () => {
         showToast({ message: "Order placed successfully" });
       },
@@ -180,7 +181,7 @@ export const CartScreen = () => {
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen} />
       {!isAdmin ? <Box backgroundColor={"white"} p='4' textAlign={"center"}>
-        *Ask the tab admin to submit the orders
+        {texts.askToAdmin}
       </Box> : <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button
           flex={1}

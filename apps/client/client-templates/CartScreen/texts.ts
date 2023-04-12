@@ -9,4 +9,5 @@ export const texts = {
   modalTitle: "Past Orders",
   error: "Something went wrong. Please try again later.",
   me: "☝️ Me",
+  askToAdmin: "*Ask the tab admin to submit the orders",
 }
