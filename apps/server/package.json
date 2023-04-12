@@ -7,7 +7,7 @@
 		"start": "ts-node --transpile-only src/index.ts",
 		"dev": "doppler run -- nodemon src/index.ts",
 		"build": "rm -rf build && tsc",
-		"generate": "graphql-codegen --config src/codegen.ts"
+		"generate": "doppler run -- graphql-codegen --config src/codegen.ts"
 	},
 	"dependencies": {
 		"@apollo/server": "^4.5.0",

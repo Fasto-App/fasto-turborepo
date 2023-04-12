@@ -7,7 +7,7 @@ const config: CodegenConfig = {
     {
       'http://localhost:4000/graphql': {
         headers: {
-          "x-api-key": 'ab6919a9-9738-4d86-928a-ebb4734ad68a',
+          "x-api-key": process.env.API_KEY || "",
         },
       },
     }

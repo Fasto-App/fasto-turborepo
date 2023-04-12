@@ -9,7 +9,7 @@
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
 		"chromatic": "chromatic --exit-zero-on-changes",
-		"generate": "graphql-codegen"
+		"generate": "doppler run -- graphql-codegen -- config codegen.ts"
 	},
 	"dependencies": {
 		"@apollo/client": "^3.6.2",
