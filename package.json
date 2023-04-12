@@ -32,7 +32,10 @@
 		"node": "16.x.x"
 	},
 	"dependencies": {
-		"graphql-ws": "^5.12.1"
+		"graphql": "^16.6.0",
+		"graphql-ws": "^5.12.1",
+		"jose": "^4.13.1",
+		"zod": "^3.21.4"
 	},
 	"packageManager": "yarn@1.22.17"
 }

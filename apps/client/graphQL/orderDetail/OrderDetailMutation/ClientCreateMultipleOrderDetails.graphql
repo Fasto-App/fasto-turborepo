@@ -1,0 +1,14 @@
+mutation ClientCreateMultipleOrderDetails($input: [ClientCreateOrderInput!]!) {
+  clientCreateMultipleOrderDetails(input: $input) {
+    _id
+    product {
+      _id
+      price
+      description
+      imageUrl
+    }
+    subTotal
+    quantity
+    status
+  }
+}

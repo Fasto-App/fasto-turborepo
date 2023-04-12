@@ -132,6 +132,13 @@ export enum CheckoutStatusKeys {
   Pending = 'Pending'
 }
 
+export type ClientCreateOrderInput = {
+  message?: InputMaybe<Scalars['String']>;
+  product: Scalars['ID'];
+  quantity: Scalars['Int'];
+  user: Scalars['ID'];
+};
+
 export type ClientSession = {
   __typename?: 'ClientSession';
   request: Request;
@@ -345,14 +352,15 @@ export type Mutation = {
   acceptInvitation: Request;
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
+  clientCreateMultipleOrderDetails: Array<OrderDetail>;
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
   createEmployeeAccount: User;
   createMenu: Menu;
-  createMultipleOrderDetails?: Maybe<Array<OrderDetail>>;
+  createMultipleOrderDetails: Array<OrderDetail>;
   createNewTakeoutOrDelivery: Scalars['String'];
-  createOrderDetail?: Maybe<OrderDetail>;
+  createOrderDetail: OrderDetail;
   createProduct: Product;
   createSpace: Space;
   createTab: Tab;
@@ -365,7 +373,7 @@ export type Mutation = {
   deleteCategory?: Maybe<RequestResponseOk>;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
-  deleteOrderDetail?: Maybe<OrderDetail>;
+  deleteOrderDetail: OrderDetail;
   deleteProduct?: Maybe<RequestResponseOk>;
   deleteSpace: Space;
   deleteTab?: Maybe<Tab>;
@@ -389,7 +397,7 @@ export type Mutation = {
   updateItemFromCart: CartItem;
   updateMenu?: Maybe<Menu>;
   updateMenuInfo: Menu;
-  updateOrderDetail?: Maybe<OrderDetail>;
+  updateOrderDetail: OrderDetail;
   updateProductByID: Product;
   updateSpace: Space;
   updateTab: Tab;
@@ -410,6 +418,11 @@ export type MutationAcceptTabRequestArgs = {
 
 export type MutationAddItemToCartArgs = {
   input: AddItemToCartInput;
+};
+
+
+export type MutationClientCreateMultipleOrderDetailsArgs = {
+  input: Array<ClientCreateOrderInput>;
 };
 
 
@@ -1220,12 +1233,19 @@ export type GetMenuByIdQueryVariables = Exact<{
 
 export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number }> }> | null } };
 
+export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
+  input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
+}>;
+
+
+export type ClientCreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', clientCreateMultipleOrderDetails: Array<{ __typename?: 'OrderDetail', _id: string, subTotal: number, quantity: number, status: OrderStatus, product: { __typename?: 'Product', _id: string, price: number, description?: string | null, imageUrl?: string | null } }> };
+
 export type CreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<CreateOrderInput> | CreateOrderInput;
 }>;
 
 
-export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails?: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null, product: { __typename?: 'Product', imageUrl?: string | null } }> | null };
+export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null, product: { __typename?: 'Product', imageUrl?: string | null } }> };
 
 export type GetProductByIdQueryVariables = Exact<{
   productId: Scalars['ID'];
@@ -2568,6 +2588,48 @@ export function useGetMenuByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMenuByIdQueryHookResult = ReturnType<typeof useGetMenuByIdQuery>;
 export type GetMenuByIdLazyQueryHookResult = ReturnType<typeof useGetMenuByIdLazyQuery>;
 export type GetMenuByIdQueryResult = Apollo.QueryResult<GetMenuByIdQuery, GetMenuByIdQueryVariables>;
+export const ClientCreateMultipleOrderDetailsDocument = gql`
+    mutation ClientCreateMultipleOrderDetails($input: [ClientCreateOrderInput!]!) {
+  clientCreateMultipleOrderDetails(input: $input) {
+    _id
+    product {
+      _id
+      price
+      description
+      imageUrl
+    }
+    subTotal
+    quantity
+    status
+  }
+}
+    `;
+export type ClientCreateMultipleOrderDetailsMutationFn = Apollo.MutationFunction<ClientCreateMultipleOrderDetailsMutation, ClientCreateMultipleOrderDetailsMutationVariables>;
+
+/**
+ * __useClientCreateMultipleOrderDetailsMutation__
+ *
+ * To run a mutation, you first call `useClientCreateMultipleOrderDetailsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClientCreateMultipleOrderDetailsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clientCreateMultipleOrderDetailsMutation, { data, loading, error }] = useClientCreateMultipleOrderDetailsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useClientCreateMultipleOrderDetailsMutation(baseOptions?: Apollo.MutationHookOptions<ClientCreateMultipleOrderDetailsMutation, ClientCreateMultipleOrderDetailsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ClientCreateMultipleOrderDetailsMutation, ClientCreateMultipleOrderDetailsMutationVariables>(ClientCreateMultipleOrderDetailsDocument, options);
+      }
+export type ClientCreateMultipleOrderDetailsMutationHookResult = ReturnType<typeof useClientCreateMultipleOrderDetailsMutation>;
+export type ClientCreateMultipleOrderDetailsMutationResult = Apollo.MutationResult<ClientCreateMultipleOrderDetailsMutation>;
+export type ClientCreateMultipleOrderDetailsMutationOptions = Apollo.BaseMutationOptions<ClientCreateMultipleOrderDetailsMutation, ClientCreateMultipleOrderDetailsMutationVariables>;
 export const CreateMultipleOrderDetailsDocument = gql`
     mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
   createMultipleOrderDetails(input: $input) {

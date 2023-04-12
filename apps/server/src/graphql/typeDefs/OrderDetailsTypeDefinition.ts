@@ -7,10 +7,18 @@ export const OrderDetailsTypeDefinition = gql`
   }
 
   extend type Mutation {
-    createOrderDetail(input: CreateOrderInput!): OrderDetail
-    createMultipleOrderDetails(input: [CreateOrderInput!]!): [OrderDetail!]
-    updateOrderDetail(input: UpdateOrderDetailInput!): OrderDetail
-    deleteOrderDetail(input: GetById!): OrderDetail
+    createOrderDetail(input: CreateOrderInput!): OrderDetail!
+    createMultipleOrderDetails(input: [CreateOrderInput!]!): [OrderDetail!]!
+    clientCreateMultipleOrderDetails(input: [ClientCreateOrderInput!]!): [OrderDetail!]!
+    updateOrderDetail(input: UpdateOrderDetailInput!): OrderDetail!
+    deleteOrderDetail(input: GetById!): OrderDetail!
+  }
+
+  input ClientCreateOrderInput {
+    user: ID!
+    product: ID!
+    quantity: Int!
+    message: String
   }
 
   input CreateOrderInput {

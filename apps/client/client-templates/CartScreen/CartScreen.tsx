@@ -6,13 +6,13 @@ import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
 import { clientRoute } from "../../routes";
 import { texts } from "./texts";
-import { useGetCartItemsPerTabQuery } from "../../gen/generated";
+import { useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
 import { useGetClientInformation } from "../../hooks";
+import { showToast } from "../../components/showToast";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
-
 
 export const CartScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -30,13 +30,49 @@ export const CartScreen = () => {
     fetchPolicy: "network-only"
   })
 
+  const [createOrder, { loading: loadingCreateOrder }] =
+    useClientCreateMultipleOrderDetailsMutation({
+      onCompleted: () => {
+        showToast({ message: "Order placed successfully" });
+      },
+      onError: (error) => {
+        showToast({
+          message: "Error placing order",
+          subMessage: error.message
+        });
+      },
+    })
+
   const theme = useTheme();
 
   const placeOrder = () => {
-    console.log("send to kitchen");
+    console.log("Place Order");
+
+    const mappedOrders = data?.getCartItemsPerTab.map((item) => {
+      return {
+        product: item.product._id,
+        quantity: item.quantity,
+        user: item.user._id,
+      }
+    })
+
+    if (!mappedOrders) return;
+
+    createOrder({
+      variables: {
+        input: mappedOrders
+      }
+    })
   };
 
   const payBill = useCallback(() => {
+    console.log("Pay Bill")
+    console.log("Request the closing of this bill, wait for the response and then redirect to the payment screen")
+    console.log("With the checkoutId and the businessId")
+    console.log({
+      businessId,
+      checkoutId,
+    })
     if (typeof businessId !== "string" || typeof checkoutId !== "string") return;
 
     route.push(clientRoute.checkout(businessId, checkoutId));
@@ -45,7 +81,7 @@ export const CartScreen = () => {
   const groupedData = useMemo(() => {
     return data?.getCartItemsPerTab.reduce((acc, item) => {
       const user = item.user;
-      const name = user._id === clientInfo?.getClientInformation._id ? "Me" : user.name;
+      const name = user._id === clientInfo?.getClientInformation._id ? texts.me : user.name;
 
       if (acc[user._id]) {
         acc[user._id].data.push(item);
@@ -104,7 +140,7 @@ export const CartScreen = () => {
               }
               sections={transformedData || []}
               renderSectionHeader={({ section: { title } }) => (
-                <HStack pt={title === "Me" ? "0" : "4"} px={4} pb={2} space={2} backgroundColor={"white"}>
+                <HStack pt={title === texts.me ? "0" : "4"} px={4} pb={2} space={2} backgroundColor={"white"}>
                   <Text alignSelf={"center"} fontSize={"18"} fontWeight={"500"}>{title}</Text>
                 </HStack>
               )}
@@ -143,12 +179,12 @@ export const CartScreen = () => {
       <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button
           flex={1}
-          isLoading={loading}
+          isLoading={loading || loadingCreateOrder}
           _text={{ bold: true }}
           colorScheme={"primary"}
           onPress={placeOrder}>{texts.cta1}</Button>
         <Button
-          isLoading={loading}
+          isLoading={loading || loadingCreateOrder}
           _text={{ bold: true }}
           flex={1}
           colorScheme={"tertiary"}

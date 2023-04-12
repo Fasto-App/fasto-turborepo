@@ -8,4 +8,5 @@ export const texts = {
   modalCta1: "Back",
   modalTitle: "Past Orders",
   error: "Something went wrong. Please try again later.",
+  me: "☝️ Me",
 }

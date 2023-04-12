@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import {
     OrderDetailModel,
     ProductModel,
+    RequestModel,
     TabModel,
     UserModel
 } from '../../../models';
@@ -45,7 +46,7 @@ const createOrderDetail = async (_parent: any,
 
 const createMultipleOrderDetails = async (_parent: any,
     { input }: { input: CreateMultipleOrdersDetailInput[] },
-    { db }: Context) => {
+    { db, user: businessUser }: Context) => {
     const OrderDetail = OrderDetailModel(db);
     const Product = ProductModel(db);
     const Tab = TabModel(db);
@@ -62,9 +63,11 @@ const createMultipleOrderDetails = async (_parent: any,
             const user = await User.findOne({ _id: parsedInput.user });
             const product = await Product.findOne({ _id: parsedInput.product });
 
+
             if (!product) throw ApolloError("NotFound");
             if (!tab) throw ApolloError("NotFound");
             if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
+            if (!businessUser?._id) throw ApolloError("Unauthorized", "Business user is not logged in");
 
             const orderDetails = await OrderDetail.create({
                 ...parsedInput,
@@ -72,6 +75,7 @@ const createMultipleOrderDetails = async (_parent: any,
                 // null users means it's for the table
                 user: user?._id,
                 tab: tab._id,
+                createdByUser: businessUser?._id
             });
 
             tab.orders.push(orderDetails._id);
@@ -86,6 +90,28 @@ const createMultipleOrderDetails = async (_parent: any,
         console.log({ err })
         throw ApolloError("InternalServerError", `Error creating OrderDetail ${err}`);
     }
+}
+
+// todo: hopefully have types generated from the schema
+const clientCreateMultipleOrderDetails = async (_parent: any,
+    { input }: { input: any },
+    { db, client }: Context) => {
+
+    const OrderDetail = OrderDetailModel(db);
+    const Product = ProductModel(db);
+    const Tab = TabModel(db);
+    const User = UserModel(db);
+    const Request = RequestModel(db);
+
+    console.log("createClientMultipleOrderDetails")
+    console.log({ input })
+
+    // order made by a client
+    // product, quantity, message, tab, user
+    // tab is comming from the Request
+    // make sure all of the cart items are from the same tab
+
+    return []
 }
 
 
@@ -153,7 +179,8 @@ const OrderDetailsResolverMutation = {
     createOrderDetail,
     updateOrderDetail,
     deleteOrderDetail,
-    createMultipleOrderDetails
+    createMultipleOrderDetails,
+    clientCreateMultipleOrderDetails
 }
 const OrderDetailsResolverQuery = {
     getOrderDetailByID,

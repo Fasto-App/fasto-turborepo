@@ -105,7 +105,7 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
 
   const handleOpenTab = useCallback(async (data: NewTabForm) => {
     const { name, phoneNumber, totalGuests, ...rest } = data
-    const array = typedValues(rest).filter((i: string) => i.trim() !== "")
+    const array = typedValues(rest).filter((i) => (i as string).trim() !== "") as string[]
 
     await clientRequestTab({
       variables: {
