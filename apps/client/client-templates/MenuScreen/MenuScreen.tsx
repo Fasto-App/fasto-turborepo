@@ -74,7 +74,6 @@ export const MenuScreen = () => {
                   onPress={() => {
                     setSelectedCategory(item.title._id)
                     // scroll to the section
-                    console.log("scroll to section", item.title._id)
                     if (sectionListRef.current) {
                       // @ts-ignore
                       sectionListRef.current.scrollToLocation({

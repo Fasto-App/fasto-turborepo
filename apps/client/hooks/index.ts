@@ -67,7 +67,6 @@ export const useGetClientSession = () => {
 
   return useGetClientSessionQuery({
     skip: !token,
-    fetchPolicy: "cache-and-network",
     pollInterval: 1000 * 60, // 1 minute
     onCompleted: (data) => {
       // if the data has the request is successfull but the tab is not there

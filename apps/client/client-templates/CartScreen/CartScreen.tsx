@@ -11,6 +11,7 @@ import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
 import { useGetClientSession } from "../../hooks";
 import { showToast } from "../../components/showToast";
+import { LoadingCartItems } from "./LoadingTiles";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
@@ -130,6 +131,7 @@ export const CartScreen = () => {
               alignContent={"center"}
             >{texts.error}</Text> :
             <SectionList
+              keyExtractor={(item) => item._id}
               ListHeaderComponent={
                 <Box alignItems={"flex-end"} px={2}>
                   {!clientSession?.getClientSession.tab?.orders?.length ? null : <Button
@@ -201,18 +203,3 @@ export const CartScreen = () => {
   );
 };
 
-const LoadingCartItems = () => {
-  return (
-    <Box>
-      {new Array(10).fill({}).map((_, i) => (
-        <Skeleton
-          key={i}
-          p={1}
-          borderRadius={"md"}
-          startColor={i % 2 === 0 ? "secondary.200" : "gray.200"}
-        />
-      )
-      )}
-    </Box>
-  )
-}

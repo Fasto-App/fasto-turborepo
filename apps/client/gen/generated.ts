@@ -1247,6 +1247,11 @@ export type CreateMultipleOrderDetailsMutationVariables = Exact<{
 
 export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null, product: { __typename?: 'Product', imageUrl?: string | null } }> };
 
+export type GetOrdersBySessionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetOrdersBySessionQuery = { __typename?: 'Query', getOrdersBySession: Array<{ __typename?: 'OrderDetail', _id: string, quantity: number, status: OrderStatus, subTotal: number, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> };
+
 export type GetProductByIdQueryVariables = Exact<{
   productId: Scalars['ID'];
 }>;
@@ -2670,6 +2675,47 @@ export function useCreateMultipleOrderDetailsMutation(baseOptions?: Apollo.Mutat
 export type CreateMultipleOrderDetailsMutationHookResult = ReturnType<typeof useCreateMultipleOrderDetailsMutation>;
 export type CreateMultipleOrderDetailsMutationResult = Apollo.MutationResult<CreateMultipleOrderDetailsMutation>;
 export type CreateMultipleOrderDetailsMutationOptions = Apollo.BaseMutationOptions<CreateMultipleOrderDetailsMutation, CreateMultipleOrderDetailsMutationVariables>;
+export const GetOrdersBySessionDocument = gql`
+    query GetOrdersBySession {
+  getOrdersBySession {
+    _id
+    quantity
+    status
+    subTotal
+    product {
+      name
+      imageUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrdersBySessionQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersBySessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersBySessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersBySessionQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetOrdersBySessionQuery(baseOptions?: Apollo.QueryHookOptions<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>(GetOrdersBySessionDocument, options);
+      }
+export function useGetOrdersBySessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>(GetOrdersBySessionDocument, options);
+        }
+export type GetOrdersBySessionQueryHookResult = ReturnType<typeof useGetOrdersBySessionQuery>;
+export type GetOrdersBySessionLazyQueryHookResult = ReturnType<typeof useGetOrdersBySessionLazyQuery>;
+export type GetOrdersBySessionQueryResult = Apollo.QueryResult<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>;
 export const GetProductByIdDocument = gql`
     query GetProductByID($productId: ID!) {
   getProductByID(productID: $productId) {

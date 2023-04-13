@@ -6,8 +6,6 @@ import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartIt
 import { showToast } from "../showToast";
 import { texts } from "./texts";
 
-const IMAGE_PLACEHOLDER = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGhlYWx0aHklMjBmb29kfGVufDB8fDB8fA%3D%3D&w=1000&q=80";
-
 export type CartTileProps = {
   index: number;
   name: string;
@@ -19,12 +17,9 @@ export type CartTileProps = {
   navegateTo?: () => void;
 };
 
-const states = ["✅", "⏳"];
-
 const refetchQueries = [{
   query: GetCartItemsPerTabDocument,
 }]
-
 
 export const CartTile = (props: CartTileProps) => {
   const { name, index, price, quantity, url, _id, editable, navegateTo } = props;
@@ -135,37 +130,6 @@ export const CartTile = (props: CartTileProps) => {
           </Text>
         </Pressable>
       </HStack>
-    </HStack>
-
-  );
-};
-
-export const PastOrdersTile = (props: CartTileProps) => {
-  const { name, index, price, url, quantity } = props;
-
-  return (
-    <HStack
-      borderRadius={"sm"}
-      p={2}
-      backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
-      justifyContent={"space-between"}
-      alignItems={"center"}>
-      <HStack space={2}>
-        <Box>
-          <Image
-            size={"xs"}
-            source={{ uri: url || IMAGE_PLACEHOLDER }}
-            alt={""}
-            borderRadius={5}
-          />
-        </Box>
-        <Text alignSelf={"center"} maxW={200}>{name}</Text>
-      </HStack>
-      <Text>{`X${quantity}`}</Text>
-      <Text>{price}</Text>
-      <Text fontSize={"18"}>
-        {index > 5 ? states[0] : states[1]}
-      </Text>
     </HStack>
 
   );
