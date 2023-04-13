@@ -748,6 +748,7 @@ export type Query = {
   getClientSession: ClientSession;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
+  getOrdersBySession: Array<OrderDetail>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
@@ -898,6 +899,7 @@ export type Tab = {
   __typename?: 'Tab';
   _id: Scalars['ID'];
   admin: Scalars['ID'];
+  cartItems: Array<Scalars['ID']>;
   checkout?: Maybe<Scalars['ID']>;
   completed_at?: Maybe<Scalars['String']>;
   created_date: Scalars['String'];
@@ -1337,7 +1339,7 @@ export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?:
 export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { __typename?: 'ClientSession', user: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null }, request: { __typename?: 'Request', _id: string, status: RequestStatus }, tab?: { __typename?: 'Tab', _id: string, status: TabStatus, admin: string, table?: { __typename?: 'Table', tableNumber: string } | null, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, orders: Array<{ __typename?: 'OrderDetail', _id: string }> } | null } };
+export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { __typename?: 'ClientSession', user: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null }, request: { __typename?: 'Request', _id: string, status: RequestStatus }, tab?: { __typename?: 'Tab', _id: string, status: TabStatus, admin: string, cartItems: Array<string>, table?: { __typename?: 'Table', tableNumber: string } | null, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, orders: Array<{ __typename?: 'OrderDetail', _id: string }> } | null } };
 
 export type GetPendingInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3150,6 +3152,7 @@ export const GetClientSessionDocument = gql`
       orders {
         _id
       }
+      cartItems
     }
   }
 }

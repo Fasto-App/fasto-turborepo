@@ -139,7 +139,7 @@ const clientCreateMultipleOrderDetails:
             if (!product) throw ApolloError("NotFound");
 
             const orderDetails = await OrderDetail.create({
-                ...parsedInput,
+                quantity: parsedInput.quantity,
                 product: parsedInput.product,
                 subTotal: (product?.price || 0) * parsedInput.quantity,
                 user: user?._id,
@@ -202,38 +202,10 @@ const deleteOrderDetail = async (_parent: any, { input }: { input: any }, { db }
     }
 }
 
-const getOrderDetailByID = async (_parent: any, { input }: { input: any }, { db }: Context) => {
-    const OrderDetail = OrderDetailModel(db);
-    const orderDetail = await OrderDetail.findOne({ _id: input.id });
-    return orderDetail;
-}
-
-const getAllOrderDetailsByOrderID = async (_parent: any, { input }: { input: any }, { db }: Context) => {
-    const OrderDetail = OrderDetailModel(db);
-    const allOrderDetailsByOrderID = await OrderDetail.find({ order: input.id });
-    return allOrderDetailsByOrderID;
-}
-
-const getOrdersByTabID = async (_parent: any, { input }: { input: any }, { db }: Context) => {
-    const OrderDetail = OrderDetailModel(db);
-    const allOrderDetailsByTabID = await OrderDetail.find({ tab: _parent._id.toString() });
-    return allOrderDetailsByTabID || [];
-}
-
-// @ts-ignore
-const OrderDetailsResolverMutation = {
+export const OrderDetailsResolverMutation = {
     createOrderDetail,
     updateOrderDetail,
     deleteOrderDetail,
     createMultipleOrderDetails,
     clientCreateMultipleOrderDetails
 }
-const OrderDetailsResolverQuery = {
-    getOrderDetailByID,
-    getAllOrderDetailsByOrderID,
-}
-const OrderDetailsResolver = {
-    getOrdersByTabID
-}
-
-export { OrderDetailsResolverMutation, OrderDetailsResolverQuery, OrderDetailsResolver }

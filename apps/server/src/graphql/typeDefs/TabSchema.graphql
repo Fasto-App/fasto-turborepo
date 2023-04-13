@@ -21,6 +21,7 @@ type Tab {
 	users: [User!]
 	created_date: String!
 	completed_at: String
+	cartItems: [ID!]!
 }
 
 input CreateTabInput {

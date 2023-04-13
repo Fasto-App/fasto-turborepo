@@ -23,6 +23,7 @@ query GetClientSession {
 			orders {
 				_id
 			}
+			cartItems
 		}
 	}
 }

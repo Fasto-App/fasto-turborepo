@@ -132,14 +132,14 @@ export const CartScreen = () => {
             <SectionList
               ListHeaderComponent={
                 <Box alignItems={"flex-end"} px={2}>
-                  <Button
+                  {!clientSession?.getClientSession.tab?.orders?.length ? null : <Button
                     size="sm"
                     variant="link"
                     colorScheme={"info"}
                     _text={{ fontSize: "lg" }}
                     onPress={() => setIsModalOpen(true)}>
-                    {texts.placedOrders}
-                  </Button>
+                    {texts.placedOrders(clientSession?.getClientSession.tab?.orders?.length)}
+                  </Button>}
                 </Box>
               }
               sections={transformedData || []}
@@ -185,6 +185,7 @@ export const CartScreen = () => {
       </Box> : <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button
           flex={1}
+          isDisabled={!data?.getCartItemsPerTab || data?.getCartItemsPerTab.length === 0}
           isLoading={loading || loadingCreateOrder}
           _text={{ bold: true }}
           colorScheme={"primary"}

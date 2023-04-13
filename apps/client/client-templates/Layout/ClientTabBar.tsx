@@ -52,7 +52,7 @@ const ClientTabBar: React.FC = (props) => {
         type={"Bag"}
         disabled={!tabData?.getClientSession.tab}
         selected={isCart}
-        numNotifications={tabData?.getClientSession.tab?.orders?.length}
+        numNotifications={tabData?.getClientSession.tab?.cartItems?.length}
         onPress={() => {
           router.push(clientRoute.cart(businessId));
         }}

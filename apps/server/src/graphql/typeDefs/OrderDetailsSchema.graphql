@@ -1,6 +1,7 @@
 extend type Query {
 	getOrderDetailByID(orderDetailID: ID!): OrderDetail
 	getAllOrderDetailsByOrderID(orderID: ID!): [OrderDetail]
+	getOrdersBySession: [OrderDetail!]!
 }
 
 extend type Mutation {

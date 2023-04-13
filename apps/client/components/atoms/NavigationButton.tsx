@@ -17,7 +17,7 @@ import {
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
 import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
-import { Badge, Box, Pressable, Text } from "native-base";
+import { Badge, Box, Pressable, Text, VStack } from "native-base";
 import { IoIosArrowBack } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
@@ -147,12 +147,14 @@ const NavigationButton = ({
       {numNotifications ?
         <Badge
           position={"absolute"}
-          colorScheme="fuchsia" rounded="full" mr={-2} zIndex={1} variant="solid" alignSelf="flex-end" _text={{
-            fontSize: 8,
-            bold: true
+          backgroundColor={"black"}
+          rounded="full" mr={-3} zIndex={1} variant="solid" alignSelf="flex-end"
+          _text={{
+            fontSize: 12,
           }}>
           {numNotifications}
-        </Badge> : null}
+        </Badge>
+        : null}
       <Icon type={type} size={"2em"} color={color ?? selectedColor} />
       <Box w={"2"} />
       <Text

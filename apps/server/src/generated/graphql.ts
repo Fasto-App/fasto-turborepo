@@ -748,6 +748,7 @@ export type Query = {
   getClientSession: ClientSession;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
+  getOrdersBySession: Array<OrderDetail>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
@@ -898,6 +899,7 @@ export type Tab = {
   __typename?: 'Tab';
   _id: Scalars['ID'];
   admin: Scalars['ID'];
+  cartItems: Array<Scalars['ID']>;
   checkout?: Maybe<Scalars['ID']>;
   completed_at?: Maybe<Scalars['String']>;
   created_date: Scalars['String'];
@@ -1579,6 +1581,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getClientSession?: Resolver<ResolversTypes['ClientSession'], ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
+  getOrdersBySession?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
   getSpacesFromBusiness?: Resolver<Maybe<Array<ResolversTypes['Space']>>, ParentType, ContextType>;
@@ -1632,6 +1635,7 @@ export type SubscriptionResolvers<ContextType = Context, ParentType extends Reso
 export type TabResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Tab'] = ResolversParentTypes['Tab']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   admin?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  cartItems?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   checkout?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   completed_at?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   created_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
