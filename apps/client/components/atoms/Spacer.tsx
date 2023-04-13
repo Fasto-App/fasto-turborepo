@@ -1,5 +1,5 @@
+import { Box } from "native-base";
 import React from "react"
-import { View } from 'react-native';
 
 const height = {
 	xsmall: 8,
@@ -12,4 +12,4 @@ const height = {
 
 type sizeType = keyof typeof height;
 
-export const Spacer = ({ size }: { size: sizeType }) => <View style={{ height: height[size] }} />;
+export const Spacer = ({ size }: { size: sizeType }) => <Box style={{ height: height[size] }} />;

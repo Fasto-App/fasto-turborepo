@@ -11,8 +11,8 @@ import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
 import { useTheme } from 'native-base';
 import { ModalFeedback } from '../components/ModalFeedback';
-import { View } from 'react-native';
 import { ErrorBanner } from '../components/ErrorBanner';
+import { View } from 'react-native';
 
 
 const LandingWrapper: React.FC = ({ children }) => (
@@ -49,6 +49,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 	}, [isClientExp, isBusinessExp])
 
 	return (
+		// 	@ts-ignore
 		<View style={{ height: "100%" }}>
 			<ThemeProvider >
 				<ErrorBanner />
@@ -57,15 +58,15 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 						<Wrapper>
 							<React.StrictMode>
 								<ProgressBar />
+								{/* @ts-ignore */}
 								<Component {...pageProps} />
 							</React.StrictMode>
 						</Wrapper>
 					</AppProvider>
 				</AppApolloProvider>
-
 				<ModalFeedback />
 			</ThemeProvider>
-		</View>
+		</View >
 	);
 }
 
