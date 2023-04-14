@@ -11,6 +11,7 @@ import { ControlledForm, SideBySideInputConfig } from '../../components/Controll
 import { useRequestJoinTabMutation } from '../../gen/generated'
 import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
+import { showToast } from '../../components/showToast'
 
 type JoinTabModalProps = {
   isOpen: boolean
@@ -50,12 +51,18 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
 
   const [requestJoinTab, { loading }] = useRequestJoinTabMutation({
     onError: (error) => {
-      console.log(error)
+      showToast({
+        message: "Error joining tab",
+        subMessage: error.message,
+        status: "error"
+      });
     },
     onCompleted: (data) => {
       // get the token back and store in the cookies
       console.log("Tab Request Completed")
-      if (!data?.requestJoinTab || typeof businessId !== "string") return
+      if (!data?.requestJoinTab || typeof businessId !== "string") {
+        throw new Error("Tab Request Error")
+      }
 
       setClientCookies(businessId, data?.requestJoinTab)
       router.push(clientRoute.menu(businessId))
@@ -119,6 +126,7 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
           </Box>
           <Box flex={1}>
             <Button
+              isLoading={loading}
               onPress={() => setModalVisibility(false)}
               _text={{ bold: true }}
               colorScheme={"trueGray"}

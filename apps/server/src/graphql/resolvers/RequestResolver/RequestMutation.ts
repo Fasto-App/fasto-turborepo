@@ -197,11 +197,11 @@ const requestJoinTab = async (
   const foundTab = await Tab.findOne({ _id: input.tab })
   const tabAdmin = await User.findOne({ _id: input.admin })
 
-  if (!tabAdmin) throw ApolloError('BadRequest', "User Not Found")
+  if (!tabAdmin) throw ApolloError('BadRequest', "Tab Admin Not Found")
   if (!foundTab) throw ApolloError('BadRequest', "Request Not Found")
 
   if (foundTab.status !== 'Open') {
-    throw ApolloError('BadRequest', "Tab Not Open Yet")
+    throw ApolloError('BadRequest', "Tab Not Open")
   }
 
   const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
@@ -447,7 +447,6 @@ export const RequestSubscription = {
         console.log('payload', payload)
 
         // if (client) {
-
         //   return payload.onTabRequestResponse.requestor?.toString() === client._id ||
         //     payload.onTabRequestResponse.admin?.toString() === client._id
         // }
