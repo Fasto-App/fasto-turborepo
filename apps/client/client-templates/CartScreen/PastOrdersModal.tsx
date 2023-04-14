@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
-import { Heading, Box, FlatList, Button, HStack, Image, Text, } from 'native-base'
+import { Heading, Box, FlatList, Button, HStack, Image, Text, Divider, Pressable, } from 'native-base'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { FDSTab, TabsType } from '../../components/FDSTab'
 import { texts } from './texts'
-import { parseToCurrency } from 'app-helpers'
+import { parseToCurrency, typedKeys } from 'app-helpers'
 import { OrderStatus, useGetOrdersBySessionQuery } from '../../gen/generated'
 import { LoadingCartItems } from './LoadingTiles'
 import { useGetClientSession } from '../../hooks'
@@ -18,14 +18,14 @@ const states = ["✅", "⏳"];
 const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
 // 01. add tab from Business dashboard
-const tabs: TabsType = {
+const tabs = {
   yourOrders: "My Orders",
   tableOrders: "All Orders",
-}
+} as const
 
 export const PastOrdersModal = (props: PastOrdersModalProps) => {
   const { isModalOpen, setIsModalOpen } = props
-  const [selectedTab, setSelectedTab] = React.useState("yourOrders");
+  const [selectedTab, setSelectedTab] = React.useState<keyof typeof tabs>("yourOrders");
 
   const { data, loading, error } = useGetOrdersBySessionQuery()
   const { data: clientSession } = useGetClientSession()
@@ -52,11 +52,25 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
             <FlatList
               ListHeaderComponent={
                 <>
-                  <FDSTab
-                    tabs={tabs}
-                    selectedTab={selectedTab}
-                    setSelectedTab={setSelectedTab}
-                  />
+                  <HStack justifyContent={"space-around"}>
+                    {typedKeys(tabs).map((key, index) => {
+                      return (
+                        <Pressable key={index} flex={1} onPress={() => setSelectedTab(key)}>
+                          <Heading
+                            size={"sm"}
+                            textAlign={"center"}
+                            color={selectedTab === key ? "primary.500" : "gray.400"}
+                            pb={2}
+                          >
+                            {`${tabs[key]} (${selectedTab === key ?
+                              myOrders?.length
+                              : data?.getOrdersBySession?.length})`}
+                          </Heading>
+                          <Divider bg={"gray.300"} />
+                        </Pressable>
+                      )
+                    })}
+                  </HStack>
                   <Box h={"2"} />
                 </>
               }
