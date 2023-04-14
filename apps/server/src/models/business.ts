@@ -1,6 +1,6 @@
 import { Types, Connection } from 'mongoose'
 import { Menu } from './menu';
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, getModelForClass, modelOptions, Severity } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
 import { Address } from './address';
 import { Product } from './product';
@@ -8,6 +8,8 @@ import { Category } from './category';
 import { User } from './user';
 import { Session } from './session';
 import type { HoursOfOperationType } from 'app-helpers';
+
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Business {
     @prop({ required: true })
     public user!: Types.ObjectId;
