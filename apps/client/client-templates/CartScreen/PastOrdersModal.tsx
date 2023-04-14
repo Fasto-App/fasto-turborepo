@@ -50,7 +50,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
             >{texts.error}</Text> :
             <FlatList
               ListHeaderComponent={
-                <>
+                <Box>
                   <HStack justifyContent={"space-around"}>
                     {typedKeys(tabs).map((key) => {
                       return (
@@ -65,16 +65,16 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
                               myOrders?.length
                               : data?.getOrdersBySession?.length})`}
                           </Heading>
-                          <Divider bg={"gray.300"} />
                         </Pressable>
                       )
                     })}
                   </HStack>
+                  <Divider bg={"gray.300"} />
                   <Box h={"2"} />
-                </>
+                </Box>
               }
               data={selectedTab === "yourOrders" ? myOrders : data?.getOrdersBySession || []}
-              keyExtractor={(item) => item._id}
+              keyExtractor={(item, index) => item._id + index}
               renderItem={({ item, index }) =>
                 <PastOrdersTile
                   index={index}
@@ -84,7 +84,8 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
                   quantity={item.quantity}
                   orderStatus={item.status}
                   _id={item._id}
-                />}
+                />
+              }
             />
       }
       ModalFooter={
@@ -94,7 +95,8 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
           onPress={() => setIsModalOpen(false)}
         >
           {texts.modalCta1}
-        </Button>}
+        </Button>
+      }
     />
   )
 }

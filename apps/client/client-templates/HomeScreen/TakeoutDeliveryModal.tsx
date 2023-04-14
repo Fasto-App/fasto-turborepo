@@ -55,11 +55,13 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
     onCompleted: (data) => {
       console.log("Tab Request Completed")
       if (!data?.createNewTakeoutOrDelivery ||
-        typeof businessId !== "string") return
+        typeof businessId !== "string") {
+        console.error("Tab Request Error")
+        return
+      }
 
       setClientCookies(businessId, data.createNewTakeoutOrDelivery)
-      setClientCookies(businessId, data.createNewTakeoutOrDelivery)
-      router.push(clientRoute.menu(businessId as string))
+      router.push(clientRoute.menu(businessId))
     },
     onError: (err) => {
       console.log("Tab Request Error", err)

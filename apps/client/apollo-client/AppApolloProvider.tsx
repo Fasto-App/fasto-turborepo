@@ -18,13 +18,12 @@ export const AppApolloProvider: React.FC = ({ children }) => {
   const router = useRouter()
   const { businessId } = router.query
 
-  const clientToken = typeof window !== "undefined" && getClientCookies(businessId as string)
-  const token = getBusinessCookies("token")
-
-  const Authorization = token ? `Bearer ${token}` : ""
-  const clientauthorization = clientToken ? `Bearer ${clientToken}` : ""
-
   const params = () => {
+    const clientToken = typeof window !== "undefined" && getClientCookies(businessId as string)
+    const token = getBusinessCookies("token")
+
+    const Authorization = token ? `Bearer ${token}` : ""
+    const clientauthorization = clientToken ? `Bearer ${clientToken}` : ""
     return ({
       [clientToken ? 'clientauthorization' : 'Authorization']: clientToken ?
         clientauthorization : Authorization,

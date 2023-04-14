@@ -158,7 +158,7 @@ export const CartScreen = () => {
               renderSectionHeader={({ section: { title } }) => (
                 <HStack
                   pt={title === texts.me ? "0" : "4"}
-                  key={title} px={4} pb={2}
+                  px={4} pb={2}
                   space={2} backgroundColor={"white"}>
                   <Text alignSelf={"center"} fontSize={"18"} fontWeight={"500"}>{title}</Text>
                 </HStack>
@@ -181,11 +181,11 @@ export const CartScreen = () => {
               ListEmptyComponent={
                 <Box>
                   <Text justifyContent={"center"} alignItems={"flex-end"} pt={"8"} textAlign={"center"}>
-                    <Text fontSize={"18"}>{texts.yourCartIsEmpty}</Text>
-                    <Box px={"2"}>
+                    <Text key={texts.yourCartIsEmpty} fontSize={"18"}>{texts.yourCartIsEmpty}</Text>
+                    <Box key={"Listar"} px={"2"}>
                       <Icon type="ListStar" color={theme.colors.primary["500"]} size={"2em"} />
                     </Box>
-                    <Text fontSize={"18"}>{texts.andStartOrdering}</Text>
+                    <Text key={texts.andStartOrdering} fontSize={"18"}>{texts.andStartOrdering}</Text>
                   </Text>
                 </Box>
               }
