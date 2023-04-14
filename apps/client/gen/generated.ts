@@ -1250,7 +1250,7 @@ export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', crea
 export type GetOrdersBySessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOrdersBySessionQuery = { __typename?: 'Query', getOrdersBySession: Array<{ __typename?: 'OrderDetail', _id: string, quantity: number, status: OrderStatus, subTotal: number, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> };
+export type GetOrdersBySessionQuery = { __typename?: 'Query', getOrdersBySession: Array<{ __typename?: 'OrderDetail', _id: string, quantity: number, status: OrderStatus, subTotal: number, user?: string | null, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> };
 
 export type GetProductByIdQueryVariables = Exact<{
   productId: Scalars['ID'];
@@ -2682,6 +2682,7 @@ export const GetOrdersBySessionDocument = gql`
     quantity
     status
     subTotal
+    user
     product {
       name
       imageUrl

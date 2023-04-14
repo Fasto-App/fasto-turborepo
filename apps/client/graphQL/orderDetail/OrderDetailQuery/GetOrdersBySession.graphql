@@ -4,6 +4,7 @@ query GetOrdersBySession {
 		quantity
 		status
 		subTotal
+		user
 		product {
 			name
 			imageUrl

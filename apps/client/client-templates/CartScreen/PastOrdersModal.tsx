@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Heading, Box, FlatList, Button, HStack, Image, Text, } from 'native-base'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { FDSTab, TabsType } from '../../components/FDSTab'
@@ -6,6 +6,7 @@ import { texts } from './texts'
 import { parseToCurrency } from 'app-helpers'
 import { OrderStatus, useGetOrdersBySessionQuery } from '../../gen/generated'
 import { LoadingCartItems } from './LoadingTiles'
+import { useGetClientSession } from '../../hooks'
 
 type PastOrdersModalProps = {
   isModalOpen: boolean
@@ -27,6 +28,8 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
   const [selectedTab, setSelectedTab] = React.useState("yourOrders");
 
   const { data, loading, error } = useGetOrdersBySessionQuery()
+  const { data: clientSession } = useGetClientSession()
+  const myOrders = useMemo(() => data?.getOrdersBySession.filter((item) => item?.user === clientSession?.getClientSession?.user?._id), [clientSession?.getClientSession?.user?._id, data?.getOrdersBySession])
 
   return (
     <CustomModal
@@ -57,7 +60,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
                   <Box h={"2"} />
                 </>
               }
-              data={data?.getOrdersBySession || []}
+              data={selectedTab === "yourOrders" ? myOrders : data?.getOrdersBySession || []}
               keyExtractor={(item) => item._id}
               renderItem={({ item, index }) =>
                 <PastOrdersTile
