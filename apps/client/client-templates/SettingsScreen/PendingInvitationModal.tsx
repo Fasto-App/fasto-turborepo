@@ -6,6 +6,7 @@ import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineI
 import { texts } from './texts'
 import { useRouter } from 'next/router'
 import { showToast } from '../../components/showToast'
+import { getCause } from '../../apollo-client/ErrorLink'
 
 type PendingInvitationModalProps = {
   isModalOpen: boolean;
@@ -40,7 +41,7 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
     onError: (error) => {
       showToast({
         message: texts.errorAcceptingInvitation,
-        subMessage: error.message,
+        subMessage: getCause(error),
         status: "error"
       })
     }
@@ -55,7 +56,7 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
     onError: (error) => {
       showToast({
         message: texts.errorDecliningInvitation,
-        subMessage: error.message,
+        subMessage: getCause(error),
         status: "error"
       })
     }

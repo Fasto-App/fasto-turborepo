@@ -3,7 +3,7 @@ import { Toast, Box, Alert, CloseIcon, HStack, IconButton, VStack, Text } from "
 
 type ToastProps = {
   message: string;
-  subMessage?: string;
+  subMessage?: string | unknown;
   status?: 'info' | 'warning' | 'success' | 'error'
 }
 

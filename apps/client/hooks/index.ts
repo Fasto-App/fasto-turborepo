@@ -6,6 +6,7 @@ import { RequestStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from
 import { clientRoute } from "../routes";
 import { showToast } from "../components/showToast";
 import { texts } from "./texts";
+import { getCause } from "../apollo-client/ErrorLink";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -99,7 +100,7 @@ export const useGetBusinessInformation = () => {
     onError: (error) => {
       showToast({
         message: texts.thereWasAnError,
-        subMessage: error.message,
+        subMessage: getCause(error),
         status: "error"
       })
     }

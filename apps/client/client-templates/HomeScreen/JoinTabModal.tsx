@@ -12,6 +12,7 @@ import { useRequestJoinTabMutation } from '../../gen/generated'
 import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
 import { showToast } from '../../components/showToast'
+import { getCause } from '../../apollo-client/ErrorLink'
 
 type JoinTabModalProps = {
   isOpen: boolean
@@ -51,9 +52,10 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
 
   const [requestJoinTab, { loading }] = useRequestJoinTabMutation({
     onError: (error) => {
+      console.log("error", error)
       showToast({
         message: "Error joining tab",
-        subMessage: error.message,
+        subMessage: getCause(error),
         status: "error"
       });
     },

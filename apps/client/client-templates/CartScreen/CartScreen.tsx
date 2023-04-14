@@ -12,6 +12,7 @@ import { PastOrdersModal } from "./PastOrdersModal";
 import { useGetClientSession } from "../../hooks";
 import { showToast } from "../../components/showToast";
 import { LoadingCartItems } from "./LoadingTiles";
+import { getCause } from "../../apollo-client/ErrorLink";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
@@ -43,7 +44,7 @@ export const CartScreen = () => {
       onError: (error) => {
         showToast({
           message: "Error placing order",
-          subMessage: error.message,
+          subMessage: getCause(error),
           status: "error"
         });
       },
@@ -61,7 +62,7 @@ export const CartScreen = () => {
     onError: (error) => {
       showToast({
         message: "Error closing tab",
-        subMessage: error.message,
+        subMessage: getCause(error),
         status: "error"
       });
     },

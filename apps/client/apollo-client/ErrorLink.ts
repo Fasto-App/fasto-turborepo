@@ -2,6 +2,7 @@ import { onError } from "@apollo/client/link/error";
 import Router from "next/router";
 import { clearBusinessCookies, clearClientCookies } from "../cookies";
 import { businessRoute } from "../routes";
+import { ApolloError } from "@apollo/client";
 
 export const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
@@ -36,3 +37,9 @@ export const errorLink = onError(({ graphQLErrors, networkError }) => {
 
   //TODO: if graphQL error has something about authentication, then logout
 });
+
+export const getCause = (error: ApolloError) => {
+  if (error.graphQLErrors.length > 0) {
+    return error.graphQLErrors[0].extensions?.cause
+  }
+}
