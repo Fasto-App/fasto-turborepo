@@ -1,4 +1,4 @@
-mutation RequestCloseTab($input: GetById!) {
+mutation RequestCloseTab($input: GetById) {
 	requestCloseTab(input: $input) {
 		_id
 		checkout

@@ -5,8 +5,9 @@ import { TableModel } from "../../../models/table";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
 import { getPercentageOfValue, TableStatus, TabStatus } from "app-helpers";
-import { BusinessModel, OrderDetailModel } from "../../../models";
+import { BusinessModel, OrderDetailModel, RequestModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
+import { MutationResolvers } from "../../../generated/graphql";
 
 const createTab = async (_parent: any, { input }: createTabInput, { db, business }: Context) => {
     const Tab = TabModel(db);
@@ -151,12 +152,34 @@ const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
 }
 
 
-const requestCloseTab = async (_parent: any, { input }: { input: { _id: string } }, { db, business }: Context) => {
+//@ts-ignore
+const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, args, { db, business, client }) => {
     const Tab = TabModel(db);
     const OrderDetail = OrderDetailModel(db);
     const Checkout = CheckoutModel(db);
-    const foundBusiness = await BusinessModel(db).findById(business);
-    const foundTab = await Tab.findById(input._id);
+    const Table = TableModel(db);
+    const foundBusiness = await BusinessModel(db).findById(business || client?.business);
+    let tabId;
+
+    if (!foundBusiness) throw ApolloError('NotFound', "Business not found")
+
+    if (client?.request) {
+        const foundRequest = await RequestModel(db).findById(client.request);
+        if (!foundRequest) throw ApolloError('NotFound')
+        tabId = foundRequest.tab;
+    }
+
+    const foundTab = await Tab.findById(tabId || args.input?._id);
+
+    const changeTableStatus = async () => {
+        if (foundTab?.table) {
+            const foundTable = await Table.findById(foundTab.table);
+            if (foundTable) {
+                foundTable.status = TableStatus.Available;
+                await foundTable.save();
+            }
+        }
+    }
 
     if (!foundTab) throw ApolloError('NotFound')
 
@@ -170,15 +193,7 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
     if (foundOrderDetails.length === 0) {
         foundTab.status = TabStatus.Closed;
         // upadate the table status to available
-        if (foundTab.table) {
-            const Table = TableModel(db);
-
-            const foundTable = await Table.findById(foundTab.table);
-            if (foundTable) {
-                foundTable.status = TableStatus.Available;
-                await foundTable.save();
-            }
-        }
+        changeTableStatus()
 
         await foundTab.save();
         return foundTab;
@@ -197,11 +212,11 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
 
     foundTab.checkout = checkout._id;
     foundTab.status = TabStatus.Pendent;
+    // upadate the table status to available
+    changeTableStatus()
 
     return await foundTab.save();
 }
-
-
 
 const TabResolverMutation = {
     createTab,

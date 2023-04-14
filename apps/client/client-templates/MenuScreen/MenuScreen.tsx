@@ -91,7 +91,7 @@ export const MenuScreen = () => {
           <SectionList
             ref={sectionListRef}
             viewabilityConfig={{
-              itemVisiblePercentThreshold: 50, //means if 50% of the item is visible
+              itemVisiblePercentThreshold: 70, //means if 70% of the item is visible
               waitForInteraction: false,
               // viewAreaCoveragePercentThreshold: 50, //means if 50% of the item is visible
               minimumViewTime: 500

@@ -586,7 +586,7 @@ export type MutationRecoverPasswordArgs = {
 
 
 export type MutationRequestCloseTabArgs = {
-  input: GetById;
+  input?: InputMaybe<GetById>;
 };
 
 
@@ -901,8 +901,6 @@ export type Tab = {
   admin: Scalars['ID'];
   cartItems: Array<Scalars['ID']>;
   checkout?: Maybe<Scalars['ID']>;
-  completed_at?: Maybe<Scalars['String']>;
-  created_date: Scalars['String'];
   orders: Array<OrderDetail>;
   status: TabStatus;
   table?: Maybe<Table>;
@@ -1505,7 +1503,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   passwordReset?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationPasswordResetArgs, 'input'>>;
   postUserLogin?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationPostUserLoginArgs, 'input'>>;
   recoverPassword?: Resolver<Maybe<ResolversTypes['RequestResponseOK']>, ParentType, ContextType, RequireFields<MutationRecoverPasswordArgs, 'input'>>;
-  requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationRequestCloseTabArgs, 'input'>>;
+  requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, Partial<MutationRequestCloseTabArgs>>;
   requestJoinTab?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRequestJoinTabArgs, 'input'>>;
   requestUserAccountCreation?: Resolver<ResolversTypes['AccountCreationResponse'], ParentType, ContextType, Partial<MutationRequestUserAccountCreationArgs>>;
   updateAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, Partial<MutationUpdateAddressArgs>>;
@@ -1637,8 +1635,6 @@ export type TabResolvers<ContextType = Context, ParentType extends ResolversPare
   admin?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   cartItems?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   checkout?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  completed_at?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  created_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   orders?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['TabStatus'], ParentType, ContextType>;
   table?: Resolver<Maybe<ResolversTypes['Table']>, ParentType, ContextType>;

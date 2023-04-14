@@ -6,7 +6,7 @@ import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
 import { clientRoute } from "../../routes";
 import { texts } from "./texts";
-import { GetCartItemsPerTabDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery } from "../../gen/generated";
+import { GetCartItemsPerTabDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
 import { useGetClientSession } from "../../hooks";
@@ -16,6 +16,7 @@ import { LoadingCartItems } from "./LoadingTiles";
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
 export const CartScreen = () => {
+  const theme = useTheme();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const route = useRouter();
@@ -48,7 +49,23 @@ export const CartScreen = () => {
       },
     })
 
-  const theme = useTheme();
+  const [closeTab, { loading: closeTabLoading }] = useRequestCloseTabMutation({
+    onCompleted: (data) => {
+      if (data?.requestCloseTab.checkout) {
+        showToast({ message: "Tab closed successfully" });
+
+        route.push(clientRoute.checkout(businessId as string, data?.requestCloseTab.checkout))
+      }
+
+    },
+    onError: (error) => {
+      showToast({
+        message: "Error closing tab",
+        subMessage: error.message,
+        status: "error"
+      });
+    },
+  })
 
   const placeOrder = () => {
     console.log("Place Order");
@@ -72,16 +89,9 @@ export const CartScreen = () => {
 
   const payBill = useCallback(() => {
     console.log("Pay Bill")
-    console.log("Request the closing of this bill, wait for the response and then redirect to the payment screen")
-    console.log("With the checkoutId and the businessId")
-    console.log({
-      businessId,
-      checkoutId,
-    })
-    if (typeof businessId !== "string" || typeof checkoutId !== "string") return;
+    closeTab()
 
-    route.push(clientRoute.checkout(businessId, checkoutId));
-  }, [businessId, checkoutId, route]);
+  }, [closeTab]);
 
   const groupedData = useMemo(() => {
     return data?.getCartItemsPerTab.reduce((acc, item) => {
@@ -146,7 +156,10 @@ export const CartScreen = () => {
               }
               sections={transformedData || []}
               renderSectionHeader={({ section: { title } }) => (
-                <HStack pt={title === texts.me ? "0" : "4"} px={4} pb={2} space={2} backgroundColor={"white"}>
+                <HStack
+                  pt={title === texts.me ? "0" : "4"}
+                  key={title} px={4} pb={2}
+                  space={2} backgroundColor={"white"}>
                   <Text alignSelf={"center"} fontSize={"18"} fontWeight={"500"}>{title}</Text>
                 </HStack>
               )}
@@ -188,12 +201,12 @@ export const CartScreen = () => {
         <Button
           flex={1}
           isDisabled={!data?.getCartItemsPerTab || data?.getCartItemsPerTab.length === 0}
-          isLoading={loading || loadingCreateOrder}
+          isLoading={loading || loadingCreateOrder || closeTabLoading}
           _text={{ bold: true }}
           colorScheme={"primary"}
           onPress={placeOrder}>{texts.cta1}</Button>
         <Button
-          isLoading={loading || loadingCreateOrder}
+          isLoading={loading || loadingCreateOrder || closeTabLoading}
           _text={{ bold: true }}
           flex={1}
           colorScheme={"tertiary"}

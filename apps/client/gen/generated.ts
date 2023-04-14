@@ -586,7 +586,7 @@ export type MutationRecoverPasswordArgs = {
 
 
 export type MutationRequestCloseTabArgs = {
-  input: GetById;
+  input?: InputMaybe<GetById>;
 };
 
 
@@ -901,8 +901,6 @@ export type Tab = {
   admin: Scalars['ID'];
   cartItems: Array<Scalars['ID']>;
   checkout?: Maybe<Scalars['ID']>;
-  completed_at?: Maybe<Scalars['String']>;
-  created_date: Scalars['String'];
   orders: Array<OrderDetail>;
   status: TabStatus;
   table?: Maybe<Table>;
@@ -1398,7 +1396,7 @@ export type CreateTabMutationVariables = Exact<{
 export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, status: TabStatus, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null } };
 
 export type RequestCloseTabMutationVariables = Exact<{
-  input: GetById;
+  input?: InputMaybe<GetById>;
 }>;
 
 
@@ -3576,7 +3574,7 @@ export type CreateTabMutationHookResult = ReturnType<typeof useCreateTabMutation
 export type CreateTabMutationResult = Apollo.MutationResult<CreateTabMutation>;
 export type CreateTabMutationOptions = Apollo.BaseMutationOptions<CreateTabMutation, CreateTabMutationVariables>;
 export const RequestCloseTabDocument = gql`
-    mutation RequestCloseTab($input: GetById!) {
+    mutation RequestCloseTab($input: GetById) {
   requestCloseTab(input: $input) {
     _id
     checkout

@@ -17,7 +17,6 @@ const states = ["✅", "⏳"];
 
 const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
-// 01. add tab from Business dashboard
 const tabs = {
   yourOrders: "My Orders",
   tableOrders: "All Orders",
@@ -53,16 +52,16 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
               ListHeaderComponent={
                 <>
                   <HStack justifyContent={"space-around"}>
-                    {typedKeys(tabs).map((key, index) => {
+                    {typedKeys(tabs).map((key) => {
                       return (
-                        <Pressable key={index} flex={1} onPress={() => setSelectedTab(key)}>
+                        <Pressable key={key} flex={1} onPress={() => setSelectedTab(key)}>
                           <Heading
                             size={"sm"}
                             textAlign={"center"}
                             color={selectedTab === key ? "primary.500" : "gray.400"}
                             pb={2}
                           >
-                            {`${tabs[key]} (${selectedTab === key ?
+                            {`${tabs[key]} (${key === "yourOrders" ?
                               myOrders?.length
                               : data?.getOrdersBySession?.length})`}
                           </Heading>
@@ -78,7 +77,6 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
               keyExtractor={(item) => item._id}
               renderItem={({ item, index }) =>
                 <PastOrdersTile
-                  key={index}
                   index={index}
                   name={item.product.name}
                   url={item.product.imageUrl || PLACEHOLDER_IMAGE}

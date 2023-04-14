@@ -8,20 +8,26 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { errorLink } from './ErrorLink';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
+
+const httpLink = createUploadLink({
+  uri: process.env.BACKEND_URL,
+})
 
 export const AppApolloProvider: React.FC = ({ children }) => {
-  const httpLink = createUploadLink({
-    uri: process.env.BACKEND_URL,
-  })
+  const router = useRouter()
+  const { businessId } = router.query
+
+  const clientToken = typeof window !== "undefined" && getClientCookies(businessId as string)
+  const token = getBusinessCookies("token")
+
+  const Authorization = token ? `Bearer ${token}` : ""
+  const clientauthorization = clientToken ? `Bearer ${clientToken}` : ""
 
   const params = () => {
-    const clientToken = typeof window !== "undefined" && getClientCookies(Router.query.businessId as string)
-    const token = getBusinessCookies("token")
-
     return ({
-      Authorization: token ? `Bearer ${token}` : "",
-      "clientauthorization": clientToken ? `Bearer ${clientToken}` : "",
+      [clientToken ? 'clientauthorization' : 'Authorization']: clientToken ?
+        clientauthorization : Authorization,
       "Apollo-Require-Preflight": "true",
       "x-api-key": process.env.NEXT_PUBLIC_API_KEY
     })

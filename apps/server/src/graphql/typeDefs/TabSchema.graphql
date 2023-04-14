@@ -8,7 +8,7 @@ extend type Mutation {
 	createTab(input: CreateTabInput!): Tab!
 	updateTab(input: UpdateTabInput!): Tab!
 	deleteTab(input: GetById!): Tab
-	requestCloseTab(input: GetById!): Tab!
+	requestCloseTab(input: GetById): Tab!
 }
 
 type Tab {
@@ -19,8 +19,6 @@ type Tab {
 	orders: [OrderDetail!]!
 	status: TabStatus!
 	users: [User!]
-	created_date: String!
-	completed_at: String
 	cartItems: [ID!]!
 }
 
