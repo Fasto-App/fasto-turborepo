@@ -26,8 +26,11 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
   const { isModalOpen, setIsModalOpen } = props
   const [selectedTab, setSelectedTab] = React.useState<keyof typeof tabs>("yourOrders");
 
-  const { data, loading, error } = useGetOrdersBySessionQuery()
   const { data: clientSession } = useGetClientSession()
+  const { data, loading, error } = useGetOrdersBySessionQuery({
+    skip: !isModalOpen,
+  })
+
   const myOrders = useMemo(() => data?.getOrdersBySession.filter((item) => item?.user === clientSession?.getClientSession?.user?._id), [clientSession?.getClientSession?.user?._id, data?.getOrdersBySession])
 
   return (
@@ -62,8 +65,8 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
                             pb={2}
                           >
                             {`${tabs[key]} (${key === "yourOrders" ?
-                              myOrders?.length
-                              : data?.getOrdersBySession?.length})`}
+                              myOrders?.length ?? 0
+                              : data?.getOrdersBySession?.length ?? 0})`}
                           </Heading>
                         </Pressable>
                       )
@@ -73,7 +76,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
                   <Box h={"2"} />
                 </Box>
               }
-              data={selectedTab === "yourOrders" ? myOrders : data?.getOrdersBySession || []}
+              data={selectedTab === "yourOrders" ? myOrders : data?.getOrdersBySession}
               keyExtractor={(item, index) => item._id + index}
               renderItem={({ item, index }) =>
                 <PastOrdersTile

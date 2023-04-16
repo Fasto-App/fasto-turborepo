@@ -6,6 +6,7 @@ import { Split } from './Split'
 import { useRouter } from 'next/router'
 import { useGetCheckoutByIdQuery } from '../../gen/generated'
 import { showToast } from '../../components/showToast'
+import { PastOrdersModal } from '../CartScreen/PastOrdersModal'
 
 const tabs: TabsType = {
   payTable: "Pay Table",
@@ -14,6 +15,7 @@ const tabs: TabsType = {
 
 export const CheckoutScreen = () => {
   const [selectedTab, setSelectedTab] = useState("payTable");
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const router = useRouter()
   const { checkoutId } = router.query
@@ -64,9 +66,13 @@ export const CheckoutScreen = () => {
             _text={{ bold: true }}
             flex={1}
             colorScheme={"tertiary"}
-            onPress={pay}>{"See Check"}</Button>
+            onPress={() => setIsModalOpen(true)}>{"See Check"}</Button>
         </VStack>
       </Box>
+      <PastOrdersModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
     </Box>
   )
 }

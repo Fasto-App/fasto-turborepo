@@ -82,17 +82,18 @@ export const PayTable = (props: PayTableProps) => {
             selectedValue={formatedTip}
             setSelectedValue={(str) => setSelectedTip(str as Percentages)}
           />
+          {/* Not working well on iOS. Reduce the amount of re-renders with hook form */}
           <Input
             h="10"
             value={tipFieldValue}
             fontSize={"lg"}
             w={100}
-            // isDisabled={selectedTip === "Custom" ? false : true}
-            isReadOnly={selectedTip === "Custom" ? false : true}
+            isDisabled={selectedTip !== "Custom"}
+            isReadOnly={selectedTip !== "Custom"}
+            _disabled={{ opacity: 0.7 }}
             textAlign={"right"}
             onChangeText={handleTipChange}
           />
-          {/* <Text fontSize={"lg"} flex={1}>{tipFieldValue}</Text> */}
         </HStack>
       </HStack>
       <Divider marginY={4} />
