@@ -13,6 +13,7 @@ query GetClientSession {
 			_id
 			status
 			admin
+			checkout
 			table {
 				tableNumber
 			}

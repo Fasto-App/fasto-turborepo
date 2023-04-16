@@ -113,6 +113,7 @@ export type Checkout = {
   _id: Scalars['ID'];
   business: Scalars['ID'];
   created_date: Scalars['String'];
+  discount?: Maybe<Scalars['Float']>;
   orders: Array<Maybe<OrderDetail>>;
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
@@ -120,7 +121,7 @@ export type Checkout = {
   subTotal: Scalars['Float'];
   tab: Scalars['ID'];
   tax: Scalars['Float'];
-  tip: Scalars['Float'];
+  tip?: Maybe<Scalars['Float']>;
   total: Scalars['Float'];
   totalPaid: Scalars['Float'];
 };
@@ -1175,14 +1176,14 @@ export type MakeCheckoutPaymentMutationVariables = Exact<{
 }>;
 
 
-export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, paid: boolean, totalPaid: number, total: number, tip: number, tax: number, tab: string, subTotal: number, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron: string, splitType?: SplitType | null, tip: number } | null> } };
+export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, paid: boolean, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, subTotal: number, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron: string, splitType?: SplitType | null, tip: number } | null> } };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
 }>;
 
 
-export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip: number, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount: number } | null> } };
+export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount: number } | null> } };
 
 export type CreateMenuMutationVariables = Exact<{
   input: CreateMenuInput;
@@ -1342,7 +1343,7 @@ export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?:
 export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { __typename?: 'ClientSession', user: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null }, request: { __typename?: 'Request', _id: string, status: RequestStatus }, tab?: { __typename?: 'Tab', _id: string, status: TabStatus, admin: string, cartItems: Array<string>, table?: { __typename?: 'Table', tableNumber: string } | null, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, orders: Array<{ __typename?: 'OrderDetail', _id: string }> } | null } };
+export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { __typename?: 'ClientSession', user: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null }, request: { __typename?: 'Request', _id: string, status: RequestStatus }, tab?: { __typename?: 'Tab', _id: string, status: TabStatus, admin: string, checkout?: string | null, cartItems: Array<string>, table?: { __typename?: 'Table', tableNumber: string } | null, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, orders: Array<{ __typename?: 'OrderDetail', _id: string }> } | null } };
 
 export type GetPendingInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3187,6 +3188,7 @@ export const GetClientSessionDocument = gql`
       _id
       status
       admin
+      checkout
       table {
         tableNumber
       }

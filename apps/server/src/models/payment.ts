@@ -4,6 +4,9 @@ import type { SplitType } from 'app-helpers';
 
 export class Payment {
   @prop({ required: true })
+  public checkout!: Types.ObjectId;
+
+  @prop({ required: true })
   public amount!: number;
 
   @prop()

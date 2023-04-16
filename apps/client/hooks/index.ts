@@ -2,7 +2,7 @@ import { useBreakpointValue } from "native-base";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { clearClientCookies, getClientCookies } from "../cookies";
-import { RequestStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from "../gen/generated";
+import { RequestStatus, TabStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from "../gen/generated";
 import { clientRoute } from "../routes";
 import { showToast } from "../components/showToast";
 import { texts } from "./texts";
@@ -61,7 +61,7 @@ export const useUploadFileHook = () => {
 
 export const useGetClientSession = () => {
   const route = useRouter()
-  const { businessId } = route.query
+  const { businessId, checkoutId } = route.query
 
   const token = getClientCookies(businessId as string)
 
@@ -77,7 +77,14 @@ export const useGetClientSession = () => {
           const business = typeof businessId === "string" ? businessId : businessId[0]
           clearClientCookies(business)
           route.push(clientRoute.home(business))
+          return
         }
+      }
+
+      if (!checkoutId && data.getClientSession.tab?.status === TabStatus.Pendent &&
+        data.getClientSession.tab.checkout) {
+        route.push(clientRoute.checkout(businessId as string, data.getClientSession.tab.checkout))
+        return
       }
     },
   })

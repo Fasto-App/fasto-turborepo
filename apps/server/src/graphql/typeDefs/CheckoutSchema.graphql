@@ -15,7 +15,8 @@ type Checkout {
 	orders: [OrderDetail]!
 	payments: [Payment]!
 	subTotal: Float!
-	tip: Float!
+	tip: Float
+	discount: Float
 	tax: Float!
 	total: Float!
 	totalPaid: Float!

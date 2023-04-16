@@ -113,6 +113,7 @@ export type Checkout = {
   _id: Scalars['ID'];
   business: Scalars['ID'];
   created_date: Scalars['String'];
+  discount?: Maybe<Scalars['Float']>;
   orders: Array<Maybe<OrderDetail>>;
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
@@ -120,7 +121,7 @@ export type Checkout = {
   subTotal: Scalars['Float'];
   tab: Scalars['ID'];
   tax: Scalars['Float'];
-  tip: Scalars['Float'];
+  tip?: Maybe<Scalars['Float']>;
   total: Scalars['Float'];
   totalPaid: Scalars['Float'];
 };
@@ -1384,6 +1385,7 @@ export type CheckoutResolvers<ContextType = Context, ParentType extends Resolver
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   business?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   created_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   orders?: Resolver<Array<Maybe<ResolversTypes['OrderDetail']>>, ParentType, ContextType>;
   paid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   payments?: Resolver<Array<Maybe<ResolversTypes['Payment']>>, ParentType, ContextType>;
@@ -1391,7 +1393,7 @@ export type CheckoutResolvers<ContextType = Context, ParentType extends Resolver
   subTotal?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   tab?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   tax?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  tip?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  tip?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalPaid?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

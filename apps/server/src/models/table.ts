@@ -1,10 +1,11 @@
 import { Connection } from 'mongoose'
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, getModelForClass, Severity, modelOptions } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
 import { Space } from './space';
 import { TableStatus } from 'app-helpers';
 import type { TableStatusType } from 'app-helpers';
 import { Tab } from './tab';
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Table {
   @prop({ required: true })
   public space!: Ref<Space>;

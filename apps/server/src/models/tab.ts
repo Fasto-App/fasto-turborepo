@@ -1,5 +1,5 @@
 import { Connection, Types } from 'mongoose'
-import { getModelForClass, prop } from '@typegoose/typegoose';
+import { Severity, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
 import { User } from './user';
 import { Table } from './table';
@@ -8,6 +8,7 @@ import { TabStatus } from 'app-helpers';
 import type { TabStatusType, TabTypeType } from 'app-helpers';
 import { CartItem } from './cartItem';
 
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Tab {
     @prop()
     public checkout?: Types.ObjectId;
