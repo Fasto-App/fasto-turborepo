@@ -1,8 +1,9 @@
-import { HStack, Divider, Text } from 'native-base'
+import { HStack, Divider, Text, Input, Box } from 'native-base'
 import React from 'react'
-import { percentageSelectData } from '../../business-templates/Checkout/checkoutStore'
+import { Percentages, percentageSelectData, useCheckoutStore } from '../../business-templates/Checkout/checkoutStore'
 import { FDSSelect } from '../../components/FDSSelect'
-import { parseToCurrency } from 'app-helpers'
+import { formatAsPercentage, getPercentageOfValue, parseToCurrency } from 'app-helpers'
+import { useForm } from 'react-hook-form'
 
 type PayTableProps = {
   subtotal: number
@@ -13,7 +14,54 @@ type PayTableProps = {
 
 export const PayTable = (props: PayTableProps) => {
   // todo: extract logic from business
-  const total = props.subtotal + props.taxes + props.tip
+
+  const { tip, setSelectedTip, selectedTip, customTip, setCustomTip } = useCheckoutStore(state => ({
+    tip: state.tip,
+    setSelectedTip: state.setSelectedTip,
+    selectedTip: state.selectedTip,
+    customTip: state.customTip,
+    setCustomTip: state.setCustomTip,
+  }))
+
+  const formatedTip = selectedTip === "Custom" ? "Custom" : formatAsPercentage(tip)
+
+  const percentageOfTotal = getPercentageOfValue(props.subtotal, tip)
+
+  const tipFieldValue = selectedTip === "Custom" ?
+    parseToCurrency(customTip) :
+    parseToCurrency(percentageOfTotal)
+
+  const handleTipChange = (value: string) => {
+    console.log("handle tip change")
+    console.log(value)
+
+    const text = value.replace(/[$,.]/g, '')
+
+    console.log("text", text)
+
+    const convertedValue = Number(text)
+
+    if (Number.isInteger(convertedValue)) {
+
+      console.log("convertedValue", convertedValue)
+      setCustomTip(convertedValue, props.subtotal)
+      return
+    }
+    console.log("not a number")
+
+    setCustomTip(0, props.subtotal)
+  }
+
+  console.log("tip", tip)
+
+  // total will be either the percentage of the value or the custom value
+  const total = props.subtotal + props.taxes + (selectedTip === "Custom" ? customTip : percentageOfTotal)
+
+  const { control } = useForm({
+    defaultValues: {
+      tip: tipFieldValue
+    }
+  })
 
   return (
     <>
@@ -29,16 +77,27 @@ export const PayTable = (props: PayTableProps) => {
         <Text fontSize={"lg"}>{"Tip"}</Text>
         <HStack space={2}>
           <FDSSelect
+            h={10} w={120}
             array={percentageSelectData}
-            selectedValue={undefined}
-            setSelectedValue={() => { console.log("setSelectedValue") }}
+            selectedValue={formatedTip}
+            setSelectedValue={(str) => setSelectedTip(str as Percentages)}
           />
-          <Text fontSize={"lg"}>{"$19.00"}</Text>
+          <Input
+            h="10"
+            value={tipFieldValue}
+            fontSize={"lg"}
+            w={100}
+            // isDisabled={selectedTip === "Custom" ? false : true}
+            isReadOnly={selectedTip === "Custom" ? false : true}
+            textAlign={"right"}
+            onChangeText={handleTipChange}
+          />
+          {/* <Text fontSize={"lg"} flex={1}>{tipFieldValue}</Text> */}
         </HStack>
       </HStack>
       <Divider marginY={4} />
       <HStack justifyContent={"space-between"} pt={2} px={4}>
-        <Text fontSize={"xl"} bold>{"total"}</Text>
+        <Text fontSize={"xl"} bold>{"Total"}</Text>
         <Text fontSize={"xl"} bold>{parseToCurrency(total)}</Text>
       </HStack>
     </>
