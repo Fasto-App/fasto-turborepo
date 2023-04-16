@@ -1,5 +1,6 @@
 import React from "react"
 import { Select, CheckIcon } from "native-base"
+import { ResponsiveValue } from "native-base/lib/typescript/components/types"
 
 export type SelectData = {
   _id: string
@@ -10,16 +11,18 @@ type FDSSelecteProps<T extends SelectData> = {
   selectedValue?: T["_id"]
   setSelectedValue: (value: T["_id"]) => void
   array: T[],
-  placeholder?: string
+  placeholder?: string,
+  w?: ResponsiveValue<number | string>,
+  h?: ResponsiveValue<number | string>,
 }
 
 export const FDSSelect = <T extends SelectData>({
-  selectedValue, setSelectedValue, array, placeholder }: FDSSelecteProps<T>) => {
+  selectedValue, setSelectedValue, array, placeholder, w, h }: FDSSelecteProps<T>) => {
   return (
     <Select
       overflow={"hidden"}
-      w={130}
-      h={"6"}
+      w={w}
+      h={h}
       selectedValue={selectedValue}
       accessibilityLabel="Choose"
       placeholder={placeholder}
@@ -27,7 +30,7 @@ export const FDSSelect = <T extends SelectData>({
       _selectedItem={{
         bg: "teal.600",
         endIcon: <CheckIcon size="5" />
-      }} mt={1}>
+      }}>
       {array.map((item) =>
         <Select.Item
           key={item._id}

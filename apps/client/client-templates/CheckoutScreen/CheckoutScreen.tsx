@@ -1,6 +1,5 @@
-import { Box, Button, Divider, Heading, HStack, Text, VStack } from 'native-base'
+import { Box, Button, VStack } from 'native-base'
 import React, { useState } from 'react'
-import { FDSSelect } from '../../components/FDSSelect'
 import { FDSTab, TabsType } from '../../components/FDSTab'
 import { PayTable } from './PayTable'
 import { Split } from './Split'
