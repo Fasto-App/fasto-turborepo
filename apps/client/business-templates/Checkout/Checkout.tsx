@@ -14,6 +14,7 @@ import { PayInFull } from './PayInFull'
 import { Split } from './Split'
 import { texts } from './texts'
 import { businessRoute } from '../../routes';
+import { useCheckoutStore } from './checkoutStore';
 
 const checkoutOptions = {
   payFull: "Pay in Full",
@@ -25,6 +26,8 @@ export const Checkout = () => {
   const [selectedOption, setSelectedOption] = React.useState<keyof typeof checkoutOptions>("payFull")
   const route = useRouter()
   const { checkoutId } = route.query
+
+  const setTotal = useCheckoutStore(state => state.setTotal)
 
   // todo: get the table number from either the Checkout or the Tab
   const { data } = useGetCheckoutByIdQuery({
@@ -38,6 +41,10 @@ export const Checkout = () => {
       const { status, paid } = data?.getCheckoutByID || {}
       if (status === "Paid" && paid) {
         setSelectedOption("success")
+      }
+
+      if (data.getCheckoutByID.subTotal) {
+        setTotal(data.getCheckoutByID.subTotal)
       }
     },
 

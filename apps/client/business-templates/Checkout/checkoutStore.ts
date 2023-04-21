@@ -1,7 +1,8 @@
-import { getFixedPointPercentage, typedKeys } from 'app-helpers';
-import { create, StateCreator } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { SplitType, getFixedPointPercentage, getPercentageOfValue, typedKeys } from 'app-helpers';
+import { create } from 'zustand'
+import { devtools, subscribeWithSelector } from 'zustand/middleware'
 import { SelectData } from '../../components/FDSSelect';
+import { shallow } from 'zustand/shallow';
 
 const percentagesAndValues = {
   "0%": 0,
@@ -31,11 +32,15 @@ interface CheckoutStore {
   customSubTotals: Record<string, number>;
   selectedTip: typeof percentages[number];
   selectedDiscount: typeof percentages[number];
+  total: number;
+  selectedSplitType: SplitType;
+  setSelectedSplitType: (selectedSplitType: SplitType) => void;
+  setTotal: (total: number) => void;
   setTip: (tip: number) => void;
   setDiscount: (discount: number) => void;
   setSelectedTip: (selectedTip: typeof percentages[number]) => void;
   setSelectedDiscount: (selectedDiscount: typeof percentages[number]) => void;
-  setCustomTip: (customTip: number, total?: number) => void;
+  setCustomTip: (customTip: number) => void;
   setCustomDiscount: (customDiscount: number, total?: number) => void;
   setCustomSubTotal: (key: string, value: string) => void;
   clearCustomSubTotals: () => void;
@@ -43,7 +48,8 @@ interface CheckoutStore {
 
 // TODO: add getters https://github.com/pmndrs/zustand/discussions/1166
 // @ts-ignore
-export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
+export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSelector(((set, get) => ({
+  total: 0,
   tip: 1000,
   discount: 0,
   customTip: 0,
@@ -51,17 +57,21 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
   customSubTotals: {},
   selectedTip: "10%",
   selectedDiscount: "0%",
-  setCustomTip: (customTip, total) => {
-    if (total && customTip) {
-      const tip = getFixedPointPercentage(customTip / total)
-      set({ customTip, tip })
-    }
+  selectedSplitType: "ByPatron",
+  setSelectedSplitType: (selectedSplitType: SplitType) => set({ selectedSplitType }),
+  setTotal: (total: number) => set({ total }),
+  setCustomTip: (customTip) => {
+    const { total } = get()
+    const tip = getFixedPointPercentage(customTip, total)
+
+    set({ customTip, tip, })
+
   },
-  setCustomDiscount: (customDiscount, total) => {
-    if (total && customDiscount) {
-      const discount = getFixedPointPercentage(customDiscount / total)
-      set({ customDiscount, discount })
-    }
+  setCustomDiscount: (customDiscount) => {
+    const { total } = get()
+
+    const discount = getFixedPointPercentage(customDiscount, total)
+    set({ customDiscount, discount })
   },
   setCustomSubTotal: (key: string, value: string) => {
     const text = value.replace(/[$,.]/g, '')
@@ -97,4 +107,29 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(((set) => ({
       selectedDiscount
     })
   }
-}))))
+})))))
+
+export const useComputedChekoutStore = () => {
+  const store = useCheckoutStore(state => ({
+    total: state.total,
+    tip: state.tip,
+    selectedTip: state.selectedTip,
+    customTip: state.customTip,
+    selectedDiscount: state.selectedDiscount,
+    customDiscount: state.customDiscount,
+    discount: state.discount,
+  }),
+    shallow
+  )
+
+  const percentageOfDiscount = getPercentageOfValue(store.total, store.discount)
+  const percentageOfTip = getPercentageOfValue(store.total, store.tip)
+  const valueOfDiscount = store.selectedDiscount === "Custom" ? store.customDiscount : percentageOfDiscount
+  const valueOfTip = store.selectedTip === "Custom" ? store.customTip : percentageOfTip
+
+  return ({
+    absoluteTotal: store.total - valueOfDiscount + valueOfTip,
+    tipCalculation: getPercentageOfValue(store.total, store.tip),
+    discountCalculation: getPercentageOfValue(store.total, store.discount),
+  })
+}

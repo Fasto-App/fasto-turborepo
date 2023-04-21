@@ -1,5 +1,5 @@
 import React from "react"
-import { Select, CheckIcon } from "native-base"
+import { Select, CheckIcon, ChevronDownIcon } from "native-base"
 import { ResponsiveValue } from "native-base/lib/typescript/components/types"
 
 export type SelectData = {
@@ -16,21 +16,23 @@ type FDSSelecteProps<T extends SelectData> = {
   h?: ResponsiveValue<number | string>,
 }
 
-export const FDSSelect = <T extends SelectData>({
+export const NotMemoizedFDSSelect = <T extends SelectData>({
   selectedValue, setSelectedValue, array, placeholder, w, h }: FDSSelecteProps<T>) => {
+
   return (
     <Select
-      overflow={"hidden"}
       w={w}
       h={h}
+      fontSize={"lg"}
       selectedValue={selectedValue}
-      accessibilityLabel="Choose"
       placeholder={placeholder}
-      onValueChange={itemValue => setSelectedValue(itemValue)}
+      onValueChange={setSelectedValue}
+      dropdownIcon={<ChevronDownIcon size="4" p="1" />}
       _selectedItem={{
         bg: "teal.600",
         endIcon: <CheckIcon size="5" />
-      }}>
+      }}
+    >
       {array.map((item) =>
         <Select.Item
           key={item._id}
@@ -41,3 +43,5 @@ export const FDSSelect = <T extends SelectData>({
     </Select>
   )
 }
+
+export const FDSSelect = React.memo(NotMemoizedFDSSelect) as typeof NotMemoizedFDSSelect

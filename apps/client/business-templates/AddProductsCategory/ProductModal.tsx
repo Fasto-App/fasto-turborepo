@@ -156,19 +156,7 @@ const ProductModal = ({
 			label: texts.price,
 			placeholder: texts.pricePlaceholder,
 			helperText: texts.productsHelperText,
-			formatValue: (value: string) => {
-				return value ?
-					(Number(value) / 100)
-						.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-					: ""
-			},
-			formatOnChange: (value: string, fieldOnchange: (num: number) => void) => {
-				const text = value.replace(/[$,.]/g, '')
-				const convertedValue = Number(text)
-				if (Number.isInteger(convertedValue)) {
-					return fieldOnchange(convertedValue)
-				}
-			}
+			inputType: "Currency",
 		},
 		category: {
 			isRequired: true,

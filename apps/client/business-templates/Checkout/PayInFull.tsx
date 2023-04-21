@@ -3,7 +3,7 @@ import { Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'n
 import React, { useCallback, useMemo } from 'react'
 import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { parseToCurrency } from 'app-helpers'
-import { Percentages, percentages, percentageSelectData, useCheckoutStore } from './checkoutStore'
+import { Percentages, percentages, percentageSelectData, useCheckoutStore, useComputedChekoutStore } from './checkoutStore'
 import { texts } from './texts'
 import { Checkout } from './types'
 import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
@@ -37,7 +37,7 @@ export const PayInFull = ({
   })) ?? [], [data?.getTabByID?.users])
 
 
-  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
+  const { total, tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
     setSelectedTip: state.setSelectedTip,
@@ -48,41 +48,14 @@ export const PayInFull = ({
     customDiscount: state.customDiscount,
     setCustomTip: state.setCustomTip,
     setCustomDiscount: state.setCustomDiscount,
+    total: state.total,
   }))
 
-  const formatedTip = selectedTip === "Custom" ? "Custom" : formatAsPercentage(tip)
-  const formatedDiscount = selectedDiscount === "Custom" ? "Custom" : formatAsPercentage(discount)
-  const tipFieldValue = selectedTip === "Custom" ?
-    parseToCurrency(customTip) :
-    parseToCurrency(getPercentageOfValue(subTotal, tip))
-  const discountValue = getPercentageOfValue(subTotal, discount)
-
-  const discountFieldValue = selectedDiscount === "Custom" ?
-    parseToCurrency(customDiscount) :
-    parseToCurrency(discountValue)
-
-  const total = useMemo(() => {
-    const discountAmount = getPercentageOfValue(subTotal, discount)
-    const tipAmount = getPercentageOfValue(subTotal, tip)
-
-    return (subTotal ?? 0) - discountAmount + tipAmount
-  }, [subTotal, tip, discount])
-
-  const handleDiscountChange = (value: string) => {
-    const text = value.replace(/[$,.]/g, '')
-    const convertedValue = Number(text)
-    if (Number.isInteger(convertedValue)) {
-      setCustomDiscount(convertedValue, subTotal)
-    }
-  }
-
-  const handleTipChange = (value: string) => {
-    const text = value.replace(/[$,.]/g, '')
-    const convertedValue = Number(text)
-    if (Number.isInteger(convertedValue)) {
-      setCustomTip(convertedValue, subTotal)
-    }
-  }
+  const {
+    absoluteTotal,
+    tipCalculation,
+    discountCalculation,
+  } = useComputedChekoutStore()
 
   const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
     refetchQueries: [{
@@ -120,47 +93,78 @@ export const PayInFull = ({
         <Divider />
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.subtotal}</Text>
-          <Text fontSize={"2xl"}>{parseToCurrency(subTotal)}</Text>
+          <Text fontSize={"lg"}>{parseToCurrency(subTotal)}</Text>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.feesAndTax}</Text>
-          <Text fontSize={"2xl"}>{parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)}
+          <Text fontSize={"lg"}>{parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)}
           </Text>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.discount}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
+              w={100} h={10}
               array={percentageSelectData}
-              selectedValue={formatedDiscount}
+              selectedValue={selectedDiscount}
               setSelectedValue={(string) => setSelectedDiscount(string as Percentages)}
             />
-            <Input
-              h={"6"}
-              w={100}
-              value={discountFieldValue}
-              isDisabled={selectedDiscount === "Custom" ? false : true}
-              textAlign={"right"}
-              onChangeText={handleDiscountChange}
-            />
+            {selectedDiscount === "Custom" ?
+              <Input
+                w={100} h={10}
+                fontSize={"lg"}
+                textAlign={"right"}
+                value={(customDiscount / 100)
+                  .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                onChangeText={(value) => {
+                  const text = value.replace(/[$,.]/g, '');
+                  const convertedValue = Number(text);
+
+                  if (isNaN(convertedValue)) return
+
+                  return setCustomDiscount(convertedValue)
+                }}
+              />
+              :
+              <Text
+                textAlign={"right"}
+                alignSelf={"center"}
+                w={100} fontSize={"lg"}>
+                {parseToCurrency(discountCalculation)}
+              </Text>}
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"2xl"}>{texts.tip}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
+              w={100} h={10}
               array={percentageSelectData}
-              selectedValue={formatedTip}
+              selectedValue={selectedTip}
               setSelectedValue={(string) => setSelectedTip(string as Percentages)}
             />
-            <Input
-              h={"6"}
-              value={tipFieldValue}
-              w={100}
-              isDisabled={selectedTip === "Custom" ? false : true}
-              textAlign={"right"}
-              onChangeText={handleTipChange}
-            />
+            {selectedTip === "Custom" ?
+              <Input
+                w={100} h={10}
+                fontSize={"lg"}
+                textAlign={"right"}
+                value={(customTip / 100)
+                  .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                onChangeText={(value) => {
+                  const text = value.replace(/[$,.]/g, '');
+                  const convertedValue = Number(text);
+
+                  if (isNaN(convertedValue)) return
+
+                  return setCustomTip(convertedValue)
+                }}
+              /> :
+              <Text
+                textAlign={"right"}
+                alignSelf={"center"}
+                w={100} fontSize={"lg"}>
+                {parseToCurrency(tipCalculation)}
+              </Text>}
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
@@ -174,7 +178,7 @@ export const PayInFull = ({
         <Divider marginY={6} />
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"3xl"} bold>{texts.total}</Text>
-          <Text fontSize={"3xl"} bold>{parseToCurrency(total)}</Text>
+          <Text fontSize={"3xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
         </HStack>
         <Button
           isLoading={loading}
