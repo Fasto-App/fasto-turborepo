@@ -8,7 +8,7 @@ import { useGetOrdersBySessionQuery } from '../../gen/generated'
 import { texts } from './texts'
 
 export const Split = () => {
-  const { selectedSplitType, setSelectedSplitType, setSelectedUsers, selectedUsers, setSplitByPatron, customSubTotals, setCustomSubTotal } = useCheckoutStore(state => ({
+  const { selectedSplitType, setSelectedSplitType, setSelectedUsers, selectedUsers, setSplitByPatron, customSubTotals, setCustomInputOnChange } = useCheckoutStore(state => ({
     setSelectedSplitType: state.setSelectedSplitType,
     selectedSplitType: state.selectedSplitType,
     setSelectedUsers: state.setSelectedUsers,
@@ -16,6 +16,7 @@ export const Split = () => {
     setSplitByPatron: state.setSplitByPatron,
     customSubTotals: state.customSubTotals,
     setCustomSubTotal: state.setCustomSubTotal,
+    setCustomInputOnChange: state.setCustomInputOnChange,
   }),
     shallow
   )
@@ -100,25 +101,7 @@ export const Split = () => {
                   value={(Number(customSubTotals[user?._id] ? customSubTotals[user?._id] : 0) / 100)
                     .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                   onChangeText={(value) => {
-                    const text = value.replace(/[$,.]/g, '');
-                    const convertedValue = Number(text);
-
-                    if (isNaN(convertedValue)) return
-
-                    if (!customTotalRemaing && (!customSubTotals[user?._id] ||
-                      convertedValue > customSubTotals[user?._id])) return
-
-                    if (convertedValue < customSubTotals[user?._id]) {
-                      return setCustomSubTotal(user?._id, convertedValue.toString())
-                    }
-
-                    if (convertedValue > customTotalRemaing) {
-                      const totalRemaining = customTotalRemaing + Math.floor(convertedValue / 10)
-
-                      return setCustomSubTotal(user?._id, totalRemaining.toString())
-                    }
-
-                    return setCustomSubTotal(user?._id, convertedValue.toString())
+                    setCustomInputOnChange(user?._id, value)
                   }}
                 />
                 :

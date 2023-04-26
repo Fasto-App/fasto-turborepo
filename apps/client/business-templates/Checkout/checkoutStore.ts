@@ -53,6 +53,7 @@ interface CheckoutStore {
   setCustomSubTotal: (key: string, value: string) => void;
   clearCustomSubTotals: () => void;
   setSplitByPatron: (orders: Order[]) => void;
+  setCustomInputOnChange: (key: string, value: string) => void;
 }
 
 // TODO: add getters https://github.com/pmndrs/zustand/discussions/1166
@@ -142,6 +143,58 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
       discount: percentagesAndValues[selectedDiscount],
       selectedDiscount
     })
+  },
+  // function that receives a value and the user id
+  // it calculates the logic and set the new customSubtotal
+  setCustomInputOnChange: (userId: string, value: string) => {
+    const { customSubTotals, total, selectedDiscount, customDiscount, selectedTip, customTip, tip, discount } = get()
+
+    const text = value.replace(/[$,.]/g, '');
+    const convertedValue = Number(text);
+
+    if (isNaN(convertedValue)) return
+
+    const percentageOfDiscount = getPercentageOfValue(total, discount)
+    const percentageOfTip = getPercentageOfValue(total, tip)
+    const valueOfDiscount = selectedDiscount === "Custom" ? customDiscount : percentageOfDiscount
+    const valueOfTip = selectedTip === "Custom" ? customTip : percentageOfTip
+
+    const customSummed = typedValues(customSubTotals).reduce((acc, value) => acc + value, 0)
+    const absoluteTotal = total - valueOfDiscount + valueOfTip
+
+    const customTotalRemaing = absoluteTotal - customSummed
+
+    if (!customTotalRemaing && (!customSubTotals[userId] ||
+      convertedValue > customSubTotals[userId])) {
+      return
+    }
+
+    if (convertedValue <= customSubTotals[userId]) {
+      return set(state => ({
+        customSubTotals: {
+          ...state.customSubTotals,
+          [userId]: convertedValue
+        }
+      }))
+    }
+
+    if (convertedValue > customTotalRemaing) {
+      const totalRemaining = customTotalRemaing + Math.floor(convertedValue / 10)
+
+      return set(state => ({
+        customSubTotals: {
+          ...state.customSubTotals,
+          [userId]: totalRemaining
+        }
+      }))
+    }
+
+    return set(state => ({
+      customSubTotals: {
+        ...state.customSubTotals,
+        [userId]: convertedValue
+      }
+    }))
   }
 })))))
 
@@ -211,6 +264,6 @@ export const useComputedChekoutStore = () => {
     tipCalculation: getPercentageOfValue(store.total, store.tip),
     discountCalculation: getPercentageOfValue(store.total, store.discount),
     splitEqually,
-    customTotalRemaing: store.total - customSummed,
+    customTotalRemaing: absoluteTotal - customSummed,
   })
 }
