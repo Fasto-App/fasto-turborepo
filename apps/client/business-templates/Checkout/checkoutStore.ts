@@ -66,7 +66,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
   customSubTotals: {},
   selectedTip: "10%",
   selectedDiscount: "0%",
-  selectedSplitType: "ByPatron",
+  selectedSplitType: "Equally",
   selectedUsers: {},
   splitByPatron: { tab: { subTotal: 0 } },
   setSplitByPatron: (orders: Order[]) => {
@@ -156,6 +156,7 @@ export const useComputedChekoutStore = () => {
     discount: state.discount,
     selectedUsers: state.selectedUsers,
     splitByPatron: state.splitByPatron,
+    customSubTotals: state.customSubTotals,
   }),
     shallow
   )
@@ -201,6 +202,8 @@ export const useComputedChekoutStore = () => {
     })
   }
 
+  const customSummed = typedValues(store.customSubTotals).reduce((acc, value) => acc + value, 0)
+
   return ({
     amountPerUser,
     computedSplitByPatron,
@@ -208,5 +211,6 @@ export const useComputedChekoutStore = () => {
     tipCalculation: getPercentageOfValue(store.total, store.tip),
     discountCalculation: getPercentageOfValue(store.total, store.discount),
     splitEqually,
+    customTotalRemaing: store.total - customSummed,
   })
 }

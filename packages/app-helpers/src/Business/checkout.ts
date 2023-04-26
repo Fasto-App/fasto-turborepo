@@ -9,8 +9,8 @@ export const CheckoutStatus = {
 } as const
 
 export const splitTypes = {
-  ByPatron: "By Patron",
   Equally: "Equally",
+  ByPatron: "By Patron",
   Custom: "Custom",
 } as const;
 
