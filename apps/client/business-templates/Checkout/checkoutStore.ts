@@ -1,4 +1,4 @@
-import { SplitType, getFixedPointPercentage, getPercentageOfValue, typedKeys } from 'app-helpers';
+import { SplitType, getFixedPointPercentage, getPercentageOfValue, typedKeys, typedValues } from 'app-helpers';
 import { create } from 'zustand'
 import { devtools, subscribeWithSelector } from 'zustand/middleware'
 import { SelectData } from '../../components/FDSSelect';
@@ -20,9 +20,14 @@ export const percentageSelectData: SelectData[] = percentages.map(percentage => 
   _id: percentage,
   value: percentage,
 }))
-// have an object with keys that point to custom subtotal values
-// at first these values are 0 or null, but at users onChange event
-// update the values in the object
+
+type Order = {
+  subTotal: number;
+  user?: string | null;
+  [key: string]: any;
+}
+
+type SPlitByPatron = { [key: string]: { subTotal: number }, tab: { subTotal: number } }
 
 interface CheckoutStore {
   tip: number;
@@ -34,6 +39,9 @@ interface CheckoutStore {
   selectedDiscount: typeof percentages[number];
   total: number;
   selectedSplitType: SplitType;
+  selectedUsers: { [key: string]: boolean };
+  splitByPatron: SPlitByPatron;
+  setSelectedUsers: (selectedUsers: { [key: string]: boolean }) => void;
   setSelectedSplitType: (selectedSplitType: SplitType) => void;
   setTotal: (total: number) => void;
   setTip: (tip: number) => void;
@@ -44,6 +52,7 @@ interface CheckoutStore {
   setCustomDiscount: (customDiscount: number, total?: number) => void;
   setCustomSubTotal: (key: string, value: string) => void;
   clearCustomSubTotals: () => void;
+  setSplitByPatron: (orders: Order[]) => void;
 }
 
 // TODO: add getters https://github.com/pmndrs/zustand/discussions/1166
@@ -58,6 +67,33 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
   selectedTip: "10%",
   selectedDiscount: "0%",
   selectedSplitType: "ByPatron",
+  selectedUsers: {},
+  splitByPatron: { tab: { subTotal: 0 } },
+  setSplitByPatron: (orders: Order[]) => {
+    const splitByPatron = orders.reduce((acc, order) => {
+      const { user, subTotal } = order
+
+      if (!user) {
+        return {
+          ...acc,
+          tab: {
+            subTotal: (acc.tab?.subTotal || 0) + subTotal
+          }
+        }
+      }
+
+      return ({
+        ...acc,
+        [user]: {
+          subTotal: (acc[user]?.subTotal || 0) + subTotal
+        }
+      })
+    }, { tab: { subTotal: 0 } } as SPlitByPatron)
+
+    set({ splitByPatron })
+
+  },
+  setSelectedUsers: (selectedUsers: { [key: string]: boolean }) => set({ selectedUsers }),
   setSelectedSplitType: (selectedSplitType: SplitType) => set({ selectedSplitType }),
   setTotal: (total: number) => set({ total }),
   setCustomTip: (customTip) => {
@@ -118,6 +154,8 @@ export const useComputedChekoutStore = () => {
     selectedDiscount: state.selectedDiscount,
     customDiscount: state.customDiscount,
     discount: state.discount,
+    selectedUsers: state.selectedUsers,
+    splitByPatron: state.splitByPatron,
   }),
     shallow
   )
@@ -126,10 +164,49 @@ export const useComputedChekoutStore = () => {
   const percentageOfTip = getPercentageOfValue(store.total, store.tip)
   const valueOfDiscount = store.selectedDiscount === "Custom" ? store.customDiscount : percentageOfDiscount
   const valueOfTip = store.selectedTip === "Custom" ? store.customTip : percentageOfTip
+  const absoluteTotal = store.total - valueOfDiscount + valueOfTip
+  const numberOfSelectedUsers = typedValues(store.selectedUsers).filter(Boolean).length
+  const splitEqually = numberOfSelectedUsers > 0 ? absoluteTotal / numberOfSelectedUsers : 0
+  let amountPerUser = 0
+
+  const computedSplitByPatron = typedKeys(store.splitByPatron).reduce((acc, key) => {
+    const { subTotal } = store.splitByPatron[key]
+
+    if (store.selectedUsers[key] && store.selectedUsers[key] === true) {
+      return {
+        ...acc,
+        [key]: {
+          subTotal
+        }
+      }
+    }
+
+    return {
+      ...acc,
+      tab: {
+        subTotal: (acc.tab?.subTotal || 0) + subTotal
+      }
+    }
+  }, { tab: { subTotal: valueOfTip } } as SPlitByPatron)
+
+  // if there is a subtotal, add the amount per user to each user
+  if (computedSplitByPatron.tab.subTotal) {
+    amountPerUser = computedSplitByPatron.tab.subTotal / numberOfSelectedUsers
+    const users = typedKeys(computedSplitByPatron)
+
+    users.forEach(user => {
+      if (user !== "tab") {
+        computedSplitByPatron[user].subTotal += amountPerUser
+      }
+    })
+  }
 
   return ({
-    absoluteTotal: store.total - valueOfDiscount + valueOfTip,
+    amountPerUser,
+    computedSplitByPatron,
+    absoluteTotal,
     tipCalculation: getPercentageOfValue(store.total, store.tip),
     discountCalculation: getPercentageOfValue(store.total, store.discount),
+    splitEqually,
   })
 }

@@ -29,7 +29,7 @@ export const Split = ({
   tax,
   payments
 }: SplitProps) => {
-  const { total, tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setSelectedSplitType, selectedSplitType, customDiscount, customSubTotals, setCustomSubTotal, clearCustomSubTotals, setCustomDiscount } = useCheckoutStore(state => ({
+  const { total, tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setSelectedSplitType, selectedSplitType, customDiscount, customSubTotals, setCustomSubTotal, clearCustomSubTotals, setCustomDiscount, selectedUsers, setSelectedUsers } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
     setSelectedTip: state.setSelectedTip,
@@ -46,6 +46,8 @@ export const Split = ({
     total: state.total,
     setSelectedSplitType: state.setSelectedSplitType,
     selectedSplitType: state.selectedSplitType,
+    setSelectedUsers: state.setSelectedUsers,
+    selectedUsers: state.selectedUsers,
   }))
 
   const {
@@ -55,8 +57,7 @@ export const Split = ({
   } = useComputedChekoutStore()
 
   const [shareTip, setShareTip] = useState(true)
-  const [areAllUsersSelected, setAreAllUsersSelected] = useState<boolean>(true);
-  const [selectedUsers, setSelectedUsers] = useState<{ [key: string]: boolean }>({});
+  const [areAllUsersSelected, setAreAllUsersSelected] = useState(true);
 
   const route = useRouter()
   const { tabId, checkoutId } = route.query

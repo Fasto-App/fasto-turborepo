@@ -1,4 +1,4 @@
-import { Box, Button, Divider, HStack, VStack, Text, Input } from 'native-base'
+import { Box, Button, Divider, HStack, VStack, Text, Input, ScrollView } from 'native-base'
 import React, { useState } from 'react'
 import { FDSTab, TabsType } from '../../components/FDSTab'
 import { Split } from './Split'
@@ -10,6 +10,7 @@ import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from 
 import { parseToCurrency } from 'app-helpers'
 import { FDSSelect } from '../../components/FDSSelect'
 import { shallow } from 'zustand/shallow'
+import { texts } from './texts'
 
 const tabs: TabsType = {
   payTable: "Pay Table",
@@ -56,9 +57,7 @@ export const CheckoutScreen = () => {
       if (data.getCheckoutByID.subTotal) {
         setTotal(data.getCheckoutByID.subTotal)
       }
-
       // if the cehckout has the split option, we should switch here
-      // we also need a payment type, amount pending, and amount paid
     },
   })
 
@@ -66,22 +65,25 @@ export const CheckoutScreen = () => {
     console.log("pay")
     console.log(data)
     alert(`Pagar ${parseToCurrency(absoluteTotal)} com tip de ${(tip)}`)
-
     // mutation will create Payments while updating the checkout
     // all users should be subscribed to the checkout
     // type of Payment: Split, Full, Tip, Refund, etc
-
   }
 
   return (
-    <Box p={4} flex={1}>
-      <Box flex={1}>
+    <Box flex={1}>
+      <PastOrdersModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
+      <Box px={2}>
         <FDSTab
           tabs={tabs}
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
         />
-        {selectedTab === "split" && <Split />}
+      </Box>
+      <ScrollView flex={1} px={4}>
         <HStack justifyContent={"space-between"} pt={4} px={4}>
           <Text fontSize={"lg"}>{"Subtotal"}</Text>
           <Text fontSize={"lg"}>{parseToCurrency(total)}</Text>
@@ -125,24 +127,28 @@ export const CheckoutScreen = () => {
           </HStack>
         </HStack>
         <Divider marginY={4} />
+        {selectedTab === "split" ? <Split /> : null}
+      </ScrollView>
+      <Box>
+        <Divider marginY={4} />
         <HStack justifyContent={"space-between"} pt={2} px={4}>
-          <Text fontSize={"xl"} bold>{"Total"}</Text>
+          <Text fontSize={"xl"} bold>{texts.total}</Text>
           <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
         </HStack>
+        {
+          selectedTab === "split" ? <>
+            <HStack justifyContent={"space-between"} pt={2} px={4}>
+              <Text fontSize={"lg"} bold>{texts.due}</Text>
+              <Text fontSize={"lg"} bold>{parseToCurrency(absoluteTotal)}</Text>
+            </HStack>
 
-        <HStack justifyContent={"space-between"} pt={2} px={4}>
-          <Text fontSize={"lg"} bold>{"Pending"}</Text>
-          <Text fontSize={"lg"} bold>{parseToCurrency(absoluteTotal)}</Text>
-        </HStack>
-
-        <HStack justifyContent={"space-between"} pt={2} px={4}>
-          <Text fontSize={"lg"} bold>{"Paid"}</Text>
-          <Text fontSize={"lg"} bold>{parseToCurrency(0)}</Text>
-        </HStack>
-
-      </Box>
-      <Box justifyContent={"flex-end"} mt={4}>
-        <VStack space={"4"} p={4}>
+            <HStack justifyContent={"space-between"} pt={2} px={4}>
+              <Text fontSize={"lg"} bold>{texts.paid}</Text>
+              <Text fontSize={"lg"} bold>{parseToCurrency(0)}</Text>
+            </HStack>
+          </> : null
+        }
+        <HStack space={"4"} p={4}>
           <Button
             _text={{ bold: true }}
             flex={1}
@@ -152,13 +158,9 @@ export const CheckoutScreen = () => {
             _text={{ bold: true }}
             flex={1}
             colorScheme={"tertiary"}
-            onPress={() => setIsModalOpen(true)}>{"See Check"}</Button>
-        </VStack>
+            onPress={() => setIsModalOpen(true)}>{texts.seeCheck}</Button>
+        </HStack>
       </Box>
-      <PastOrdersModal
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-      />
     </Box>
   )
 }
