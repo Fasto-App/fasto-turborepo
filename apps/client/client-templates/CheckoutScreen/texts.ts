@@ -5,4 +5,5 @@ export const texts = {
   paid: "Paid:",
   due: "Due:",
   totalRemaining: "Total Remaining:",
+  finalize: "Finalize",
 }

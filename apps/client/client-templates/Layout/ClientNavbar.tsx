@@ -55,7 +55,7 @@ const ClientNavBar = (props: { tableNumber?: string }) => {
             Table
           </Text>
           <Text fontSize={"lg"} color="coolGray.800" bold>
-            {tableNumber || "-"}
+            {tableNumber || "∞"}
           </Text>
         </VStack>
       </HStack>

@@ -153,7 +153,7 @@ export const CheckoutScreen = () => {
             _text={{ bold: true }}
             flex={1}
             colorScheme={"primary"}
-            onPress={pay}>{"Pay"}</Button>
+            onPress={pay}>{texts.finalize}</Button>
           <Button
             _text={{ bold: true }}
             flex={1}
