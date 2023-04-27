@@ -3,22 +3,18 @@ import { useRouter } from 'next/router';
 import React, { useCallback } from 'react'
 import { QrReader } from 'react-qr-reader';
 import { CustomModal } from '../../components/CustomModal/CustomModal';
-import { texts } from './texts';
 import { clientRouteParams } from '../../routes';
+import { useTranslation } from 'react-i18next';
 
 // todo - do some exploration  on using html5 code reader
 // import { useHtml5QrCodeScanner } from 'react-html5-qrcode-reader';
 // or use browser native code reader and God
 
-type QRCodeReaderProps = {
-  isOpen: boolean
-  setModalVisibility: (isOpen: boolean) => void
-}
-
 export const QRCodeReader = () => {
   const [qrCode, setQrCode] = React.useState<string | null>(null)
   const [qrCodeError, setQrCodeError] = React.useState<boolean>(false)
   const router = useRouter()
+  const { t } = useTranslation("clientHome")
 
   const onResult = useCallback((result: any, error: any) => {
 
@@ -61,7 +57,7 @@ export const QRCodeReader = () => {
         {qrCode}
       </Text>
       {qrCodeError ? <Text color={"error.500"}>
-        {texts.pleaseScanAValidCode}
+        {t("pleaseScanAValidCode")}
       </Text> : null}
     </>
   )

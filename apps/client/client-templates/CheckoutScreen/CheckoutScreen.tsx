@@ -11,20 +11,19 @@ import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from 
 import { parseToCurrency } from 'app-helpers'
 import { FDSSelect } from '../../components/FDSSelect'
 import { shallow } from 'zustand/shallow'
-import { texts } from './texts'
-
-const tabs: TabsType = {
-  payTable: "Pay Table",
-  split: "Split Payment",
-}
 
 export const CheckoutScreen = () => {
   const router = useRouter()
   const { checkoutId } = router.query
 
-  const { t } = useTranslation('common')
+  const { t } = useTranslation('clientCheckout')
   const [selectedTab, setSelectedTab] = useState("payTable");
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const tabs: TabsType = {
+    payTable: t('payTable'),
+    split: t("split"),
+  }
 
   const { setTotal, setSelectedTip, selectedTip, total, setCustomTip, customTip, tip } = useCheckoutStore(state => ({
     setSelectedTip: state.setSelectedTip,
@@ -74,7 +73,6 @@ export const CheckoutScreen = () => {
 
   return (
     <Box flex={1}>
-      <Text textAlign={"center"}>{t('hello world')}</Text>
       <PastOrdersModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -88,15 +86,15 @@ export const CheckoutScreen = () => {
       </Box>
       <ScrollView flex={1} px={4}>
         <HStack justifyContent={"space-between"} pt={4} px={4}>
-          <Text fontSize={"lg"}>{"Subtotal"}</Text>
+          <Text fontSize={"lg"}>{t("subtotal")}</Text>
           <Text fontSize={"lg"}>{parseToCurrency(total)}</Text>
         </HStack>
         <HStack justifyContent={"space-between"} pt={4} px={4}>
-          <Text fontSize={"lg"}>{"Taxes"}</Text>
+          <Text fontSize={"lg"}>{t("taxes")}</Text>
           <Text fontSize={"lg"}>{parseToCurrency(data?.getCheckoutByID.tax)}</Text>
         </HStack>
         <HStack justifyContent={"space-between"} pt={4} px={4}>
-          <Text fontSize={"lg"}>{"Tip"}</Text>
+          <Text fontSize={"lg"}>{t("tip")}</Text>
           <HStack space={2}>
             <FDSSelect
               h={10} w={120}
@@ -135,18 +133,18 @@ export const CheckoutScreen = () => {
       <Box>
         <Divider marginY={4} />
         <HStack justifyContent={"space-between"} pt={2} px={4}>
-          <Text fontSize={"xl"} bold>{texts.total}</Text>
+          <Text fontSize={"xl"} bold>{t('total')}</Text>
           <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
         </HStack>
         {
           selectedTab === "split" ? <>
             <HStack justifyContent={"space-between"} pt={2} px={4}>
-              <Text fontSize={"lg"} bold>{texts.due}</Text>
+              <Text fontSize={"lg"} bold>{t("due")}</Text>
               <Text fontSize={"lg"} bold>{parseToCurrency(absoluteTotal)}</Text>
             </HStack>
 
             <HStack justifyContent={"space-between"} pt={2} px={4}>
-              <Text fontSize={"lg"} bold>{texts.paid}</Text>
+              <Text fontSize={"lg"} bold>{t("paid")}</Text>
               <Text fontSize={"lg"} bold>{parseToCurrency(0)}</Text>
             </HStack>
           </> : null
@@ -156,12 +154,12 @@ export const CheckoutScreen = () => {
             _text={{ bold: true }}
             flex={1}
             colorScheme={"primary"}
-            onPress={pay}>{texts.finalize}</Button>
+            onPress={pay}>{t("finalize")}</Button>
           <Button
             _text={{ bold: true }}
             flex={1}
             colorScheme={"tertiary"}
-            onPress={() => setIsModalOpen(true)}>{texts.seeCheck}</Button>
+            onPress={() => setIsModalOpen(true)}>{t("seeCheck")}</Button>
         </HStack>
       </Box>
     </Box>

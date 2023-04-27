@@ -1,0 +1,13 @@
+{
+	"openNewTab": "Abrir una nueva comanda",
+	"joinTab": "Unirse a una comanda",
+	"viewMenu": "Ver menú",
+	"takeoutOrDelivery": "Para llevar o entrega",
+	"cancel": "Cancelar",
+	"requestTab": "Solicitar una comanda",
+	"yourAboutToJoin": "Estás a punto de unirte a la comanda de {{name}}",
+	"join": "Unirse",
+	"scanTheCode": "Escanear el código para unirse a la comanda",
+	"pleaseScanAValidCode": "Por favor, escanear un código válido",
+	"continue": "Continuar"
+}

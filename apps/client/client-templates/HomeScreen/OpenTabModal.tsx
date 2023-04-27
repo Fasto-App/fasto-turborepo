@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
-import { texts } from './texts'
+import { useTranslation } from 'next-i18next'
 
 const array1to5 = Array.from({ length: 5 }, (_, i) => i + 1).map(
   (i) => ({ name: i.toString(), _id: i.toString() })
@@ -67,6 +67,7 @@ type OpenTabModalProps = {
 export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) => {
   const router = useRouter()
   const { businessId } = router.query
+  const { t } = useTranslation("clientHome")
 
   const { control, formState, watch, handleSubmit } = useForm({
     resolver: zodResolver(newTabSchema),
@@ -129,7 +130,7 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
       <CustomModal
         isOpen={isOpen}
         onClose={setModalVisibility}
-        HeaderComponent={<Heading>{texts.requestTab}</Heading>}
+        HeaderComponent={<Heading>{t("requestTab")}</Heading>}
         ModalBody={
           <ControlledForm
             Config={newConfig}
@@ -143,13 +144,13 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
               isLoading={loading}
               onPress={handleSubmit(handleOpenTab)}
               flex={1}>
-              {texts.openNewTab}
+              {t("openNewTab")}
             </Button>
             <Button
               isLoading={loading}
               onPress={setModalVisibility}
               colorScheme={"muted"} flex={1}>
-              {texts.cancel}
+              {t("cancel")}
             </Button>
           </>
         }

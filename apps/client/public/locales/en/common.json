@@ -1,3 +1,5 @@
 {
-	"hello world": "Hello World."
+	"placedOrders": "Placed Orders",
+	"somethingWentWrong": "Something went wrong.\nPlease try again later.",
+	"back": "Back"
 }

@@ -10,8 +10,9 @@ import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
-import { texts } from './texts'
-import { string } from 'zod'
+import { useTranslation } from 'next-i18next'
+// import { texts } from './texts'
+// import { string } from 'zod'
 
 const Config: SideBySideInputConfig = {
   name: {
@@ -40,6 +41,7 @@ type OpenTabModalProps = {
 export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) => {
   const router = useRouter()
   const { businessId } = router.query
+  const { t } = useTranslation("clientHome")
 
   const { control, formState, handleSubmit } = useForm({
     resolver: zodResolver(joinTabSchema),
@@ -93,7 +95,7 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
       <CustomModal
         isOpen={isOpen}
         onClose={setModalVisibility}
-        HeaderComponent={<Heading>{texts.takeoutOrDelivery}</Heading>}
+        HeaderComponent={<Heading>{t("takeoutOrDelivery")}</Heading>}
         ModalBody={
           <ControlledForm
             Config={Config}
@@ -107,13 +109,13 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
               isLoading={loading}
               onPress={handleSubmit(handleNewTakeoutOrDelivery)}
               flex={1}>
-              {texts.continue}
+              {t("continue")}
             </Button>
             <Button
               isLoading={loading}
               onPress={setModalVisibility}
               colorScheme={"muted"} flex={1}>
-              {texts.cancel}
+              {t("cancel")}
             </Button>
           </>
         }

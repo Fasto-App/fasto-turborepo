@@ -2,11 +2,12 @@ import React, { useMemo } from 'react'
 import { Heading, Box, FlatList, Button, HStack, Image, Text, Divider, Pressable, } from 'native-base'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { FDSTab, TabsType } from '../../components/FDSTab'
-import { texts } from './texts'
+// import { texts } from './texts'
 import { parseToCurrency, typedKeys } from 'app-helpers'
 import { OrderStatus, useGetOrdersBySessionQuery } from '../../gen/generated'
 import { LoadingCartItems } from './LoadingTiles'
 import { useGetClientSession } from '../../hooks'
+import { useTranslation } from 'next-i18next'
 
 type PastOrdersModalProps = {
   isModalOpen: boolean
@@ -26,6 +27,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
   const { isModalOpen, setIsModalOpen } = props
   const [selectedTab, setSelectedTab] = React.useState<keyof typeof tabs>("yourOrders");
 
+  const { t } = useTranslation('common')
   const { data: clientSession } = useGetClientSession()
   const { data, loading, error } = useGetOrdersBySessionQuery({
     skip: !isModalOpen,
@@ -40,7 +42,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
       onClose={() => setIsModalOpen(false)}
       HeaderComponent={
         <Heading textAlign={"center"} size={"md"}>
-          {texts.modalTitle}
+          {t("placedOrders")}
         </Heading>}
       ModalBody={
         loading ?
@@ -50,7 +52,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
               fontSize={"lg"}
               textAlign={"center"}
               alignContent={"center"}
-            >{texts.error}</Text> :
+            >{t("somethingWentWrong")}</Text> :
             <FlatList
               ListHeaderComponent={
                 <Box>
@@ -97,7 +99,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
           colorScheme={"primary"}
           onPress={() => setIsModalOpen(false)}
         >
-          {texts.modalCta1}
+          {t("back")}
         </Button>
       }
     />

@@ -1,20 +1,21 @@
 import { Image, Box, Button, Center, Heading, VStack, Text } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { texts } from './texts'
+// import { texts } from './texts'
 import { JoinTabModal } from './JoinTabModal'
 import { OpenTabModal } from './OpenTabModal'
 import { useGetBusinessInformation, useGetClientSession } from '../../hooks'
 import { clientRoute } from '../../routes'
-import { Link } from '../../components/atoms/Link'
 import { TakeoutDeliveryModal } from './TakeoutDeliveryModal'
 import { getClientCookies } from '../../cookies'
+import { useTranslation } from "next-i18next"
 
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
   const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
   const [isTakeoutDeliveryModalOpen, setIsTakeoutDeliveryModalOpen] = useState(false)
 
+  const { t } = useTranslation("clientHome")
   const route = useRouter()
   const { businessId, tabId, adminId, name } = route.query
 
@@ -72,18 +73,18 @@ export const HomeScreen = () => {
         <Button
           isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
           onPress={() => setIsOpenTabModalOpen(true)}
-          _text={{ bold: true }}>{texts.openNewTab}</Button>
+          _text={{ bold: true }}>{t("openNewTab")}</Button>
         <Button onPress={() => setIsTakeoutDeliveryModalOpen(true)}
           _text={{ bold: true }}
-          colorScheme={"secondary"}>{texts.takeoutOrDelivery}</Button>
+          colorScheme={"secondary"}>{t("takeoutOrDelivery")}</Button>
         <Button
           isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
           onPress={joinTab}
           _text={{ bold: true }}
-          colorScheme={"tertiary"}>{texts.joinTab}</Button>
+          colorScheme={"tertiary"}>{t("joinTab")}</Button>
         <Button onPress={onPress}
           _text={{ bold: true }}
-          colorScheme={"blueGray"}>{texts.viewMenu}</Button>
+          colorScheme={"blueGray"}>{t("viewMenu")}</Button>
 
         {/* <Link href='client/login'>
           Re-enter existing tab

@@ -3,7 +3,6 @@ import React, { useCallback } from 'react'
 import { Box, Button, Heading } from 'native-base'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { QRCodeReader } from './QRCodeReader'
-import { texts } from './texts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { JoinTabForm, joinTabSchema } from 'app-helpers'
 import { useForm } from 'react-hook-form'
@@ -13,6 +12,7 @@ import { setClientCookies } from '../../cookies'
 import { clientRoute } from '../../routes'
 import { showToast } from '../../components/showToast'
 import { getCause } from '../../apollo-client/ErrorLink'
+import { useTranslation } from 'next-i18next'
 
 type JoinTabModalProps = {
   isOpen: boolean
@@ -41,6 +41,7 @@ const Config: SideBySideInputConfig = {
 export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) => {
   const router = useRouter()
   const { tabId, name, adminId, businessId } = router.query
+  const { t } = useTranslation("clientHome")
 
   const { control, formState, handleSubmit } = useForm({
     resolver: zodResolver(joinTabSchema),
@@ -102,9 +103,8 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
       onClose={() => setModalVisibility(false)}
       isOpen={isOpen}
       HeaderComponent={<Heading>{
-        tabId && name ? texts.yourAboutToJoin(
-          typeof name === "string" ? name : name?.[0]
-        ) : texts.scanTheCode
+        tabId && name ? t("yourAboutToJoin", { name: typeof name === "string" ? name : name?.[0] })
+          : t("scanTheCode")
       }</Heading>}
       ModalBody={tabId && name ? (
         <ControlledForm
@@ -123,7 +123,7 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
                 _text={{ bold: true }}
                 w={"100%"}
               >
-                {texts.join}
+                {t("join")}
               </Button> : null}
           </Box>
           <Box flex={1}>
@@ -134,7 +134,7 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
               colorScheme={"trueGray"}
               w={"100%"}
             >
-              {texts.cancel}
+              {t("cancel")}
             </Button>
           </Box>
         </Button.Group>
