@@ -1,4 +1,5 @@
 import { Box, Button, Divider, HStack, VStack, Text, Input, ScrollView } from 'native-base'
+import { useTranslation } from "next-i18next"
 import React, { useState } from 'react'
 import { FDSTab, TabsType } from '../../components/FDSTab'
 import { Split } from './Split'
@@ -21,6 +22,7 @@ export const CheckoutScreen = () => {
   const router = useRouter()
   const { checkoutId } = router.query
 
+  const { t } = useTranslation('common')
   const [selectedTab, setSelectedTab] = useState("payTable");
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -72,6 +74,7 @@ export const CheckoutScreen = () => {
 
   return (
     <Box flex={1}>
+      <Text textAlign={"center"}>{t('hello world')}</Text>
       <PastOrdersModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}

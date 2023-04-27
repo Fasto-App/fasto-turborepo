@@ -13,7 +13,7 @@ import { useTheme } from 'native-base';
 import { ModalFeedback } from '../components/ModalFeedback';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { View } from 'react-native';
-
+import { appWithTranslation } from 'next-i18next'
 
 const LandingWrapper: React.FC = ({ children }) => (
 	<Fragment>
@@ -72,4 +72,4 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
 MyApp.displayName = "_app"
 
-export default MyApp;
+export default appWithTranslation(MyApp);
