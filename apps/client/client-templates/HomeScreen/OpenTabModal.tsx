@@ -126,7 +126,7 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
 
   return (
     <>
-      <DevTool control={control} />
+      {isOpen && <DevTool control={control} />}
       <CustomModal
         isOpen={isOpen}
         onClose={setModalVisibility}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import NextLink from 'next/link';
 import { LoginFormFields } from '../types';
 import { Center, Box, Heading, VStack, HStack, Text, Button, } from "native-base"
@@ -10,21 +10,15 @@ import { setBusinessCookies } from '../../cookies';
 import { businessRoute } from '../../routes';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 import { Link } from '../../components/atoms/Link';
-
-const texts = {
-	welcomeToFasto: "Welcome to openTab",
-	theSmartestAndFastestWay: "The Smartest and Fastest Way to Order",
-	ImNewUser: "I'm a new user ",
-	loginHere: "Login Here",
-	login: "Login",
-	signup: "Sign Up",
-	forgotPassword: "Forgot Password?",
-};
+import { FDSSelect } from '../../components/FDSSelect';
+import { localeObj, Locale } from 'app-helpers';
+import { useTranslation } from 'next-i18next';
 
 export const LoginForm = () => {
 	const router = useRouter();
 	const [showPass, setShowPass] = React.useState(false);
 	const [error, setError] = React.useState<string | undefined>(undefined);
+	const { t } = useTranslation("businessLogin");
 
 	const {
 		control,
@@ -66,11 +60,18 @@ export const LoginForm = () => {
 		}
 	};
 
-	const passwordInputProps: RegularInputConfig = {
+	const passwordInputProps: RegularInputConfig = useMemo(() => ({
 		...LoginConfig,
+		email: {
+			...LoginConfig.email,
+			label: t("email"),
+			placeholder: t("email"),
+		},
 		password: {
 			...LoginConfig.password,
 			type: showPass ? "text" : "password",
+			label: t("password"),
+			placeholder: t("password"),
 			rightElement: (
 				<PasswordIcon
 					setShowPass={setShowPass}
@@ -78,17 +79,27 @@ export const LoginForm = () => {
 				/>
 			),
 		}
-	};
-
+	}), [showPass, t]);
 
 	return (
-		<Center w="100%" height={"100vh"}>
+		<Center w="100%" height={"100%"}>
+			<Box position={"absolute"} top={"5"} right={"5"}>
+				<FDSSelect
+					w="70"
+					h="8"
+					array={localeObj}
+					selectedValue={router.locale as Locale}
+					setSelectedValue={(value) => {
+						const path = router.asPath;
+						return router.push(path, path, { locale: value });
+					}} />
+			</Box>
 			<Box safeArea p="2" py="8" w="90%" maxW="600">
 				<Heading size="2xl" fontWeight="600" color="coolGray.800" textAlign={"center"}>
-					{texts.welcomeToFasto}
+					{t("welcomeToFasto")}
 				</Heading>
 				<Heading mt="2" color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-					{texts.theSmartestAndFastestWay}
+					{t("theSmartestAndFastestWay")}
 				</Heading>
 				<VStack space={3} mt="5">
 					<ControlledForm
@@ -102,11 +113,11 @@ export const LoginForm = () => {
 						onPress={handleSubmit(onSubmit)}
 						isLoading={loading}
 					>
-						{texts.loginHere}
+						{t("loginHere")}
 					</Button>
 
 					<Link href={businessRoute.forgotPassword}>
-						{texts.forgotPassword}
+						{t("forgotPassword")}
 					</Link>
 					{error ?
 						<Text
@@ -122,10 +133,10 @@ export const LoginForm = () => {
 							fontSize="sm"
 							color="coolGray.600"
 						>
-							{texts.ImNewUser}
+							{t("ImNewUser")}
 						</Text>
 						<Link href={businessRoute.signup}>
-							{texts.signup}
+							{t("signup")}
 						</Link>
 
 					</HStack>

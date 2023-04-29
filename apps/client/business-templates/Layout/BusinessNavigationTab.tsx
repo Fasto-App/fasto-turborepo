@@ -5,6 +5,8 @@ import { BusinessNavigationButton } from "../../components/atoms/NavigationButto
 import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { LeftSideBar } from "../../components";
 import { HamburgerMenu } from "../MenuHamburguer";
+import { FDSSelect } from "../../components/FDSSelect";
+import { localeObj, Locale } from "app-helpers";
 
 const navigationTitle = {
   dashboard: "Dashboard",
@@ -23,6 +25,17 @@ const BusinessNavigationTab = () => {
 
   return (
     <LeftSideBar>
+      <Box alignItems={"center"} p={2}>
+        <FDSSelect
+          w="70"
+          h="8"
+          array={localeObj}
+          selectedValue={router.locale as Locale}
+          setSelectedValue={(value) => {
+            const path = router.asPath;
+            return router.push(path, path, { locale: value });
+          }} />
+      </Box>
       <Center
         alignItems={"center"}
         justifyContent={"center"}

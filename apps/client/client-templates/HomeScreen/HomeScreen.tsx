@@ -1,7 +1,6 @@
-import { Image, Box, Button, Center, Heading, VStack, Text } from 'native-base'
+import { Image, Box, Button, Center, Heading, VStack, Text, HStack } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-// import { texts } from './texts'
 import { JoinTabModal } from './JoinTabModal'
 import { OpenTabModal } from './OpenTabModal'
 import { useGetBusinessInformation, useGetClientSession } from '../../hooks'
@@ -9,6 +8,8 @@ import { clientRoute } from '../../routes'
 import { TakeoutDeliveryModal } from './TakeoutDeliveryModal'
 import { getClientCookies } from '../../cookies'
 import { useTranslation } from "next-i18next"
+import { FDSSelect } from '../../components/FDSSelect'
+import { Locale, localeObj } from 'app-helpers'
 
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
@@ -52,16 +53,26 @@ export const HomeScreen = () => {
 
   return (
     <Center h={"100%"} backgroundColor={"white"}>
-      <Box
+      <HStack
         position={"absolute"}
         top={0}
         w={"100%"}
-        pl={6}
+        px={6}
         pt={4}
         alignItems={"flex-start"}
+        justifyContent={"space-between"}
       >
         <Image src="/images/Asset.svg" alt="me" width={"100"} height={"31"} />
-      </Box>
+        <FDSSelect
+          w="70"
+          h="8"
+          array={localeObj}
+          selectedValue={route.locale as Locale}
+          setSelectedValue={(value) => {
+            const path = route.asPath;
+            return route.push(path, path, { locale: value });
+          }} />
+      </HStack>
       <Heading size={"2xl"}>{businessName}</Heading>
       <Image
         my={2}

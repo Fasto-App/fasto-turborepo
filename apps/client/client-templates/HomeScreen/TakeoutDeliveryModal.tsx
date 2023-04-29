@@ -91,7 +91,7 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
 
   return (
     <>
-      <DevTool control={control} />
+      {isOpen && <DevTool control={control} />}
       <CustomModal
         isOpen={isOpen}
         onClose={setModalVisibility}
