@@ -10,25 +10,14 @@ import { CreateAccountField } from 'app-helpers';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { useCreateEmployeeAccountMutation, useCreateUserMutation } from '../../gen/generated';
 import { DevTool } from '@hookform/devtools';
-
-const texts = {
-  login: "Login",
-  signup: "Sign Up",
-  imNewUser: "I'm already a user. ",
-  username: "Username",
-  createPassword: "Create Password",
-  newPassword: "New Password",
-  invalidTokenOrEmail: "Invalid token or email",
-  passwordConfirmation: "Password Confirmation",
-  pleaseEnterAndConfirm: (email: string) => `Please, enter and confirm your new password for ${email}`,
-  yourBusiness: (businessName: string) => `Your Business ${businessName}© is waiting for you.`,
-}
+import { useTranslation } from 'next-i18next';
 
 export const CreateAccountScreen = () => {
   const [showPass, setShowPass] = React.useState(false);
 
   const router = useRouter();
   const { token, email, business } = router.query;
+  const { t } = useTranslation("businessCreateAccount")
 
   const [createUser, { loading }] = useCreateUserMutation({
     onCompleted: (data) => {
@@ -93,7 +82,7 @@ export const CreateAccountScreen = () => {
       p={"4"}
       fontSize={"lg"}
     >
-      {texts.invalidTokenOrEmail}
+      {t("invalidTokenOrEmail")}
     </Text>
   }
 
@@ -126,18 +115,18 @@ export const CreateAccountScreen = () => {
       <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{
         color: "warmGray.50"
       }}>
-        {texts.createPassword}
+        {t("createPassword")}
       </Heading>
       <Center>
         <Heading maxWidth={"400px"} mt="2" alignContent={"center"} _dark={{
           color: "warmGray.200"
         }} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-          {texts.pleaseEnterAndConfirm(email as string)}
+          {t("pleaseEnterAndConfirm", { email })}
         </Heading>
         {business ? <Heading maxWidth={"400px"} mt="2" alignContent={"center"} _dark={{
           color: "warmGray.200"
         }} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-          {texts.yourBusiness(business as string)}
+          {t("yourBusiness", { businessName: business })}
         </Heading> : null}
       </Center>
       <DevTool control={control} />
@@ -153,17 +142,17 @@ export const CreateAccountScreen = () => {
           onPress={handleSubmit(onSignUpSubmit)}
           isLoading={loading || employeeLoading}
         >
-          {texts.signup}
+          {t("signup")}
         </Button>
         <HStack mt="6" justifyContent="center">
           <Text fontSize="sm" color="coolGray.600" _dark={{
             color: "warmGray.200"
           }}>
-            {texts.imNewUser}
+            {t("imNewUser")}
           </Text>
           <Pressable>
             <Link href={businessRoute.login}>
-              {texts.login}
+              {t("login")}
             </Link>
           </Pressable>
         </HStack>

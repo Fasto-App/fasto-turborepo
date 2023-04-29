@@ -1,0 +1,12 @@
+{
+	"login": "Entrar",
+	"signup": "Cadastrar-se",
+	"imNewUser": "Já sou usuário. ",
+	"username": "Nome de usuário",
+	"createPassword": "Criar senha",
+	"newPassword": "Nova senha",
+	"invalidTokenOrEmail": "Token ou e-mail inválido",
+	"passwordConfirmation": "Confirmação de senha",
+	"pleaseEnterAndConfirm": "Por favor, insira e confirme sua nova senha para {{email}}",
+	"yourBusiness": "Seu negócio {{businessName}}© está esperando por você."
+}

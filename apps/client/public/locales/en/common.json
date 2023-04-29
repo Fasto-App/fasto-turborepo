@@ -1,5 +1,14 @@
 {
-	"placedOrders": "Placed Orders",
+	"welcomeToFasto": "Welcome to Fasto",
+	"theSmartestAndFastestWay": "The smartest and easiest way to order",
+	"back": "Back",
+	"cancel": "Cancel",
+	"email": "Email",
+	"password": "Password",
+	"login": "Login",
+	"signUp": "Sign Up",
 	"somethingWentWrong": "Something went wrong.\nPlease try again later.",
-	"back": "Back"
+	"provideValidEmail": "Please provide a valid email address.",
+	"makeSureEmailsMatch": "Please make sure your emails match.",
+	"placedOrders": "Placed Orders"
 }

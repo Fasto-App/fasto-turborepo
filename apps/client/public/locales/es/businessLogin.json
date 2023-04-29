@@ -1,11 +1,5 @@
 {
-	"welcomeToFasto": "Bienvenido a Fasto",
-	"theSmartestAndFastestWay": "La forma más inteligente y fácil de hacer pedidos",
 	"ImNewUser": "Soy un nuevo usuario. ",
 	"loginHere": "Iniciar sesión aquí",
-	"login": "Iniciar sesión",
-	"signup": "Registrarse",
-	"forgotPassword": "¿Olvidaste tu contraseña?",
-	"password": "Contraseña",
-	"email": "Email"
+	"forgotPassword": "¿Olvidaste tu contraseña?"
 }

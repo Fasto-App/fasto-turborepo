@@ -18,7 +18,7 @@ export const LoginForm = () => {
 	const router = useRouter();
 	const [showPass, setShowPass] = React.useState(false);
 	const [error, setError] = React.useState<string | undefined>(undefined);
-	const { t } = useTranslation("businessLogin");
+	const { t } = useTranslation(["businessLogin", "common"]);
 
 	const {
 		control,
@@ -64,14 +64,14 @@ export const LoginForm = () => {
 		...LoginConfig,
 		email: {
 			...LoginConfig.email,
-			label: t("email"),
-			placeholder: t("email"),
+			label: t("common:email"),
+			placeholder: t("common:email"),
 		},
 		password: {
 			...LoginConfig.password,
 			type: showPass ? "text" : "password",
-			label: t("password"),
-			placeholder: t("password"),
+			label: t("common:password"),
+			placeholder: t("common:password"),
 			rightElement: (
 				<PasswordIcon
 					setShowPass={setShowPass}
@@ -96,10 +96,10 @@ export const LoginForm = () => {
 			</Box>
 			<Box safeArea p="2" py="8" w="90%" maxW="600">
 				<Heading size="2xl" fontWeight="600" color="coolGray.800" textAlign={"center"}>
-					{t("welcomeToFasto")}
+					{t("common:welcomeToFasto")}
 				</Heading>
 				<Heading mt="2" color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-					{t("theSmartestAndFastestWay")}
+					{t("common:theSmartestAndFastestWay")}
 				</Heading>
 				<VStack space={3} mt="5">
 					<ControlledForm
@@ -113,11 +113,11 @@ export const LoginForm = () => {
 						onPress={handleSubmit(onSubmit)}
 						isLoading={loading}
 					>
-						{t("loginHere")}
+						{t("businessLogin:loginHere")}
 					</Button>
 
 					<Link href={businessRoute.forgotPassword}>
-						{t("forgotPassword")}
+						{t("businessLogin:forgotPassword")}
 					</Link>
 					{error ?
 						<Text
@@ -133,12 +133,11 @@ export const LoginForm = () => {
 							fontSize="sm"
 							color="coolGray.600"
 						>
-							{t("ImNewUser")}
+							{t("businessLogin:ImNewUser")}
 						</Text>
 						<Link href={businessRoute.signup}>
-							{t("signup")}
+							{t("common:signUp")}
 						</Link>
-
 					</HStack>
 				</VStack>
 			</Box>

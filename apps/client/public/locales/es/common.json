@@ -1,5 +1,12 @@
 {
-	"placedOrders": "Pedidos realizados",
-	"somethingWentWrong": "¡Algo salió mal!\nPor favor, inténtalo de nuevo más tarde.",
-	"back": "Volver"
+	"welcomeToFasto": "Bienvenido a Fasto",
+	"theSmartestAndFastestWay": "La manera más inteligente y fácil de hacer un pedido",
+	"back": "Atrás",
+	"cancel": "Cancelar",
+	"email": "Correo electrónico",
+	"password": "Contraseña",
+	"login": "Iniciar sesión",
+	"signUp": "Registrarse",
+	"somethingWentWrong": "Algo salió mal.\nPor favor, inténtelo de nuevo más tarde.",
+	"placedOrders": "Pedidos realizados"
 }

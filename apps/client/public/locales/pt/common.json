@@ -1,5 +1,12 @@
 {
-	"placedOrders": "Pedidos",
-	"somethingWentWrong": "Alguma coisa deu errado!\nPor favor, tente novamente mais tarde.",
-	"back": "Voltar"
+	"welcomeToFasto": "Bem-vindo a Fasto",
+	"theSmartestAndFastestWay": "A maneira mais inteligente e fácil de pedir",
+	"back": "Voltar",
+	"cancel": "Cancelar",
+	"email": "E-mail",
+	"password": "Senha",
+	"login": "Entrar",
+	"signUp": "Cadastrar-se",
+	"somethingWentWrong": "Algo deu errado.\nPor favor, tente novamente mais tarde.",
+	"placedOrders": "Pedidos Realizados"
 }
