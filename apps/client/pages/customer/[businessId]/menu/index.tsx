@@ -7,7 +7,7 @@ export default MenuScreen
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? "pt", [
+      ...(await serverSideTranslations(locale ?? "en", [
         'common',
       ])),
     },
