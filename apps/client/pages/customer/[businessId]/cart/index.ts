@@ -1,17 +1,19 @@
-import { GetStaticProps } from "next";
+import { GetStaticProps, GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { CreateAccountScreen } from "../../../business-templates/CreateaAccount/";
+import { CartScreen } from "../../../../customer-templates/CartScreen";
 
-
-export default CreateAccountScreen
+export default CartScreen;
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale ?? "pt", [
         'common',
-        'businessCreateAccount'
       ])),
     },
   };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return { paths: [], fallback: true };
 };

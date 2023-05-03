@@ -26,9 +26,7 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   if (process.env.NEXT_PUBLIC_ENVIRONMENT !== "development" &&
     request.headers.get("x-forwarded-proto") !== "https") {
 
-
     return NextResponse.redirect(
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
       `https://www.${process.env.HOST_NAME}${request.nextUrl.pathname}`,
       301
     )

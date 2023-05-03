@@ -3,9 +3,9 @@ import type { AppProps } from 'next/app';
 import React, { Fragment, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { BusinessLayout } from '../business-templates/Layout/BusinessLayout';
-import { ClientLayout } from '../client-templates/Layout';
+import { CustomerLayout } from '../customer-templates/Layout';
 import { AppProvider } from '../appProvider';
-import { BUSINESS, CLIENT } from '../routes';
+import { BUSINESS, CUSTOMER } from '../routes';
 import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
@@ -35,18 +35,18 @@ const ProgressBar = () => {
 const MyApp = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
 	const isBusinessExp = router.route.includes(BUSINESS);
-	const isClientExp = router.route.includes(CLIENT);
+	const isCustomerExp = router.route.includes(CUSTOMER);
 
 	const Wrapper = useMemo(() => {
-		if (isClientExp) {
-			return ClientLayout
+		if (isCustomerExp) {
+			return CustomerLayout
 		} else if (isBusinessExp) {
 			return BusinessLayout
 		}
 
 		return LandingWrapper
 
-	}, [isClientExp, isBusinessExp])
+	}, [isCustomerExp, isBusinessExp])
 
 	return (
 		// 	@ts-ignore

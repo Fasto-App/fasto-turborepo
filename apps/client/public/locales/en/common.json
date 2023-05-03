@@ -5,10 +5,22 @@
 	"cancel": "Cancel",
 	"email": "Email",
 	"password": "Password",
+	"passwordConfirmation": "Password Confirmation",
 	"login": "Login",
 	"signUp": "Sign Up",
+	"close": "Close",
+	"ok": "OK",
 	"somethingWentWrong": "Something went wrong.\nPlease try again later.",
 	"provideValidEmail": "Please provide a valid email address.",
 	"makeSureEmailsMatch": "Please make sure your emails match.",
-	"placedOrders": "Placed Orders"
+	"placedOrders": "Placed Orders",
+	"businessName": "Business Name",
+	"imAlreadyAUser": "I'm already a user. ",
+	"table": "Table",
+	"Home": "Home",
+	"Cart": "Cart",
+	"Menu": "Menu",
+	"Checkout": "Checkout",
+	"Product Description": "Product Description",
+	"Settings": "Settings"
 }

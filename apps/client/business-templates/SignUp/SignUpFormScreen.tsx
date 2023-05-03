@@ -6,8 +6,10 @@ import { businessRoute } from '../../routes';
 import { validateEmail } from '../../authUtilities/utils';
 import { useSignUpHook } from './hooks';
 import { useRequestUserAccountCreationMutation } from '../../gen/generated';
-import { SignUpSchemaInput } from 'app-helpers';
+import { SignUpSchemaInput, localeObj, Locale } from 'app-helpers';
 import { useTranslation } from 'next-i18next';
+import { FDSSelect } from '../../components/FDSSelect';
+import { useRouter } from 'next/router';
 
 export const SignUpFormScreen = () => {
   const cancelRef = React.useRef(null);
@@ -16,6 +18,8 @@ export const SignUpFormScreen = () => {
   const [requestAccountCreation,
     { data, loading, error, reset: resetNetwork }
   ] = useRequestUserAccountCreationMutation()
+
+  const router = useRouter()
 
   const { t } = useTranslation(["common", "businessSignUp"])
 
@@ -32,6 +36,17 @@ export const SignUpFormScreen = () => {
   }
 
   return (<Center w="100%" height={"100vh"}>
+    <Box position={"absolute"} top={"5"} right={"5"}>
+      <FDSSelect
+        w="70"
+        h="8"
+        array={localeObj}
+        selectedValue={router.locale as Locale}
+        setSelectedValue={(value) => {
+          const path = router.asPath;
+          return router.push(path, path, { locale: value });
+        }} />
+    </Box>
     <AlertDialog leastDestructiveRef={cancelRef} isOpen={data?.requestUserAccountCreation?.ok} onClose={resetNetwork}>
       <AlertDialog.Content>
         <AlertDialog.CloseButton />
@@ -40,11 +55,9 @@ export const SignUpFormScreen = () => {
           {t("businessSignUp:weHaveSent")}
         </AlertDialog.Body>
         <AlertDialog.Footer>
-          <Button.Group space={2}>
-            <Button onPress={resetNetwork} ref={cancelRef} colorScheme="green">
-              {t("common:cancel")}
-            </Button>
-          </Button.Group>
+          <Button w={"100"} onPress={resetNetwork} ref={cancelRef} colorScheme="green">
+            {t("common:ok")}
+          </Button>
         </AlertDialog.Footer>
       </AlertDialog.Content>
     </AlertDialog>

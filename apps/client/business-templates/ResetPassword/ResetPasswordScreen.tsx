@@ -9,23 +9,16 @@ import { ResetPasswordSchemaInput } from 'app-helpers';
 import { setBusinessCookies } from '../../cookies';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
+import { useTranslation } from 'next-i18next';
 
-const texts = {
-  resetPassword: "Reset Password",
-  imAlreadyAUser: "I'm already a user ",
-  pleaseEnterYourPassword: (email: string) => `${email}, Please enter and confirm your new password`,
-  newPassword: "New Password",
-  reset: "Reset",
-  passwordConfirmation: "Password Confirmation",
-  passwordConfirmationError: "Password Confirmation does not match",
-  passwordError: "Password must be at least 8 characters long",
-  goBack: "Go Back",
-  login: "Login",
-}
-
-export const ResetPasswordScreen = ({ token, email }: { token: string, email: string }) => {
+export const ResetPasswordScreen = () => {
   const { control, formState, reset, handleSubmit } = useResetPasswordHook()
   const [showPass, setShowPass] = React.useState(false);
+
+  const { query } = useRouter();
+  const { email, token } = query;
+
+  const { t } = useTranslation(["businessResetPassword", "common"])
 
   const router = useRouter();
   const [resetPassword, { loading }] = usePasswordResetMutation({
@@ -40,13 +33,14 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
   });
 
   const onResetSubmit = async (formData: ResetPasswordSchemaInput) => {
+    if (!token) throw new Error("Token is required");
 
     await resetPassword({
       variables: {
         input: {
           password: formData.password,
           passwordConfirmation: formData.passwordConfirmation,
-          token,
+          token: typeof token === "string" ? token : token[0],
         }
       }
     })
@@ -59,6 +53,8 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
     password: {
       ...ResetPasswordConfig.password,
       type: showPass ? "text" : "password",
+      placeholder: t("common:password"),
+      label: t("common:password"),
       rightElement: (
         <PasswordIcon
           setShowPass={setShowPass}
@@ -69,6 +65,8 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
     passwordConfirmation: {
       ...ResetPasswordConfig.passwordConfirmation,
       type: showPass ? "text" : "password",
+      placeholder: t("common:passwordConfirmation"),
+      label: t("common:passwordConfirmation"),
       rightElement: (
         <PasswordIcon
           setShowPass={setShowPass}
@@ -78,17 +76,18 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
     }
   };
 
+  if (!email || !token) return <Center><Text>{t("businessResetPassword:goBack")}</Text></Center>
 
   return (<Center w="100%" height={"100%"}>
     <Box safeArea p="2" py="8" w="90%" maxW="600">
       <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{
         color: "warmGray.50"
       }}>
-        {texts.resetPassword}
+        {t("businessResetPassword:resetPassword")}
       </Heading>
       <Center>
         <Heading maxWidth={"400px"} mt="2" alignContent={"center"} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-          {texts.pleaseEnterYourPassword(email)}
+          {t("businessResetPassword:pleaseEnterYourPassword", { email: typeof email === "string" ? email : email[0] })}
         </Heading>
       </Center>
       <ControlledForm
@@ -96,14 +95,13 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
         formState={formState}
         Config={passwordInputProps}
       />
-
       <VStack space={3} mt="5">
         <Button isLoading={loading} mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
-          {texts.reset}
+          {t("businessResetPassword:reset")}
         </Button>
         <HStack mt="6" justifyContent="center">
           <Text fontSize="sm" color="coolGray.600">
-            {texts.imAlreadyAUser}
+            {t("common:imAlreadyAUser")}
           </Text>
           <Pressable>
             <NextLink href={businessRoute.login}>
@@ -112,7 +110,7 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
                 fontWeight: "medium",
                 fontSize: "sm"
               }}>
-                {texts.login}
+                {t("common:login")}
               </Link>
             </NextLink>
           </Pressable>

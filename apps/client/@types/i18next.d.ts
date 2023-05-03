@@ -1,11 +1,13 @@
 // import the original type declarations
 import "i18next";
 // import all namespaces (for the default language, only)
+import businessResetPassword from "../public/locales/en/businessResetPassword.json";
+import businessForgotPassword from "../public/locales/en/businessForgotPassword.json";
 import businessSignUp from "../public/locales/en/businessSignUp.json";
 import businessCreateAccount from "../public/locales/en/businessCreateAccount.json";
 import businessLogin from "../public/locales/en/businessLogin.json";
-import clientCheckout from "../public/locales/en/clientCheckout.json";
-import clientHome from "../public/locales/en/clientHome.json";
+import customerCheckout from "../public/locales/en/customerCheckout.json";
+import customerHome from "../public/locales/en/customerHome.json";
 import common from "../public/locales/en/common.json";
 
 declare module "i18next" {
@@ -16,11 +18,13 @@ declare module "i18next" {
     // custom resources type
     resources: {
       common: typeof common;
-      clientCheckout: typeof clientCheckout;
-      clientHome: typeof clientHome;
+      customerCheckout: typeof customerCheckout;
+      customerHome: typeof customerHome;
       businessLogin: typeof businessLogin;
-      businessCreateAccount: typeof businessCreateAccount;
       businessSignUp: typeof businessSignUp;
+      businessCreateAccount: typeof businessCreateAccount;
+      businessForgotPassword: typeof businessForgotPassword;
+      businessResetPassword: typeof businessResetPassword;
     };
   }
 }

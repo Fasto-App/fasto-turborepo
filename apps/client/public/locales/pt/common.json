@@ -5,8 +5,21 @@
 	"cancel": "Cancelar",
 	"email": "E-mail",
 	"password": "Senha",
+	"passwordConfirmation": "Confirmação de Senha",
 	"login": "Entrar",
 	"signUp": "Cadastrar-se",
+	"close": "Fechar",
+	"ok": "OK",
 	"somethingWentWrong": "Algo deu errado.\nPor favor, tente novamente mais tarde.",
-	"placedOrders": "Pedidos Realizados"
+	"placedOrders": "Pedidos Realizados",
+	"businessName": "Nome do Negócio",
+	"imAlreadyAUser": "Já sou usuário. ",
+	"Seetings": "Configurações",
+	"table": "Mesa",
+	"Home": "Início",
+	"Cart": "Carrinho",
+	"Menu": "Menu",
+	"Checkout": "Finalizar Compra",
+	"Product Description": "Descrição do Produto",
+	"Settings": "Configurações"
 }
