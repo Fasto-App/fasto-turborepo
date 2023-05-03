@@ -12,23 +12,7 @@ import { DevTool } from "@hookform/devtools";
 import { useUploadFileMutation } from '../../gen/generated';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm/ControlledForm';
 import { UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form';
-
-const texts = {
-	addTitle: "Add New Product",
-	editTitle: "Edit Product",
-	category: "Category",
-	dishesProducts: "Dish / Product Name",
-	productsHelperText: "Max 25 characters",
-	description: "Description",
-	descriptionHelperText: "Max 5 lines",
-	photo: "Photo",
-	price: "Price",
-	pricePlaceholder: "$12.99",
-	create: "Create",
-	delete: "Delete Product",
-	cancel: "Cancel",
-	edit: "Save",
-}
+import { useTranslation } from 'next-i18next';
 
 type ProductModalProps = {
 	showModal: boolean,
@@ -53,6 +37,8 @@ const ProductModal = ({
 }: ProductModalProps) => {
 	const productId = useAppStore(state => state.product)
 	const setProduct = useAppStore(state => state.setProduct)
+
+	const { t } = useTranslation("businessCategoriesProducts");
 
 	const [uploadFile] = useUploadFileMutation({
 		onCompleted: (data) => {
@@ -146,39 +132,39 @@ const ProductModal = ({
 		name: {
 			isRequired: true,
 			name: 'name',
-			label: texts.dishesProducts,
-			placeholder: texts.dishesProducts,
-			helperText: texts.productsHelperText,
+			label: t("dishesProducts"),
+			placeholder: t("dishesProducts"),
+			helperText: t("productsHelperText"),
 		},
 		price: {
 			isRequired: true,
 			name: 'price',
-			label: texts.price,
-			placeholder: texts.pricePlaceholder,
-			helperText: texts.productsHelperText,
+			label: t("price"),
+			placeholder: t("pricePlaceholder"),
+			helperText: t("productsHelperText"),
 			inputType: "Currency",
 		},
 		category: {
 			isRequired: true,
 			name: 'category',
-			label: texts.category,
-			placeholder: texts.category,
-			helperText: texts.productsHelperText,
+			label: t("category"),
+			placeholder: t("category"),
+			helperText: t("productsHelperText"),
 			inputType: 'Select',
 			array: allCategories.map(cat => ({ name: cat.name, _id: cat._id })) ?? []
 		},
 		description: {
 			name: 'description',
-			label: texts.description,
-			placeholder: texts.description,
-			helperText: texts.descriptionHelperText,
+			label: t("description"),
+			placeholder: t("description"),
+			helperText: t("descriptionHelperText"),
 			inputType: 'TextArea'
 		},
 		file: {
 			name: 'file',
-			label: texts.photo,
-			placeholder: texts.photo,
-			helperText: texts.productsHelperText,
+			label: t("photo"),
+			placeholder: t("photo"),
+			helperText: t("productsHelperText"),
 			inputType: 'File',
 			handleOnChange: handleFileUpload,
 		}
@@ -191,14 +177,14 @@ const ProductModal = ({
 				<DevTool control={productControl} />
 				<Modal.Content maxWidth="400px">
 					<Modal.CloseButton />
-					<Modal.Header>{isEditing ? texts.editTitle : texts.addTitle}</Modal.Header>
+					<Modal.Header>{isEditing ? t("editTitle") : t("addTitle")}</Modal.Header>
 					<Modal.Body>
 						<ControlledForm
 							control={productControl}
 							formState={productFormState}
 							Config={ProductFormConfig}
 						/>
-						{isEditing ? <DeleteAlert deleteItem={deleteProductCb} title={texts.delete} /> : null}
+						{isEditing ? <DeleteAlert deleteItem={deleteProductCb} title={t("delete")} /> : null}
 					</Modal.Body>
 
 					<Modal.Footer>
@@ -206,10 +192,10 @@ const ProductModal = ({
 							<Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={() => {
 								closeModalAndClearQueryParams();
 							}}>
-								{texts.cancel}
+								{t("cancel")}
 							</Button>
 							<Button w={"100px"} onPress={handleProductSubmit(onProductSubmit)}>
-								{isEditing ? texts.edit : texts.create}
+								{isEditing ? t("edit") : t("create")}
 							</Button>
 						</Button.Group>
 					</Modal.Footer>

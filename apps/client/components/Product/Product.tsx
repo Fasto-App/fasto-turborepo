@@ -12,6 +12,7 @@ import {
 	Spacer, Checkbox
 } from 'native-base';
 import { BorderTile } from '../BorderTile';
+import { useTranslation } from 'next-i18next';
 
 type ProductTileProps = {
 	onPress?: () => void;
@@ -29,11 +30,6 @@ type ProductCardProps = ProductTileProps & {
 	price: number;
 }
 
-const texts = {
-	addToMenu: 'Add to Menu',
-	editItem: 'Edit Item',
-}
-
 const maxLength = 100;
 
 const IMAGE_PLACEHOLDER = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJtmXoCwCBNSm0w3SLD1aWW9m6kpRUoCFp2qmT7i5TTKE_KMRIfZUNReWEyJ6QWtx3Iww&usqp=CAU"
@@ -44,6 +40,7 @@ const Price = ({ price }: { price: number }) => (
 	</Text>)
 
 const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton }: ProductCardProps) => {
+	const { t } = useTranslation("businessCategoriesProducts");
 
 	const formattedDescriptions = description && description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
@@ -76,8 +73,8 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 				<VStack alignItems="center" space={2} justifyContent="space-between" pb={2}>
 					{singleButton ?? <Price price={price} />}
 					<HStack alignItems="center" space={2} justifyContent="space-between">
-						{singleButton ? <Price price={price} /> : <Button w={"100"}>{texts.addToMenu}</Button>}
-						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{texts.editItem}</Button>
+						{singleButton ? <Price price={price} /> : <Button w={"100"}>{t("addToMenu")}</Button>}
+						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{t("editItem")}</Button>
 					</HStack>
 				</VStack>
 			</Stack>

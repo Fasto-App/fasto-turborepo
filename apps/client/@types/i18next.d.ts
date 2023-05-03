@@ -1,6 +1,7 @@
 // import the original type declarations
 import "i18next";
 // import all namespaces (for the default language, only)
+import businessCategoriesProducts from "../public/locales/en/businessCategoriesProducts.json";
 import businessResetPassword from "../public/locales/en/businessResetPassword.json";
 import businessForgotPassword from "../public/locales/en/businessForgotPassword.json";
 import businessSignUp from "../public/locales/en/businessSignUp.json";
@@ -25,6 +26,7 @@ declare module "i18next" {
       businessCreateAccount: typeof businessCreateAccount;
       businessForgotPassword: typeof businessForgotPassword;
       businessResetPassword: typeof businessResetPassword;
+      businessCategoriesProducts: typeof businessCategoriesProducts;
     };
   }
 }

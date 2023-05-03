@@ -11,15 +11,7 @@ import { AllAndEditButtons } from '../AllAndAddButons';
 import { useCategoryFormHook } from './useCategoryFormHook';
 import { CategoryModal } from './CategoryModal';
 import { GetAllCategoriesByBusinessQuery } from '../../gen/generated';
-
-
-const texts = {
-	title: "Categories",
-	showList: "Show List",
-	showCards: "Show Cards",
-	edit: "Edit",
-	emptyListText: "Start adding Categories by clicking in the button above.",
-}
+import { useTranslation } from 'react-i18next';
 
 type Categories = NonNullable<GetAllCategoriesByBusinessQuery["getAllCategoriesByBusiness"]>
 
@@ -28,6 +20,8 @@ const CategoryList = ({ resetAll, categories }:
 	const [showCategoryModal, setShowCategoryModal] = useState(false);
 	const setCategory = useAppStore(state => state.setCategory)
 	const categoryId = useAppStore(state => state.category)
+
+	const { t } = useTranslation("businessCategoriesProducts")
 
 	const clearQueryParams = () => {
 		setCategory(null)
@@ -80,7 +74,7 @@ const CategoryList = ({ resetAll, categories }:
 					horizontal
 					onPress={() => setShowCategoryModal(true)}
 				/>
-				<Text pt={3} fontSize={"xl"}>{texts.emptyListText}</Text>
+				<Text pt={3} fontSize={"xl"}>{t("emptyListText")}</Text>
 			</Box>
 		)
 	}
@@ -101,7 +95,7 @@ const CategoryList = ({ resetAll, categories }:
 			<Box flexDirection={"row"}>
 				{/* Title */}
 				<Heading flex={1}>
-					{texts.title}
+					{t("title")}
 				</Heading>
 			</Box>
 

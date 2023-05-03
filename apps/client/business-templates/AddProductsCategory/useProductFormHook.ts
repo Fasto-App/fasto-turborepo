@@ -5,7 +5,7 @@ import * as z from 'zod';
 // PRODUCT FORM STATE
 const productSchema = z.object({
   _id: z.string().optional(),
-  name: z.string().min(1, { message: 'Name Required' }),
+  name: z.string().min(3, { message: 'Name Required' }),
   price: z.number().min(1, { message: 'Price Required' }),
   category: z.string().min(1, { message: 'Category Required' }),
   file: z.string().optional(),
