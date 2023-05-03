@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm";
 import { useSpacesMutationHook } from "../../graphQL/SpaceQL";
+import { useTranslation } from "next-i18next";
 
 const spaceSchema = z.object({
   space_name: z.string().
@@ -38,6 +39,8 @@ export const SpaceModal = ({ isModalOpen, setIsModalOpen }: SpaceModalProps) => 
     createSpace,
   } = useSpacesMutationHook();
 
+  const { t } = useTranslation(["common", "businessTables"])
+
   const onSubmit = useCallback(
     async (data: spaceSchemaInput) => {
       setIsModalOpen(false)
@@ -63,7 +66,7 @@ export const SpaceModal = ({ isModalOpen, setIsModalOpen }: SpaceModalProps) => 
     <Modal.CloseButton />
     <DevTool control={control} /> {/* set up the dev tool */}
     <Modal.Content minWidth="500px">
-      <Modal.Header>{"Add Space"}</Modal.Header>
+      <Modal.Header>{t("businessTables:addSpace")}</Modal.Header>
       <Modal.Body>
         <ControlledForm
           control={control}
@@ -71,17 +74,17 @@ export const SpaceModal = ({ isModalOpen, setIsModalOpen }: SpaceModalProps) => 
           Config={{
             space_name: {
               name: "space_name",
-              label: "Space Name",
-              placeholder: "E.g. Patio",
+              label: t("businessTables:spaceName"),
+              placeholder: t("businessTables:spaceExample"),
             }
           }}
         />
         <Button.Group space={2} paddingTop={4}>
           <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={onCancel}>
-            {"Cancel"}
+            {t("cancel")}
           </Button>
           <Button w={"100px"} onPress={handleSubmit(onSubmit)}>
-            {"Save"}
+            {t("save")}
           </Button>
         </Button.Group>
       </Modal.Body>

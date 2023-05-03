@@ -5,7 +5,6 @@ import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
 import { AddTableModal } from "./AddTableModal"
 import { TableModal } from "./TableModal"
-import { texts } from "./texts"
 import { useTableScreenStore } from "./tableScreenStore"
 import { shallow } from 'zustand/shallow'
 import { MoreButton } from "../../components/MoreButton"
@@ -16,6 +15,7 @@ import { BottomSection } from "../../components/BottomSection"
 import { UpperSection } from "../../components/UpperSection"
 import { Tile, TileLoading } from "../../components/Tile"
 import { OrangeBox } from "../../components/OrangeBox"
+import { useTranslation } from "next-i18next"
 
 export const TablesScreen = () => {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
@@ -42,6 +42,8 @@ export const TablesScreen = () => {
   )
 
   const setNetworkState = useAppStore(state => state.setNetworkState)
+
+  const { t } = useTranslation("businessTables")
 
   // todo: get all the spaces and default to the first one
   // const { allSpaces } = useSpacesMutationHook(setSelectedSpace);
@@ -174,7 +176,7 @@ export const TablesScreen = () => {
         <UpperSection>
 
           <Heading>
-            {texts.space}
+            {t("space")}
           </Heading>
 
           <HStack flex={1} space={2} mt={2}>
@@ -203,11 +205,11 @@ export const TablesScreen = () => {
           <BottomSection>
             <Box flex={1} >
               <HStack space={30} pb={"6"}>
-                <Heading alignSelf={"center"}>{texts.tables}</Heading>
+                <Heading alignSelf={"center"}>{t("tables")}</Heading>
                 <ButtonWithBadge
                   onPress={() => setIsRequestModalOpen(true)}
                   badgeCount={pendingRequestsData?.getTabRequests.length}>
-                  {texts.requests}
+                  {t("requests")}
                 </ButtonWithBadge>
               </HStack>
               <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>

@@ -4,7 +4,7 @@ import { Icon } from '../../components/atoms/NavigationButton'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { GetSpacesFromBusinessDocument, GetTabRequestsDocument, RequestStatus, useAcceptTabRequestMutation, useDeclineTabRequestMutation } from '../../gen/generated'
-import { texts } from './texts'
+import { useTranslation } from 'next-i18next'
 
 type TileProps = {
   name?: string | null,
@@ -35,6 +35,7 @@ const TileRequest = ({ name,
   status,
   array }: TileProps) => {
   const [selectedValue, setSelectedValue] = useState<string | undefined>(undefined)
+  const { t } = useTranslation("businessTables")
 
   return (<HStack
     borderRadius={"md"}
@@ -52,7 +53,7 @@ const TileRequest = ({ name,
         <Text fontSize={"20"}>{people}</Text>
         <FDSSelect
           array={array}
-          placeholder={texts.selectTable}
+          placeholder={t("selectTable")}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
         />
@@ -71,12 +72,12 @@ const TileRequest = ({ name,
           isLoading={isLoading}
           isDisabled={!selectedValue}
           colorScheme={"tertiary"}
-          flex={1}>{texts.accept}</Button>
+          flex={1}>{t("accept")}</Button>
         <Button
           onPress={() => onPress2(_id)}
           isLoading={isLoading}
           colorScheme={"secondary"}
-          flex={1}>{texts.decline}</Button>
+          flex={1}>{t("decline")}</Button>
       </HStack>
     </Box>
   </HStack>
@@ -101,6 +102,7 @@ export const RequestsModal = ({
   availableTables,
   subscribeToRequests
 }: RequestsModalProps) => {
+  const { t } = useTranslation("businessTables")
 
   const [decline, { loading: loadingDecline }] = useDeclineTabRequestMutation({ refetchQueries })
   const [accept, { loading: loadingAccept }] = useAcceptTabRequestMutation({ refetchQueries })
@@ -136,7 +138,7 @@ export const RequestsModal = ({
       size={"xl"}
       isOpen={isOpen}
       onClose={onClose}
-      HeaderComponent={<Heading>{texts.pendingRequests}</Heading>}
+      HeaderComponent={<Heading>{t("pendingRequests")}</Heading>}
       ModalBody={
         <>
           {isLoading ? <Text>Loading</Text> : <FlatList
@@ -155,11 +157,11 @@ export const RequestsModal = ({
               />}
             keyExtractor={(item, index) => index.toString()}
             ItemSeparatorComponent={() => <Box h={4} />}
-            ListEmptyComponent={() => <Text textAlign="center">{texts.noPendingRequests}</Text>}
+            ListEmptyComponent={() => <Text textAlign="center">{t("noPendingRequests")}</Text>}
           />}
         </>
       }
-      ModalFooter={<Button onPress={onClose} flex={1} colorScheme={"gray"}>{texts.close}</Button>}
+      ModalFooter={<Button onPress={onClose} flex={1} colorScheme={"gray"}>{t("close")}</Button>}
     />
   )
 }

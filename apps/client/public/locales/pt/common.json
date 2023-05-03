@@ -28,5 +28,7 @@
 	"logout": "Sair",
 	"noItems": "Nenhum item",
 	"edit": "Editar",
-	"addToMenu": "Addicionar ao Menu"
+	"addToMenu": "Addicionar ao Menu",
+	"quickSale": "Venda Rápida",
+	"save": "Salvar"
 }

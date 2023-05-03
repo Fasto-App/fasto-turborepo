@@ -13,6 +13,7 @@ import { OccupiedModal } from "./OccupiedModal";
 import * as z from "zod"
 import { useTableScreenStore } from "./tableScreenStore";
 import { CustomModal } from "../../components/CustomModal/CustomModal";
+import { useTranslation } from "next-i18next";
 
 const tableSchema = z.object({
   admin: z.string().optional(),
@@ -47,15 +48,10 @@ const SideBySideTabConfig: SideBySideInputConfig = {
   info: [{ totalUsers }, { admin }]
 }
 
-const texts = {
-  addNewItem: "Add New Item",
-  openTab: "Open a New Tab",
-  cancel: "Cancel",
-}
-
 
 export const TableModal = () => {
   const router = useRouter()
+  const { t } = useTranslation("businessTables")
 
   const tableId = useTableScreenStore(state => state.tableChoosen)
   const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
@@ -176,13 +172,13 @@ export const TableModal = () => {
         ModalFooter={
           <Button.Group flex={1} justifyContent={"center"} space={4}>
             <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-              {texts.cancel}
+              {t("cancel")}
             </Button>
             <Button w={"200px"}
               onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}
               isLoading={loadingGetMenus}
             >
-              {isOcuppiedTable ? texts.addNewItem : texts.openTab}
+              {isOcuppiedTable ? t("addNewItem") : t("openTab")}
             </Button>
           </Button.Group>
         }

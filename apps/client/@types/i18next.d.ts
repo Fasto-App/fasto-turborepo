@@ -1,6 +1,7 @@
 // import the original type declarations
 import "i18next";
 
+import businessTables from "../public/locales/en/businessTables.json";
 import businessMenu from "../public/locales/en/businessMenu.json";
 import businessCategoriesProducts from "../public/locales/en/businessCategoriesProducts.json";
 import businessResetPassword from "../public/locales/en/businessResetPassword.json";
@@ -29,6 +30,7 @@ declare module "i18next" {
       businessResetPassword: typeof businessResetPassword;
       businessCategoriesProducts: typeof businessCategoriesProducts;
       businessMenu: typeof businessMenu;
+      businessTables: typeof businessTables;
     };
   }
 }

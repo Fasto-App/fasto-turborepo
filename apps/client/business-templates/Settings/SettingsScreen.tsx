@@ -1,5 +1,5 @@
-import { typedKeys } from 'app-helpers'
-import { Box, Button, FlatList, Heading, VStack } from 'native-base'
+import { localeObj, typedKeys, Locale } from 'app-helpers'
+import { Box, Button, FlatList, HStack, Heading, VStack } from 'native-base'
 import React, { useState } from 'react'
 import { ManageAccount } from './ManageAccount'
 import { ManageBusiness } from './ManageBusiness'
@@ -9,6 +9,8 @@ import { texts } from './texts'
 import { UpperSection } from '../../components/UpperSection'
 import { OrangeBox } from '../../components/OrangeBox'
 import { BottomSection } from '../../components/BottomSection'
+import router from 'next/router'
+import { FDSSelect } from "../../components/FDSSelect";
 
 const manageTabs = {
   manage_business: {
@@ -60,9 +62,21 @@ export const SettingsScreen = () => {
       <OrangeBox />
       <VStack m={"4"} space={"4"} flex={1}>
         <UpperSection>
-          <Heading>
-            {texts.title}
-          </Heading>
+          <HStack justifyContent={"space-between"}>
+            <Heading>
+              {texts.title}
+            </Heading>
+
+            <FDSSelect
+              w="70"
+              h="8"
+              array={localeObj}
+              selectedValue={router.locale as Locale}
+              setSelectedValue={(value) => {
+                const path = router.asPath;
+                return router.push(path, path, { locale: value });
+              }} />
+          </HStack>
           <FlatList
             horizontal
             data={tabs}

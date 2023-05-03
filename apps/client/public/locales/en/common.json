@@ -29,5 +29,8 @@
 	"logout": "Logout",
 	"noItems": "No items found",
 	"edit": "Edit",
-	"addToMenu": "Add to Menu"
+	"addToMenu": "Add to Menu",
+	"yes": "Yes",
+	"quickSale": "Quick Sale",
+	"save": "Save"
 }

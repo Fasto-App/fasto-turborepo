@@ -1,12 +1,10 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Center } from "native-base";
+import { Box, Button, Center } from "native-base";
 import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
 import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { LeftSideBar } from "../../components";
 import { HamburgerMenu } from "../MenuHamburguer";
-import { FDSSelect } from "../../components/FDSSelect";
-import { localeObj, Locale } from "app-helpers";
 import { useTranslation } from "next-i18next";
 
 const BusinessNavigationTab = () => {
@@ -18,17 +16,6 @@ const BusinessNavigationTab = () => {
 
   return (
     <LeftSideBar>
-      <Box alignItems={"center"} p={2}>
-        <FDSSelect
-          w="70"
-          h="8"
-          array={localeObj}
-          selectedValue={router.locale as Locale}
-          setSelectedValue={(value) => {
-            const path = router.asPath;
-            return router.push(path, path, { locale: value });
-          }} />
-      </Box>
       <Center
         alignItems={"center"}
         justifyContent={"center"}
@@ -77,6 +64,9 @@ const BusinessNavigationTab = () => {
         />
       </Center>
       <Box position={"absolute"} bottom={"0"} flex={1} pl={2} pb={4}>
+        <Button w={"full"} mb={8}>
+          {t("quickSale")}
+        </Button>
         <HamburgerMenu />
       </Box>
     </LeftSideBar>
