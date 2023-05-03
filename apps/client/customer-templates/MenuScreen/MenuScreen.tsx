@@ -5,7 +5,7 @@ import { Tab } from "./Tab";
 import { useRouter } from "next/router";
 import { customerRoute } from "../../routes";
 import { useGetClientMenuQuery } from "../../gen/generated";
-import { texts } from "./texts";
+import { useTranslation } from "next-i18next";
 
 export const MenuScreen = () => {
   const router = useRouter();
@@ -13,6 +13,7 @@ export const MenuScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const sectionListRef = useRef<typeof SectionList | null>(null);
   const scrollViewRef = useRef<typeof ScrollView | null>(null);
+  const { t } = useTranslation("common")
 
   // function that fetchs either an specific menu or the default one
   const { data, loading: loadingQuery, error: errorQuery } = useGetClientMenuQuery({
@@ -53,7 +54,7 @@ export const MenuScreen = () => {
       <Text
         fontSize={"lg"}
         textAlign={"center"}>
-        {texts.errorText}
+        {t("somethingWentWrong")}
       </Text>) :
       loadingQuery ? <LoadingMenu /> :
         <>
@@ -126,7 +127,7 @@ export const MenuScreen = () => {
               <Text
                 textAlign={"center"}
                 fontSize={"xl"}>
-                {texts.noItems}
+                {t("noItems")}
               </Text>}
           />
         </>

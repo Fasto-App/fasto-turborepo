@@ -16,10 +16,14 @@
 	"imAlreadyAUser": "Já sou usuário. ",
 	"Seetings": "Configurações",
 	"table": "Mesa",
-	"Home": "Início",
-	"Cart": "Carrinho",
-	"Menu": "Menu",
-	"Checkout": "Finalizar Compra",
-	"Product Description": "Descrição do Produto",
-	"Settings": "Configurações"
+	"home": "Início",
+	"cart": "Carrinho",
+	"menu": "Menu",
+	"checkout": "Finalizar Compra",
+	"productDescription": "Descrição do Produto",
+	"settings": "Configurações",
+	"dashboard": "Painel de Controle",
+	"categoriesProducts": "Categorias e Produtos",
+	"tables": "Mesas",
+	"logout": "Sair"
 }

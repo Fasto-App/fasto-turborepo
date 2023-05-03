@@ -15,10 +15,14 @@
 	"businessName": "Nombre del negocio",
 	"imAlreadyAUser": "Ya soy usuario. ",
 	"table": "Mesa",
-	"Home": "Inicio",
-	"Cart": "Carrito",
-	"Menu": "Menú",
-	"Checkout": "Pagar",
-	"Product Description": "Descripción del Producto",
-	"Settings": "Configuración"
+	"home": "Inicio",
+	"cart": "Carrito",
+	"menu": "Menú",
+	"checkout": "Pagar",
+	"productDescription": "Descripción del Producto",
+	"settings": "Configuración",
+	"dashboard": "Panel",
+	"categoriesProducts": "Categorías y Productos",
+	"tables": "Mesas",
+	"logout": "Cerrar sesión"
 }

@@ -14,12 +14,12 @@ export const customerRoute = {
 export type customerRouteKeys = keyof typeof customerRoute;
 
 export const customerPathName = {
-  [`/customer/[businessId]`]: "Home",
-  [`/customer/[businessId]/cart`]: 'Cart',
-  [`/customer/[businessId]/menu`]: 'Menu',
-  [`/customer/[businessId]/checkout/[checkoutId]`]: 'Checkout',
-  [`/customer/[businessId]/product-description/[productId]`]: 'Product Description',
-  [`/customer/[businessId]/settings`]: 'Settings',
+  [`/customer/[businessId]`]: "home",
+  [`/customer/[businessId]/cart`]: 'cart',
+  [`/customer/[businessId]/menu`]: 'menu',
+  [`/customer/[businessId]/checkout/[checkoutId]`]: 'checkout',
+  [`/customer/[businessId]/product-description/[productId]`]: 'productDescription',
+  [`/customer/[businessId]/settings`]: 'settings',
 } as const
 
 export const customerTitlePath = {

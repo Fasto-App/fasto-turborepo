@@ -17,10 +17,15 @@
 	"businessName": "Business Name",
 	"imAlreadyAUser": "I'm already a user. ",
 	"table": "Table",
-	"Home": "Home",
-	"Cart": "Cart",
-	"Menu": "Menu",
-	"Checkout": "Checkout",
-	"Product Description": "Product Description",
-	"Settings": "Settings"
+	"home": "Home",
+	"cart": "Cart",
+	"menu": "Menu",
+	"checkout": "Checkout",
+	"productDescription": "Product Description",
+	"settings": "Settings",
+	"dashboard": "Dashboard",
+	"categoriesProducts": "Categories / Products",
+	"tables": "Tables",
+	"logout": "Logout",
+	"noItems": "No items found"
 }
