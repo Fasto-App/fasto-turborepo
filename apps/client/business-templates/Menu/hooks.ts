@@ -11,7 +11,6 @@ export const MenuConfig: RegularInputConfig = {
     placeholder: "Weekends",
     isRequired: true,
   },
-
 }
 
 export const useMenuHook = () => {

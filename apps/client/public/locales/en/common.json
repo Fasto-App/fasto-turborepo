@@ -27,5 +27,7 @@
 	"categoriesProducts": "Categories / Products",
 	"tables": "Tables",
 	"logout": "Logout",
-	"noItems": "No items found"
+	"noItems": "No items found",
+	"edit": "Edit",
+	"addToMenu": "Add to Menu"
 }

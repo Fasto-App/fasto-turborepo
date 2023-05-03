@@ -10,13 +10,7 @@ import { Product } from './types'
 import { GetAllMenusByBusinessIdDocument, useDeleteMenuMutation, useGetAllCategoriesByBusinessQuery, useGetAllMenusByBusinessIdQuery, useUpdateMenuMutation } from '../../gen/generated'
 import { Icon } from '../../components/atoms/NavigationButton'
 import { Pressable } from 'react-native'
-
-const texts = {
-  editMenu: "Edit Menu",
-  cancel: "Cancel",
-  save: "Save",
-  delete: "Delete",
-}
+import { useTranslation } from 'next-i18next'
 
 function MenuProducts() {
   const { favoriteMenus, setFavoriteMenus } = useAppStore(state => ({
@@ -27,13 +21,12 @@ function MenuProducts() {
   const setNetworkState = useAppStore(state => state.setNetworkState)
   const { data: menusData, loading: loadingQuery } = useGetAllMenusByBusinessIdQuery({
     onCompleted: (data) => {
-      console.log("Menus Data", data)
 
       const reducedMenus = data?.getAllMenusByBusinessID?.reduce((acc, menu) => {
         acc[menu?._id] = menu.isFavorite
         return acc
       }, {} as any)
-      console.log("reducedMenus", reducedMenus)
+
       setFavoriteMenus(reducedMenus)
 
     },
@@ -42,7 +35,7 @@ function MenuProducts() {
     }
   });
 
-  console.log({ favoriteMenus })
+  const { t } = useTranslation("businessMenu")
 
   const { data } = useGetAllCategoriesByBusinessQuery();
   const allCategories = useMemo(() => data?.getAllCategoriesByBusiness ?? [], [data?.getAllCategoriesByBusiness])
@@ -97,7 +90,6 @@ function MenuProducts() {
   const numColumns = useNumOfColumns(isEditingMenu)
 
   const selectedMenu = menusData?.getAllMenusByBusinessID?.find(menu => menu?._id === menuId)
-  console.log("Selected Menu", selectedMenu)
 
 
   const categoriesIdsOnMenu = useMemo(() => selectedMenu?.sections?.map(section => section.category._id) ?? [],
@@ -200,11 +192,11 @@ function MenuProducts() {
         renderItem={renderProductCard}
         keyExtractor={(item) => `${item?._id}`}
         ItemSeparatorComponent={() => <Box height={"4"} />}
-        ListEmptyComponent={<Text>To start adding products press "Edit Menu"</Text>}
+        ListEmptyComponent={<Text>{t("emptyProducts")}</Text>}
       />
 
     )
-  }, [productsFiltereOnMenu, numColumns, renderProductCard])
+  }, [numColumns, productsFiltereOnMenu, renderProductCard, t])
 
   const renderListTile = useCallback(() => {
     return (
@@ -330,7 +322,7 @@ function MenuProducts() {
           </HStack>
           <HStack alignItems="center" space={2} justifyContent="end">
             <Button w={"100"} variant={"subtle"} onPress={resetEditingAndSectionMap}>
-              {texts.cancel}
+              {t("cancel")}
             </Button>
             <Button
               w={"100"}
@@ -368,7 +360,7 @@ function MenuProducts() {
                   }
                 })
                 resetEditingAndSectionMap()
-              }}>{texts.save}
+              }}>{t("save")}
             </Button>
           </HStack>
         </HStack>
@@ -378,7 +370,7 @@ function MenuProducts() {
           w={"100"}
           onPress={onEditMEnu}
         >
-          {texts.editMenu}
+          {t("editMenu")}
         </Button>}
     </Box>
   )

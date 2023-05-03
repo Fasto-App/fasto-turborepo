@@ -25,5 +25,8 @@
 	"dashboard": "Painel de Controle",
 	"categoriesProducts": "Categorias e Produtos",
 	"tables": "Mesas",
-	"logout": "Sair"
+	"logout": "Sair",
+	"noItems": "Nenhum item",
+	"edit": "Editar",
+	"addToMenu": "Addicionar ao Menu"
 }

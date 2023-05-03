@@ -40,7 +40,7 @@ const Price = ({ price }: { price: number }) => (
 	</Text>)
 
 const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton }: ProductCardProps) => {
-	const { t } = useTranslation("businessCategoriesProducts");
+	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
@@ -74,7 +74,7 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 					{singleButton ?? <Price price={price} />}
 					<HStack alignItems="center" space={2} justifyContent="space-between">
 						{singleButton ? <Price price={price} /> : <Button w={"100"}>{t("addToMenu")}</Button>}
-						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{t("editItem")}</Button>
+						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{t("edit")}</Button>
 					</HStack>
 				</VStack>
 			</Stack>
@@ -82,6 +82,7 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 };
 
 const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle, description }: ProductTileProps) => {
+	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
@@ -107,7 +108,7 @@ const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaT
 						isChecked={isChecked}
 						onChange={onCheckboxClick}
 					>
-						Add to Menu
+						{t("addToMenu")}
 					</Checkbox>
 					:
 					<Button w={"100"} colorScheme="tertiary"

@@ -24,5 +24,8 @@
 	"dashboard": "Panel",
 	"categoriesProducts": "Categorías y Productos",
 	"tables": "Mesas",
-	"logout": "Cerrar sesión"
+	"logout": "Cerrar sesión",
+	"noItems": "No hay productos",
+	"edit": "Editar",
+	"addToMenu": "Agregar al menú"
 }
