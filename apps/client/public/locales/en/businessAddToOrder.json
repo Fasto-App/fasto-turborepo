@@ -1,0 +1,9 @@
+{
+	"back": "Back",
+	"table": "Table",
+	"total": "Total",
+	"sendToKitchen": "Send to kitchen",
+	"patrons": "Patrons",
+	"people": "{{number}} People",
+	"tableNumber": "Table {{number}}"
+}

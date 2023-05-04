@@ -1,17 +1,18 @@
 import React from "react";
 import { VStack, HStack, Button, } from "native-base"
-import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
+import { ControlledForm, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm"
 import { ManageLocationConfig } from "./Config"
 import { useManageLocationFormHook, } from "./hooks"
-import { texts } from "./texts"
 import { businessLocationSchemaInput } from "app-helpers";
 import { useGetBusinessLocationQuery, useUpdateBusinessLocationMutation } from "../../gen/generated";
 import { DevTool } from "@hookform/devtools";
 import { Loading } from "../../components/Loading";
 import { useAppStore } from "../UseAppStore";
+import { useTranslation } from "next-i18next";
 
 export const ManageBusinessLocation = () => {
   const setNetworkState = useAppStore(state => state.setNetworkState)
+  const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetBusinessLocationQuery({
     onCompleted: (data) => {
@@ -52,13 +53,47 @@ export const ManageBusinessLocation = () => {
     })
   }
 
+  const newManageLocationConfig = {
+    ...ManageLocationConfig,
+    streetAddress: {
+      ...ManageLocationConfig.streetAddress,
+      label: t("streetAddress"),
+      placeholder: t("streetAddress")
+    },
+    complement: {
+      ...ManageLocationConfig.complement,
+      label: t("complement"),
+      placeholder: t("complement")
+    },
+    postalCode: {
+      ...ManageLocationConfig.postalCode,
+      label: t("postalCode"),
+      placeholder: t("postalCode")
+    },
+    city: {
+      ...ManageLocationConfig.city,
+      label: t("city"),
+      placeholder: t("city")
+    },
+    stateOrProvince: {
+      ...ManageLocationConfig.stateOrProvince,
+      label: t("state"),
+      placeholder: t("state")
+    },
+    country: {
+      ...ManageLocationConfig.country,
+      label: t("country"),
+      placeholder: t("country")
+    },
+  }
+
   return (
     <VStack space={"2"}>
-      <DevTool control={control} /> {/* set up the dev tool */}
+      <DevTool control={control} />
       <ControlledForm
         control={control}
         formState={formState}
-        Config={ManageLocationConfig}
+        Config={newManageLocationConfig}
       />
       <HStack pt={4} alignItems="center" space={4} justifyContent="end">
         <Button
@@ -67,14 +102,14 @@ export const ManageBusinessLocation = () => {
           onPress={() => console.log("Cancel")}
           isLoading={loading}
         >
-          {texts.cancel}
+          {t("cancel")}
         </Button>
         <Button
           w={"30%"}
           colorScheme="tertiary"
           onPress={handleSubmit(handleSaveBusinessInfo)}
           isLoading={loading}
-        >{texts.save}
+        >{t("save")}
         </Button>
       </HStack>
       <Loading isLoading={loadingQuery || loading} />

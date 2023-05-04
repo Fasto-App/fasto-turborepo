@@ -1,19 +1,19 @@
 import React, { useState } from "react"
-import { HStack, Box, Button, Text, Center } from "native-base"
+import { HStack, Box, Button, Text } from "native-base"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { ManageBusinessConfig, uploadPicture } from "./Config"
 import { useManageBusinessFormHook } from "./hooks"
-import { texts } from "./texts"
 import { useUploadFileHook } from "../../hooks"
 import { useGetBusinessInformationQuery, useUpdateBusinessInformationMutation } from "../../gen/generated"
 import { ControlledInput } from "../../components/ControlledForm/ControlledInput"
 import { WeeklySchedule } from "../../components/WeeklySchedule/WeeklySchedule"
-import { businessInformationSchemaInput, DaysOfTheWeekArray, hoursOfOperationSchema, typedKeys } from "app-helpers"
+import { businessInformationSchemaInput, DaysOfTheWeekArray, hoursOfOperationSchema } from "app-helpers"
 import { shallow } from "zustand/shallow"
 import { useScheduleStore } from "../../components/WeeklySchedule/scheduleStore"
 import { DevTool } from "@hookform/devtools"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
+import { useTranslation } from "next-i18next"
 
 export const ManageBusiness = () => {
   const setNetworkState = useAppStore(state => state.setNetworkState)
@@ -25,6 +25,7 @@ export const ManageBusiness = () => {
     toggleDay: state.toggleDay,
   }), shallow)
 
+  const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetBusinessInformationQuery({
     onCompleted: (data) => {
@@ -96,6 +97,20 @@ export const ManageBusiness = () => {
     }
   }
 
+  const ManageBusinessConfigNewConfig = {
+    ...ManageBusinessConfig,
+    name: {
+      ...ManageBusinessConfig.name,
+      label: t("businessName"),
+      placeholder: t("businessName")
+    },
+    description: {
+      ...ManageBusinessConfig.description,
+      label: t("businessDescription"),
+      placeholder: t("businessDescription")
+    }
+  }
+
   return (
     <HStack flex={1} flexDir={"column"} space={"4"}>
       <DevTool control={control} />
@@ -108,12 +123,13 @@ export const ManageBusiness = () => {
           <ControlledForm
             control={control}
             formState={formState}
-            Config={ManageBusinessConfig}
+            Config={ManageBusinessConfigNewConfig}
           />
         </Box>
         <Box w={"xs"}>
           <ControlledInput
             {...uploadPicture}
+            label={t("uploadPicture")}
             handleOnChange={handleFileOnChange}
             src={imageSrc || data?.getBusinessInformation?.picture}
             control={control}
@@ -131,7 +147,7 @@ export const ManageBusiness = () => {
             onPress={() => console.log("Cancel")}
             isLoading={loading}
           >
-            {texts.cancel}
+            {t("cancel")}
           </Button>
           <Button
             w={"100"}
@@ -139,7 +155,7 @@ export const ManageBusiness = () => {
             onPress={handleSubmit(handleSaveAccountInfo)}
             isLoading={loading}
           >
-            {texts.save}
+            {t("save")}
           </Button>
         </HStack>
       </Box>

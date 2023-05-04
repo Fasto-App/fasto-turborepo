@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { clearClientCookies, getClientCookies } from "../cookies";
 import { RequestStatus, TabStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from "../gen/generated";
-import { clientRoute } from "../routes";
+import { customerRoute } from "../routes";
 import { showToast } from "../components/showToast";
 import { texts } from "./texts";
 import { getCause } from "../apollo-client/ErrorLink";
@@ -76,14 +76,14 @@ export const useGetClientSession = () => {
         if (businessId) {
           const business = typeof businessId === "string" ? businessId : businessId[0]
           clearClientCookies(business)
-          route.push(clientRoute.home(business))
+          route.push(customerRoute.home(business))
           return
         }
       }
 
       if (!checkoutId && data.getClientSession.tab?.status === TabStatus.Pendent &&
         data.getClientSession.tab.checkout) {
-        route.push(clientRoute.checkout(businessId as string, data.getClientSession.tab.checkout))
+        route.push(customerRoute.checkout(businessId as string, data.getClientSession.tab.checkout))
         return
       }
     },

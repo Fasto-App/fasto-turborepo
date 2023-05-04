@@ -1,0 +1,9 @@
+{
+	"back": "Volver",
+	"table": "Mesa",
+	"total": "Total",
+	"sendToKitchen": "Enviar a la cocina",
+	"patrons": "Comensales",
+	"people": "{{number}} Personas",
+	"tableNumber": "Mesa {{number}}"
+}

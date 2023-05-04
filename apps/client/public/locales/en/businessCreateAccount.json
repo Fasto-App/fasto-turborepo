@@ -1,0 +1,12 @@
+{
+	"login": "Login",
+	"signup": "Sign Up",
+	"imNewUser": "I'm already a user. ",
+	"username": "Username",
+	"createPassword": "Create Password",
+	"newPassword": "New Password",
+	"invalidTokenOrEmail": "Invalid token or email",
+	"passwordConfirmation": "Password Confirmation",
+	"pleaseEnterAndConfirm": "Please, enter and confirm your new password for {{email}}",
+	"yourBusiness": "Your Business {{businessName}}© is waiting for you."
+}

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Pressable } from 'react-native'
 import { HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, } from "native-base"
 import { useGetAllBusinessQuery } from "../gen/generated";
-import { clientRoute } from "../routes";
+import { customerRoute } from "../routes";
 
 const width = {
 	base: 300,
@@ -37,7 +37,7 @@ export default function Home() {
 
 				return (
 					<Pressable key={business?._id}>
-						<Link href={clientRoute.home(business?._id)}>
+						<Link href={customerRoute.home(business?._id)}>
 							<Center width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
 								<Text color={"white"} fontSize="lg">{business?.name}</Text>
 							</Center>

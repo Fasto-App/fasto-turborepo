@@ -1,10 +1,6 @@
 import React from "react"
 import { Button, HStack } from "native-base"
-
-const texts = {
-  edit: "Edit",
-  all: "All",
-}
+import { useTranslation } from "next-i18next";
 
 type AllAndEditButtonsProps = {
   allAction: () => void;
@@ -17,6 +13,8 @@ export const AllAndEditButtons = ({
   editAction,
   categoryId
 }: AllAndEditButtonsProps) => {
+  const { t } = useTranslation("businessCategoriesProducts")
+
   return (
     <HStack space={2}>
       <Button
@@ -24,7 +22,7 @@ export const AllAndEditButtons = ({
         variant={"outline"}
         onPress={allAction}
       >
-        {texts.all}
+        {t("all")}
       </Button>
 
       <Button
@@ -34,7 +32,7 @@ export const AllAndEditButtons = ({
         width={"100px"}
         colorScheme="tertiary"
         onPress={() => editAction(categoryId)}>
-        {texts.edit}
+        {t("edit")}
       </Button>
     </HStack>
   )

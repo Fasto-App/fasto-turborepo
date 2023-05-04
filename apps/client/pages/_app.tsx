@@ -3,9 +3,9 @@ import type { AppProps } from 'next/app';
 import React, { Fragment, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { BusinessLayout } from '../business-templates/Layout/BusinessLayout';
-import { ClientLayout } from '../client-templates/Layout';
+import { CustomerLayout } from '../customer-templates/Layout';
 import { AppProvider } from '../appProvider';
-import { BUSINESS, CLIENT } from '../routes';
+import { BUSINESS, CUSTOMER } from '../routes';
 import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
@@ -13,7 +13,7 @@ import { useTheme } from 'native-base';
 import { ModalFeedback } from '../components/ModalFeedback';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { View } from 'react-native';
-
+import { appWithTranslation } from 'next-i18next'
 
 const LandingWrapper: React.FC = ({ children }) => (
 	<Fragment>
@@ -35,18 +35,24 @@ const ProgressBar = () => {
 const MyApp = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
 	const isBusinessExp = router.route.includes(BUSINESS);
-	const isClientExp = router.route.includes(CLIENT);
+	const isCustomerExp = router.route.includes(CUSTOMER);
 
 	const Wrapper = useMemo(() => {
-		if (isClientExp) {
-			return ClientLayout
+		if (isCustomerExp) {
+			return CustomerLayout
 		} else if (isBusinessExp) {
 			return BusinessLayout
 		}
 
 		return LandingWrapper
 
-	}, [isClientExp, isBusinessExp])
+	}, [isCustomerExp, isBusinessExp])
+
+	if (router.isFallback) {
+		return (
+			<div className="lds-dual-ring"></div>
+		)
+	}
 
 	return (
 		// 	@ts-ignore
@@ -72,4 +78,4 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
 MyApp.displayName = "_app"
 
-export default MyApp;
+export default appWithTranslation(MyApp);

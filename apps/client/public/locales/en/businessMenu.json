@@ -1,0 +1,15 @@
+{
+	"title": "Menu",
+	"emptyListText": "Start adding Menus by clicking in the button above.",
+	"editMenu": "Edit Menu",
+	"cancel": "Cancel",
+	"save": "Save",
+	"delete": "Delete",
+	"addMenu": "Add Menu",
+	"menuName": "Menu Name",
+	"maxChar": "Max. 50 characters",
+	"errorMenu": "Menu name is required",
+	"add": "Add",
+	"edit": "Edit",
+	"emptyProducts": "To start adding products press 'Edit Menu'"
+}

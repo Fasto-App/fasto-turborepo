@@ -4,10 +4,10 @@ import React, { useCallback, useMemo } from 'react'
 import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { parseToCurrency } from 'app-helpers'
 import { Percentages, percentages, percentageSelectData, useCheckoutStore, useComputedChekoutStore } from './checkoutStore'
-import { texts } from './texts'
 import { Checkout } from './types'
 import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 
 export const PayInFull = ({
   subTotal,
@@ -18,6 +18,7 @@ export const PayInFull = ({
   const { tabId, checkoutId } = route.query
 
   const [selectedUser, setSelectedUser] = React.useState<string>()
+  const { t } = useTranslation("businessCheckout")
 
   const { data } = useGetTabCheckoutByIdQuery({
     skip: !tabId,
@@ -87,21 +88,21 @@ export const PayInFull = ({
   return (
     <Center>
       <Heading size={"2xl"} p={4}>
-        {texts.checkout}
+        {t("checkout")}
       </Heading>
       <VStack w={"70%"} minW={"lg"} space={4}>
         <Divider />
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.subtotal}</Text>
+          <Text fontSize={"2xl"}>{t("subtotal")}</Text>
           <Text fontSize={"lg"}>{parseToCurrency(subTotal)}</Text>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.feesAndTax}</Text>
+          <Text fontSize={"2xl"}>{t("feesAndTax")}</Text>
           <Text fontSize={"lg"}>{parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)}
           </Text>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.discount}</Text>
+          <Text fontSize={"2xl"}>{t("discount")}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
               w={100} h={10}
@@ -135,7 +136,7 @@ export const PayInFull = ({
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.tip}</Text>
+          <Text fontSize={"2xl"}>{t("tip")}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
               w={100} h={10}
@@ -168,7 +169,7 @@ export const PayInFull = ({
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.paymentBy}</Text>
+          <Text fontSize={"2xl"}>{t("paymentBy")}</Text>
           <FDSSelect
             array={allUsersFromTab}
             selectedValue={selectedUser}
@@ -177,7 +178,7 @@ export const PayInFull = ({
         </HStack>
         <Divider marginY={6} />
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"3xl"} bold>{texts.total}</Text>
+          <Text fontSize={"3xl"} bold>{t("total")}</Text>
           <Text fontSize={"3xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
         </HStack>
         <Button
@@ -188,7 +189,7 @@ export const PayInFull = ({
           colorScheme={"tertiary"}
           onPress={handlePay}
         >
-          {texts.pay}
+          {t("pay")}
         </Button>
       </VStack>
     </Center>

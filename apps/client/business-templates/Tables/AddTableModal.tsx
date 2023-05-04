@@ -1,5 +1,6 @@
 import React from "react"
 import { Button, Modal, Text } from "native-base"
+import { useTranslation } from "next-i18next";
 
 type AddTableModalProps = {
   isModalOpen: boolean;
@@ -12,6 +13,8 @@ export const AddTableModal = ({
   setIsModalOpen,
   postNewTable
 }: AddTableModalProps) => {
+  const { t } = useTranslation(["common", "businessTables"])
+
   const onSubmit = async () => {
     setIsModalOpen(false)
     await postNewTable()
@@ -24,17 +27,17 @@ export const AddTableModal = ({
   return <Modal isOpen={isModalOpen} onClose={onCancel}>
     <Modal.CloseButton />
     <Modal.Content minWidth="500px">
-      <Modal.Header>{"Add Space"}</Modal.Header>
+      <Modal.Header>{t("businessTables:addTable")}</Modal.Header>
       <Modal.Body>
-        <Text>Would you like to add a new table?</Text>
+        <Text>{t("businessTables:addNewTable")}</Text>
       </Modal.Body>
       <Modal.Footer>
         <Button.Group space={2} paddingTop={4}>
           <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={onCancel}>
-            {"Cancel"}
+            {t("common:cancel")}
           </Button>
           <Button w={"100px"} onPress={onSubmit}>
-            {"Yes"}
+            {t("common:yes")}
           </Button>
         </Button.Group>
       </Modal.Footer>

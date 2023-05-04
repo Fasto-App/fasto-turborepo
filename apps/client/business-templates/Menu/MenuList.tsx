@@ -8,13 +8,10 @@ import { ControlledForm } from '../../components/ControlledForm';
 import { GetAllMenusByBusinessIdDocument, useCreateMenuMutation } from '../../gen/generated';
 import { menuSchemaInput } from 'app-helpers';
 import { AllMenusbyBusiness } from './types';
-
-const texts = {
-  title: "Menu",
-  emptyListText: "Start adding Menus by clicking in the button above.",
-}
+import { useTranslation } from 'next-i18next';
 
 export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
+  const { t } = useTranslation("businessMenu")
 
   const [showModal, setShowModal] = useState(false)
   const setMenu = useAppStore(state => state.setMenu)
@@ -34,7 +31,7 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
       <Box flex={1}>
         <Box flexDirection={"row"} mb={"2"}>
           <Heading flex={1}>
-            {texts.title}
+            {t("title")}
           </Heading>
         </Box>
 
@@ -76,22 +73,14 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
   );
 }
 
-const textsMenu = {
-  addMenu: "Add Menu",
-  editMenu: "Edit Menu",
-  menuName: "Menu Name",
-  maxChar: "Max. 50 characters",
-  errorMenu: "Menu name is required",
-  add: "Add",
-  cancel: "Cancel",
-  edit: "Edit",
-}
 
 const MenuModal = ({ showModal, setShowModal }: {
   showModal: boolean,
   setShowModal: (value: boolean) => void
 }) => {
   const { control, handleSubmit, formState } = useMenuHook()
+
+  const { t } = useTranslation("businessMenu")
 
   const [createMenu] = useCreateMenuMutation({
     update: (cache, { data }) => {
@@ -129,7 +118,7 @@ const MenuModal = ({ showModal, setShowModal }: {
     <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
       <Modal.Content maxWidth="40%" minW={"400px"}>
         <Modal.CloseButton />
-        <Modal.Header>{isEditing ? textsMenu.editMenu : textsMenu.addMenu}</Modal.Header>
+        <Modal.Header>{isEditing ? t("editMenu") : t("addMenu")}</Modal.Header>
         <Modal.Body>
           <ControlledForm
             Config={MenuConfig}
@@ -144,10 +133,10 @@ const MenuModal = ({ showModal, setShowModal }: {
               variant="ghost"
               colorScheme="tertiary"
               onPress={() => setShowModal(false)}>
-              {textsMenu.cancel}
+              {t("cancel")}
             </Button>
             <Button w={"100px"} onPress={handleSubmit(onMenuSubmit)}>
-              {isEditing ? textsMenu.edit : textsMenu.add}
+              {isEditing ? t("edit") : t("add")}
             </Button>
           </Button.Group>
         </Modal.Footer>

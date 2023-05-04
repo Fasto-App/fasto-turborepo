@@ -38,16 +38,18 @@ export const getFixedPointPercentage = (part: number, total: number) => {
 
 export const DICE_BEAR_INITIALS_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
-let loggingEnabled = process.env.ENVIRONMENT === 'development';
+export const locales = ['en', 'pt', 'es'] as const
+export const localeFlags = {
+  en: '🇺🇸',
+  pt: '🇧🇷',
+  es: '🇪🇸',
+} as const
 
-type LogArgument = string | { color: string };
+export type Locale = typeof locales[number]
 
-export function log(...args: LogArgument[]) {
-  const lastArg = args[args.length - 1];
-  const options = typeof lastArg === 'object' && lastArg !== null ? args.pop() : {};
-  // @ts-ignore
-  const { color = 'black' } = options || { color: 'black' };
-  if (loggingEnabled) {
-    console.log(...args.map(message => `%c${message}`), `color: ${color}`);
+export const localeObj = locales.map(locale => {
+  return {
+    _id: locale,
+    value: localeFlags[locale]
   }
-}
+})

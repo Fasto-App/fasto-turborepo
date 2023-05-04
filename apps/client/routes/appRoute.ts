@@ -1,31 +1,31 @@
 import { businessRoute } from "."
-import { clientRoute } from "./clientRoute"
+import { customerRoute } from "./customerRoute"
 
 export const HOME = "/" as const
 const ADMIN = "/admin" as const
 export const BUSINESS = "/business" as const
-export const CLIENT = "/client" as const
+export const CUSTOMER = "/customer" as const
 export const BUSINESS_ADMIN = BUSINESS + ADMIN
 
 export const appRoute = {
   home: HOME,
   businessRoute,
-  clientRoute
+  customerRoute
 };
 
 
 type HomeRoute = typeof HOME;
 
-type Client = typeof clientRoute
+type Client = typeof customerRoute
 type ClientKeys = keyof Client;
-type ClientRoutes = Client[ClientKeys];
+type customerRoutes = Client[ClientKeys];
 
 
 type Business = typeof businessRoute;
 type BusinessKeys = keyof Business;
 type BusinessRoutes = Business[BusinessKeys];
-export type AppNavigation = HomeRoute | BusinessRoutes | ClientRoutes;
+export type AppNavigation = HomeRoute | BusinessRoutes | customerRoutes;
 
 type BusinessExperience = typeof BUSINESS
-type ClientExperience = typeof CLIENT;
+type ClientExperience = typeof CUSTOMER;
 export type AppExperience = BusinessExperience | ClientExperience;

@@ -17,6 +17,7 @@ import { Tile } from "../../components/Tile"
 import { OrderDetail, OrderStatus, User } from "../../gen/generated"
 import { parseToCurrency, typedKeys } from 'app-helpers'
 import { Transition } from "../../components/Transition"
+import { useTranslation } from "next-i18next"
 
 const FilterOrderBy = {
   patron: "Patron",
@@ -24,15 +25,6 @@ const FilterOrderBy = {
 } as const
 
 type FilterOrderBy = typeof FilterOrderBy[keyof typeof FilterOrderBy]
-
-const texts = {
-  byPatron: "By Patron",
-  byTable: "By Table",
-  person: "Person",
-  chooseService: "Choose a service",
-  orderStatus: "Order Status",
-  noOrdersYet: "No orders yet",
-}
 
 
 // users and orders from getTabById Query
@@ -44,6 +36,8 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
   const [filter, setFilterBy] = useState<FilterOrderBy>(FilterOrderBy.patron)
   const isFilteredByPatron = filter === FilterOrderBy.patron
 
+  const { t } = useTranslation("businessTables")
+
   return (
     <Box>
       <HStack flex={1} justifyContent={"space-around"} space={2}>
@@ -53,7 +47,7 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
             textAlign={"center"}
             color={isFilteredByPatron ? undefined : "gray.400"}
           >
-            {texts.byPatron}
+            {t("byPatron")}
           </Heading>
           <Divider bg={isFilteredByPatron ? "gray.400" : "gray.300"} />
         </Pressable>
@@ -63,7 +57,7 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
             textAlign={"center"}
             color={!isFilteredByPatron ? undefined : "gray.400"}
           >
-            {texts.byTable}
+            {t("byTable")}
           </Heading>
           <Divider bg={!isFilteredByPatron ? "gray.400" : "gray.300"} />
         </Pressable>
@@ -76,7 +70,7 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
             <HStack space={2}>
               {users?.map((patron, index) => (
                 <Tile key={patron._id} selected={false} onPress={undefined} >
-                  {`${texts.person} ${index + 1}`}
+                  {`${t("person")} ${index + 1}`}
                 </Tile>
               ))}
             </HStack>
@@ -85,7 +79,7 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
         <VStack space={6} pt={"5"}>
           {!orders?.length ?
             <Center flex={1} paddingY={"10"}>
-              <Heading size={"md"} textAlign={"center"}>{texts.noOrdersYet}</Heading>
+              <Heading size={"md"} textAlign={"center"}>{t("noOrdersYet")}</Heading>
             </Center>
             : orders?.map((order) => {
               if (!order) return null
@@ -115,6 +109,8 @@ type OrderTileProps = {
 }
 
 const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderTileProps) => {
+  const { t } = useTranslation("businessTables")
+
   return (<HStack borderRadius={"md"} p={1} backgroundColor={"white"} flex={1} justifyContent={"space-between"}>
     <HStack>
       <Center>
@@ -132,8 +128,8 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
         mt={1}
         minWidth="400"
         selectedValue={status}
-        placeholder={texts.orderStatus}
-        accessibilityLabel={texts.chooseService}
+        placeholder={t("orderStatus")}
+        accessibilityLabel={t("chooseService")}
         onValueChange={itemValue => console.log(itemValue)}>
         {typedKeys(OrderStatus).map((status, index) => (
           <Select.Item key={index} label={status} value={status.toUpperCase()} />)

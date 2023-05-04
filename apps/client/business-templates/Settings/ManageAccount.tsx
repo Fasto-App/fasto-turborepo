@@ -1,7 +1,6 @@
 import React from "react"
 import { HStack, Button, Box } from "native-base"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
-import { texts } from "./texts"
 import { ManageAccountConfig, uploadPicture } from "./Config"
 import { useManageAccountFormHook } from "./hooks"
 import { useUploadFileHook } from "../../hooks"
@@ -11,9 +10,11 @@ import { useGetUserInformationQuery, useUpdateUserInformationMutation } from "..
 import { AccountInformation } from "app-helpers"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
+import { useTranslation } from "next-i18next"
 
 export const ManageAccount = () => {
   const setNetworkState = useAppStore(state => state.setNetworkState)
+  const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetUserInformationQuery({
     onCompleted: (data) => {
@@ -57,13 +58,42 @@ export const ManageAccount = () => {
     })
   }
 
+  const newManageAccount = {
+    ...ManageAccountConfig,
+    name: {
+      ...ManageAccountConfig.name,
+      label: t("name"),
+      placeholder: t("name"),
+    },
+    email: {
+      ...ManageAccountConfig.email,
+      label: t("email"),
+      placeholder: t("email"),
+    },
+    oldPassword: {
+      ...ManageAccountConfig.oldPassword,
+      label: t("oldPassword"),
+      placeholder: t("oldPassword"),
+    },
+    newPassword: {
+      ...ManageAccountConfig.newPassword,
+      label: t("newPassword"),
+      placeholder: t("newPassword"),
+    },
+    newPasswordConfirmation: {
+      ...ManageAccountConfig.newPasswordConfirmation,
+      label: t("newPasswordConfirmation"),
+      placeholder: t("newPasswordConfirmation"),
+    },
+  }
+
   return (
     <HStack flex={1} flexDir={"column"}>
       <DevTool control={control} />
       <ControlledForm
         control={control}
         formState={formState}
-        Config={ManageAccountConfig}
+        Config={newManageAccount}
       />
       <ControlledInput
         {...uploadPicture}
@@ -79,14 +109,14 @@ export const ManageAccount = () => {
             onPress={() => console.log("Cancel")}
             isLoading={loading}
           >
-            {texts.cancel}
+            {t("cancel")}
           </Button>
           <Button
             w={"100"}
             colorScheme="tertiary"
             onPress={handleSubmit(handleSaveAccountInfo)}
             isLoading={loading}
-          >{texts.save}
+          >{t("save")}
           </Button>
         </HStack>
       </Box>

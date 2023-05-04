@@ -1,6 +1,16 @@
+import { GetStaticProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { LoginForm } from "../../../business-templates/Login";
-import { GetServerSidePropsContext } from "next";
-import { businessRoute } from "../../../routes";
-import * as jose from 'jose'
 
 export default LoginForm;
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? "en", [
+        'common',
+        'businessLogin'
+      ])),
+    },
+  };
+};

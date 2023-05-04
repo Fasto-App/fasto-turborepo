@@ -12,9 +12,9 @@ import { UpperSection } from '../../components/UpperSection'
 import { useGetCheckoutByIdQuery } from '../../gen/generated'
 import { PayInFull } from './PayInFull'
 import { Split } from './Split'
-import { texts } from './texts'
 import { businessRoute } from '../../routes';
 import { useCheckoutStore } from './checkoutStore';
+import { useTranslation } from 'next-i18next';
 
 const checkoutOptions = {
   payFull: "Pay in Full",
@@ -28,6 +28,7 @@ export const Checkout = () => {
   const { checkoutId } = route.query
 
   const setTotal = useCheckoutStore(state => state.setTotal)
+  const { t } = useTranslation("businessCheckout")
 
   // todo: get the table number from either the Checkout or the Tab
   const { data } = useGetCheckoutByIdQuery({
@@ -64,7 +65,7 @@ export const Checkout = () => {
       <LeftSideBar>
         <Box flex={1} justifyContent={"center"}>
           <Text textAlign={"center"}>
-            {texts.leftText}
+            {t("leftText")}
           </Text>
         </Box>
         <Button
@@ -72,7 +73,7 @@ export const Checkout = () => {
           onPress={() => console.log("View Summary")}
           mb={4}
         >
-          {texts.viewSummary}
+          {t("viewSummary")}
         </Button>
       </LeftSideBar>
       <Box flex={1}>
@@ -80,7 +81,7 @@ export const Checkout = () => {
         <VStack flex={1} p={2} space={4}>
           <UpperSection>
             <Heading>
-              {texts.table(checkoutId as string)}
+              {t("table", { number: checkoutId as string })}
             </Heading>
             <HStack space={"4"}>
               {typedKeys(checkoutOptions).filter((option) => option !== "success").map((option) => (
@@ -116,9 +117,9 @@ export const Checkout = () => {
                   <SuccessAnimation />
                 </Box>
                 <Text fontSize={"2xl"}>
-                  {texts.sessionEnded}
+                  {t("sessionEnded")}
                   <Link fontSize={"2xl"} href={businessRoute.tables}>
-                    {texts.backToManageTables}
+                    {t("backToManageTables")}
                   </Link>
                 </Text>
               </Center>

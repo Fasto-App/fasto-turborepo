@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 
 const httpLink = createUploadLink({
   uri: process.env.BACKEND_URL,
+  // uri: "http://192.168.15.76:4000/graphql",
 })
 
 export const AppApolloProvider: React.FC = ({ children }) => {
