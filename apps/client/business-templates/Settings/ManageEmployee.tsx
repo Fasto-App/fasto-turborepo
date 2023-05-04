@@ -4,7 +4,7 @@ import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
-import { texts } from "./texts"
+// import { texts } from "./texts"
 import { AddMoreButton } from "../../components/atoms/AddMoreButton"
 import { DICE_BEAR_INITIALS_URL, EmployeeInformation } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
@@ -14,10 +14,13 @@ import { EmployeeTile } from "../../components/BorderTile"
 import { DeleteAlert } from "../../components/DeleteAlert"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
+import { useTranslation } from "next-i18next"
 
 export const ManageEmployee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const setNetworkState = useAppStore(state => state.setNetworkState)
+
+  const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetAllEmployeesQuery({
     onError: () => {
@@ -80,18 +83,27 @@ export const ManageEmployee = () => {
 
   const isEditingConfig = useMemo(() => {
 
-    return getValues("_id") ? ({
+    return ({
       ...ManageEmployeeConfig,
       name: {
         ...ManageEmployeeConfig.name,
-        isDisabled: true
+        isDisabled: !!getValues("_id"),
+        label: t("name"),
+      },
+      jobTitle: {
+        ...ManageEmployeeConfig.jobTitle,
+        label: t("jobTitle"),
+      },
+      privilege: {
+        ...ManageEmployeeConfig.privileges,
+        label: t("privileges"),
       },
       email: {
         ...ManageEmployeeConfig.email,
-        isDisabled: true
+        isDisabled: !!getValues("_id"),
+        label: t("email"),
       }
-    }) : ManageEmployeeConfig
-
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValues("_id")])
 
@@ -123,7 +135,7 @@ export const ManageEmployee = () => {
       <CustomModal
         isOpen={isModalOpen}
         onClose={onCancel}
-        HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
+        HeaderComponent={<Heading>{t("addEmployee")}</Heading>}
         ModalBody={
           <>
             <ControlledForm
@@ -135,7 +147,7 @@ export const ManageEmployee = () => {
             />
             {getValues("_id") ?
               <Box pt={4}>
-                <DeleteAlert deleteItem={deleteEmployeeCB} title={texts.delete} />
+                <DeleteAlert deleteItem={deleteEmployeeCB} title={t("delete")} />
               </Box>
               : null}
           </>
@@ -149,14 +161,14 @@ export const ManageEmployee = () => {
               onPress={onCancel}
               isLoading={loading}
             >
-              {texts.cancel}
+              {t("cancel")}
             </Button>
             <Button
               flex={1}
               onPress={handleSubmit(onSubmit)}
               isLoading={loading}
             >
-              {texts.save}
+              {t("save")}
             </Button>
           </>
         }
@@ -170,7 +182,7 @@ export const ManageEmployee = () => {
       {!combinedData.length
         ?
         <VStack>
-          <Text pt={5}>{texts.startAddingEmployees}</Text>
+          <Text pt={5}>{t("startAddingEmployees")}</Text>
           <AddMoreButton
             onPress={() => setIsModalOpen(true)} empty={true} />
         </VStack>
