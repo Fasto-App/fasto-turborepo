@@ -48,6 +48,12 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
 	}, [isCustomerExp, isBusinessExp])
 
+	if (router.isFallback) {
+		return (
+			<div className="lds-dual-ring"></div>
+		)
+	}
+
 	return (
 		// 	@ts-ignore
 		<View style={{ height: "100%" }}>
