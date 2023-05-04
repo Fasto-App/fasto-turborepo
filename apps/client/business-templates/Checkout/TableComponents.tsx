@@ -2,7 +2,7 @@ import React from "react"
 import { SplitType, parseToCurrency } from "app-helpers";
 import { HStack, Box, Checkbox, Input, Text, Button } from "native-base";
 import { FC } from "react";
-import { texts } from "./texts";
+import { useTranslation } from "next-i18next";
 
 const Cell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
   return (
@@ -26,6 +26,8 @@ type HeaderProps = {
 }
 
 export const Header = ({ type, areAllUsersSelected, onCheckboxChange }: HeaderProps) => {
+  const { t } = useTranslation("businessCheckout")
+
   return (
     <HStack py={2}>
       <Box justifyContent={"center"}>
@@ -37,22 +39,22 @@ export const Header = ({ type, areAllUsersSelected, onCheckboxChange }: HeaderPr
         />
       </Box>
       <Cell bold>
-        {texts.patron}
+        {t("patron")}
       </Cell>
       <Cell bold>
-        {texts.subtotal}
+        {t("subtotal")}
       </Cell>
       {type === "ByPatron" ? <Cell bold>
-        {texts.sharedByTable}
+        {t("sharedByTable")}
       </Cell> : null}
       <Cell bold>
-        {texts.feesAndTax}
+        {t("feesAndTax")}
       </Cell>
       <Cell bold>
-        {texts.tip}
+        {t("tip")}
       </Cell>
       <Cell bold>
-        {texts.total}
+        {t("total")}
       </Cell>
       <Box flex={1} />
     </HStack>
@@ -92,6 +94,8 @@ export const Row = ({
   onCustominputChange,
   hasUserPaid
 }: RowProps) => {
+  const { t } = useTranslation("businessCheckout")
+
   return (<HStack>
     <Box justifyContent={"center"}>
       <Checkbox
@@ -139,7 +143,7 @@ export const Row = ({
         colorScheme={"tertiary"}
         onPress={onPress}
       >
-        {hasUserPaid ? texts.paid : texts.pay}
+        {hasUserPaid ? t("paid") : t("pay")}
       </Button>
     </Box>
   </HStack >)

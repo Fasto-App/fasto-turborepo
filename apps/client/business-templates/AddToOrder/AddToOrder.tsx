@@ -23,16 +23,7 @@ import { ProductTile } from "../../components/Product/Product";
 import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { useAppStore } from "../UseAppStore";
 import { businessRoute } from "../../routes";
-
-const texts = {
-  back: "Back",
-  table: "Table",
-  total: "Total",
-  sendToKitchen: "Send to kitchen",
-  patrons: "Patrons",
-  people: (number: string | number) => `${number} People`,
-  tableNumber: (number: string | number) => `Table ${number}`,
-}
+import { useTranslation } from "next-i18next";
 
 type NewOrder = Product & { quantity: number, selectedUser?: string }
 
@@ -42,6 +33,8 @@ export const AddToOrder = () => {
   const [orderItems, setOrderItems] = React.useState<NewOrder[]>([])
   const [selectedUser, setSelectedUser] = React.useState<string>()
   const [selectedCategory, setSelectedCategory] = React.useState<string>()
+
+  const { t } = useTranslation("businessAddToOrder")
 
   const setNetworkState = useAppStore(state => state.setNetworkState)
 
@@ -148,9 +141,9 @@ export const AddToOrder = () => {
       <LeftSideBar>
         <Flex flex={1} pt={2} pb={4}>
           <Flex direction="row" justify="space-evenly" mb={4}>
-            <Text py="2">{texts.tableNumber(1)}</Text>
+            <Text py="2">{t("tableNumber", { number: 2 })}</Text>
             <Divider orientation="vertical" mx="3" />
-            <Text py="2">{texts.people(2)}</Text>
+            <Text py="2">{t("people", { number: 2 })}</Text>
           </Flex>
           <ScrollView flex={1}>
             {orderItems?.map((order, index) => {
@@ -204,12 +197,12 @@ export const AddToOrder = () => {
           <Box w={"100%"} justifyContent={"end"} pt={2}>
             <Divider mb="3" />
             <HStack justifyContent={"space-between"} pb={2}>
-              <Heading size={"md"}>{texts.total}</Heading>
+              <Heading size={"md"}>{t("total")}</Heading>
               <Heading size={"md"}>{parseToCurrency(total)}</Heading>
             </HStack>
             <VStack space={4}>
               <Button w={"full"} onPress={onSendToKitchen} isDisabled={orderItems.length <= 0} >
-                {texts.sendToKitchen}
+                {t("sendToKitchen")}
               </Button>
               <Button
                 flex={1}
@@ -220,7 +213,7 @@ export const AddToOrder = () => {
                 onPress={() => route.back()}
                 justifyContent={"end"}
               >
-                {texts.back}
+                {t("back")}
               </Button>
             </VStack>
           </Box>
@@ -231,7 +224,7 @@ export const AddToOrder = () => {
         <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
         <VStack flex={1} p={4} space={4}>
           <UpperSection>
-            <Heading>{texts.patrons}</Heading>
+            <Heading>{t("patrons")}</Heading>
             <HStack space={2}>
               <SmallAddMoreButton onPress={() => console.log("Hello")} />
               <ScrollView horizontal={true} pb={2}>
@@ -240,7 +233,7 @@ export const AddToOrder = () => {
                     selected={!selectedUser}
                     onPress={() => setSelectedUser(undefined)}
                   >
-                    {texts.table}
+                    {t("table")}
                   </Tile>
                   {tabData?.getTabByID?.users?.map((user, index) => (
                     <Tile

@@ -6,12 +6,12 @@ import { useSpring, animated } from "react-spring";
 import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
 import { parseToCurrency } from "app-helpers";
-import { texts } from "./texts";
 import { getClientCookies } from "../../cookies";
 import { useAddItemToCartMutation, useGetProductByIdQuery } from "../../gen/generated";
 import { LoadingPDP } from "./LoadingPDP";
 import { customerRoute } from "../../routes";
 import { showToast } from "../../components/showToast";
+import { useTranslation } from "next-i18next";
 
 const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
@@ -31,6 +31,7 @@ export const ProductDescriptionScreen = () => {
   const [text, setText] = useState("");
 
   const tab = getClientCookies(businessId as string)
+  const { t } = useTranslation("customerProductDescription");
 
   // function to query product by id
   const { data, loading, error } = useGetProductByIdQuery({
@@ -43,14 +44,14 @@ export const ProductDescriptionScreen = () => {
   const [addItemToCart, { loading: addToCartLoading }] = useAddItemToCartMutation({
     onCompleted: () => {
       showToast({
-        message: texts.addedToCart,
+        message: t("addedToCart"),
       })
 
       route.push(customerRoute.menu(businessId as string));
     },
     onError: (err) => {
       showToast({
-        message: texts.errorAddingToCart,
+        message: t("errorAddingToCart"),
         subMessage: err.message,
         status: "error"
       })
@@ -99,7 +100,7 @@ export const ProductDescriptionScreen = () => {
           flex={1}
           p={8}
           fontSize={"2xl"}
-          textAlign={"center"}>{texts.errorPDP}</Text>
+          textAlign={"center"}>{t("errorPDP")}</Text>
       ) :
         <ScrollView h="100%" px={4}>
           <Box>
@@ -129,7 +130,7 @@ export const ProductDescriptionScreen = () => {
           <Divider my={"5"} backgroundColor={"gray.300"} />
           {/* todo */}
           {true ? null : <VStack space={"1"} mb={"4"}>
-            <Text fontWeight={"semibold"} fontSize={"25"}>{texts.extras}</Text>
+            <Text fontWeight={"semibold"} fontSize={"25"}>{t("extras")}</Text>
             {addons.map((addon, index) => (
               <Addon
                 isDisabled={!tab}
@@ -163,7 +164,7 @@ export const ProductDescriptionScreen = () => {
           colorScheme="primary"
           _text={{ fontSize: "18", bold: true }}
         >
-          {texts.addToCart}
+          {t("addToCart")}
         </Button>
       </Box>
     </AnimatedBox>

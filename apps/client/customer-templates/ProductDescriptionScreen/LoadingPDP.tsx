@@ -1,4 +1,4 @@
-import { Box, Skeleton, HStack, Divider } from 'native-base'
+import { Box, Skeleton, HStack } from 'native-base'
 import React from 'react'
 
 export const LoadingPDP = () => {

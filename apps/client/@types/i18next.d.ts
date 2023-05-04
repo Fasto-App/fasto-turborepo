@@ -1,6 +1,8 @@
 // import the original type declarations
 import "i18next";
 
+import businessCheckout from "../public/locales/en/businessCheckout.json";
+import businessAddToOrder from "../public/locales/en/businessAddToOrder.json";
 import businessSettings from "../public/locales/en/businessSettings.json";
 import businessTables from "../public/locales/en/businessTables.json";
 import businessMenu from "../public/locales/en/businessMenu.json";
@@ -12,6 +14,7 @@ import businessCreateAccount from "../public/locales/en/businessCreateAccount.js
 import businessLogin from "../public/locales/en/businessLogin.json";
 import customerCheckout from "../public/locales/en/customerCheckout.json";
 import customerHome from "../public/locales/en/customerHome.json";
+import customerProductDescription from "../public/locales/en/customerProductDescription.json";
 import common from "../public/locales/en/common.json";
 
 declare module "i18next" {
@@ -24,6 +27,7 @@ declare module "i18next" {
       common: typeof common;
       customerCheckout: typeof customerCheckout;
       customerHome: typeof customerHome;
+      customerProductDescription: typeof customerProductDescription;
       businessLogin: typeof businessLogin;
       businessSignUp: typeof businessSignUp;
       businessCreateAccount: typeof businessCreateAccount;
@@ -33,6 +37,8 @@ declare module "i18next" {
       businessMenu: typeof businessMenu;
       businessTables: typeof businessTables;
       businessSettings: typeof businessSettings;
+      businessAddToOrder: typeof businessAddToOrder;
+      businessCheckout: typeof businessCheckout;
     };
   }
 }

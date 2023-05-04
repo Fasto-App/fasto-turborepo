@@ -6,9 +6,9 @@ import { FDSSelect } from '../../components/FDSSelect'
 import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation, SplitType as SplitTypeGen } from '../../gen/generated'
 import { parseToCurrency } from 'app-helpers'
 import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from './checkoutStore'
-import { texts } from './texts'
 import { Transition } from '../../components/Transition'
 import { Header, Row } from './TableComponents'
+import { useTranslation } from 'next-i18next'
 
 type SplitProps = {
   subTotal?: number
@@ -58,6 +58,8 @@ export const Split = ({
 
   const [shareTip, setShareTip] = useState(true)
   const [areAllUsersSelected, setAreAllUsersSelected] = useState(true);
+
+  const { t } = useTranslation("businessCheckout")
 
   const route = useRouter()
   const { tabId, checkoutId } = route.query
@@ -289,20 +291,20 @@ export const Split = ({
         <VStack w={"50%"} minW={"lg"} pt={8} space={4}>
           <HStack justifyContent={"space-between"} px={8}>
             {selectedSplitType === "ByPatron" ? <>
-              <Text fontSize={"lg"}>{texts.AllByTable}</Text>
+              <Text fontSize={"lg"}>{t("AllByTable")}</Text>
               <Text fontSize={"lg"}>{parseToCurrency(total)}</Text>
             </> : null}
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{texts.subtotal}</Text>
+            <Text fontSize={"lg"}>{t("subtotal")}</Text>
             <Text fontSize={"lg"}>{parseToCurrency(subTotal)}</Text>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{texts.feesAndTax}</Text>
+            <Text fontSize={"lg"}>{t("feesAndTax")}</Text>
             <Text fontSize={"lg"}>{parseToCurrency((tax ?? 0) * (subTotal ?? 0))}</Text>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{texts.discount}</Text>
+            <Text fontSize={"lg"}>{t("discount")}</Text>
             <HStack space={2} alignItems={"self-end"}>
               <FDSSelect
                 w={100} h={10}
@@ -337,7 +339,7 @@ export const Split = ({
             </HStack>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{texts.tip}</Text>
+            <Text fontSize={"lg"}>{t("tip")}</Text>
             <HStack space={2}>
               <FDSSelect
                 w={100} h={10}
@@ -372,11 +374,11 @@ export const Split = ({
           </HStack>
           <Divider marginY={2} />
           <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"xl"} bold>{texts.total}</Text>
+            <Text fontSize={"xl"} bold>{t("total")}</Text>
             <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"xl"} bold>{texts.remaning}</Text>
+            <Text fontSize={"xl"} bold>{t("remaning")}</Text>
             <Text fontSize={"xl"} bold>{parseToCurrency(paymentsByUser.totalPaid)}</Text>
           </HStack>
         </VStack>
