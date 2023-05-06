@@ -55,7 +55,7 @@ export const TableModal = () => {
 
   const tableId = useTableScreenStore(state => state.tableChoosen)
   const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
-  const { data } = useGetTableByIdQuery({
+  const { data, loading } = useGetTableByIdQuery({
     skip: !tableId,
     variables: {
       input: {
@@ -71,15 +71,10 @@ export const TableModal = () => {
   const isAvailableTable = tableChoosen?.status === "Available"
   const isReservedTable = tableChoosen?.status === "Reserved"
 
-  const { data: menusData, loading: loadingGetMenus } = useGetAllMenusByBusinessIdQuery();
-
   const [createTab] = useCreateTabMutation({
     refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
     onCompleted: (data) => {
-      const menuId = menusData?.getAllMenusByBusinessID[0]._id
-      if (!menuId) throw ("Menu id is undefined")
-
-      router.push(businessRoute.add_to_order(`${data?.createTab._id}`, menuId))
+      router.push(businessRoute.add_to_order, { query: { tabId: data.createTab._id } })
     },
     onError: (error) => {
       console.log(error)
@@ -101,9 +96,6 @@ export const TableModal = () => {
   })
 
   const onSubmit = useCallback(async (data: any) => {
-    const menuId = menusData?.getAllMenusByBusinessID[0]._id
-
-    if (!menuId) throw ("Menu id is undefined")
 
     switch (tableChoosen?.status) {
       case "Available":
@@ -126,11 +118,11 @@ export const TableModal = () => {
         console.log(tableChoosen)
 
         if (!tableChoosen?.tab?._id) throw ("Tab id is undefined")
-        router.push(businessRoute.add_to_order(`${tableChoosen?.tab?._id}`, menuId))
+        router.push(businessRoute.add_to_order, { query: { tabId: tableChoosen?.tab?._id } })
         break;
     }
 
-  }, [createTab, menusData?.getAllMenusByBusinessID, router, tableChoosen])
+  }, [createTab, router, tableChoosen])
 
   const onCancel = () => {
     setTableChoosen(undefined)
@@ -176,7 +168,7 @@ export const TableModal = () => {
             </Button>
             <Button w={"200px"}
               onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}
-              isLoading={loadingGetMenus}
+              isLoading={loading}
             >
               {isOcuppiedTable ? t("addNewItem") : t("openTab")}
             </Button>

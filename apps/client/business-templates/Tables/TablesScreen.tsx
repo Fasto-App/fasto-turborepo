@@ -171,28 +171,28 @@ export const TablesScreen = () => {
           })
         }}
       />
-      <OrangeBox height={150} />
+      <OrangeBox />
       <VStack m={"4"} space={"4"} flex={1}>
         <UpperSection>
+          <HStack flex={1} space={2} mt={2} justifyContent={"space-between"}>
+            <VStack space="2">
+              <Heading>
+                {t("space")}
+              </Heading>
 
-          <Heading>
-            {t("space")}
-          </Heading>
+              <HStack flex={1} space={4}>
+                <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
+                {spaceLoading ? <TileLoading /> : (
+                  <FlatList
+                    horizontal
+                    data={data?.getSpacesFromBusiness}
+                    renderItem={renderSpaces}
+                    ItemSeparatorComponent={() => <Box w={4} />}
+                    keyExtractor={(item, index) => `${item?._id}-${index}`}
+                  />)}
+              </HStack>
+            </VStack>
 
-          <HStack flex={1} space={2} mt={2}>
-            <HStack flex={1} space={4}>
-              <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
-              {spaceLoading ? <TileLoading /> : (
-                <FlatList
-                  horizontal
-                  data={data?.getSpacesFromBusiness}
-                  renderItem={renderSpaces}
-                  ItemSeparatorComponent={() => <Box w={4} />}
-                  keyExtractor={(item, index) => `${item?._id}-${index}`}
-                />)}
-            </HStack>
-
-            <Divider orientation="vertical" />
             <Stats
               Available={availableTables?.length || 0}
               Occupied={occupiedTables?.length || 0}

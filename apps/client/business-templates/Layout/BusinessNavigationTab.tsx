@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Button, Center } from "native-base";
+import { Button, Center, VStack } from "native-base";
 import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
 import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { LeftSideBar } from "../../components";
-import { HamburgerMenu } from "../MenuHamburguer";
+import { AccountMenu } from "../MenuHamburguer";
 import { useTranslation } from "next-i18next";
 
 const BusinessNavigationTab = () => {
@@ -20,6 +20,8 @@ const BusinessNavigationTab = () => {
         alignItems={"center"}
         justifyContent={"center"}
         h={"full"}
+        borderWidth={1}
+        borderColor={"gray.300"}
       >
         <BusinessNavigationButton
           text={t("dashboard")}
@@ -55,6 +57,14 @@ const BusinessNavigationTab = () => {
           }}
         />
         <BusinessNavigationButton
+          text={t("placedOrders")}
+          type={"ClipBoard"}
+          selected={useIsPageSelected(businessRoute.orders)}
+          onPress={() => {
+            router.push(businessRoute.orders);
+          }}
+        />
+        <BusinessNavigationButton
           text={t("settings")}
           type={"Settings"}
           selected={useIsPageSelected(businessRoute.settings)}
@@ -62,13 +72,15 @@ const BusinessNavigationTab = () => {
             router.push(businessRoute.settings);
           }}
         />
+        <VStack space={10} bottom={0} position={"absolute"} p="4" w={"full"}>
+          <Button
+            _text={{ bold: true }}
+            onPress={() => router.push(businessRoute.add_to_order)}>
+            {t("quickSale")}
+          </Button>
+          <AccountMenu />
+        </VStack>
       </Center>
-      <Box position={"absolute"} bottom={"0"} flex={1} pl={2} pb={4}>
-        <Button w={"full"} mb={8}>
-          {t("quickSale")}
-        </Button>
-        <HamburgerMenu />
-      </Box>
     </LeftSideBar>
   );
 };

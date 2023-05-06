@@ -23,6 +23,7 @@ export const NotMemoizedFDSSelect = <T extends SelectData>({
     <Select
       w={w}
       h={h}
+      overflow={"hidden"}
       fontSize={"lg"}
       selectedValue={selectedValue}
       placeholder={placeholder}

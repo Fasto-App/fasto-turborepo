@@ -29,7 +29,8 @@ type NewOrder = Product & { quantity: number, selectedUser?: string }
 
 export const AddToOrder = () => {
   const route = useRouter()
-  const { tabId, menuId } = route.query
+  const { tabId } = route.query
+
   const [orderItems, setOrderItems] = React.useState<NewOrder[]>([])
   const [selectedUser, setSelectedUser] = React.useState<string>()
   const [selectedCategory, setSelectedCategory] = React.useState<string>()
@@ -59,12 +60,6 @@ export const AddToOrder = () => {
   })
 
   const { data: menuData } = useGetMenuByIdQuery({
-    skip: !menuId,
-    variables: {
-      input: {
-        id: menuId as string,
-      }
-    },
     onCompleted: (data) => {
       if (data?.getMenuByID?.sections?.[0].category._id) {
         setSelectedCategory(data?.getMenuByID?.sections?.[0].category._id)

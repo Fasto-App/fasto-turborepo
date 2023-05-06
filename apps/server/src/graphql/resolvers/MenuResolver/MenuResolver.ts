@@ -3,6 +3,7 @@ import { MenuModel, ProductModel, CategoryModel, Section, Product } from "../../
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMenuInput, UpdateMenuInput } from "./types";
+import { QueryResolvers } from "../../../generated/graphql";
 
 type UpdateMenuInfo = Pick<UpdateMenuInput, 'name' | '_id'>;
 
@@ -26,13 +27,19 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
     }
 }
 
-const getMenuByID = async (_parent: any, args: any, { db }: { db: Connection }) => {
-
-    console.log(args)
+// @ts-ignore
+const getMenuByID: QueryResolvers["getMenuByID"] = async (_parent, args, { db, business }) => {
 
     const Menu = MenuModel(db);
-    const menu = await Menu.findOne({ _id: args.input.id });
-    if (!menu) throw Error('Menu not found');
+    let menu;
+    if (args.input?.id) {
+        menu = await Menu.findOne({ _id: args.input?.id });
+        if (!menu) throw ApolloError('NotFound', 'Menu not found');
+    } else {
+        menu = await Menu.findOne({ business, isFavorite: true });
+
+        if (!menu) throw ApolloError('NotFound', 'No favorite menu found for this business');
+    }
 
     return menu
 }

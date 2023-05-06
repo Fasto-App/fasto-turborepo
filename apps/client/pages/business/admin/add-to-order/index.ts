@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { AddToOrder } from "../../../../business-templates/AddToOrder";
 
@@ -13,8 +13,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       ])),
     },
   };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return { paths: [], fallback: true };
 };

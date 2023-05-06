@@ -26,12 +26,12 @@ import { BiLogOutCircle } from "react-icons/bi"
 import { MdOutlineFrontHand } from "react-icons/md"
 import { BsTrash } from "react-icons/bs"
 import { RiUserSettingsLine } from "react-icons/ri"
-import { RiShoppingBag3Line } from "react-icons/ri"
 import { ImQrcode } from "react-icons/im"
 import { BsBag } from "react-icons/bs"
 import { BsPeopleFill } from "react-icons/bs"
 import { MdOutlinePhoneIphone } from "react-icons/md"
 import { AiFillStar, AiOutlineStar } from "react-icons/ai"
+import { HiOutlineClipboardList } from "react-icons/hi"
 
 type IconProps = {
   type: NavigationButtonType;
@@ -41,6 +41,8 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "ClipBoard":
+      return <HiOutlineClipboardList color={color} size={size} />;
     case "StarFill":
       return <AiFillStar color={color} size={size} />;
     case "StarOutline":
