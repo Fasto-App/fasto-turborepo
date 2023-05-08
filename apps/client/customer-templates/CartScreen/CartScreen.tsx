@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
 import { customerRoute } from "../../routes";
-import { texts } from "./texts";
 import { GetCartItemsPerTabDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
@@ -13,6 +12,7 @@ import { useGetClientSession } from "../../hooks";
 import { showToast } from "../../components/showToast";
 import { LoadingCartItems } from "./LoadingTiles";
 import { getCause } from "../../apollo-client/ErrorLink";
+import { useTranslation } from "next-i18next";
 
 const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
@@ -24,6 +24,8 @@ export const CartScreen = () => {
   const { businessId, checkoutId } = route.query;
 
   const token = getClientCookies(businessId as string)
+
+  const { t } = useTranslation("customerCart");
 
   const { data: clientSession } = useGetClientSession()
 
@@ -97,7 +99,7 @@ export const CartScreen = () => {
   const groupedData = useMemo(() => {
     return data?.getCartItemsPerTab.reduce((acc, item) => {
       const user = item.user;
-      const name = user._id === clientSession?.getClientSession.user._id ? texts.me : user.name;
+      const name = user._id === clientSession?.getClientSession.user._id ? t("me") : user.name;
 
       if (acc[user._id]) {
         acc[user._id].data.push(item);
@@ -111,7 +113,7 @@ export const CartScreen = () => {
 
       return acc;
     }, {} as { [key: string]: { name?: string | null, data: any[], } });
-  }, [clientSession?.getClientSession.user._id, data?.getCartItemsPerTab])
+  }, [clientSession?.getClientSession.user._id, data?.getCartItemsPerTab, t])
 
   const sortedData = useMemo(() => {
     return typedKeys(groupedData).sort((a, b) => {
@@ -140,7 +142,7 @@ export const CartScreen = () => {
               fontSize={"lg"}
               textAlign={"center"}
               alignContent={"center"}
-            >{texts.error}</Text> :
+            >{t("error")}</Text> :
             <SectionList
               keyExtractor={(item) => item._id}
               ListHeaderComponent={
@@ -151,14 +153,14 @@ export const CartScreen = () => {
                     colorScheme={"info"}
                     _text={{ fontSize: "lg" }}
                     onPress={() => setIsModalOpen(true)}>
-                    {texts.placedOrders(clientSession?.getClientSession.tab?.orders?.length)}
+                    {t("placedOrders", { number: clientSession?.getClientSession.tab?.orders?.length })}
                   </Button>}
                 </Box>
               }
               sections={transformedData || []}
               renderSectionHeader={({ section: { title } }) => (
                 <HStack
-                  pt={title === texts.me ? "0" : "4"}
+                  pt={title === t("me") ? "0" : "4"}
                   px={4} pb={2}
                   space={2} backgroundColor={"white"}>
                   <Text alignSelf={"center"} fontSize={"18"} fontWeight={"500"}>{title}</Text>
@@ -182,11 +184,11 @@ export const CartScreen = () => {
               ListEmptyComponent={
                 <Box>
                   <Text justifyContent={"center"} alignItems={"flex-end"} pt={"8"} textAlign={"center"}>
-                    <Text key={texts.yourCartIsEmpty} fontSize={"18"}>{texts.yourCartIsEmpty}</Text>
+                    <Text key={t("yourCartIsEmpty")} fontSize={"18"}>{t("yourCartIsEmpty")}</Text>
                     <Box key={"Listar"} px={"2"}>
                       <Icon type="ListStar" color={theme.colors.primary["500"]} size={"2em"} />
                     </Box>
-                    <Text key={texts.andStartOrdering} fontSize={"18"}>{texts.andStartOrdering}</Text>
+                    <Text key={t("andStartOrdering")} fontSize={"18"}>{t("andStartOrdering")}</Text>
                   </Text>
                 </Box>
               }
@@ -197,7 +199,7 @@ export const CartScreen = () => {
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen} />
       {!isAdmin ? <Box backgroundColor={"white"} p='4' textAlign={"center"}>
-        {texts.askToAdmin}
+        {t("askToAdmin")}
       </Box> : <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
         <Button
           flex={1}
@@ -205,13 +207,13 @@ export const CartScreen = () => {
           isLoading={loading || loadingCreateOrder || closeTabLoading}
           _text={{ bold: true }}
           colorScheme={"primary"}
-          onPress={placeOrder}>{texts.cta1}</Button>
+          onPress={placeOrder}>{t("cta1")}</Button>
         <Button
           isLoading={loading || loadingCreateOrder || closeTabLoading}
           _text={{ bold: true }}
           flex={1}
           colorScheme={"tertiary"}
-          onPress={payBill}>{texts.cta2}</Button>
+          onPress={payBill}>{t("cta2")}</Button>
       </HStack>}
     </>
   );

@@ -16,21 +16,6 @@ const array1to5 = Array.from({ length: 5 }, (_, i) => i + 1).map(
   (i) => ({ name: i.toString(), _id: i.toString() })
 )
 
-function guestConfigObject(number: string): RegularInputConfig[] {
-  const num = parseInt(number)
-  if (num === 1) return []
-
-  return Array.from({ length: num - 1 }, (_, i) => i + 1).map(
-    (i) => ({
-      [`guest${i + 1}`]: {
-        name: `guest${i + 1}`,
-        label: `Guest ${i + 1} Name`,
-        placeholder: `Optional`,
-      },
-    })
-  )
-}
-
 const Config: SideBySideInputConfig = {
   name: {
     name: "name",
@@ -78,17 +63,6 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
     },
   })
 
-  const totalGuests = watch("totalGuests")
-
-  const newConfig = useMemo(() => {
-    const guestConfig = guestConfigObject(totalGuests)
-
-    return guestConfig.reduce((acc, curr) => {
-      return { ...acc, ...curr }
-    }, Config)
-
-  }, [totalGuests])
-
   const [clientRequestTab, { loading }] = useOpenTabRequestMutation({
     refetchQueries: [
       { query: GetTabRequestsDocument }],
@@ -133,7 +107,21 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
         HeaderComponent={<Heading>{t("requestTab")}</Heading>}
         ModalBody={
           <ControlledForm
-            Config={newConfig}
+            Config={{
+              ...Config,
+              name: {
+                ...Config.name,
+                label: t("guestName"),
+              },
+              phoneNumber: {
+                ...Config.phoneNumber,
+                label: t("phoneNumber"),
+              },
+              totalGuests: {
+                ...Config.totalGuests,
+                label: t("totalGuests"),
+              },
+            }}
             control={control}
             formState={formState}
           />

@@ -11,5 +11,6 @@
 	"errorMenu": "El nombre del menú es obligatorio",
 	"add": "Agregar",
 	"edit": "Editar",
-	"emptyProducts": "Para empezar a agregar productos presione 'Editar Menú'"
+	"emptyProducts": "Para empezar a agregar productos presione 'Editar Menú'",
+	"deleteMenu": "Borrar menú"
 }

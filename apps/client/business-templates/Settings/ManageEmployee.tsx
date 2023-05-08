@@ -175,7 +175,7 @@ export const ManageEmployee = () => {
       />
       <HStack alignItems={"center"} space={4}>
         <Heading size={"lg"}>
-          {"Employees"}
+          {t("employees")}
         </Heading>
         <MoreButton onPress={() => setIsModalOpen(true)} />
       </HStack>

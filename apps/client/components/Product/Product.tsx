@@ -73,7 +73,7 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 				<VStack alignItems="center" space={2} justifyContent="space-between" pb={2}>
 					{singleButton ?? <Price price={price} />}
 					<HStack alignItems="center" space={2} justifyContent="space-between">
-						{singleButton ? <Price price={price} /> : <Button w={"100"}>{t("addToMenu")}</Button>}
+						{/* {singleButton ? <Price price={price} /> : <Button w={"100"}>{t("addToMenu")}</Button>} */}
 						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{t("edit")}</Button>
 					</HStack>
 				</VStack>

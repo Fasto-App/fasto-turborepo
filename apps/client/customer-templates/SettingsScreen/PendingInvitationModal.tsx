@@ -3,10 +3,10 @@ import React, { useCallback } from 'react'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { getClientCookies } from '../../cookies'
 import { useAcceptInvitationMutation, useGetPendingInvitationsQuery, useDeclineInvitationMutation, GetPendingInvitationsDocument, GetClientSessionDocument } from '../../gen/generated'
-import { texts } from './texts'
 import { useRouter } from 'next/router'
 import { showToast } from '../../components/showToast'
 import { getCause } from '../../apollo-client/ErrorLink'
+import { useTranslation } from 'next-i18next'
 
 type PendingInvitationModalProps = {
   isModalOpen: boolean;
@@ -23,6 +23,8 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
   const { query } = useRouter()
   const { businessId } = query
 
+  const { t } = useTranslation("customerSettings")
+
   const token = getClientCookies(businessId as string)
 
   const { data, loading } = useGetPendingInvitationsQuery({
@@ -35,12 +37,12 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
     refetchQueries: refetchOptions,
     onCompleted: () => {
       showToast({
-        message: texts.invitationAccepted,
+        message: t("invitationAccepted"),
       })
     },
     onError: (error) => {
       showToast({
-        message: texts.errorAcceptingInvitation,
+        message: t("errorAcceptingInvitation"),
         subMessage: getCause(error),
         status: "error"
       })
@@ -50,12 +52,12 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
     refetchQueries: refetchOptions,
     onCompleted: () => {
       showToast({
-        message: texts.invitationDeclined,
+        message: t("invitationDeclined"),
       })
     },
     onError: (error) => {
       showToast({
-        message: texts.errorDecliningInvitation,
+        message: t("errorDecliningInvitation"),
         subMessage: getCause(error),
         status: "error"
       })
@@ -88,7 +90,7 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
       onClose={() => setIsModalOpen(false)}
       isOpen={isModalOpen}
       HeaderComponent={<Heading textAlign={"center"} fontSize={"2xl"}>
-        {texts.pendingInvitations}
+        {t("pendingInvitations")}
       </Heading>}
       ModalBody={loading ? <Text>Loading</Text> : <FlatList
         data={data?.getPendingInvitations}
@@ -102,13 +104,13 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
             onDecline={() => onDecline(item._id)}
             onAccept={() => onAccept(item._id)}
           />}
-        ListEmptyComponent={<Text textAlign={"center"}>{texts.noPendingInvitations}</Text>}
+        ListEmptyComponent={<Text textAlign={"center"}>{t("noPendingInvitations")}</Text>}
       />}
       ModalFooter={<Button
         colorScheme={"gray"}
         w={"100%"}
         onPress={() => setIsModalOpen(false)}>
-        {texts.close}
+        {t("close")}
       </Button>}
     />
   )
@@ -122,6 +124,8 @@ const PendingInvitationTile = ({ index, onDecline, onAccept, name, phone, loadin
   onAccept: () => void
   loading?: boolean
 }) => {
+  const { t } = useTranslation("customerSettings")
+
   return (
     <HStack
       space={4}
@@ -140,10 +144,10 @@ const PendingInvitationTile = ({ index, onDecline, onAccept, name, phone, loadin
       </Box>
       <Button.Group h={"10"} flex={1} justifyContent={"space-between"} space={4}>
         <Button flex={1} colorScheme={"tertiary"} onPress={onAccept} isLoading={loading}>
-          {texts.accept}
+          {t("accept")}
         </Button>
         <Button flex={1} onPress={onDecline} isLoading={loading}>
-          {texts.decline}
+          {t("decline")}
         </Button>
       </Button.Group>
     </HStack>

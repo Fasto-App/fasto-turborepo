@@ -310,7 +310,7 @@ function MenuProducts() {
       {isEditingMenu ?
         <HStack justifyContent="space-between">
           <HStack alignItems="center" space={2} py={4}>
-            <DeleteAlert title={"Delete Menu"} deleteItem={async () => {
+            <DeleteAlert title={t("deleteMenu")} deleteItem={async () => {
               if (!menuId) throw new Error("Menu not found")
 
               await deleteMenu({

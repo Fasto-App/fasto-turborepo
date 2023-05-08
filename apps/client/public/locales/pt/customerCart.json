@@ -1,0 +1,13 @@
+{
+	"title": "Pedidos",
+	"yourCartIsEmpty": "Seu carrinho está vazio. Volte ao menu",
+	"andStartOrdering": "e comece a fazer seu pedido!",
+	"cta1": "Fazer pedido",
+	"cta2": "Pagar conta",
+	"placedOrders": "Ver pedidos realizados ({{number}})",
+	"modalCta1": "Voltar",
+	"modalTitle": "Pedidos realizados",
+	"error": "Algo deu errado!\nPor favor, tente novamente mais tarde",
+	"me": "☝️ Eu",
+	"askToAdmin": "*Peça ao administrador da mesa para enviar os pedidos"
+}

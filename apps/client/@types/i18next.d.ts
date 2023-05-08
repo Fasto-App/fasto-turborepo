@@ -16,6 +16,8 @@ import businessLogin from "../public/locales/en/businessLogin.json";
 import customerCheckout from "../public/locales/en/customerCheckout.json";
 import customerHome from "../public/locales/en/customerHome.json";
 import customerProductDescription from "../public/locales/en/customerProductDescription.json";
+import customerSettings from "../public/locales/en/customerSettings.json";
+import customerCart from "../public/locales/en/customerCart.json";
 import common from "../public/locales/en/common.json";
 
 declare module "i18next" {
@@ -26,6 +28,8 @@ declare module "i18next" {
     // custom resources type
     resources: {
       common: typeof common;
+      customerCart: typeof customerCart;
+      customerSettings: typeof customerSettings;
       customerCheckout: typeof customerCheckout;
       customerHome: typeof customerHome;
       customerProductDescription: typeof customerProductDescription;

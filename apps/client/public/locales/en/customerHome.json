@@ -9,5 +9,8 @@
 	"join": "Join",
 	"scanTheCode": "Scan the code to join the tab",
 	"pleaseScanAValidCode": "Please, scan a valid code",
-	"continue": "Continue"
+	"continue": "Continue",
+	"guestName": "Guest Name",
+	"phoneNumber": "Phone Number",
+	"totalGuests": "Total Guests"
 }

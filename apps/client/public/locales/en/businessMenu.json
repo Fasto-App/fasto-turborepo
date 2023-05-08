@@ -11,5 +11,6 @@
 	"errorMenu": "Menu name is required",
 	"add": "Add",
 	"edit": "Edit",
-	"emptyProducts": "To start adding products press 'Edit Menu'"
+	"emptyProducts": "To start adding products press 'Edit Menu'",
+	"deleteMenu": "Delete Menu"
 }

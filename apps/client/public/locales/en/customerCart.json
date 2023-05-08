@@ -1,0 +1,13 @@
+{
+	"title": "Orders",
+	"yourCartIsEmpty": "Your cart is empty. Go back to the menu",
+	"andStartOrdering": "and start ordering!",
+	"cta1": "Place Order",
+	"cta2": "Pay Bill",
+	"placedOrders": "See Placed Orders {{number}}",
+	"modalCta1": "Back",
+	"modalTitle": "Placed Orders",
+	"error": "Something went wrong!\nPlease try again later",
+	"me": "☝️ Me",
+	"askToAdmin": "*Ask the tab admin to submit the orders"
+}

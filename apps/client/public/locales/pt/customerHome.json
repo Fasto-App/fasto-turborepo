@@ -9,5 +9,8 @@
 	"join": "Juntar-se",
 	"scanTheCode": "Escanear o código para juntar-se à comanda",
 	"pleaseScanAValidCode": "Por favor, escaneie um código válido",
-	"continue": "Continuar"
+	"continue": "Continuar",
+	"guestName": "Nome",
+	"phoneNumber": "Número de telefone",
+	"totalGuests": "Total de convidados"
 }

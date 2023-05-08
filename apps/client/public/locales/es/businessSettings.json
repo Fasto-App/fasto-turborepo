@@ -1,5 +1,6 @@
 {
 	"addEmployee": "Agregar Empleado",
+	"employees": "Empleados",
 	"title": "Cambiar Información de la Cuenta",
 	"startAddingEmployees": "Comience a agregar empleados haciendo clic en el botón de abajo.",
 	"save": "Guardar",

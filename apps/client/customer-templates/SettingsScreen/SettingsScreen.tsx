@@ -10,6 +10,7 @@ import { customerRoute, customerRouteParams } from "../../routes";
 import { useRouter } from "next/router";
 import { PendingInvitationModal } from "./PendingInvitationModal";
 import { QRCodeReaderModal } from "./QRCodeReaderModal";
+import { useTranslation } from "next-i18next";
 
 const ListBorderTile: React.FC = ({ children }) => {
   return (
@@ -35,21 +36,17 @@ type SettingsTileProps = {
   disabled?: boolean;
 }
 
-const texts = {
-  guests: "Guests",
-}
-
 const settingsTiles = [
   {
     _id: "qrcode",
     icon: "QRCode",
-    title: "Invite Guest With QR Code",
+    title: "inviteGuestWithQRCode",
     iconBackgroundColor: "blueGray.500" //"amber.500"
   },
   {
     _id: "invitations",
     icon: "People",
-    title: "Pending Invitations",
+    title: "pendingInvitations",
     iconBackgroundColor: "violet.500" //"indigo.500"
   }
 ] as const
@@ -79,6 +76,7 @@ const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor,
 const SettingsScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false)
   const [isModalOpen2, setIsModalOpen2] = React.useState(false)
+  const { t } = useTranslation("customerSettings")
 
   const router = useRouter()
   const { businessId } = router.query
@@ -141,20 +139,22 @@ const SettingsScreen = () => {
       <Box backgroundColor={"white"} borderRadius={"md"}>
         <UsersAccordion users={clientSession?.getClientSession.tab?.users} />
       </Box>
-      {settingsTiles.map((tile, index) => (
-        // if not admin, disable the QR Code and the Pending Invitations tiles
+      {/* // if not admin, disable the QR Code and the Pending Invitations tiles */}
+      {settingsTiles.map((tile, index) =>
+      (
         !isAdmin && tile._id === "qrcode" || !isAdmin && tile._id === "invitations" ? null : (
           <SettingsTile
             _id={tile._id}
             key={index}
             icon={tile.icon}
-            title={tile.title}
+            title={t(`${tile.title}`)}
             iconBackgroundColor={tile.iconBackgroundColor}
             onPress={() => handlePress(tile._id)}
             disabled={shouldBeDisabled(tile._id)}
           />
         )
-      ))}
+      )
+      )}
       <QRCodeReaderModal QR_CODE={QR_CODE || ""}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -173,6 +173,7 @@ export { SettingsScreen };
 const UsersAccordion = (props: { users?: { _id: string; name?: string | null, __typename?: "User" }[] | null }) => {
   const { users } = props
   const [collapsed, setCollapsed] = React.useState(false)
+  const { t } = useTranslation("customerSettings")
 
   if (!users || users?.length === 0) return null
 
@@ -194,7 +195,7 @@ const UsersAccordion = (props: { users?: { _id: string; name?: string | null, __
               </Avatar>))}
             </Avatar.Group>
             <Text fontSize={"16"} alignSelf={"center"}>
-              {texts.guests}
+              {t("guests")}
             </Text>
           </HStack>
           {collapsed ? <ChevronDownIcon color={"secondary.900"} /> :

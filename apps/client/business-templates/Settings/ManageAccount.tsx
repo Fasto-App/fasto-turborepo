@@ -100,6 +100,7 @@ export const ManageAccount = () => {
         handleOnChange={handleFileOnChange}
         src={imageSrc || data?.getUserInformation?.picture}
         control={control}
+        label={t("uploadPicture")}
       />
       <Box>
         <HStack alignItems="center" space={2} justifyContent="end">

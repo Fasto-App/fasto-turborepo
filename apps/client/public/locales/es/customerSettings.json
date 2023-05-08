@@ -1,0 +1,17 @@
+{
+	"inviteGuestWithQRCode": "Invitar invitado con código QR",
+	"pendingInvitations": "Invitaciones pendientes",
+	"guests": "Invitados",
+	"tab": "Cuenta",
+	"admin": "Administrador",
+	"guest": "Invitado",
+	"close": "Cerrar",
+	"accept": "Aceptar",
+	"decline": "Rechazar",
+	"noPendingInvitations": "No hay invitaciones pendientes",
+	"loading": "Cargando",
+	"errorDecliningInvitation": "Error al rechazar la invitación",
+	"invitationDeclined": "Invitación rechazada",
+	"errorAcceptingInvitation": "Error al aceptar la invitación",
+	"invitationAccepted": "Invitación aceptada"
+}
