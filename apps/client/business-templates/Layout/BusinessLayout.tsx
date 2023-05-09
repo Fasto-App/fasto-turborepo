@@ -1,11 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { Box, useBreakpointValue } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { useBreakpointValue } from 'native-base';
 import { BusinessScreenContainer } from '../../components/atoms/BusinessScreenContainer';
-import { colors } from '../../theme/colors';
 import { BusinessNavigationTab } from './BusinessNavigationTab';
-import { AppBar } from '../../components/AppBar/AppBar';
 import router from 'next/router';
 import { BUSINESS_ADMIN } from '../../routes';
 
