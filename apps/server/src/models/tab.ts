@@ -13,8 +13,8 @@ export class Tab {
     @prop()
     public checkout?: Types.ObjectId;
 
-    @prop({ required: true })
-    public admin!: Ref<User>;
+    @prop({ ref: () => User })
+    public admin?: Ref<User>;
 
     @prop({ default: TabStatus.Open })
     public status?: TabStatusType;
@@ -24,7 +24,6 @@ export class Tab {
 
     @prop()
     public type?: TabTypeType;
-
 
     @prop({ required: true, default: [] })
     public cartItems!: Ref<CartItem>[];

@@ -174,7 +174,7 @@ export type CreateOrderInput = {
   message?: InputMaybe<Scalars['String']>;
   product: Scalars['ID'];
   quantity: Scalars['Int'];
-  tab: Scalars['ID'];
+  tab?: InputMaybe<Scalars['ID']>;
   user?: InputMaybe<Scalars['ID']>;
 };
 
@@ -744,6 +744,7 @@ export type Query = {
   getCartItemsPerTab: Array<CartItem>;
   getCategoryByID?: Maybe<Category>;
   getCheckoutByID: Checkout;
+  getCheckoutsByBusiness: Array<Checkout>;
   getClientInformation: User;
   getClientMenu: Menu;
   getClientSession: ClientSession;
@@ -1184,6 +1185,11 @@ export type GetCheckoutByIdQueryVariables = Exact<{
 
 
 export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount: number } | null> } };
+
+export type GetCheckoutsByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string }> };
 
 export type CreateMenuMutationVariables = Exact<{
   input: CreateMenuInput;
@@ -2291,6 +2297,51 @@ export function useGetCheckoutByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetCheckoutByIdQueryHookResult = ReturnType<typeof useGetCheckoutByIdQuery>;
 export type GetCheckoutByIdLazyQueryHookResult = ReturnType<typeof useGetCheckoutByIdLazyQuery>;
 export type GetCheckoutByIdQueryResult = Apollo.QueryResult<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>;
+export const GetCheckoutsByBusinessDocument = gql`
+    query GetCheckoutsByBusiness {
+  getCheckoutsByBusiness {
+    _id
+    business
+    tab
+    status
+    paid
+    subTotal
+    tip
+    discount
+    tax
+    total
+    totalPaid
+    created_date
+  }
+}
+    `;
+
+/**
+ * __useGetCheckoutsByBusinessQuery__
+ *
+ * To run a query within a React component, call `useGetCheckoutsByBusinessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCheckoutsByBusinessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCheckoutsByBusinessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCheckoutsByBusinessQuery(baseOptions?: Apollo.QueryHookOptions<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>(GetCheckoutsByBusinessDocument, options);
+      }
+export function useGetCheckoutsByBusinessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>(GetCheckoutsByBusinessDocument, options);
+        }
+export type GetCheckoutsByBusinessQueryHookResult = ReturnType<typeof useGetCheckoutsByBusinessQuery>;
+export type GetCheckoutsByBusinessLazyQueryHookResult = ReturnType<typeof useGetCheckoutsByBusinessLazyQuery>;
+export type GetCheckoutsByBusinessQueryResult = Apollo.QueryResult<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>;
 export const CreateMenuDocument = gql`
     mutation CreateMenu($input: CreateMenuInput!) {
   createMenu(input: $input) {

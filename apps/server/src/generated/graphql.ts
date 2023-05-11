@@ -174,7 +174,7 @@ export type CreateOrderInput = {
   message?: InputMaybe<Scalars['String']>;
   product: Scalars['ID'];
   quantity: Scalars['Int'];
-  tab: Scalars['ID'];
+  tab?: InputMaybe<Scalars['ID']>;
   user?: InputMaybe<Scalars['ID']>;
 };
 
@@ -744,6 +744,7 @@ export type Query = {
   getCartItemsPerTab: Array<CartItem>;
   getCategoryByID?: Maybe<Category>;
   getCheckoutByID: Checkout;
+  getCheckoutsByBusiness: Array<Checkout>;
   getClientInformation: User;
   getClientMenu: Menu;
   getClientSession: ClientSession;
@@ -1576,6 +1577,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getCartItemsPerTab?: Resolver<Array<ResolversTypes['CartItem']>, ParentType, ContextType>;
   getCategoryByID?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoryByIdArgs, 'id'>>;
   getCheckoutByID?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetCheckoutByIdArgs, 'input'>>;
+  getCheckoutsByBusiness?: Resolver<Array<ResolversTypes['Checkout']>, ParentType, ContextType>;
   getClientInformation?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   getClientMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<QueryGetClientMenuArgs, 'input'>>;
   getClientSession?: Resolver<ResolversTypes['ClientSession'], ParentType, ContextType>;

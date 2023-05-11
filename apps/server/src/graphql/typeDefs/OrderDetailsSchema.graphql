@@ -5,7 +5,6 @@ extend type Query {
 }
 
 extend type Mutation {
-	createOrderDetail(input: CreateOrderInput!): OrderDetail!
 	createMultipleOrderDetails(input: [CreateOrderInput!]!): [OrderDetail!]!
 	clientCreateMultipleOrderDetails(input: [ClientCreateOrderInput!]!): [OrderDetail!]!
 	updateOrderDetail(input: UpdateOrderDetailInput!): OrderDetail!
@@ -20,7 +19,7 @@ input ClientCreateOrderInput {
 
 input CreateOrderInput {
 	user: ID
-	tab: ID!
+	tab: ID
 	product: ID!
 	quantity: Int!
 	message: String

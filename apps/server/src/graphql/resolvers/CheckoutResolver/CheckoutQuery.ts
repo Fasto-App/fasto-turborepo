@@ -1,5 +1,5 @@
+import { QueryResolvers } from "../../../generated/graphql";
 import { CheckoutModel } from "../../../models/checkout";
-import { PaymentModel } from "../../../models/payment";
 import { Context } from "../types";
 
 export const getCheckoutByID = async (parent: any, args: any, { db }: Context, info: any) => {
@@ -8,10 +8,17 @@ export const getCheckoutByID = async (parent: any, args: any, { db }: Context, i
   return checkout
 }
 
+// @ts-ignore
+export const getCheckoutsByBusiness: QueryResolvers["getCheckoutsByBusiness"] = async (_parent, args, { db, business }) => {
+  const Checkout = CheckoutModel(db);
+  const checkouts = await Checkout.find({ business: business });
+  return checkouts
+}
 
 
 const CheckoutResolverQuery = {
   getCheckoutByID,
+  getCheckoutsByBusiness,
 }
 
 export {

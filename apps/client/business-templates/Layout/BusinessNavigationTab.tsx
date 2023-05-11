@@ -20,8 +20,6 @@ const BusinessNavigationTab = () => {
         alignItems={"center"}
         justifyContent={"center"}
         h={"full"}
-        borderWidth={1}
-        borderColor={"gray.300"}
       >
         <BusinessNavigationButton
           text={t("dashboard")}

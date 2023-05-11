@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import {
+    BusinessModel,
     OrderDetailModel,
     ProductModel,
     RequestModel,
@@ -8,79 +8,56 @@ import {
 } from '../../../models';
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
-import { CreateMultipleOrdersDetail, CreateMultipleOrdersDetailInput, CreateOrderDetail, CreateOrderDetailInput, UpdateOrderDetailInput } from "./types";
+import { CreateMultipleOrdersDetail, UpdateOrderDetailInput } from "./types";
 import { MutationResolvers } from '../../../generated/graphql';
 import { CartItemModel } from '../../../models/cartItem';
+import { TabStatus, TabType, getPercentageOfValue } from 'app-helpers';
+import { CheckoutModel } from '../../../models/checkout';
 
-const createOrderDetail = async (_parent: any,
-    { input }: CreateOrderDetailInput,
-    { db }: Context) => {
+// @ts-ignore
+const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"] = async (_parent,
+    { input },
+    { db, user: businessUser }) => {
+    console.log("createMultipleOrderDetails")
+
+    const Checkout = CheckoutModel(db);
     const OrderDetail = OrderDetailModel(db);
     const Product = ProductModel(db);
     const Tab = TabModel(db);
     const User = UserModel(db);
+    const Business = BusinessModel(db);
+
+    let tab: any;
 
     try {
-        const parsedInput = CreateOrderDetail.parse(input);
-
-        const user = await User.findOne({ _id: parsedInput.user });
-        const tab = await Tab.findOne({ _id: parsedInput.tab });
-        const product = await Product.findOne({ _id: parsedInput.product });
-
-        if (!product) throw ApolloError("NotFound");
-        if (!tab) throw ApolloError("NotFound");
-
-        const orderDetail = await OrderDetail.create({
-            ...parsedInput,
-            subTotal: (product?.price || 0) * parsedInput.quantity,
-            user: user?._id,
-        })
-
-        tab.orders.push(orderDetail._id);
-        await tab.save();
-
-        return orderDetail;
-    } catch (err) {
-        console.log({ err })
-        throw ApolloError("InternalServerError", `Error creating OrderDetail ${err}`);
-    }
-}
-
-const createMultipleOrderDetails = async (_parent: any,
-    { input }: { input: CreateMultipleOrdersDetailInput[] },
-    { db, user: businessUser }: Context) => {
-    const OrderDetail = OrderDetailModel(db);
-    const Product = ProductModel(db);
-    const Tab = TabModel(db);
-    const User = UserModel(db);
-
-    try {
-
-        console.log("createMultipleOrderDetails")
+        const foundBusiness = await Business.findOne({ createdByUser: businessUser?._id });
 
         const parsedInputArray = CreateMultipleOrdersDetail.parse(input);
 
-        // todo: we don't have to look for the same tab inside this loop
-        const tab = await Tab.findOne({ _id: parsedInputArray[0].tab });
-
-        if (!tab) throw ApolloError("NotFound");
+        if (parsedInputArray[0].tab) {
+            tab = await Tab.findOne({ _id: parsedInputArray[0].tab });
+            if (!tab) throw ApolloError("NotFound");
+            if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
+        } else {
+            tab = await Tab.create({
+                type: TabType.Takeout,
+                status: TabStatus.Pendent,
+            });
+        }
 
         const orderDetails = await Promise.all(parsedInputArray.map(async (parsedInput) => {
             const user = await User.findOne({ _id: parsedInput.user });
             const product = await Product.findOne({ _id: parsedInput.product });
 
-
             if (!product) throw ApolloError("NotFound");
-            if (!tab) throw ApolloError("NotFound");
-            if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
+
             if (!businessUser?._id) throw ApolloError("Unauthorized", "Business user is not logged in");
 
             const orderDetails = await OrderDetail.create({
                 ...parsedInput,
                 subTotal: (product?.price || 0) * parsedInput.quantity,
-                // undefined users means it's for the table
                 user: user?._id,
-                tab: tab._id,
+                tab: tab?._id,
                 createdByUser: businessUser?._id
             });
 
@@ -90,6 +67,21 @@ const createMultipleOrderDetails = async (_parent: any,
         }));
 
         await tab.save();
+
+        if (!parsedInputArray[0].tab) {
+            const subTotal = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.subTotal, 0);
+
+            await Checkout.create({
+                tab: tab._id,
+                business: businessUser?.business,
+                orders: orderDetails.map(orderDetail => orderDetail._id),
+                subTotal,
+                total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
+                tax: foundBusiness?.taxRate ?? 0,
+            })
+        }
+
+
         return orderDetails;
 
     } catch (err) {
@@ -203,7 +195,6 @@ const deleteOrderDetail = async (_parent: any, { input }: { input: any }, { db }
 }
 
 export const OrderDetailsResolverMutation = {
-    createOrderDetail,
     updateOrderDetail,
     deleteOrderDetail,
     createMultipleOrderDetails,

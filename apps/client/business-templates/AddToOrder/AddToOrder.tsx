@@ -24,6 +24,8 @@ import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, u
 import { useAppStore } from "../UseAppStore";
 import { businessRoute } from "../../routes";
 import { useTranslation } from "next-i18next";
+import { showToast } from "../../components/showToast";
+import { OrangeBox } from "../../components/OrangeBox";
 
 type NewOrder = Product & { quantity: number, selectedUser?: string }
 
@@ -68,6 +70,7 @@ export const AddToOrder = () => {
   })
 
   const { data: tabData } = useGetTabByIdQuery({
+    skip: !tabId,
     variables: {
       input: {
         _id: tabId as string,
@@ -76,32 +79,46 @@ export const AddToOrder = () => {
     onCompleted: (data) => {
       // if data has status of pending, send to 
       // if (data?.getTabByID?. === "pending") {
-
       // }
+    },
+    // TODO: translate
+    onError: () => {
+      showToast({
+        status: "error",
+        message: "Error getting tab data"
+      })
     }
   })
 
-  const [createOrders] = useCreateMultipleOrderDetailsMutation({
+  const [createOrders, { loading }] = useCreateMultipleOrderDetailsMutation({
     refetchQueries: [{
       query: GetTableByIdDocument, variables: {
         input: {
           _id: tabData?.getTabByID?.table?._id,
-        }
-      }
+        },
+        onQueryUpdated: () => !tabData?.getTabByID?.table?._id,
+        // filter: {
+        //   skip: !tabData?.getTabByID?.table?._id
+        // }
+      },
     }],
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: "Orders created successfully" })
+
       route.back()
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: "Error creating orders"
+      })
     }
   })
 
   const onSendToKitchen = useCallback(async () => {
     const orderDetails = orderItems.map(order => ({
       ...(order?.selectedUser && { user: order?.selectedUser }),
-      tab: tabId as string,
+      tab: Array.isArray(tabId) ? tabId[0] : tabId,
       product: order._id,
       quantity: order.quantity,
     }))
@@ -191,12 +208,14 @@ export const AddToOrder = () => {
           </ScrollView>
           <Box w={"100%"} justifyContent={"end"} pt={2}>
             <Divider mb="3" />
-            <HStack justifyContent={"space-between"} pb={2}>
+            <HStack justifyContent={"space-between"} pb={4}>
               <Heading size={"md"}>{t("total")}</Heading>
               <Heading size={"md"}>{parseToCurrency(total)}</Heading>
             </HStack>
             <VStack space={4}>
-              <Button w={"full"} onPress={onSendToKitchen} isDisabled={orderItems.length <= 0} >
+              <Button
+                isLoading={loading}
+                w={"full"} onPress={onSendToKitchen} isDisabled={orderItems.length <= 0} >
                 {t("sendToKitchen")}
               </Button>
               <Button
@@ -216,7 +235,7 @@ export const AddToOrder = () => {
       </LeftSideBar>
 
       <Box flex={1}>
-        <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
+        <OrangeBox />
         <VStack flex={1} p={4} space={4}>
           <UpperSection>
             <Heading>{t("patrons")}</Heading>
@@ -242,7 +261,7 @@ export const AddToOrder = () => {
                 </HStack>
               </ScrollView>
             </HStack>
-            <SideBySideButtons
+            {tabId ? <SideBySideButtons
               leftAction={requestCloseTab}
               rightAction={() => console.log("See Details")}
               leftLoading={loadingCloseTab}
@@ -250,7 +269,7 @@ export const AddToOrder = () => {
               rightText={"See Details"}
               leftDisabled={false}
               rightDisabled={false}
-            />
+            /> : null}
           </UpperSection>
           <BottomSection>
             <HStack space={2}>

@@ -1,3 +1,7 @@
+import { Locale } from "date-fns";
+import es from "date-fns/locale/es";
+import pt from "date-fns/locale/pt";
+
 export const validateEmail = (email?: string) => {
   return String(email)
     .toLowerCase()
@@ -12,4 +16,15 @@ export const validatePassword = (password: string) => {
     .length >= 6 &&
     String(password)
       .match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/));
+}
+
+const myLocales: Record<string, Locale> = {
+  pt: pt,
+  es: es,
+}
+
+export const getLocale = (locale?: string) => {
+  if (!locale) return undefined
+
+  return { locale: myLocales[locale] }
 }
