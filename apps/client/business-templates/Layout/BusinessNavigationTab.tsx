@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Button, Center, VStack } from "native-base";
+import { Button, Center, VStack, Image } from "native-base";
 import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
 import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { LeftSideBar } from "../../components";
-import { AccountMenu } from "../MenuHamburguer";
+import { AccountMenu } from "../../components/MenuHamburguer";
 import { useTranslation } from "next-i18next";
 
 const BusinessNavigationTab = () => {
@@ -16,11 +16,14 @@ const BusinessNavigationTab = () => {
 
   return (
     <LeftSideBar>
-      <Center
-        alignItems={"center"}
-        justifyContent={"center"}
-        h={"full"}
-      >
+      <Center>
+        <Image
+          src="/images/fasto-logo.svg"
+          alt="Fasto Logo"
+          width={"200"}
+          height={"42"} />
+      </Center>
+      <Center      >
         <BusinessNavigationButton
           text={t("dashboard")}
           type={"Dashboard"}
@@ -70,15 +73,15 @@ const BusinessNavigationTab = () => {
             router.push(businessRoute.settings);
           }}
         />
-        <VStack space={10} bottom={0} position={"absolute"} p="4" w={"full"}>
-          <Button
-            _text={{ bold: true }}
-            onPress={() => router.push(businessRoute.add_to_order)}>
-            {t("quickSale")}
-          </Button>
-          <AccountMenu />
-        </VStack>
       </Center>
+      <VStack space={10} bottom={0} paddingX={2} w={"full"}>
+        <Button
+          _text={{ bold: true }}
+          onPress={() => router.push(businessRoute.add_to_order)}>
+          {t("quickSale")}
+        </Button>
+        <AccountMenu />
+      </VStack>
     </LeftSideBar>
   );
 };

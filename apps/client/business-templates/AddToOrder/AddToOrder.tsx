@@ -15,7 +15,7 @@ import { SummaryComponent } from "../../components/OrderSummary";
 import { LeftSideBar } from "../../components";
 import { parseToCurrency } from 'app-helpers';
 import { UpperSection } from "../../components/UpperSection";
-import { SideBySideButtons } from "../AllAndAddButons";
+import { SideBySideButtons } from "../../components/AllAndAddButons";
 import { Tile } from "../../components/Tile";
 import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";

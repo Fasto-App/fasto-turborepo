@@ -1,13 +1,14 @@
 import React from "react"
 import Link from 'next/link';
-import { Pressable } from 'react-native'
-import { HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, } from "native-base"
+import { Image, HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, Pressable } from "native-base"
 import { useGetAllBusinessQuery } from "../gen/generated";
-import { customerRoute } from "../routes";
+import { businessRoute, customerRoute } from "../routes";
+import { NavigationButton } from "../components/atoms/NavigationButton";
+import { useRouter } from "next/router";
 
 const width = {
-	base: 300,
-	sm: 400
+	base: 220,
+	sm: 270
 }
 
 const LoadingTiles = () => {
@@ -28,31 +29,48 @@ const LoadingTiles = () => {
 export default function Home() {
 	const { data, loading, error } = useGetAllBusinessQuery()
 
-	return (
-		<VStack space={6} justifyContent="center" alignItems={"center"} p={16} w={"100%"}>
-			{error ? <Text>{error.message}</Text> : null}
-			{loading ? <LoadingTiles /> : null}
-			{data?.getAllBusiness.map((business) => {
-				if (!business?._id) return null
+	const router = useRouter()
 
-				return (
-					<Pressable key={business?._id}>
-						<Link href={customerRoute.home(business?._id)}>
-							<Center width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
-								<Text color={"white"} fontSize="lg">{business?.name}</Text>
-							</Center>
-						</Link>
-					</Pressable>
-				)
-			})}
-			<Pressable>
-				<Link href={'/business/login'}>
-					<Center width={width} h="20" bg="tertiary.500" rounded="md" shadow={3}>
-						<Text color={"white"} fontSize="lg">Business Dashboard</Text>
-					</Center>
-				</Link>
-			</Pressable>
-		</VStack>
+	return (
+		<Box backgroundColor={"pink"} h={"full"}>
+			<HStack position={"revert"} justifyContent={"space-between"} p={8}>
+				<Image src="/images/fasto-logo.svg" alt="Fasto Logo" width={"200"} height={"45"} />
+				<Center>
+					<div style={{
+						background: "linear-gradient(349deg, rgba(227,232,0,1) 0%, rgba(255,102,0,1) 25%)",
+						borderRadius: "100%"
+					}}>
+						<NavigationButton
+							type={"UserAdd"}
+							color="black"
+							onPress={function (): void {
+								router.push(businessRoute.login);
+							}} />
+					</div>
+				</Center>
+			</HStack>
+
+
+
+			<HStack space={6} p={16} w={"100%"} flexWrap={"wrap"} >
+				{error ? <Text>{error.message}</Text> : null}
+				{loading ? <LoadingTiles /> : null}
+
+				{data?.getAllBusiness.map((business) => {
+					if (!business?._id) return null
+
+					return (
+						<Pressable key={business?._id} p="4">
+							<Link href={customerRoute.home(business?._id)}>
+								<Center width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
+									<Text color={"white"} fontSize="lg">{business?.name}</Text>
+								</Center>
+							</Link>
+						</Pressable>
+					)
+				})}
+			</HStack>
+		</Box >
 
 	);
 }

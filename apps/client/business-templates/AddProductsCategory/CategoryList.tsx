@@ -7,7 +7,7 @@ import { AddMoreButton } from '../../components/atoms/AddMoreButton';
 import { CategoryTile } from '../../components/Category/Category';
 import { Category } from '../../components/Category/types';
 import { useAppStore } from '../UseAppStore';
-import { AllAndEditButtons } from '../AllAndAddButons';
+import { AllAndEditButtons } from '../../components/AllAndAddButons';
 import { useCategoryFormHook } from './useCategoryFormHook';
 import { CategoryModal } from './CategoryModal';
 import { GetAllCategoriesByBusinessQuery } from '../../gen/generated';

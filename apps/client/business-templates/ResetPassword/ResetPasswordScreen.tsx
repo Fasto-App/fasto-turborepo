@@ -1,5 +1,5 @@
 import React from 'react'
-import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text } from "native-base";
+import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text, Image } from "native-base";
 import NextLink from "next/link";
 import { businessRoute } from '../../routes';
 import { ResetPasswordConfig, useResetPasswordHook } from './hook';
@@ -78,45 +78,51 @@ export const ResetPasswordScreen = () => {
 
   if (!email || !token) return <Center><Text>{t("businessResetPassword:goBack")}</Text></Center>
 
-  return (<Center w="100%" height={"100%"}>
-    <Box safeArea p="2" py="8" w="90%" maxW="600">
-      <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{
-        color: "warmGray.50"
-      }}>
-        {t("businessResetPassword:resetPassword")}
-      </Heading>
-      <Center>
-        <Heading maxWidth={"400px"} mt="2" alignContent={"center"} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-          {t("businessResetPassword:pleaseEnterYourPassword", { email: typeof email === "string" ? email : email[0] })}
+  return (
+    <Center w="100%" height={"100%"}>
+      <Box position={"absolute"} top={"5"} left={"5"}>
+        <Image src="/images/fasto-logo.svg"
+          alt="Fasto Logo"
+          height={36} width={180} />
+      </Box>
+      <Box safeArea p="2" py="8" w="90%" maxW="600">
+        <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{
+          color: "warmGray.50"
+        }}>
+          {t("businessResetPassword:resetPassword")}
         </Heading>
-      </Center>
-      <ControlledForm
-        control={control}
-        formState={formState}
-        Config={passwordInputProps}
-      />
-      <VStack space={3} mt="5">
-        <Button isLoading={loading} mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
-          {t("businessResetPassword:reset")}
-        </Button>
-        <HStack mt="6" justifyContent="center">
-          <Text fontSize="sm" color="coolGray.600">
-            {t("common:imAlreadyAUser")}
-          </Text>
-          <Pressable>
-            <NextLink href={businessRoute.login}>
-              <Link _text={{
-                color: "indigo.500",
-                fontWeight: "medium",
-                fontSize: "sm"
-              }}>
-                {t("common:login")}
-              </Link>
-            </NextLink>
-          </Pressable>
-        </HStack>
-      </VStack>
-    </Box>
-  </Center>
+        <Center>
+          <Heading maxWidth={"400px"} mt="2" alignContent={"center"} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
+            {t("businessResetPassword:pleaseEnterYourPassword", { email: typeof email === "string" ? email : email[0] })}
+          </Heading>
+        </Center>
+        <ControlledForm
+          control={control}
+          formState={formState}
+          Config={passwordInputProps}
+        />
+        <VStack space={3} mt="5">
+          <Button isLoading={loading} mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
+            {t("businessResetPassword:reset")}
+          </Button>
+          <HStack mt="6" justifyContent="center">
+            <Text fontSize="sm" color="coolGray.600">
+              {t("common:imAlreadyAUser")}
+            </Text>
+            <Pressable>
+              <NextLink href={businessRoute.login}>
+                <Link _text={{
+                  color: "indigo.500",
+                  fontWeight: "medium",
+                  fontSize: "sm"
+                }}>
+                  {t("common:login")}
+                </Link>
+              </NextLink>
+            </Pressable>
+          </HStack>
+        </VStack>
+      </Box>
+    </Center>
   )
 }

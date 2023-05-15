@@ -1,5 +1,5 @@
 import React from "react"
-import { Center, Box, Heading, VStack, HStack, Button, AlertDialog } from "native-base";
+import { Center, Box, Heading, VStack, HStack, Button, AlertDialog, Image } from "native-base";
 import { businessRoute } from "../../routes";
 import { ControlledForm } from "../../components/ControlledForm";
 import { ForgotPasswordConfig, useForgotPasswordHook } from "./hooks";
@@ -36,6 +36,12 @@ export const ForgotPasswordForm = () => {
 
   return (
     <Center w="100%" height={"100vh"}>
+      <Box position={"absolute"} top={"5"} left={"5"}>
+        <Image src="/images/fasto-logo.svg"
+          alt="Fasto Logo"
+          height={36} width={180} />
+      </Box>
+
       <AlertDialog leastDestructiveRef={cancelRef} isOpen={!!successfull} onClose={resetNetwork}>
         <AlertDialog.Content>
           <AlertDialog.CloseButton />
@@ -52,6 +58,7 @@ export const ForgotPasswordForm = () => {
           </AlertDialog.Footer>
         </AlertDialog.Content>
       </AlertDialog>
+
       <Box safeArea p="2" py="8" w="90%" maxW="600">
         <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"}>
           {t("businessForgotPassword:forgotPassoword")}

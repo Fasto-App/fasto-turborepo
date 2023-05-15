@@ -6,7 +6,7 @@ import { useCategoryMutationHook } from "../../graphQL/CategoryQL";
 import { useAppStore } from "../UseAppStore";
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm";
 import { CategoryFields } from "./useCategoryFormHook";
-import { ModalAddButtons } from "../ModalButtons";
+import { ModalAddButtons } from "../../components/ModalButtons";
 import { useTranslation } from "next-i18next";
 
 type CategoriesModalProps = {

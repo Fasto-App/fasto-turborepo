@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
-import NextLink from 'next/link';
 import { LoginFormFields } from '../types';
-import { Center, Box, Heading, VStack, HStack, Text, Button, } from "native-base"
+import { Center, Box, Heading, VStack, HStack, Text, Button, Image } from "native-base"
 import { useRouter } from 'next/router';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { LoginConfig, useLoginFormHook } from './hooks';
@@ -83,6 +82,12 @@ export const LoginForm = () => {
 
 	return (
 		<Center w="100%" height={"100%"}>
+			<Box position={"absolute"} top={"5"} left={"5"}>
+				<Image src="/images/fasto-logo.svg"
+					alt="Fasto Logo"
+					height={36} width={180} />
+			</Box>
+
 			<Box position={"absolute"} top={"5"} right={"5"}>
 				<FDSSelect
 					w="70"

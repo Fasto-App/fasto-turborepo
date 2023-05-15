@@ -10,6 +10,8 @@ import { getClientCookies } from '../../cookies'
 import { useTranslation } from "next-i18next"
 import { FDSSelect } from '../../components/FDSSelect'
 import { Locale, localeObj } from 'app-helpers'
+import NextImage from 'next/image'
+
 
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
@@ -62,7 +64,9 @@ export const HomeScreen = () => {
         alignItems={"flex-start"}
         justifyContent={"space-between"}
       >
-        <Image src="/images/Asset.svg" alt="me" width={"100"} height={"31"} />
+        <Image src="/images/fasto-logo.svg"
+          alt="Fasto Logo"
+          height={36} width={180} />
         <FDSSelect
           w="70"
           h="8"
@@ -74,11 +78,11 @@ export const HomeScreen = () => {
           }} />
       </HStack>
       <Heading size={"2xl"}>{businessName}</Heading>
-      <Image
-        my={2}
-        size="xl"
-        source={{ uri: image ?? "https://via.placeholder.com/150" }}
+      <NextImage
+        src={image ?? "https://via.placeholder.com/150"}
         alt="Business Name"
+        width={"150"}
+        height={"150"}
       />
       <VStack space={6} mt={"10"} w={"80%"}>
         <Button
