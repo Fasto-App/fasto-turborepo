@@ -17,11 +17,9 @@ const BusinessNavigationTab = () => {
   return (
     <LeftSideBar>
       <Center>
-        <Image
-          src="/images/fasto-logo.svg"
+        <Image src="/images/fasto-logo.svg"
           alt="Fasto Logo"
-          width={"200"}
-          height={"42"} />
+          height={36} width={180} />
       </Center>
       <Center      >
         <BusinessNavigationButton

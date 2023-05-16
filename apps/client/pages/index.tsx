@@ -34,7 +34,7 @@ export default function Home() {
 	return (
 		<Box backgroundColor={"pink"} h={"full"}>
 			<HStack position={"revert"} justifyContent={"space-between"} p={8}>
-				<Image src="/images/fasto-logo.svg" alt="Fasto Logo" width={"200"} height={"45"} />
+				<Image src="/images/fasto-logo.svg" alt="Fasto Logo" height={36} width={180} />
 				<Center>
 					<div style={{
 						background: "linear-gradient(349deg, rgba(227,232,0,1) 0%, rgba(255,102,0,1) 25%)",

@@ -45,14 +45,18 @@ export function AccountMenu() {
   return <Menu
     placement="right bottom"
     trigger={triggerProps => {
-      return <Pressable accessibilityLabel="More options menu" {...triggerProps}>
-        <AccountTile
-          isActive
-          employeeName={clientInfo?.getUserInformation?.name}
-          businessName={data?.getBusinessInformation.name}
-          uri={data?.getBusinessInformation.picture}
-        />
-      </Pressable>;
+      return (
+        <Pressable
+          _hover={{ backgroundColor: "gray.50", borderRadius: "md" }}
+          accessibilityLabel="More options menu" {...triggerProps}>
+          <AccountTile
+            isActive
+            employeeName={clientInfo?.getUserInformation?.name}
+            businessName={data?.getBusinessInformation.name}
+            uri={data?.getBusinessInformation.picture}
+          />
+        </Pressable>
+      );
     }}>
     {/* <Menu.Group title="Accounts">
       <Menu.Item>
