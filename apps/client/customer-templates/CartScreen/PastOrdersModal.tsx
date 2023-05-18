@@ -23,6 +23,69 @@ const tabs = {
   tableOrders: "All Orders",
 } as const
 
+export const PastOrdersList = () => {
+  const [selectedTab, setSelectedTab] = React.useState<keyof typeof tabs>("yourOrders");
+
+  const { t } = useTranslation('common')
+  const { data: clientSession } = useGetClientSession()
+  const { data, loading, error } = useGetOrdersBySessionQuery()
+
+  const myOrders = useMemo(() => data?.getOrdersBySession.filter((item) => item?.user === clientSession?.getClientSession?.user?._id), [clientSession?.getClientSession?.user?._id, data?.getOrdersBySession])
+
+  return (
+    <>
+      {loading ?
+        <LoadingCartItems /> : error ?
+          <Text
+            flex={1}
+            fontSize={"lg"}
+            textAlign={"center"}
+            alignContent={"center"}
+          >{t("somethingWentWrong")}</Text> :
+          <FlatList
+            stickyHeaderIndices={[0]}
+            ListHeaderComponent={
+              <Box>
+                <HStack justifyContent={"space-around"} backgroundColor={"white"}>
+                  {typedKeys(tabs).map((key) => {
+                    return (
+                      <Pressable key={key} flex={1} onPress={() => setSelectedTab(key)}>
+                        <Heading
+                          size={"sm"}
+                          textAlign={"center"}
+                          color={selectedTab === key ? "primary.500" : "gray.400"}
+                          pb={2}
+                        >
+                          {`${tabs[key]} (${key === "yourOrders" ?
+                            myOrders?.length ?? 0
+                            : data?.getOrdersBySession?.length ?? 0})`}
+                        </Heading>
+                      </Pressable>
+                    )
+                  })}
+                </HStack>
+                <Divider bg={"gray.300"} />
+                <Box h={"2"} />
+              </Box>
+            }
+            data={selectedTab === "yourOrders" ? myOrders : data?.getOrdersBySession}
+            keyExtractor={(item, index) => item._id + index}
+            renderItem={({ item, index }) =>
+              <PastOrdersTile
+                index={index}
+                name={item.product.name}
+                url={item.product.imageUrl || PLACEHOLDER_IMAGE}
+                price={parseToCurrency(item.subTotal)}
+                quantity={item.quantity}
+                orderStatus={item.status}
+                _id={item._id}
+              />
+            }
+          />}
+    </>
+  )
+}
+
 export const PastOrdersModal = (props: PastOrdersModalProps) => {
   const { isModalOpen, setIsModalOpen } = props
   const [selectedTab, setSelectedTab] = React.useState<keyof typeof tabs>("yourOrders");

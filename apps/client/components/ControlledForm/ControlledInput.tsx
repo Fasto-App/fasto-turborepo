@@ -21,7 +21,7 @@ type CustomInputProps = {
   accessibilityLabel?: string;
 }
 
-type InputType = "Input" | "TextArea" | "Select" | "File" | "Date" | "Currency"
+type InputType = "Input" | "TextArea" | "Select" | "File" | "Date" | "Currency" | "Number"
 
 export type InputProps = IInputProps & CustomInputProps
 export type ControlledFormInput<T extends Record<string, string | number>> = Omit<UseControllerProps, "control"> & InputProps &
@@ -166,6 +166,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                   </label>
                 )
               case "Input":
+              case "Number":
               case "Currency":
               default:
                 return (
@@ -191,6 +192,14 @@ export const ControlledInput = <T extends Record<string, string>>({
                           }
 
                           return field.onChange(convertedValue)
+
+                        case "Number":
+                          const number = Number(value);
+                          if (isNaN(number)) {
+                            return field.onChange(0);
+                          }
+
+                          return field.onChange(number)
 
                         default:
                           return field.onChange(value);

@@ -1,9 +1,8 @@
 
-import { FIXED_POINT_FACTOR_PERCENTAGE, getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
+import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
 import { TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
-import { SessionModel } from "../../../models/session";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 
@@ -127,6 +126,17 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
     default:
       throw ApolloError('BadRequest')
   }
+};
+
+
+// todo: implement this
+const customerRequestCheckoutPayment = async (parent: any, args: any, { db }: Context, info: any) => {
+  // get all the information from the client and validate it
+  // 
+}
+
+const customerRequestSplit = () => {
+
 }
 
 export const CheckoutResolverMutation = {

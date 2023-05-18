@@ -130,6 +130,9 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
     if (selectedTip === "Custom") {
       return set({ selectedTip, tip: 0 })
     }
+    // for custom, if the value of the tip is set to something lower than before, the total remainaing becomes negative
+
+    // to address this 
     set({
       tip: percentagesAndValues[selectedTip],
       selectedTip
@@ -147,7 +150,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
   // function that receives a value and the user id
   // it calculates the logic and set the new customSubtotal
   setCustomInputOnChange: (userId: string, value: string) => {
-    const { customSubTotals, total, selectedDiscount, customDiscount, selectedTip, customTip, tip, discount } = get()
+    const { customSubTotals, total, selectedDiscount, customDiscount, selectedTip, customTip, tip, discount, selectedUsers } = get()
 
     const text = value.replace(/[$,.]/g, '');
     const convertedValue = Number(text);
@@ -159,12 +162,17 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
     const valueOfDiscount = selectedDiscount === "Custom" ? customDiscount : percentageOfDiscount
     const valueOfTip = selectedTip === "Custom" ? customTip : percentageOfTip
 
-    const customSummed = typedValues(customSubTotals).reduce((acc, value) => acc + value, 0)
+    const customSummed = typedKeys(customSubTotals).reduce((acc, key) => {
+      if (!selectedUsers[key]) return acc
+
+      return acc + customSubTotals[key]
+    }, 0)
+
     const absoluteTotal = total - valueOfDiscount + valueOfTip
 
     const customTotalRemaing = absoluteTotal - customSummed
 
-    if (!customTotalRemaing && (!customSubTotals[userId] ||
+    if (customTotalRemaing <= 0 && (!customSubTotals[userId] ||
       convertedValue > customSubTotals[userId])) {
       return
     }
@@ -178,13 +186,12 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
       }))
     }
 
-    if (convertedValue > customTotalRemaing) {
-      const totalRemaining = customTotalRemaing + Math.floor(convertedValue / 10)
+    if (convertedValue > customTotalRemaing + (customSubTotals[userId] ?? 0)) {
 
       return set(state => ({
         customSubTotals: {
           ...state.customSubTotals,
-          [userId]: totalRemaining
+          [userId]: customTotalRemaing + customSubTotals[userId]
         }
       }))
     }
@@ -255,7 +262,12 @@ export const useComputedChekoutStore = () => {
     })
   }
 
-  const customSummed = typedValues(store.customSubTotals).reduce((acc, value) => acc + value, 0)
+  // if the user is selected, grab their total from the input
+  const customSummed = typedKeys(store.customSubTotals).reduce((acc, key) => {
+    if (!store.selectedUsers[key]) return acc
+
+    return acc + store.customSubTotals[key]
+  }, 0)
 
   return ({
     amountPerUser,

@@ -47,7 +47,11 @@ export function AccountMenu() {
     trigger={triggerProps => {
       return (
         <Pressable
-          _hover={{ backgroundColor: "gray.50", borderRadius: "md" }}
+          padding={2}
+          _hover={{
+            backgroundColor: "gray.50", borderRadius: "md",
+            shadow: "4",
+          }}
           accessibilityLabel="More options menu" {...triggerProps}>
           <AccountTile
             isActive
@@ -66,7 +70,7 @@ export function AccountMenu() {
         <AccountTile isActive employeeName="Alex" businessName="Mendes" uri="https://bit.ly/dan-abramov" />
       </Menu.Item>
     </Menu.Group> */}
-    <Divider mt="3" w="100%" />
+    < Divider mt="3" w="100%" />
     <Menu.Item backgroundColor={"white"}>
       <BusinessNavigationButton
         text={"Logout"}
@@ -77,6 +81,6 @@ export function AccountMenu() {
         }}
       />
     </Menu.Item>
-  </Menu>
+  </Menu >
 
 }

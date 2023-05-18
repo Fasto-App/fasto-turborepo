@@ -18,6 +18,7 @@ export const CustomerLayout: React.FC = ({ children }) => {
   const isCheckout = route.pathname === customerTitlePath.Checkout
   const isSettings = route.pathname === customerTitlePath.Settings
   const isCart = route.pathname === customerTitlePath.Cart
+  const isSplit = route.pathname === customerTitlePath.Split
   const { data } = useGetClientSession()
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export const CustomerLayout: React.FC = ({ children }) => {
       <Box flex={1}>
         {children}
       </Box>
-      {productId || isHome || isCheckout || !token ? null :
+      {productId || isHome || isCheckout || isSplit || !token ? null :
         <ClientTabBar />}
     </Flex>
   );

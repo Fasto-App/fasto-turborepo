@@ -17,8 +17,8 @@ import {
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
 import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
-import { Badge, Box, Pressable, Text, VStack } from "native-base";
-import { IoIosArrowBack } from "react-icons/io";
+import { Badge, Box, Pressable, Text, } from "native-base";
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line } from "react-icons/ri"
@@ -41,6 +41,10 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "ArrowUp":
+      return <IoIosArrowUp color={color} size={size} />;
+    case "ArrowDown":
+      return <IoIosArrowDown color={color} size={size} />;
     case "ClipBoard":
       return <HiOutlineClipboardList color={color} size={size} />;
     case "StarFill":

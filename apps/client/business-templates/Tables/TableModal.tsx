@@ -6,7 +6,7 @@ import { Badge, Button, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { GetSpacesFromBusinessDocument, useCreateTabMutation, useGetAllMenusByBusinessIdQuery, useGetTableByIdQuery } from "../../gen/generated";
+import { GetSpacesFromBusinessDocument, useCreateTabMutation, useGetTableByIdQuery } from "../../gen/generated";
 import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
@@ -29,11 +29,7 @@ const TabConfig: RegularInputConfig = {
     placeholder: "Select number of guests",
     errorMessage: "Please, enter a number of guests",
     helperText: "Number of guests",
-    formatOnChange: (value: string, fieldOnchange: (num: number) => void) => {
-      if (Number.isInteger(Number(value))) {
-        return fieldOnchange(Number(value))
-      }
-    }
+    inputType: "Number",
   },
   admin: {
     name: "admin",
