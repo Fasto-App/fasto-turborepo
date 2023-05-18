@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react"
-import { Badge, Box, Button, Divider, FlatList, Heading, HStack, VStack } from "native-base"
+import { Badge, Box, Button, Divider, FlatList, Heading, HStack, ScrollView, VStack } from "native-base"
 import { SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
@@ -212,16 +212,18 @@ export const TablesScreen = () => {
                   {t("requests")}
                 </ButtonWithBadge>
               </HStack>
-              <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-                <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
-                {allTablesFromSpace?.map((table, index) =>
-                  <SquareTable
-                    key={table?._id}
-                    index={index}
-                    status={table?.status}
-                    tableNumber={table?.tableNumber}
-                    onPress={() => setTableChoosen(table._id)} />)}
-              </HStack>
+              <ScrollView>
+                <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
+                  <SquareTable isButton={true} onPress={() => setIsNewTableModalOpen(true)} />
+                  {allTablesFromSpace?.map((table, index) =>
+                    <SquareTable
+                      key={table?._id}
+                      index={index}
+                      status={table?.status}
+                      tableNumber={table?.tableNumber}
+                      onPress={() => setTableChoosen(table._id)} />)}
+                </HStack>
+              </ScrollView>
             </Box>
           </BottomSection> : null}
       </VStack>

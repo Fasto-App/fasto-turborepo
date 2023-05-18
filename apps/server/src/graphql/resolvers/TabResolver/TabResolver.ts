@@ -38,7 +38,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
                 users: allUsers.map(user => user._id),
             });
 
-            await table.updateOne({ status: TableStatus.Occupied });
+            await table.updateOne({ status: TableStatus.Occupied, tab: tab._id });
 
             return tab
 
@@ -57,7 +57,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             users: allUsers.map(user => user._id),
         });
         // change the status table to occupied
-        await table.updateOne({ status: TableStatus.Occupied });
+        await table.updateOne({ status: TableStatus.Occupied, tab: tab._id });
 
         return tab
 

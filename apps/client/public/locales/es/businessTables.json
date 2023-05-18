@@ -25,5 +25,6 @@
 	"Reserved": "Reservada",
 	"spaceName": "Nombre del Área",
 	"addSpace": "Agregar Área",
-	"spaceExample": "Ejemplo: Bar, Terraza, etc."
+	"spaceExample": "Ejemplo: Bar, Terraza, etc.",
+	"errorCreatingTab": "Error al crear la cuenta. Por favor intente nuevamente"
 }

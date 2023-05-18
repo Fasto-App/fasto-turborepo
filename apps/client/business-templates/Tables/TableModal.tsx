@@ -14,6 +14,7 @@ import * as z from "zod"
 import { useTableScreenStore } from "./tableScreenStore";
 import { CustomModal } from "../../components/CustomModal/CustomModal";
 import { useTranslation } from "next-i18next";
+import { showToast } from "../../components/showToast";
 
 const tableSchema = z.object({
   admin: z.string().optional(),
@@ -70,10 +71,16 @@ export const TableModal = () => {
   const [createTab] = useCreateTabMutation({
     refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
     onCompleted: (data) => {
-      router.push(businessRoute.add_to_order, { query: { tabId: data.createTab._id } })
+      router.push({
+        pathname: businessRoute.add_to_order,
+        query: { tabId: data.createTab._id }
+      })
     },
     onError: (error) => {
-      console.log(error)
+      showToast({
+        status: "error",
+        message: t("errorCreatingTab"),
+      })
     }
   })
 
@@ -114,7 +121,15 @@ export const TableModal = () => {
         console.log(tableChoosen)
 
         if (!tableChoosen?.tab?._id) throw ("Tab id is undefined")
-        router.push(businessRoute.add_to_order, { query: { tabId: tableChoosen?.tab?._id } })
+
+        // if the state of the tab is not open, it means a checkout was requested
+        // navigate to checkout
+        // if (tableChoosen?.tab) { }
+
+        router.push({
+          pathname: businessRoute.add_to_order,
+          query: { tabId: tableChoosen?.tab?._id }
+        })
         break;
     }
 

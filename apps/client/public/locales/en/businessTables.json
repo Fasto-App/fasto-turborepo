@@ -25,5 +25,6 @@
 	"Reserved": "Reserved",
 	"spaceName": "Space Name",
 	"addSpace": "Add Space",
-	"spaceExample": "Example: Bar, Terrace, etc."
+	"spaceExample": "Example: Bar, Terrace, etc.",
+	"errorCreatingTab": "Error creating tab. Please try again."
 }

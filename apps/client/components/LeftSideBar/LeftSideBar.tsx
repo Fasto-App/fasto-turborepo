@@ -3,12 +3,9 @@ import React, { PropsWithChildren } from "react"
 
 export const LeftSideBar = ({ children }: PropsWithChildren<{}>) => (
   <VStack
-    space={1}
-    w={"1/4"}
-    minWidth={"240px"}
-    maxWidth={"288px"}
-    shadow={"8"}
     justifyContent={"space-between"}
+    w={"285"}
+    shadow={"8"}
     paddingY={4}
     paddingX={2}
   >
