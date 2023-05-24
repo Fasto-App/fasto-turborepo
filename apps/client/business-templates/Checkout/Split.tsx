@@ -20,8 +20,8 @@ type SplitProps = {
     splitType?: SplitType | null | undefined;
     patron: string;
     tip: number;
-    discount: number;
-  } | null)[]
+    discount?: number | null | undefined;
+  } | null)[] | undefined
 }
 
 export const Split = ({
@@ -77,7 +77,7 @@ export const Split = ({
   // we need to get the users from the payments
 
   // make an object with the users and the payments for fast lookup
-  const paymentsByUser = payments.reduce((acc, payment) => {
+  const paymentsByUser = payments?.reduce((acc, payment) => {
     const { patron, amount, splitType, tip, discount } = payment || {}
 
     acc.totalPaid = (acc.totalPaid ?? 0) + (amount ?? 0)
@@ -265,7 +265,7 @@ export const Split = ({
                   setAreAllUsersSelected(false)
                 }
               }}
-              hasUserPaid={!!paymentsByUser[user._id]}
+              hasUserPaid={!!paymentsByUser?.[user._id]}
               isUserSelected={areAllUsersSelected || !!selectedUsers[user._id]} // if all is selected or if the object state has the user id set to true
               key={user._id}
               user={`Person ${(index + 1).toString()}`}
@@ -379,7 +379,7 @@ export const Split = ({
           </HStack>
           <HStack justifyContent={"space-between"} px={8}>
             <Text fontSize={"xl"} bold>{t("remaning")}</Text>
-            <Text fontSize={"xl"} bold>{parseToCurrency(paymentsByUser.totalPaid)}</Text>
+            <Text fontSize={"xl"} bold>{parseToCurrency(paymentsByUser?.totalPaid)}</Text>
           </HStack>
         </VStack>
       </Box>
