@@ -117,6 +117,7 @@ export type Checkout = {
   orders: Array<Maybe<OrderDetail>>;
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
+  splitType?: Maybe<SplitType>;
   status: CheckoutStatusKeys;
   subTotal: Scalars['Float'];
   tab: Scalars['ID'];
@@ -199,6 +200,19 @@ export type CreateTabInput = {
 
 export type CreateTableInput = {
   space: Scalars['ID'];
+};
+
+export type CustomSplitInput = {
+  amount: Scalars['Float'];
+  patron: Scalars['ID'];
+};
+
+export type CustomerRequestSplitInput = {
+  checkout: Scalars['ID'];
+  customSplit?: InputMaybe<Array<InputMaybe<CustomSplitInput>>>;
+  selectedUsers: Array<Scalars['String']>;
+  splitType: SplitType;
+  tip: Scalars['Float'];
 };
 
 export enum DaysOfWeek {
@@ -360,12 +374,12 @@ export type Mutation = {
   createMenu: Menu;
   createMultipleOrderDetails: Array<OrderDetail>;
   createNewTakeoutOrDelivery: Scalars['String'];
-  createOrderDetail: OrderDetail;
   createProduct: Product;
   createSpace: Space;
   createTab: Tab;
   createTable: Table;
   createUser: User;
+  customerRequestSplit: Checkout;
   declineInvitation: Request;
   declineTabRequest: Request;
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
@@ -461,11 +475,6 @@ export type MutationCreateNewTakeoutOrDeliveryArgs = {
 };
 
 
-export type MutationCreateOrderDetailArgs = {
-  input: CreateOrderInput;
-};
-
-
 export type MutationCreateProductArgs = {
   input: CreateProductInput;
 };
@@ -488,6 +497,11 @@ export type MutationCreateTableArgs = {
 
 export type MutationCreateUserArgs = {
   input?: InputMaybe<UserInput>;
+};
+
+
+export type MutationCustomerRequestSplitArgs = {
+  input: CustomerRequestSplitInput;
 };
 
 
@@ -706,7 +720,7 @@ export type Payment = {
   __typename?: 'Payment';
   _id: Scalars['ID'];
   amount: Scalars['Float'];
-  discount: Scalars['Float'];
+  discount?: Maybe<Scalars['Float']>;
   patron: Scalars['ID'];
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
@@ -1172,6 +1186,13 @@ export type UpdateCategoryMutationVariables = Exact<{
 
 export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory?: { __typename?: 'Category', _id: string, name: string, description?: string | null } | null };
 
+export type CustomerRequestSplitMutationVariables = Exact<{
+  input: CustomerRequestSplitInput;
+}>;
+
+
+export type CustomerRequestSplitMutation = { __typename?: 'Mutation', customerRequestSplit: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string } };
+
 export type MakeCheckoutPaymentMutationVariables = Exact<{
   input: MakeCheckoutPaymentInput;
 }>;
@@ -1184,7 +1205,7 @@ export type GetCheckoutByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount: number } | null> } };
+export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null } | null> } };
 
 export type GetCheckoutsByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2196,6 +2217,50 @@ export function useUpdateCategoryMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateCategoryMutationHookResult = ReturnType<typeof useUpdateCategoryMutation>;
 export type UpdateCategoryMutationResult = Apollo.MutationResult<UpdateCategoryMutation>;
 export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
+export const CustomerRequestSplitDocument = gql`
+    mutation CustomerRequestSplit($input: CustomerRequestSplitInput!) {
+  customerRequestSplit(input: $input) {
+    _id
+    business
+    tab
+    status
+    paid
+    subTotal
+    tip
+    discount
+    tax
+    total
+    totalPaid
+    created_date
+  }
+}
+    `;
+export type CustomerRequestSplitMutationFn = Apollo.MutationFunction<CustomerRequestSplitMutation, CustomerRequestSplitMutationVariables>;
+
+/**
+ * __useCustomerRequestSplitMutation__
+ *
+ * To run a mutation, you first call `useCustomerRequestSplitMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCustomerRequestSplitMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [customerRequestSplitMutation, { data, loading, error }] = useCustomerRequestSplitMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCustomerRequestSplitMutation(baseOptions?: Apollo.MutationHookOptions<CustomerRequestSplitMutation, CustomerRequestSplitMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CustomerRequestSplitMutation, CustomerRequestSplitMutationVariables>(CustomerRequestSplitDocument, options);
+      }
+export type CustomerRequestSplitMutationHookResult = ReturnType<typeof useCustomerRequestSplitMutation>;
+export type CustomerRequestSplitMutationResult = Apollo.MutationResult<CustomerRequestSplitMutation>;
+export type CustomerRequestSplitMutationOptions = Apollo.BaseMutationOptions<CustomerRequestSplitMutation, CustomerRequestSplitMutationVariables>;
 export const MakeCheckoutPaymentDocument = gql`
     mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
   makeCheckoutPayment(input: $input) {
@@ -2248,6 +2313,7 @@ export const GetCheckoutByIdDocument = gql`
     query GetCheckoutByID($input: GetById!) {
   getCheckoutByID(input: $input) {
     _id
+    splitType
     business
     created_date
     paid

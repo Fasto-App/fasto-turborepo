@@ -12,9 +12,6 @@ export class Payment {
   @prop()
   public tip!: number;
 
-  @prop({ default: 0 })
-  public discount?: number;
-
   @prop({ required: true })
   public patron!: Types.ObjectId;
 
@@ -23,6 +20,9 @@ export class Payment {
 
   @prop()
   public splitType?: SplitType;
+
+  @prop({ required: true, default: false })
+  public paid!: boolean;
 
   @prop({ default: Date.now() })
   public created_date!: Date;

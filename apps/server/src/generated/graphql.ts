@@ -117,6 +117,7 @@ export type Checkout = {
   orders: Array<Maybe<OrderDetail>>;
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
+  splitType?: Maybe<SplitType>;
   status: CheckoutStatusKeys;
   subTotal: Scalars['Float'];
   tab: Scalars['ID'];
@@ -199,6 +200,19 @@ export type CreateTabInput = {
 
 export type CreateTableInput = {
   space: Scalars['ID'];
+};
+
+export type CustomSplitInput = {
+  amount: Scalars['Float'];
+  patron: Scalars['ID'];
+};
+
+export type CustomerRequestSplitInput = {
+  checkout: Scalars['ID'];
+  customSplit?: InputMaybe<Array<InputMaybe<CustomSplitInput>>>;
+  selectedUsers: Array<Scalars['String']>;
+  splitType: SplitType;
+  tip: Scalars['Float'];
 };
 
 export enum DaysOfWeek {
@@ -360,12 +374,12 @@ export type Mutation = {
   createMenu: Menu;
   createMultipleOrderDetails: Array<OrderDetail>;
   createNewTakeoutOrDelivery: Scalars['String'];
-  createOrderDetail: OrderDetail;
   createProduct: Product;
   createSpace: Space;
   createTab: Tab;
   createTable: Table;
   createUser: User;
+  customerRequestSplit: Checkout;
   declineInvitation: Request;
   declineTabRequest: Request;
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
@@ -461,11 +475,6 @@ export type MutationCreateNewTakeoutOrDeliveryArgs = {
 };
 
 
-export type MutationCreateOrderDetailArgs = {
-  input: CreateOrderInput;
-};
-
-
 export type MutationCreateProductArgs = {
   input: CreateProductInput;
 };
@@ -488,6 +497,11 @@ export type MutationCreateTableArgs = {
 
 export type MutationCreateUserArgs = {
   input?: InputMaybe<UserInput>;
+};
+
+
+export type MutationCustomerRequestSplitArgs = {
+  input: CustomerRequestSplitInput;
 };
 
 
@@ -706,7 +720,7 @@ export type Payment = {
   __typename?: 'Payment';
   _id: Scalars['ID'];
   amount: Scalars['Float'];
-  discount: Scalars['Float'];
+  discount?: Maybe<Scalars['Float']>;
   patron: Scalars['ID'];
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
@@ -1160,6 +1174,8 @@ export type ResolversTypes = {
   CreateSpaceInput: CreateSpaceInput;
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
+  CustomSplitInput: CustomSplitInput;
+  CustomerRequestSplitInput: CustomerRequestSplitInput;
   DaysOfWeek: DaysOfWeek;
   DeleteBusinessPayload: ResolverTypeWrapper<DeleteBusinessPayload>;
   DeleteEmployee: DeleteEmployee;
@@ -1255,6 +1271,8 @@ export type ResolversParentTypes = {
   CreateSpaceInput: CreateSpaceInput;
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
+  CustomSplitInput: CustomSplitInput;
+  CustomerRequestSplitInput: CustomerRequestSplitInput;
   DeleteBusinessPayload: DeleteBusinessPayload;
   DeleteEmployee: DeleteEmployee;
   DeleteSpaceInput: DeleteSpaceInput;
@@ -1390,6 +1408,7 @@ export type CheckoutResolvers<ContextType = Context, ParentType extends Resolver
   orders?: Resolver<Array<Maybe<ResolversTypes['OrderDetail']>>, ParentType, ContextType>;
   paid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   payments?: Resolver<Array<Maybe<ResolversTypes['Payment']>>, ParentType, ContextType>;
+  splitType?: Resolver<Maybe<ResolversTypes['SplitType']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['CheckoutStatusKeys'], ParentType, ContextType>;
   subTotal?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   tab?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -1480,12 +1499,12 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<MutationCreateMenuArgs, 'input'>>;
   createMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationCreateMultipleOrderDetailsArgs, 'input'>>;
   createNewTakeoutOrDelivery?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateNewTakeoutOrDeliveryArgs, 'input'>>;
-  createOrderDetail?: Resolver<ResolversTypes['OrderDetail'], ParentType, ContextType, RequireFields<MutationCreateOrderDetailArgs, 'input'>>;
   createProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'input'>>;
   createSpace?: Resolver<ResolversTypes['Space'], ParentType, ContextType, Partial<MutationCreateSpaceArgs>>;
   createTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationCreateTabArgs, 'input'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, Partial<MutationCreateTableArgs>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationCreateUserArgs>>;
+  customerRequestSplit?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationCustomerRequestSplitArgs, 'input'>>;
   declineInvitation?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<MutationDeclineInvitationArgs, 'input'>>;
   declineTabRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<MutationDeclineTabRequestArgs, 'input'>>;
   deleteBusiness?: Resolver<Maybe<ResolversTypes['DeleteBusinessPayload']>, ParentType, ContextType, RequireFields<MutationDeleteBusinessArgs, 'businessID'>>;
@@ -1539,7 +1558,7 @@ export type OrderDetailResolvers<ContextType = Context, ParentType extends Resol
 export type PaymentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Payment'] = ResolversParentTypes['Payment']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  discount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  discount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   patron?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   splitType?: Resolver<Maybe<ResolversTypes['SplitType']>, ParentType, ContextType>;
   tip?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;

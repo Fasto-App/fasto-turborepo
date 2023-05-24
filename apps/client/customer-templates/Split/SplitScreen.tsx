@@ -4,12 +4,16 @@ import React, { useEffect } from 'react'
 import { useCheckoutStore, useComputedChekoutStore } from '../../business-templates/Checkout/checkoutStore'
 import { shallow } from 'zustand/shallow'
 import { useGetClientSession } from '../../hooks'
-import { useGetOrdersBySessionQuery } from '../../gen/generated'
+import { SplitType, useCustomerRequestSplitMutation, useGetOrdersBySessionQuery } from '../../gen/generated'
 import { useTranslation } from 'next-i18next'
 import { OrderTotals } from '../CheckoutScreen'
+import { showToast } from '../../components/showToast'
+import { useRouter } from 'next/router'
 
 export const SplitScreen = () => {
-  const { selectedSplitType, setSelectedSplitType, setSelectedUsers, selectedUsers, setSplitByPatron, customSubTotals, setCustomInputOnChange } = useCheckoutStore(state => ({
+  const router = useRouter()
+
+  const { selectedSplitType, setSelectedSplitType, setSelectedUsers, selectedUsers, setSplitByPatron, customSubTotals, setCustomInputOnChange, tip } = useCheckoutStore(state => ({
     setSelectedSplitType: state.setSelectedSplitType,
     selectedSplitType: state.selectedSplitType,
     setSelectedUsers: state.setSelectedUsers,
@@ -18,6 +22,7 @@ export const SplitScreen = () => {
     customSubTotals: state.customSubTotals,
     setCustomSubTotal: state.setCustomSubTotal,
     setCustomInputOnChange: state.setCustomInputOnChange,
+    tip: state.tip,
   }),
     shallow
   )
@@ -29,9 +34,21 @@ export const SplitScreen = () => {
     customTotalRemaing,
   } = useComputedChekoutStore()
 
+  const [requestSplit, { loading: loadingSplit }] = useCustomerRequestSplitMutation({
+    onError: (error) => {
+      showToast({
+        status: "error",
+        message: error.message,
+      })
+    },
+    onCompleted: () => {
+      router.back()
+    }
+  })
+
   const { t } = useTranslation("customerCheckout")
 
-  const { data: clientSession, loading, error } = useGetClientSession()
+  const { data: clientSession, loading } = useGetClientSession()
   useGetOrdersBySessionQuery({
     onCompleted(data) {
       if (!data.getOrdersBySession) return
@@ -49,6 +66,47 @@ export const SplitScreen = () => {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const splitOnPress = async () => {
+    if (!clientSession?.getClientSession.tab?.checkout) throw new Error("No checkout")
+
+    let customSplit: { patron: string; amount: number }[] = [];
+
+    const selectedUsersInput = typedKeys(selectedUsers).reduce((acc, curr) => {
+      if (selectedUsers[curr]) {
+        acc.push(curr as string)
+      }
+      return acc
+    }, [] as string[])
+
+    if (selectedSplitType === "Custom") {
+      customSplit = typedKeys(selectedUsers).reduce((acc, curr) => {
+
+        if (selectedUsers[curr] && customSubTotals[curr]) {
+          acc.push({
+            patron: curr.toString(),
+            amount: customSubTotals[curr]
+          })
+
+          return acc
+        }
+
+        return acc
+      }, [] as { patron: string, amount: number }[])
+    }
+
+    requestSplit({
+      variables: {
+        input: {
+          checkout: clientSession?.getClientSession.tab?.checkout,
+          splitType: SplitType[selectedSplitType],
+          selectedUsers: selectedUsersInput,
+          customSplit,
+          tip
+        }
+      }
+    })
+  }
 
   return (
     <>
@@ -145,7 +203,13 @@ export const SplitScreen = () => {
 
       <Box py={4} px={2} >
         <OrderTotals />
-        <Button mt={4}>
+        <Button mt={4}
+          onPress={splitOnPress}
+          isLoading={loadingSplit || loading}
+          isDisabled={selectedSplitType === "Custom" && customTotalRemaing !== 0
+            || !typedKeys(selectedUsers).some((key) => selectedUsers[key])
+          }
+        >
           {t("split")}
         </Button>
       </Box>

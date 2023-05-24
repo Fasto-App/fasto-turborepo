@@ -1,7 +1,7 @@
 {
 	"tabShared": "Compartilhado:",
 	"seeCheck": "Pedidos",
-	"total": "Total:",
+	"totalAmount": "Valor Total:",
 	"paid": "Pago:",
 	"due": "Restante:",
 	"totalRemaining": "Total Restante:",
@@ -10,5 +10,14 @@
 	"subtotal": "Subtotal",
 	"taxes": "Taxas",
 	"split": "Dividir",
-	"payTable": "Pagar Mesa"
+	"payTable": "Pagar Mesa",
+	"splitType": "Tipo de Divisão:",
+	"Equally": "Igualmente",
+	"ByPatron": "Por Cliente",
+	"Custom": "Personalizado",
+	"successMessage": "Sua conta foi encerrada com sucesso.\nObrigado por fazer seu pedido conosco!",
+	"endSession": "Finalizar sessão",
+	"amountToBePaid": "Quantidade a pagar:",
+	"seeOrder": "Ver pedido",
+	"errorFetchingCheckoutInfo": "Erro ao buscar informações de pagamento"
 }

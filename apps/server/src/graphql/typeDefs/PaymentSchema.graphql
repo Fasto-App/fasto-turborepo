@@ -8,5 +8,5 @@ type Payment {
 	patron: ID!
 	tip: Float!
 	splitType: SplitType
-	discount: Float!
+	discount: Float
 }

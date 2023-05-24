@@ -1,7 +1,7 @@
 {
 	"tabShared": "Tab Shared:",
 	"seeCheck": "See Check",
-	"total": "Total:",
+	"totalAmount": "Total Amount:",
 	"paid": "Paid:",
 	"due": "Due:",
 	"totalRemaining": "Total Remaining:",
@@ -10,5 +10,14 @@
 	"subtotal": "Subtotal",
 	"taxes": "Taxes",
 	"split": "Split",
-	"payTable": "Pay Table"
+	"payTable": "Pay Table",
+	"splitType": "Split Type:",
+	"Equally": "Equally",
+	"ByPatron": "By Patron",
+	"Custom": "Custom",
+	"successMessage": "Your tab was successfully closed.\nThank you for choosing to order with us!",
+	"endSession": "End Session",
+	"amountToBePaid": "Amount to be paid:",
+	"seeOrder": "See Order",
+	"errorFetchingCheckoutInfo": "Error fetching checkout information"
 }

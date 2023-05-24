@@ -1,10 +1,11 @@
 
 import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
-import { TableModel, TabModel, UserModel } from "../../../models";
+import { OrderDetailModel, TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
+import { MutationResolvers } from "../../../generated/graphql";
 
 export const makeCheckoutPayment = async (parent: any, args: { input: PaymentType }, { db }: Context, info: any) => {
 
@@ -135,10 +136,66 @@ const customerRequestCheckoutPayment = async (parent: any, args: any, { db }: Co
   // 
 }
 
-const customerRequestSplit = () => {
+// @ts-ignore
+const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db }) => {
+  const Checkout = CheckoutModel(db);
+  const Order = OrderDetailModel(db);
+  const Payment = PaymentModel(db);
+  const foundCheckout = await Checkout.findById(input.checkout)
+
+  if (!foundCheckout) throw ApolloError('BadRequest')
+  foundCheckout.orders // populate all the orders
+
+
+  if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already split')
+
+  foundCheckout.splitType = input.splitType
+  foundCheckout.tip = input.tip
+  foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, input.tip)
+
+  await foundCheckout.save()
+
+  switch (input.splitType) {
+    case "Equally":
+      const paymentAmount = foundCheckout.total / input.selectedUsers.length
+
+      // for each user, create a payment
+      for (const user of input.selectedUsers) {
+        const payment = await Payment.create({
+          amount: paymentAmount,
+          patron: user,
+          splitType: input.splitType,
+          tip: input.tip,
+          checkout: foundCheckout._id
+        })
+
+        foundCheckout.payments?.push(payment._id)
+      }
+
+      await foundCheckout.save()
+
+      break;
+    case "ByPatron":
+      const orders = await Order.find({ _id: { $in: foundCheckout.orders } })
+      // separate the orders by user and create a payment for each user
+
+      console.log("ByPatron")
+      console.log(input.selectedUsers)
+      break;
+    case "Custom":
+      console.log("Custom")
+      console.log(input.customSplit)
+      break;
+
+    default:
+      throw ApolloError('BadRequest')
+  }
+
+  return foundCheckout
 
 }
 
 export const CheckoutResolverMutation = {
   makeCheckoutPayment,
+  customerRequestSplit
 }

@@ -1,6 +1,7 @@
 query GetCheckoutByID($input: GetById!) {
 	getCheckoutByID(input: $input) {
 		_id
+		splitType
 		business
 		created_date
 		paid

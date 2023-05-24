@@ -5,6 +5,7 @@ extend type Query {
 
 extend type Mutation {
 	makeCheckoutPayment(input: MakeCheckoutPaymentInput!): Checkout!
+	customerRequestSplit(input: CustomerRequestSplitInput!): Checkout!
 }
 
 type Checkout {
@@ -21,6 +22,7 @@ type Checkout {
 	tax: Float!
 	total: Float!
 	totalPaid: Float!
+	splitType: SplitType
 	created_date: String!
 }
 
@@ -32,6 +34,19 @@ input MakeCheckoutPaymentInput {
 	discount: Float!
 	splitType: SplitType
 	paymentMethod: String
+}
+
+input CustomerRequestSplitInput {
+	checkout: ID!
+	splitType: SplitType!
+	customSplit: [CustomSplitInput]
+	selectedUsers: [String!]!
+	tip: Float!
+}
+
+input CustomSplitInput {
+	patron: ID!
+	amount: Float!
 }
 
 enum CheckoutStatusKeys {
