@@ -10,8 +10,8 @@ import { useGetClientSession } from '../../hooks'
 import { useTranslation } from 'next-i18next'
 
 type PastOrdersModalProps = {
-  isModalOpen: boolean
-  setIsModalOpen: (value: boolean) => void
+  isModalOpen: boolean;
+  setIsModalOpen: (value: boolean) => void;
 }
 
 const states = ["✅", "⏳"];
