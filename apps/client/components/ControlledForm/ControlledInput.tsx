@@ -66,7 +66,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                 return (
                   <TextArea
                     {...field}
-                    h={"48"}
+                    h={"24"}
                     fontSize="lg"
                     autoCompleteType={undefined}
                     placeholder={placeholder} />)
@@ -146,21 +146,23 @@ export const ControlledInput = <T extends Record<string, string>>({
                     <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
                       <input type="file" style={{ display: "none" }} onChange={handleOnChange} accept="image/*" />
                       <span>
-                        <AspectRatio maxHeight={300} borderRadius={"lg"} overflow={"hidden"}>
-                          {!src ?
-                            <Box mr={2} alignItems={"center"} justifyContent={"center"}>
-                              <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
-                            </Box>
-                            :
+                        {!src && !field.value ?
+                          <Box mr={2}
+                            alignItems={"center"} justifyContent={"center"} w={"full"} h={"20"}>
+                            <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
+                          </Box>
+                          :
+                          <Box w={"md"} h={"40"}>
+
                             <Image
-                              src={src}
+                              src={src || field.value}
                               alt="alt"
                               layout={'fill'}
                               objectFit={'cover'}
                               style={{ borderRadius: "10", borderWidth: 1 }}
                             />
-                          }
-                        </AspectRatio>
+                          </Box>
+                        }
                       </span>
                     </Box>
                   </label>

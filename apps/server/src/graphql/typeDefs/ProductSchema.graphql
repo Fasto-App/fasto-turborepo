@@ -23,7 +23,7 @@ input CreateProductInput {
 	name: String!
 	description: String
 	price: Int!
-	file: String
+	file: Upload
 	addons: [CreateProductInput]
 	category: ID!
 }
@@ -33,6 +33,6 @@ input UpdateProductInput {
 	name: String!
 	description: String
 	price: Int!
-	file: String
+	file: Upload
 	category: ID!
 }

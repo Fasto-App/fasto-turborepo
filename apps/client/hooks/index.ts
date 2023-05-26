@@ -34,7 +34,10 @@ export const useUploadFileHook = () => {
 
 
   const handleFileOnChange = (evt: any) => {
-    const file = evt.target.files[0]
+    const file = evt?.target?.files?.[0]
+
+    console.log("handleFileOnChange")
+    console.log("file", file)
 
     if (!file) {
       setImageUrl("")

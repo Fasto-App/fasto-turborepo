@@ -23,5 +23,6 @@
 	"photo": "Foto",
 	"price": "Preço",
 	"pricePlaceholder": "R$12,99",
-	"create": "Criar"
+	"create": "Criar",
+	"uploadPicture": "Carregar Foto"
 }

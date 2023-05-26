@@ -183,7 +183,7 @@ export type CreateProductInput = {
   addons?: InputMaybe<Array<InputMaybe<CreateProductInput>>>;
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
-  file?: InputMaybe<Scalars['String']>;
+  file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
   price: Scalars['Int'];
 };
@@ -993,7 +993,7 @@ export type UpdateProductInput = {
   _id: Scalars['ID'];
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
-  file?: InputMaybe<Scalars['String']>;
+  file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
   price: Scalars['Int'];
 };
