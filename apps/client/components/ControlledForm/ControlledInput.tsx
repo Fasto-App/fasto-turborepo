@@ -144,7 +144,12 @@ export const ControlledInput = <T extends Record<string, string>>({
                 return (
                   <label tabIndex={0} style={{ cursor: "pointer" }}>
                     <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
-                      <input type="file" style={{ display: "none" }} onChange={handleOnChange} accept="image/*" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={handleOnChange}
+                      />
                       <span>
                         {!src && !field.value ?
                           <Box mr={2}

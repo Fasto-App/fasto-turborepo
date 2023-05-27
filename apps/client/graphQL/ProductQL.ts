@@ -1,4 +1,4 @@
-import { useAppStore } from "../business-templates/UseAppStore";
+import { showToast } from "../components/showToast";
 import {
   useGetAllProductsByBusinessIdQuery,
   useCreateProductMutation,
@@ -9,8 +9,6 @@ import {
 
 
 export const useProductMutationHook = (useAddProductButton = false) => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
-
   // READ
   const {
     data: allProducts,
@@ -28,11 +26,16 @@ export const useProductMutationHook = (useAddProductButton = false) => {
     }
   ] = useCreateProductMutation({
     onCompleted: (data) => {
-      setNetworkState("success")
+      showToast({
+        message: "Product created successfully",
+      })
 
     },
     onError: (error) => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: "There was an error creating the product",
+      })
     },
     refetchQueries: [GetAllProductsByBusinessIdDocument]
   });
@@ -40,13 +43,19 @@ export const useProductMutationHook = (useAddProductButton = false) => {
 
   const [deleteProduct, {
     data: productDeleted,
-    reset: resetDeleteProduct
+    reset: resetDeleteProduct,
+    loading: deleteProductIsLoading,
   }] = useDeleteProductMutation({
     onCompleted: (data) => {
-      setNetworkState("success")
+      showToast({
+        message: "Product deleted successfully",
+      })
     },
     onError: (error) => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: "Error deleting the product",
+      })
     },
     refetchQueries: [GetAllProductsByBusinessIdDocument]
   });
@@ -54,13 +63,19 @@ export const useProductMutationHook = (useAddProductButton = false) => {
   // MARK UPDATE
   const [updateProduct,
     { reset: resetUpdateProduct,
+      loading: updateProductIsLoading,
       data: productUpdated, }] =
     useUpdateProductByIdMutation({
       onCompleted: (data) => {
-        setNetworkState("success")
+        showToast({
+          message: "Product updated successfully",
+        })
       },
       onError: (error) => {
-        setNetworkState("error")
+        showToast({
+          status: "error",
+          message: "Error updating the product",
+        })
       },
       refetchQueries: [GetAllProductsByBusinessIdDocument]
     });
@@ -70,7 +85,7 @@ export const useProductMutationHook = (useAddProductButton = false) => {
     createProduct,
     createProductIsLoading,
     deleteProduct,
-    loadingProduct: createProductIsLoading || getProductsIsLoading,
+    loadingProduct: createProductIsLoading || getProductsIsLoading || updateProductIsLoading || deleteProductIsLoading,
     updateProduct,
     productError: isProductError?.message,
     productUpdated,

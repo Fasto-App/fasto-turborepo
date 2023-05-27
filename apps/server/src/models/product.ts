@@ -3,8 +3,6 @@ import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { Ref } from '@typegoose/typegoose';
 import { Business } from "./business";
 import { Category } from "./category";
-
-const defaultImage = "https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png"
 export class Product {
   @prop({ required: true })
   public name!: string;
@@ -24,7 +22,7 @@ export class Product {
   @prop({ default: [] })
   public addons?: Types.ObjectId[];
 
-  @prop({ default: defaultImage })
+  @prop()
   public imageUrl?: string;
 
   @prop({ default: Date.now() })

@@ -45,8 +45,13 @@ const createProduct = async (_parent: any, { input }: { input: CreateProductInpu
             business: businessByID?._id,
             category: categoryByID?._id,
             addons: input?.addons,
-            imageUrl: input.file,
         });
+
+        if (input.file) {
+            const file = await uploadFileS3Bucket(input.file)
+
+            product.imageUrl = file.Location;
+        }
 
 
         const savedProduct = await product.save();
@@ -97,6 +102,18 @@ const getProductByID = async (_parent: any,
 
 // TODO: Properly type input
 const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, business }: Context) => {
+    // TODO: change to updateOne instead?
+    // await product.updateOne({
+    //     $set: {
+    //         name: input.name,
+    //         description: input.description,
+    //         price: input.price,
+    //         category: input.category,
+    //         addons: input.addons,
+    //         imageUrl: input.imageUrl,
+    //     }
+    // })
+
     const { input } = arg;
 
     // use the _id to find the product, make sure the name is unique, and update the product
@@ -107,7 +124,9 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 
     // if the input has a photo, upload it to the s3 bucket
     if (input.file) {
-        product.imageUrl = input.file;
+        const file = await uploadFileS3Bucket(input.file)
+
+        product.imageUrl = file.Location;
     }
 
     // if theres a name, see if the name is unique
@@ -125,7 +144,7 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
     // if theres a price, see if the price is valid
     if (input.price) {
         if (input.price < 0) {
-            throw ApolloError('BadRequest', "Product name already exists. Please try it again.")
+            throw ApolloError('BadRequest', "Price must be greater than 0. Please try it again")
         }
 
 
@@ -151,27 +170,11 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 
     // if theres a addons, see if the addons are valid
     if (input.addons) {
-        if (input.addons.length > 10) throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
+        if (input.addons.length > 10)
+            throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
     }
 
-    if (input.file) {
-        product.imageUrl = input.file;
-    }
-
-    // TODO: change to updateOne instead?
-    // await product.updateOne({
-    //     $set: {
-    //         name: input.name,
-    //         description: input.description,
-    //         price: input.price,
-    //         category: input.category,
-    //         addons: input.addons,
-    //         imageUrl: input.imageUrl,
-    //     }
-    // })
-
-    await product.save()
-    return product
+    return await product.save()
 }
 
 // delete category

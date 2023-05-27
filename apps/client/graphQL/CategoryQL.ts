@@ -1,4 +1,4 @@
-import { useAppStore } from "../business-templates/UseAppStore";
+import { showToast } from "../components/showToast";
 import {
   GetAllCategoriesByBusinessDocument,
   GetAllProductsByBusinessIdDocument,
@@ -9,7 +9,6 @@ import {
 } from "../gen/generated";
 
 export const useCategoryMutationHook = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
 
   const { data: allCategories,
     loading: getCategoriesIsLoading,
@@ -23,10 +22,15 @@ export const useCategoryMutationHook = () => {
     reset: resetCreateCategories
   }] = useCreateCategoryMutation({
     onCompleted: (data) => {
-      setNetworkState("success")
+      showToast({
+        message: "Category created successfully",
+      })
     },
     onError: (error) => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: "There was an error creating the category",
+      })
     },
     update: (cache, { data }) => {
       // @ts-ignore
@@ -50,10 +54,15 @@ export const useCategoryMutationHook = () => {
   }] =
     useUpdateCategoryMutation({
       onCompleted: (data) => {
-        setNetworkState("success")
+        showToast({
+          message: "Category updated successfully",
+        })
       },
       onError: (error) => {
-        setNetworkState("error")
+        showToast({
+          status: "error",
+          message: "Error updating the category",
+        })
       },
       update: (cache, { data }) => {
         // @ts-ignore
@@ -80,10 +89,15 @@ export const useCategoryMutationHook = () => {
     reset: resetDeleteCategory
   }] = useDeleteCategoryMutation({
     onCompleted: (data) => {
-      setNetworkState("success")
+      showToast({
+        message: "Category deleted successfully",
+      })
     },
     onError: (error) => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: "Error deleting the category",
+      })
     },
     refetchQueries: [GetAllCategoriesByBusinessDocument, GetAllProductsByBusinessIdDocument]
   });

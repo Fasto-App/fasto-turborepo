@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
 	Button,
 	Modal
@@ -14,6 +14,14 @@ import { UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { useUploadFileHook } from '../../hooks';
 import { ControlledInput, InputProps } from '../../components/ControlledForm';
+import {
+	useGetAllProductsByBusinessIdQuery,
+	useCreateProductMutation,
+	GetAllProductsByBusinessIdDocument,
+	useDeleteProductMutation,
+	useUpdateProductByIdMutation
+} from "../../gen/generated";
+import { showToast } from '../../components/showToast';
 
 type ProductModalProps = {
 	showModal: boolean,
@@ -33,7 +41,6 @@ const ProductModal = ({
 	handleProductSubmit,
 	productFormState,
 	productControl,
-	setProductValue,
 	resetProduct
 }: ProductModalProps) => {
 	const productId = useAppStore(state => state.product)
@@ -46,11 +53,60 @@ const ProductModal = ({
 	const isEditing = !!productId
 
 	const { allCategories } = useCategoryMutationHook()
-	const {
-		deleteProduct,
-		updateProduct,
-		createProduct
-	} = useProductMutationHook()
+
+	const [createProduct,
+		{
+			loading: createProductIsLoading,
+		}
+	] = useCreateProductMutation({
+		onCompleted: () => {
+			showToast({
+				message: "Product created successfully",
+			})
+
+		},
+		onError: () => {
+			showToast({
+				status: "error",
+				message: "There was an error creating the product",
+			})
+		},
+		refetchQueries: [GetAllProductsByBusinessIdDocument]
+	});
+
+	const [updateProduct,
+		{ loading: updateProductIsLoading }] =
+		useUpdateProductByIdMutation({
+			onCompleted: () => {
+				showToast({
+					message: "Product updated successfully",
+				})
+			},
+			onError: () => {
+				showToast({
+					status: "error",
+					message: "Error updating the product",
+				})
+			},
+			refetchQueries: [GetAllProductsByBusinessIdDocument]
+		});
+
+	const [deleteProduct, {
+		loading: deleteProductIsLoading,
+	}] = useDeleteProductMutation({
+		onCompleted: () => {
+			showToast({
+				message: "Product deleted successfully",
+			})
+		},
+		onError: () => {
+			showToast({
+				status: "error",
+				message: "Error deleting the product",
+			})
+		},
+		refetchQueries: [GetAllProductsByBusinessIdDocument]
+	});
 
 	const closeModalAndClearQueryParams = () => {
 		handleFileOnChange(null)
@@ -109,7 +165,7 @@ const ProductModal = ({
 		closeModalAndClearQueryParams();
 	};
 
-	const ProductFormConfig: RegularInputConfig = {
+	const ProductFormConfig: RegularInputConfig = useMemo(() => ({
 		name: {
 			isRequired: true,
 			name: 'name',
@@ -141,18 +197,18 @@ const ProductModal = ({
 
 			inputType: 'TextArea'
 		}
-	}
+	}), [allCategories, t])
 
-	const uploadPicture: InputProps = {
+	const uploadPicture: InputProps = useMemo(() => ({
 		name: 'file',
 		label: t("photo"),
 		placeholder: t("photo"),
 		inputType: 'File',
-	}
+	}), [t])
 
 	return (
 		<>
-			<Modal isOpen={showModal} onClose={closeModalAndClearQueryParams} size={"lg"}>
+			<Modal isOpen={showModal} onClose={closeModalAndClearQueryParams} size={"lg"} height={"full"}>
 				<DevTool control={productControl} />
 				<Modal.Content>
 					<Modal.CloseButton />
@@ -176,12 +232,16 @@ const ProductModal = ({
 
 					<Modal.Footer>
 						<Button.Group space={2}>
-							<Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={() => {
-								closeModalAndClearQueryParams();
-							}}>
+							<Button
+								isLoading={createProductIsLoading || updateProductIsLoading || deleteProductIsLoading}
+								w={"100px"} variant="ghost" colorScheme="tertiary" onPress={() => {
+									closeModalAndClearQueryParams();
+								}}>
 								{t("cancel")}
 							</Button>
-							<Button w={"100px"} onPress={handleProductSubmit(onProductSubmit)}>
+							<Button
+								isLoading={createProductIsLoading || updateProductIsLoading || deleteProductIsLoading}
+								w={"100px"} onPress={handleProductSubmit(onProductSubmit)}>
 								{isEditing ? t("save") : t("create")}
 							</Button>
 						</Button.Group>
