@@ -61,14 +61,14 @@ const ProductModal = ({
 	] = useCreateProductMutation({
 		onCompleted: () => {
 			showToast({
-				message: "Product created successfully",
+				message: t("productCreated"),
 			})
 
 		},
 		onError: () => {
 			showToast({
 				status: "error",
-				message: "There was an error creating the product",
+				message: t('productCreatedError'),
 			})
 		},
 		refetchQueries: [GetAllProductsByBusinessIdDocument]
@@ -79,13 +79,13 @@ const ProductModal = ({
 		useUpdateProductByIdMutation({
 			onCompleted: () => {
 				showToast({
-					message: "Product updated successfully",
+					message: t("productUpdated"),
 				})
 			},
 			onError: () => {
 				showToast({
 					status: "error",
-					message: "Error updating the product",
+					message: t("productUpdatedError"),
 				})
 			},
 			refetchQueries: [GetAllProductsByBusinessIdDocument]
@@ -96,13 +96,13 @@ const ProductModal = ({
 	}] = useDeleteProductMutation({
 		onCompleted: () => {
 			showToast({
-				message: "Product deleted successfully",
+				message: t('productDeleted')
 			})
 		},
 		onError: () => {
 			showToast({
 				status: "error",
-				message: "Error deleting the product",
+				message: t('productDeletedError')
 			})
 		},
 		refetchQueries: [GetAllProductsByBusinessIdDocument]

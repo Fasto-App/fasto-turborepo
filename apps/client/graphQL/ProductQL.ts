@@ -1,4 +1,5 @@
 import { showToast } from "../components/showToast";
+import { useTranslation } from "next-i18next";
 import {
   useGetAllProductsByBusinessIdQuery,
   useCreateProductMutation,
@@ -8,14 +9,14 @@ import {
 } from "../gen/generated";
 
 
-export const useProductMutationHook = (useAddProductButton = false) => {
+export const useProductMutationHook = () => {
   // READ
   const {
     data: allProducts,
     loading: getProductsIsLoading
   } = useGetAllProductsByBusinessIdQuery();
 
-
+  const { t } = useTranslation("businessCategoriesProducts");
 
   const [createProduct,
     {
@@ -27,14 +28,14 @@ export const useProductMutationHook = (useAddProductButton = false) => {
   ] = useCreateProductMutation({
     onCompleted: (data) => {
       showToast({
-        message: "Product created successfully",
+        message: t("productCreated")
       })
 
     },
-    onError: (error) => {
+    onError: () => {
       showToast({
         status: "error",
-        message: "There was an error creating the product",
+        message: t("productCreatedError"),
       })
     },
     refetchQueries: [GetAllProductsByBusinessIdDocument]
@@ -46,15 +47,15 @@ export const useProductMutationHook = (useAddProductButton = false) => {
     reset: resetDeleteProduct,
     loading: deleteProductIsLoading,
   }] = useDeleteProductMutation({
-    onCompleted: (data) => {
+    onCompleted: () => {
       showToast({
-        message: "Product deleted successfully",
+        message: t("productDeleted"),
       })
     },
-    onError: (error) => {
+    onError: () => {
       showToast({
         status: "error",
-        message: "Error deleting the product",
+        message: t("productDeletedError"),
       })
     },
     refetchQueries: [GetAllProductsByBusinessIdDocument]
@@ -66,15 +67,15 @@ export const useProductMutationHook = (useAddProductButton = false) => {
       loading: updateProductIsLoading,
       data: productUpdated, }] =
     useUpdateProductByIdMutation({
-      onCompleted: (data) => {
+      onCompleted: () => {
         showToast({
-          message: "Product updated successfully",
+          message: t("productUpdated"),
         })
       },
-      onError: (error) => {
+      onError: () => {
         showToast({
           status: "error",
-          message: "Error updating the product",
+          message: t("productUpdatedError"),
         })
       },
       refetchQueries: [GetAllProductsByBusinessIdDocument]

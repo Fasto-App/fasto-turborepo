@@ -24,5 +24,17 @@
 	"price": "Precio",
 	"pricePlaceholder": "$12.99",
 	"create": "Crear",
-	"uploadPicture": "Subir Foto"
+	"uploadPicture": "Subir Foto",
+	"productCreated": "Producto creado exitosamente",
+	"productUpdated": "Producto actualizado exitosamente",
+	"productDeleted": "Producto eliminado exitosamente",
+	"categoryCreated": "Categoría creada exitosamente",
+	"categoryUpdated": "Categoría actualizada exitosamente",
+	"categoryDeleted": "Categoría eliminada exitosamente",
+	"productCreatedError": "Error al crear el producto",
+	"productUpdatedError": "Error al actualizar el producto",
+	"productDeletedError": "Error al eliminar el producto",
+	"categoryCreatedError": "Error al crear la categoría",
+	"categoryUpdatedError": "Error al actualizar la categoría",
+	"categoryDeletedError": "Error al eliminar la categoría"
 }

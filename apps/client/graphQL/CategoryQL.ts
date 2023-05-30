@@ -1,3 +1,4 @@
+import { useTranslation } from "next-i18next";
 import { showToast } from "../components/showToast";
 import {
   GetAllCategoriesByBusinessDocument,
@@ -12,8 +13,9 @@ export const useCategoryMutationHook = () => {
 
   const { data: allCategories,
     loading: getCategoriesIsLoading,
-    error: getCategoriesError,
   } = useGetAllCategoriesByBusinessQuery();
+
+  const { t } = useTranslation("businessCategoriesProducts");
 
   const [createCategory, {
     data: categoryCreated,
@@ -21,15 +23,15 @@ export const useCategoryMutationHook = () => {
     error: isCategoryError,
     reset: resetCreateCategories
   }] = useCreateCategoryMutation({
-    onCompleted: (data) => {
+    onCompleted: () => {
       showToast({
-        message: "Category created successfully",
+        message: t("categoryCreated"),
       })
     },
-    onError: (error) => {
+    onError: () => {
       showToast({
         status: "error",
-        message: "There was an error creating the category",
+        message: t("categoryCreatedError"),
       })
     },
     update: (cache, { data }) => {
@@ -53,15 +55,15 @@ export const useCategoryMutationHook = () => {
     error: isCategoryUpdatedError,
   }] =
     useUpdateCategoryMutation({
-      onCompleted: (data) => {
+      onCompleted: () => {
         showToast({
-          message: "Category updated successfully",
+          message: t("categoryUpdated"),
         })
       },
-      onError: (error) => {
+      onError: () => {
         showToast({
           status: "error",
-          message: "Error updating the category",
+          message: t("categoryUpdatedError"),
         })
       },
       update: (cache, { data }) => {
@@ -88,15 +90,15 @@ export const useCategoryMutationHook = () => {
     data: categoryDeleted,
     reset: resetDeleteCategory
   }] = useDeleteCategoryMutation({
-    onCompleted: (data) => {
+    onCompleted: () => {
       showToast({
-        message: "Category deleted successfully",
+        message: t("categoryDeleted")
       })
     },
     onError: (error) => {
       showToast({
         status: "error",
-        message: "Error deleting the category",
+        message: t("categoryDeletedError"),
       })
     },
     refetchQueries: [GetAllCategoriesByBusinessDocument, GetAllProductsByBusinessIdDocument]
