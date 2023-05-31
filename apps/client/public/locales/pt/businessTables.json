@@ -8,6 +8,7 @@
 	"orderStatus": "Status do Pedido",
 	"noOrdersYet": "Nenhum pedido ainda",
 	"space": "Área",
+	"table": "Mesa",
 	"tables": "Mesas",
 	"requests": "Pedidos",
 	"accept": "Aceitar",
@@ -26,5 +27,7 @@
 	"spaceName": "Nome da Área",
 	"addSpace": "Adicionar Área",
 	"spaceExample": "Exemplo: Bar, Terraço, etc.",
-	"errorCreatingTab": "Erro ao criar comanda. Por favor, tente novamente."
+	"errorCreatingTab": "Erro ao criar comanda. Por favor, tente novamente.",
+	"numberOfGuests": "Número de convidados",
+	"selectedNumberOfGuests": "Entre com o número de convidados"
 }

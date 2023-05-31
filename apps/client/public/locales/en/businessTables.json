@@ -8,6 +8,7 @@
 	"orderStatus": "Order Status",
 	"noOrdersYet": "No orders yet",
 	"space": "Space",
+	"table": "Table",
 	"tables": "Tables",
 	"requests": "Requests",
 	"accept": "Accept",
@@ -26,5 +27,7 @@
 	"spaceName": "Space Name",
 	"addSpace": "Add Space",
 	"spaceExample": "Example: Bar, Terrace, etc.",
-	"errorCreatingTab": "Error creating tab. Please try again."
+	"errorCreatingTab": "Error creating tab. Please try again.",
+	"numberOfGuests": "Number of Guests",
+	"selectedNumberOfGuests": "Enter number of guests"
 }

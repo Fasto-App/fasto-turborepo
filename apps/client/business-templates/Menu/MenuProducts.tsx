@@ -310,15 +310,19 @@ function MenuProducts() {
       {isEditingMenu ?
         <HStack justifyContent="space-between">
           <HStack alignItems="center" space={2} py={4}>
-            <DeleteAlert title={t("deleteMenu")} deleteItem={async () => {
-              if (!menuId) throw new Error("Menu not found")
+            <DeleteAlert
+              title={t("deleteMenu")}
+              body={(t("deleteMenuBody"))}
+              cancel={t("cancel")}
+              deleteItem={async () => {
+                if (!menuId) throw new Error("Menu not found")
 
-              await deleteMenu({
-                variables: {
-                  id: menuId
-                }
-              })
-            }} />
+                await deleteMenu({
+                  variables: {
+                    id: menuId
+                  }
+                })
+              }} />
           </HStack>
           <HStack alignItems="center" space={2} justifyContent="end">
             <Button w={"100"} variant={"subtle"} onPress={resetEditingAndSectionMap}>

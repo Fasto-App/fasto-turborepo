@@ -89,10 +89,12 @@ export const ManageEmployee = () => {
         ...ManageEmployeeConfig.name,
         isDisabled: !!getValues("_id"),
         label: t("name"),
+        placeholder: t("enterName"),
       },
       jobTitle: {
         ...ManageEmployeeConfig.jobTitle,
         label: t("jobTitle"),
+        placeholder: t("enterJobTitle"),
       },
       privilege: {
         ...ManageEmployeeConfig.privileges,
@@ -189,7 +191,9 @@ export const ManageEmployee = () => {
         :
         <ScrollView pt={6}>
           <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-            {combinedData.map((employee, index) => {
+            {combinedData.map((employee) => {
+              if (employee.jobTitle === "Owner") return null
+
               return (
                 <EmployeeTile
                   key={employee._id}
@@ -198,7 +202,7 @@ export const ManageEmployee = () => {
                   name={employee.name}
                   privilege={employee.privilege}
                   picture={employee.picture || DICE_BEAR_INITIALS_URL(employee.name)}
-                  ctaTitle={"Edit"}
+                  ctaTitle={t("edit")}
                   isPending={employee.isPending}
                   onPress={() => onEditPressed(employee)}
                 />

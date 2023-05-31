@@ -12,5 +12,6 @@
 	"add": "Agregar",
 	"edit": "Editar",
 	"emptyProducts": "Para empezar a agregar productos presione 'Editar Menú'",
-	"deleteMenu": "Borrar menú"
+	"deleteMenu": "Borrar menú",
+	"deleteMenuBody": "Esto eliminará todos los datos relacionados con este producto. Esta acción no se puede deshacer."
 }

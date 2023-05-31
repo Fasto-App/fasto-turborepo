@@ -12,5 +12,6 @@
 	"add": "Add",
 	"edit": "Edit",
 	"emptyProducts": "To start adding products press 'Edit Menu'",
-	"deleteMenu": "Delete Menu"
+	"deleteMenu": "Delete Menu",
+	"deleteMenuBody": "This will remove all data related to this menu. This action cannot be undone."
 }

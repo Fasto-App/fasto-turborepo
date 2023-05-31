@@ -227,7 +227,13 @@ const ProductModal = ({
 							control={productControl}
 							label={t("uploadPicture")}
 						/>
-						{isEditing ? <DeleteAlert deleteItem={deleteProductCb} title={t("delete")} /> : null}
+						{isEditing ?
+							<DeleteAlert
+								deleteItem={deleteProductCb}
+								title={t("delete")}
+								body={t("deleteProductBody")}
+								cancel={t("cancel")}
+							/> : null}
 					</Modal.Body>
 
 					<Modal.Footer>

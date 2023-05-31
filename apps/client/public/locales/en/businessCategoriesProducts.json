@@ -11,7 +11,7 @@
 	"description": "Description",
 	"descriptionHelperText": "Max 5 lines",
 	"add": "Add",
-	"delete": "Delete Category",
+	"delete": "Delete",
 	"cancel": "Cancel",
 	"save": "Save",
 	"all": "All",
@@ -36,5 +36,8 @@
 	"productDeletedError": "Error deleting product",
 	"categoryCreatedError": "Error creating category",
 	"categoryUpdatedError": "Error updating category",
-	"categoryDeletedError": "Error deleting category"
+	"categoryDeletedError": "Error deleting category",
+	"deleteProductTitle": "Delete Product",
+	"deleteProductBody": "This will remove all data relating to this product. This action cannot be reversed.",
+	"deleteCategoryBody": "This will remove all data relating to this category. This action cannot be reversed."
 }

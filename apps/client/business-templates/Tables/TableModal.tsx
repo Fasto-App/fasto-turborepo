@@ -23,32 +23,18 @@ const tableSchema = z.object({
   }),
 })
 
-const TabConfig: RegularInputConfig = {
-  totalUsers: {
-    name: "totalUsers",
-    label: "Num Guests",
-    placeholder: "Select number of guests",
-    errorMessage: "Please, enter a number of guests",
-    helperText: "Number of guests",
-    inputType: "Number",
-  },
-  admin: {
-    name: "admin",
-    label: "Admin",
-    placeholder: "Select an admin user",
-  },
-}
-
-const { totalUsers, admin } = TabConfig
-
-const SideBySideTabConfig: SideBySideInputConfig = {
-  info: [{ totalUsers }, { admin }]
-}
-
-
 export const TableModal = () => {
   const router = useRouter()
   const { t } = useTranslation("businessTables")
+
+  const SideBySideTabConfig: RegularInputConfig = {
+    totalUsers: {
+      name: "totalUsers",
+      label: t("numberOfGuests"),
+      placeholder: t("selectedNumberOfGuests"),
+      inputType: "Number",
+    }
+  }
 
   const tableId = useTableScreenStore(state => state.tableChoosen)
   const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
@@ -141,6 +127,8 @@ export const TableModal = () => {
     clearErrors()
   }
 
+  console.log(`isOcuppiedTable ? t("addNewItem") : t("openTab")`, isOcuppiedTable ? t("addNewItem") : t("openTab"))
+
   return (
     <>
       <DevTool control={control} />
@@ -151,10 +139,13 @@ export const TableModal = () => {
         HeaderComponent={
           <>
             <Text fontSize={"20"}>
-              {"Table " + tableChoosen?.tableNumber}
+              {`${t("table")} ${tableChoosen?.tableNumber}`}
             </Text>
-            <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
-              {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}
+            <Badge
+              mt={2}
+              width={'20'}
+              colorScheme={badgeScheme(tableChoosen?.status)}>
+              {!!tableChoosen?.status && t(tableChoosen?.status)}
             </Badge>
           </>}
         ModalBody={
@@ -174,10 +165,10 @@ export const TableModal = () => {
         }
         ModalFooter={
           <Button.Group flex={1} justifyContent={"center"} space={4}>
-            <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
+            <Button flex={1} w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
               {t("cancel")}
             </Button>
-            <Button w={"200px"}
+            <Button flex={1} w={"200px"}
               onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}
               isLoading={loading}
             >

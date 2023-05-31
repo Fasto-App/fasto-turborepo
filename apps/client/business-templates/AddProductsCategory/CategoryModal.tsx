@@ -109,6 +109,8 @@ const CategoryModal = ({
                   setShowModal(false);
                 }}
                 title={t("delete")}
+                body={t("deleteCategoryBody")}
+                cancel={t("cancel")}
               />
             ) : null}
           </Modal.Body>

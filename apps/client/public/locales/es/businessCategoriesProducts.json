@@ -11,7 +11,7 @@
 	"description": "Descripción",
 	"descriptionHelperText": "Máximo de 5 líneas",
 	"add": "Agregar",
-	"delete": "Eliminar Categoría",
+	"delete": "Eliminar",
 	"cancel": "Cancelar",
 	"save": "Guardar",
 	"all": "Todos",
@@ -36,5 +36,8 @@
 	"productDeletedError": "Error al eliminar el producto",
 	"categoryCreatedError": "Error al crear la categoría",
 	"categoryUpdatedError": "Error al actualizar la categoría",
-	"categoryDeletedError": "Error al eliminar la categoría"
+	"categoryDeletedError": "Error al eliminar la categoría",
+	"deleteProductTitle": "Eliminar Producto",
+	"deleteProductBody": "Esto eliminará todos los datos relacionados con este producto. Esta acción no se puede deshacer.",
+	"deleteCategoryBody": "Esto eliminará todos los datos relacionados con este producto. Esta acción no se puede deshacer."
 }

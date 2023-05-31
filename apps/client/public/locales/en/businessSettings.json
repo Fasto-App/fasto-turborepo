@@ -20,10 +20,14 @@
 	"state": "State",
 	"country": "Country",
 	"name": "Name",
+	"enterName": "Enter Name",
 	"jobTitle": "Job Title",
+	"enterJobTitle": "Enter Job Title",
 	"privileges": "Privileges",
 	"email": "Email",
 	"oldPassword": "Old Password",
 	"newPassword": "New Password",
-	"newPasswordConfirmation": "New Password Confirmation"
+	"newPasswordConfirmation": "New Password Confirmation",
+	"edit": "Edit",
+	"deleteEmployeeBody": "Are you sure you want to delete this employee?"
 }

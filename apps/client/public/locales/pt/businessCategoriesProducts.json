@@ -11,7 +11,7 @@
 	"description": "Descrição",
 	"descriptionHelperText": "Máximo de 5 linhas",
 	"add": "Adicionar",
-	"delete": "Excluir Categoria",
+	"delete": "Excluir",
 	"cancel": "Cancelar",
 	"save": "Salvar",
 	"all": "Todos",
@@ -36,5 +36,8 @@
 	"productDeletedError": "Erro ao excluir o produto",
 	"categoryCreatedError": "Erro ao criar a categoria",
 	"categoryUpdatedError": "Erro ao atualizar a categoria",
-	"categoryDeletedError": "Erro ao excluir a categoria"
+	"categoryDeletedError": "Erro ao excluir a categoria",
+	"deleteProductTitle": "Delete Product",
+	"deleteProductBody": "Isso removerá todos os dados relacionados a este produto. Esta ação não pode ser revertida.",
+	"deleteCategoryBody": "Isso removerá todos os dados relacionados a esta categoria. Esta ação não pode ser revertida."
 }

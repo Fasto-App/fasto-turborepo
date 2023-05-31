@@ -1,6 +1,6 @@
 import { Ref } from "@typegoose/typegoose";
 import { Connection } from "mongoose"
-import { CategoryModel, Category, BusinessModel, ProductModel, IUserModel } from "../../../models";
+import { CategoryModel, Category, BusinessModel, ProductModel, IUserModel, MenuModel, Section, SectionModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateCategoryInput, UpdateCategoryInput } from "./types";
@@ -197,8 +197,11 @@ const deleteCategory = async (_parent: any, args: { id: string }, { db, business
 
     if (category.parentCategory) throw ApolloError('BadRequest')
 
-
     await category.remove();
+
+    const section = await SectionModel(db).findOne({ category: category._id })
+
+    await section?.remove()
 
     return { ok: true }
 };

@@ -39,3 +39,6 @@ export class Menu {
 
 export const MenuModel = (conn: Connection) =>
     getModelForClass(Menu, { existingConnection: conn, schemaOptions: { collection: 'Menu' } })
+
+export const SectionModel = (conn: Connection) =>
+    getModelForClass(Menu, { existingConnection: conn, schemaOptions: { collection: 'Section' } })

@@ -20,10 +20,13 @@
 	"state": "Estado",
 	"country": "País",
 	"name": "Nombre",
+	"enterName": "Ingrese Nombre",
 	"jobTitle": "Título del Puesto",
+	"enterJobTitle": "Ingrese Título del Puesto",
 	"privileges": "Privilegios",
 	"email": "Correo Electrónico",
 	"oldPassword": "Contraseña Anterior",
 	"newPassword": "Nueva Contraseña",
-	"newPasswordConfirmation": "Confirmación de Nueva Contraseña"
+	"newPasswordConfirmation": "Confirmación de Nueva Contraseña",
+	"edit": "Editar"
 }
