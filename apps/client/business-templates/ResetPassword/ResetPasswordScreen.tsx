@@ -5,11 +5,12 @@ import { businessRoute } from '../../routes';
 import { ResetPasswordConfig, useResetPasswordHook } from './hook';
 import { useRouter } from 'next/router';
 import { usePasswordResetMutation } from '../../gen/generated';
-import { ResetPasswordSchemaInput } from 'app-helpers';
+import { Locale, ResetPasswordSchemaInput, localeObj } from 'app-helpers';
 import { setBusinessCookies } from '../../cookies';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 import { useTranslation } from 'next-i18next';
+import { FDSSelect } from '../../components/FDSSelect';
 
 export const ResetPasswordScreen = () => {
   const { control, formState, reset, handleSubmit } = useResetPasswordHook()
@@ -84,6 +85,17 @@ export const ResetPasswordScreen = () => {
         <Image src="/images/fasto-logo.svg"
           alt="Fasto Logo"
           height={36} width={180} />
+      </Box>
+      <Box position={"absolute"} top={"5"} right={"5"}>
+        <FDSSelect
+          w="70"
+          h="8"
+          array={localeObj}
+          selectedValue={router.locale as Locale}
+          setSelectedValue={(value) => {
+            const path = router.asPath;
+            return router.push(path, path, { locale: value });
+          }} />
       </Box>
       <Box safeArea p="2" py="8" w="90%" maxW="600">
         <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{

@@ -95,7 +95,7 @@ const CategoryList = ({ resetAll, categories }:
 			<Box flexDirection={"row"}>
 				{/* Title */}
 				<Heading flex={1}>
-					{t("title")}
+					{t("categories")}
 				</Heading>
 			</Box>
 
