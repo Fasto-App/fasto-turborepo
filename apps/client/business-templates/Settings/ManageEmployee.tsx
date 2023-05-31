@@ -149,7 +149,12 @@ export const ManageEmployee = () => {
             />
             {getValues("_id") ?
               <Box pt={4}>
-                <DeleteAlert deleteItem={deleteEmployeeCB} title={t("delete")} />
+                <DeleteAlert
+                  deleteItem={deleteEmployeeCB}
+                  title={t("delete")}
+                  body={t("deleteEmployeeBody")}
+                  cancel={t("cancel")}
+                />
               </Box>
               : null}
           </>
