@@ -21,14 +21,15 @@ const ModalAddButtons = ({
   isEditing,
 }: ModalAddButtonsProps) => {
   return (
-    <Button.Group space={2}>
+    <Button.Group space={2} flex={1}>
       <Button w={"100px"}
-        variant="ghost"
+        variant="outline"
         colorScheme="tertiary"
-        onPress={cancelAction}>
+        onPress={cancelAction}
+        flex={1}>
         {texts.cancel}
       </Button>
-      <Button w={"100px"} onPress={saveAction}>
+      <Button w={"100px"} onPress={saveAction} flex={1}>
         {isEditing ? texts.save : texts.add}
       </Button>
     </Button.Group >

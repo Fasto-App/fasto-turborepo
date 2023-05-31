@@ -126,16 +126,17 @@ const MenuModal = ({ showModal, setShowModal }: {
             formState={formState}
           />
         </Modal.Body>
-        <Modal.Footer>
-          <Button.Group space={2}>
+        <Modal.Footer borderColor={"white"}>
+          <Button.Group space={2} flex={1} >
             <Button
               w={"100px"}
-              variant="ghost"
+              variant="outline"
               colorScheme="tertiary"
-              onPress={() => setShowModal(false)}>
+              onPress={() => setShowModal(false)}
+              flex={1}>
               {t("cancel")}
             </Button>
-            <Button w={"100px"} onPress={handleSubmit(onMenuSubmit)}>
+            <Button w={"100px"} onPress={handleSubmit(onMenuSubmit)} flex={1}>
               {isEditing ? t("edit") : t("add")}
             </Button>
           </Button.Group>

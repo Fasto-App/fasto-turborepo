@@ -114,7 +114,7 @@ const CategoryModal = ({
               />
             ) : null}
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer borderColor={"white"}>
             <ModalAddButtons
               isEditing={isEditing}
               cancelAction={closeModalAndClearQueryParams}

@@ -32,11 +32,11 @@ export const AddTableModal = ({
         <Text>{t("businessTables:addNewTable")}</Text>
       </Modal.Body>
       <Modal.Footer>
-        <Button.Group space={2} paddingTop={4}>
-          <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={onCancel}>
+        <Button.Group space={2} flex={1}>
+          <Button w={"100px"} variant="outline" colorScheme="tertiary" onPress={onCancel} flex={1}>
             {t("common:cancel")}
           </Button>
-          <Button w={"100px"} onPress={onSubmit}>
+          <Button w={"100px"} onPress={onSubmit} flex={1}>
             {t("common:yes")}
           </Button>
         </Button.Group>

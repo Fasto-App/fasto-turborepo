@@ -1,5 +1,5 @@
 import { localeObj, typedKeys, Locale } from 'app-helpers'
-import { Box, Button, FlatList, HStack, Heading, VStack } from 'native-base'
+import { Box, Button, FlatList, HStack, Heading, ScrollView, VStack } from 'native-base'
 import React, { useState } from 'react'
 import { ManageAccount } from './ManageAccount'
 import { ManageBusiness } from './ManageBusiness'
@@ -84,12 +84,12 @@ export const SettingsScreen = () => {
           />
         </UpperSection>
         <BottomSection>
-          <Box>
+          <ScrollView>
             {selectedTab === "manageLocation" ? <ManageBusinessLocation /> :
               selectedTab === "manageAccount" ? <ManageAccount /> :
                 selectedTab === "manageEmployees" ? <ManageEmployee /> :
                   selectedTab === "manageBusiness" ? <ManageBusiness /> : null}
-          </Box>
+          </ScrollView>
         </BottomSection>
       </VStack>
     </Box>

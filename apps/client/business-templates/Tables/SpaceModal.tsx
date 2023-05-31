@@ -79,15 +79,17 @@ export const SpaceModal = ({ isModalOpen, setIsModalOpen }: SpaceModalProps) => 
             }
           }}
         />
-        <Button.Group space={2} paddingTop={4}>
-          <Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={onCancel}>
+      </Modal.Body>
+      <Modal.Footer borderColor={"white"}>
+        <Button.Group space={2} flex={1}>
+          <Button w={"100px"} variant="outline" colorScheme="tertiary" onPress={onCancel} flex={1}>
             {t("cancel")}
           </Button>
-          <Button w={"100px"} onPress={handleSubmit(onSubmit)}>
+          <Button w={"100px"} onPress={handleSubmit(onSubmit)} flex={1}>
             {t("save")}
           </Button>
         </Button.Group>
-      </Modal.Body>
+      </Modal.Footer>
     </Modal.Content>
   </Modal>
 }

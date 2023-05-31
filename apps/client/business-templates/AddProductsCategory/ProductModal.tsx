@@ -236,16 +236,18 @@ const ProductModal = ({
 							/> : null}
 					</Modal.Body>
 
-					<Modal.Footer>
-						<Button.Group space={2}>
+					<Modal.Footer borderColor={"white"}>
+						<Button.Group space={2} flex={1}>
 							<Button
+								flex={1}
 								isLoading={createProductIsLoading || updateProductIsLoading || deleteProductIsLoading}
-								w={"100px"} variant="ghost" colorScheme="tertiary" onPress={() => {
+								w={"100px"} variant="outline" colorScheme="tertiary" onPress={() => {
 									closeModalAndClearQueryParams();
 								}}>
 								{t("cancel")}
 							</Button>
 							<Button
+								flex={1}
 								isLoading={createProductIsLoading || updateProductIsLoading || deleteProductIsLoading}
 								w={"100px"} onPress={handleProductSubmit(onProductSubmit)}>
 								{isEditing ? t("save") : t("create")}

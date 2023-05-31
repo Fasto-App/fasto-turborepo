@@ -1,5 +1,5 @@
 import React from "react"
-import { HStack, Button, Box } from "native-base"
+import { HStack, Button, Box, ScrollView } from "native-base"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { ManageAccountConfig, uploadPicture } from "./Config"
 import { useManageAccountFormHook } from "./hooks"
@@ -90,6 +90,7 @@ export const ManageAccount = () => {
   return (
     <HStack flex={1} flexDir={"column"}>
       <DevTool control={control} />
+
       <ControlledForm
         control={control}
         formState={formState}
