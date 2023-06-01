@@ -132,7 +132,7 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
         accessibilityLabel={t("chooseService")}
         onValueChange={itemValue => console.log(itemValue)}>
         {typedKeys(OrderStatus).map((status, index) => (
-          <Select.Item key={index} label={status} value={status.toUpperCase()} />)
+          <Select.Item key={index} label={t(OrderStatus[status])} value={status} />)
         )}
       </Select>
     </Center>

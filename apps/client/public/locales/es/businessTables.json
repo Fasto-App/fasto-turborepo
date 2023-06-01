@@ -29,5 +29,8 @@
 	"spaceExample": "Ejemplo: Bar, Terraza, etc.",
 	"errorCreatingTab": "Error al crear la cuenta. Por favor intente nuevamente",
 	"numberOfGuests": "Número de Invitados",
-	"selectedNumberOfGuests": "Introduce el número de invitados"
+	"selectedNumberOfGuests": "Introduce el número de invitados",
+	"Delivered": "Entregado",
+	"Open": "Abierto",
+	"Pendent": "Pendiente"
 }

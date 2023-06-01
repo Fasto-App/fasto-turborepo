@@ -29,5 +29,8 @@
 	"spaceExample": "Exemplo: Bar, Terraço, etc.",
 	"errorCreatingTab": "Erro ao criar comanda. Por favor, tente novamente.",
 	"numberOfGuests": "Número de convidados",
-	"selectedNumberOfGuests": "Entre com o número de convidados"
+	"selectedNumberOfGuests": "Entre com o número de convidados",
+	"Delivered": "Entregue",
+	"Open": "Aberto",
+	"Pendent": "Pendente"
 }

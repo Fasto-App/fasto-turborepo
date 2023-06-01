@@ -29,5 +29,8 @@
 	"spaceExample": "Example: Bar, Terrace, etc.",
 	"errorCreatingTab": "Error creating tab. Please try again.",
 	"numberOfGuests": "Number of Guests",
-	"selectedNumberOfGuests": "Enter number of guests"
+	"selectedNumberOfGuests": "Enter number of guests",
+	"Delivered": "Delivered",
+	"Open": "Open",
+	"Pendent": "Pendent"
 }

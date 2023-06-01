@@ -28,5 +28,6 @@
 	"oldPassword": "Senha Antiga",
 	"newPassword": "Nova Senha",
 	"newPasswordConfirmation": "Confirmação de Nova Senha",
-	"edit": "Editar"
+	"edit": "Editar",
+	"pending": "Pendente"
 }

@@ -29,5 +29,6 @@
 	"newPassword": "New Password",
 	"newPasswordConfirmation": "New Password Confirmation",
 	"edit": "Edit",
-	"deleteEmployeeBody": "Are you sure you want to delete this employee?"
+	"deleteEmployeeBody": "Are you sure you want to delete this employee?",
+	"pending": "Pending"
 }

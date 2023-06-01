@@ -5,12 +5,13 @@ import { UpperSection } from '../../components/UpperSection'
 import { FDSSelect } from '../../components/FDSSelect'
 import { BottomSection } from '../../components/BottomSection'
 import { useTranslation } from 'next-i18next'
-import { useGetCheckoutsByBusinessQuery } from '../../gen/generated'
+import { CheckoutStatusKeys, useGetCheckoutsByBusinessQuery } from '../../gen/generated'
 import { LoadingItems } from './LoadingItems'
 import { parseToCurrency } from 'app-helpers'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { getLocale } from '../../authUtilities/utils'
+import { ColorSchemeType } from 'native-base/lib/typescript/components/types'
 
 const TableHeader: FC = ({ children }) => <Heading textAlign={"center"} flex="1" size={"md"}>{children}</Heading>
 
@@ -36,9 +37,10 @@ type OrderDetailsProps = {
   date: string;
   total: string;
   status: string;
+  colorScheme: ColorSchemeType;
 }
 
-const OrderDetails = ({ _id, date, total, status }: OrderDetailsProps) => {
+const OrderDetails = ({ _id, date, total, status, colorScheme = "info" }: OrderDetailsProps) => {
   return (
     <Pressable _hover={{ backgroundColor: "secondary.100" }}>
       <HStack justifyContent={"space-between"} py="4">
@@ -46,7 +48,7 @@ const OrderDetails = ({ _id, date, total, status }: OrderDetailsProps) => {
         <TableData>{date}</TableData>
         <TableData>{total}</TableData>
         <TableData>
-          <Badge variant={"subtle"} colorScheme={"info"}>{status}</Badge>
+          <Badge variant={"subtle"} colorScheme={colorScheme}>{status}</Badge>
         </TableData>
       </HStack>
     </Pressable>
@@ -75,6 +77,7 @@ export const OrdersScreen = () => {
               <FDSSelect
                 w={"100px"}
                 h={"8"}
+                placeholder={t("date")}
                 setSelectedValue={function (value: string): void {
                   throw new Error('Function not implemented.')
                 }} array={[]}
@@ -83,6 +86,7 @@ export const OrdersScreen = () => {
               <FDSSelect
                 w={"100px"}
                 h={"8"}
+                placeholder={t("status")}
                 setSelectedValue={function (value: string): void {
                   throw new Error('Function not implemented.')
                 }} array={[]}
@@ -101,7 +105,8 @@ export const OrdersScreen = () => {
                     key={checkout._id}
                     date={format(Number(checkout.created_date), "PPpp", getLocale(router.locale))}
                     total={parseToCurrency(checkout.total)}
-                    status={checkout.status}
+                    status={t(CheckoutStatusKeys[checkout.status])}
+                    colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
                   />
                 )).reverse()}
               </ScrollView>}
