@@ -38,7 +38,7 @@ class MyDocument extends Document {
           <meta name="mobile-web-app-capable" content="yes" />
           <meta
             name="msapplication-config"
-            content="/icons/browserconfig.xml"
+            content="/browserconfig.xml"
           />
           <meta name="msapplication-TileColor" content="#d56f5b" />
           <meta name="msapplication-tap-highlight" content="no" />
