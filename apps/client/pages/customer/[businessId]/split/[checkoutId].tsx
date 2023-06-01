@@ -1,16 +1,27 @@
+import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { SettingsScreen } from "../../../../customer-templates/SettingsScreen";
+import { SplitScreen } from "../../../../customer-templates/Split";
+import { useTranslation } from "next-i18next";
+import Head from "next/head";
 
+export default function CheckoutPage() {
+  const { t } = useTranslation('common');
 
-export default SettingsScreen
+  return <>
+    <Head>
+      <title>{t("checkout")}</title>
+    </Head>
+    <SplitScreen />
+  </>
+}
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale ?? "en", [
         'common',
-        'customerSettings'
+        'customerCheckout'
       ])),
     },
   };

@@ -5,6 +5,7 @@ import { useGetAllBusinessQuery } from "../gen/generated";
 import { businessRoute, customerRoute } from "../routes";
 import { NavigationButton } from "../components/atoms/NavigationButton";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 const width = {
 	base: 220,
@@ -32,45 +33,50 @@ export default function Home() {
 	const router = useRouter()
 
 	return (
-		<Box backgroundColor={"pink"} h={"full"}>
-			<HStack position={"revert"} justifyContent={"space-between"} p={8}>
-				<Image src="/images/fasto-logo.svg" alt="Fasto Logo" height={36} width={180} />
-				<Center>
-					<div style={{
-						background: "linear-gradient(349deg, rgba(227,232,0,1) 0%, rgba(255,102,0,1) 25%)",
-						borderRadius: "100%"
-					}}>
-						<NavigationButton
-							type={"UserAdd"}
-							color="black"
-							onPress={function (): void {
-								router.push(businessRoute.login);
-							}} />
-					</div>
-				</Center>
-			</HStack>
+		<>
+			<Head>
+				<title>Fasto</title>
+			</Head>
+
+			<Box backgroundColor={"pink"} h={"full"}>
+				<HStack position={"revert"} justifyContent={"space-between"} p={8}>
+					<Image src="/images/fasto-logo.svg" alt="Fasto Logo" height={36} width={180} />
+					<Center>
+						<div style={{
+							background: "linear-gradient(349deg, rgba(227,232,0,1) 0%, rgba(255,102,0,1) 25%)",
+							borderRadius: "100%"
+						}}>
+							<NavigationButton
+								type={"UserAdd"}
+								color="black"
+								onPress={function (): void {
+									router.push(businessRoute.login);
+								}} />
+						</div>
+					</Center>
+				</HStack>
 
 
 
-			<HStack space={6} p={16} w={"100%"} flexWrap={"wrap"} >
-				{error ? <Text>{error.message}</Text> : null}
-				{loading ? <LoadingTiles /> : null}
+				<HStack space={6} p={16} w={"100%"} flexWrap={"wrap"} >
+					{error ? <Text>{error.message}</Text> : null}
+					{loading ? <LoadingTiles /> : null}
 
-				{data?.getAllBusiness.map((business) => {
-					if (!business?._id) return null
+					{data?.getAllBusiness.map((business) => {
+						if (!business?._id) return null
 
-					return (
-						<Pressable key={business?._id} p="4">
-							<Link href={customerRoute.home(business?._id)}>
-								<Center width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
-									<Text color={"white"} fontSize="lg">{business?.name}</Text>
-								</Center>
-							</Link>
-						</Pressable>
-					)
-				})}
-			</HStack>
-		</Box >
-
+						return (
+							<Pressable key={business?._id} p="4">
+								<Link href={customerRoute.home(business?._id)}>
+									<Center width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
+										<Text color={"white"} fontSize="lg">{business?.name}</Text>
+									</Center>
+								</Link>
+							</Pressable>
+						)
+					})}
+				</HStack>
+			</Box >
+		</>
 	);
 }

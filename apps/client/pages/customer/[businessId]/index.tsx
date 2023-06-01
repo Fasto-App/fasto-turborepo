@@ -1,15 +1,28 @@
 import { GetStaticProps, GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { CartScreen } from "../../../../customer-templates/CartScreen";
+import { HomeScreen } from "../../../customer-templates/HomeScreen/HomeScreen";
 
-export default CartScreen;
+import React from "react";
+import Head from 'next/head';
+import { useTranslation } from "next-i18next";
+
+export default function HomePage() {
+  const { t } = useTranslation('common');
+
+  return <>
+    <Head>
+      <title>{t("home")}</title>
+    </Head>
+    <HomeScreen />
+  </>
+}
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale ?? "en", [
         'common',
-        'customerCart'
+        'customerHome'
       ])),
     },
   };
