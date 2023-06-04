@@ -212,8 +212,8 @@ export const Split = ({
           />
           {allUsersFromTab.map((user, index) => {
             const valueOfDiscountPerUser = getPercentageOfValue(split?.[user._id]?.subTotal, discount)
-            const valueOfDiscount = getPercentageOfValue(split?.table.subTotal, discount)
-            const tableSubTotal = (split?.table.subTotal ?? 0) - valueOfDiscount
+            const valueOfDiscount = getPercentageOfValue(split?.table?.subTotal, discount)
+            const tableSubTotal = (split?.table?.subTotal ?? 0) - valueOfDiscount
             const totalPersonalAmount = (split?.[user._id]?.subTotal ?? 0) - valueOfDiscountPerUser
 
             const userSubTotal = selectedSplitType === "Equally" ?

@@ -3,7 +3,7 @@ import { BUSINESS_ADMIN, BUSINESS } from "./appRoute";
 export const businessRoute = {
   add_products_categories: `${BUSINESS_ADMIN}/add-products-categories`,
   add_to_order: `${BUSINESS_ADMIN}/add-to-order`,
-  checkout: (checkoutId: string, tabId: string) => `${BUSINESS_ADMIN}/checkout/${checkoutId}?tabId=${tabId}`,
+  checkout: `${BUSINESS_ADMIN}/checkout/[checkoutId]`,
   createAccount: `${BUSINESS}/create-account`,
   dashboard: `${BUSINESS_ADMIN}/dashboard`,
   forgotPassword: `${BUSINESS}/forgot-password`,

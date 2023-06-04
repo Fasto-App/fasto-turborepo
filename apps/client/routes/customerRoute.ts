@@ -1,6 +1,4 @@
 import { CUSTOMER } from "./appRoute";
-import i18next from 'i18next'
-
 
 export const customerRoute = {
   home: (businessId: string) => `${CUSTOMER}/${businessId}`,

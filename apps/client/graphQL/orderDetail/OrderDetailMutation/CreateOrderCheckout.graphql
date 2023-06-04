@@ -1,0 +1,17 @@
+mutation CreateOrdersCheckout($input: [OrderDetailInput!]!) {
+	createOrdersCheckout(input: $input) {
+		_id
+		business
+		tab
+		status
+		paid
+		subTotal
+		tip
+		discount
+		tax
+		total
+		totalPaid
+		splitType
+		created_date
+	}
+}

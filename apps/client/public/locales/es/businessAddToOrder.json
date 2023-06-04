@@ -5,5 +5,10 @@
 	"sendToKitchen": "Enviar a la cocina",
 	"patrons": "Comensales",
 	"people": "{{number}} Personas",
-	"tableNumber": "Mesa {{number}}"
+	"tableNumber": "Mesa {{number}}",
+	"requestToCloseTabSuccessfully": "Solicitud de cierre de cuenta enviada",
+	"menu": "Menú",
+	"errorGettingTabData": "Error al obtener los datos de la pestaña",
+	"ordersCreatedSuccessfully": "Órdenes creadas exitosamente",
+	"errorCreatingOrders": "Error al crear las órdenes"
 }

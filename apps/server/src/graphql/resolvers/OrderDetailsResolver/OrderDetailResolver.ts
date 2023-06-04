@@ -14,36 +14,94 @@ import { CartItemModel } from '../../../models/cartItem';
 import { TabStatus, TabType, getPercentageOfValue } from 'app-helpers';
 import { CheckoutModel } from '../../../models/checkout';
 
+// wee need two differentiate functions for creating order and creating the orderwith checkout
+
+// @ts-ignore
+const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (parent, { input },
+    { db, user: businessUser }) => {
+
+    console.log("createOrdersCheckout")
+    console.log({ input })
+
+    const Checkout = CheckoutModel(db);
+    const OrderDetail = OrderDetailModel(db);
+    const Business = BusinessModel(db);
+    const Tab = TabModel(db);
+    const Product = ProductModel(db);
+    const User = UserModel(db);
+
+    if (!businessUser?._id) throw ApolloError("Unauthorized", "Business user is not logged in");
+
+    try {
+        const parsedInputArray = CreateMultipleOrdersDetail.parse(input);
+        const foundBusiness = await Business.findOne({ createdByUser: businessUser?.business });
+
+        const newUser = await User.create({})
+
+        if (!newUser?._id) throw ApolloError("InternalServerError", "Error creating user");
+
+        const newTab = await Tab.create({
+            admin: newUser?._id,
+            type: TabType.Takeout,
+            status: TabStatus.Pendent,
+            users: [newUser?._id],
+        });
+
+        const orderDetails = await Promise.all(parsedInputArray.map(async (parsedInput) => {
+            const product = await Product.findOne({ _id: parsedInput.product });
+
+            if (!product) throw ApolloError("NotFound");
+
+            const orderDetails = await OrderDetail.create({
+                ...parsedInput,
+                subTotal: (product?.price || 0) * parsedInput.quantity,
+                user: newUser?._id,
+                tab: newTab?._id,
+                createdByUser: businessUser?._id
+            });
+
+            newTab.orders.push(orderDetails._id);
+
+            return orderDetails
+        }));
+
+        const subTotal = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.subTotal, 0);
+
+        return await Checkout.create({
+            tab: newTab._id,
+            business: businessUser?.business,
+            orders: orderDetails.map(orderDetail => orderDetail._id),
+            subTotal,
+            total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
+            tax: foundBusiness?.taxRate ?? 0,
+        })
+
+    } catch (error) {
+
+        console.log("Error: ", error)
+        throw ApolloError("BadRequest", `Error creating order ${error}`);
+    }
+}
+
+
+
 // @ts-ignore
 const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"] = async (_parent,
     { input },
     { db, user: businessUser }) => {
     console.log("createMultipleOrderDetails")
 
-    const Checkout = CheckoutModel(db);
     const OrderDetail = OrderDetailModel(db);
     const Product = ProductModel(db);
     const Tab = TabModel(db);
     const User = UserModel(db);
-    const Business = BusinessModel(db);
-
-    let tab: any;
 
     try {
-        const foundBusiness = await Business.findOne({ createdByUser: businessUser?._id });
-
         const parsedInputArray = CreateMultipleOrdersDetail.parse(input);
 
-        if (parsedInputArray[0].tab) {
-            tab = await Tab.findOne({ _id: parsedInputArray[0].tab });
-            if (!tab) throw ApolloError("NotFound");
-            if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
-        } else {
-            tab = await Tab.create({
-                type: TabType.Takeout,
-                status: TabStatus.Pendent,
-            });
-        }
+        const tab = await Tab.findOne({ _id: parsedInputArray[0].tab });
+        if (!tab) throw ApolloError("NotFound");
+        if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
 
         const orderDetails = await Promise.all(parsedInputArray.map(async (parsedInput) => {
             const user = await User.findOne({ _id: parsedInput.user });
@@ -68,25 +126,11 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
 
         await tab.save();
 
-        if (!parsedInputArray[0].tab) {
-            const subTotal = orderDetails.reduce((acc, orderDetail) => acc + orderDetail.subTotal, 0);
-
-            await Checkout.create({
-                tab: tab._id,
-                business: businessUser?.business,
-                orders: orderDetails.map(orderDetail => orderDetail._id),
-                subTotal,
-                total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
-                tax: foundBusiness?.taxRate ?? 0,
-            })
-        }
-
-
         return orderDetails;
 
     } catch (err) {
         console.log({ err })
-        throw ApolloError("InternalServerError", `Error creating OrderDetail ${err}`);
+        throw ApolloError("BadRequest", `Error creating OrderDetail ${err}`);
     }
 }
 
@@ -190,7 +234,7 @@ const deleteOrderDetail = async (_parent: any, { input }: { input: any }, { db }
         return await OrderDetail.findOneAndDelete({ _id: input._id });
     } catch (err) {
         console.log({ err })
-        throw ApolloError("InternalServerError", `Error deleting OrderDetail ${err}`);
+        throw ApolloError("BadRequest", `Error deleting OrderDetail ${err}`);
     }
 }
 
@@ -198,5 +242,6 @@ export const OrderDetailsResolverMutation = {
     updateOrderDetail,
     deleteOrderDetail,
     createMultipleOrderDetails,
-    clientCreateMultipleOrderDetails
+    clientCreateMultipleOrderDetails,
+    createOrdersCheckout,
 }

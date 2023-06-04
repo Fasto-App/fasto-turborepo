@@ -183,7 +183,7 @@ export type CreateProductInput = {
   addons?: InputMaybe<Array<InputMaybe<CreateProductInput>>>;
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
-  file?: InputMaybe<Scalars['String']>;
+  file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
   price: Scalars['Int'];
 };
@@ -374,6 +374,7 @@ export type Mutation = {
   createMenu: Menu;
   createMultipleOrderDetails: Array<OrderDetail>;
   createNewTakeoutOrDelivery: Scalars['String'];
+  createOrdersCheckout: Checkout;
   createProduct: Product;
   createSpace: Space;
   createTab: Tab;
@@ -472,6 +473,11 @@ export type MutationCreateMultipleOrderDetailsArgs = {
 
 export type MutationCreateNewTakeoutOrDeliveryArgs = {
   input: CreateNewTakeoutOrDeliveryInput;
+};
+
+
+export type MutationCreateOrdersCheckoutArgs = {
+  input: Array<OrderDetailInput>;
 };
 
 
@@ -993,7 +999,7 @@ export type UpdateProductInput = {
   _id: Scalars['ID'];
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
-  file?: InputMaybe<Scalars['String']>;
+  file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
   price: Scalars['Int'];
 };
@@ -1499,6 +1505,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<MutationCreateMenuArgs, 'input'>>;
   createMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationCreateMultipleOrderDetailsArgs, 'input'>>;
   createNewTakeoutOrDelivery?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateNewTakeoutOrDeliveryArgs, 'input'>>;
+  createOrdersCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationCreateOrdersCheckoutArgs, 'input'>>;
   createProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'input'>>;
   createSpace?: Resolver<ResolversTypes['Space'], ParentType, ContextType, Partial<MutationCreateSpaceArgs>>;
   createTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationCreateTabArgs, 'input'>>;

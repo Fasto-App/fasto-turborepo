@@ -20,8 +20,7 @@ import { Tile } from "../../components/Tile";
 import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
-import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
-import { useAppStore } from "../UseAppStore";
+import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useCreateOrdersCheckoutMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { businessRoute } from "../../routes";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
@@ -39,12 +38,36 @@ export const AddToOrder = () => {
 
   const { t } = useTranslation("businessAddToOrder")
 
-  const setNetworkState = useAppStore(state => state.setNetworkState)
+  const [createOrderCheckout, { loading: createOrderCheckoutLoading }] = useCreateOrdersCheckoutMutation({
+    onCompleted: (data) => {
+      const checkoutId = data?.createOrdersCheckout?._id
+      if (!checkoutId) throw new Error("Checkout id is missing")
+
+      showToast({ message: t("ordersCreatedSuccessfully"), })
+
+      route.push({
+        pathname: businessRoute.checkout,
+        query: {
+          checkoutId,
+          tabId: data?.createOrdersCheckout.tab
+        }
+      })
+    },
+    onError: () => {
+      showToast({
+        status: "error",
+        message: t("errorCreatingOrders")
+      })
+    }
+  })
 
   const [requestCloseTabMutation, { loading: loadingCloseTab }] = useRequestCloseTabMutation({
     refetchQueries: ["GetSpacesFromBusiness"],
     onCompleted: (data) => {
-      setNetworkState("success")
+      showToast({
+        message: t("requestToCloseTabSuccessfully"),
+      })
+
       const status = data?.requestCloseTab?.status
       const checkoutId = data?.requestCloseTab?.checkout
 
@@ -52,7 +75,13 @@ export const AddToOrder = () => {
         case "Pendent":
           if (!checkoutId) throw new Error("Checkout id is missing")
 
-          route.push(businessRoute.checkout(checkoutId, tabId as string))
+          route.push({
+            pathname: businessRoute.checkout,
+            query: {
+              checkoutId,
+              tabId,
+            }
+          })
           break;
         default:
           route.back()
@@ -77,7 +106,7 @@ export const AddToOrder = () => {
       }
     },
     onCompleted: (data) => {
-      // if data has status of pending, send to 
+      // if data has status of pending, send to checkout
       // if (data?.getTabByID?. === "pending") {
       // }
     },
@@ -85,7 +114,7 @@ export const AddToOrder = () => {
     onError: () => {
       showToast({
         status: "error",
-        message: "Error getting tab data"
+        message: t("errorGettingTabData")
       })
     }
   })
@@ -96,41 +125,46 @@ export const AddToOrder = () => {
         input: {
           _id: tabData?.getTabByID?.table?._id,
         },
-        onQueryUpdated: () => !tabData?.getTabByID?.table?._id,
-        // filter: {
-        //   skip: !tabData?.getTabByID?.table?._id
-        // }
       },
     }],
     onCompleted: () => {
-      showToast({ message: "Orders created successfully" })
+      showToast({ message: t("ordersCreatedSuccessfully") })
 
       route.back()
     },
     onError: () => {
       showToast({
         status: "error",
-        message: "Error creating orders"
+        message: t("errorCreatingOrders")
       })
     }
   })
 
   const onSendToKitchen = useCallback(async () => {
-    const orderDetails = orderItems.map(order => ({
-      ...(order?.selectedUser && { user: order?.selectedUser }),
-      tab: Array.isArray(tabId) ? tabId[0] : tabId,
-      product: order._id,
-      quantity: order.quantity,
-    }))
 
+    if (tabId) {
+      return await createOrders({
+        variables: {
+          input: orderItems.map(order => ({
+            ...(order?.selectedUser && { user: order?.selectedUser }),
+            tab: Array.isArray(tabId) ? tabId[0] : tabId,
+            product: order._id,
+            quantity: order.quantity,
+          })),
+        }
+      })
+    }
 
-    await createOrders({
+    return await createOrderCheckout({
       variables: {
-        input: orderDetails,
+        input: orderItems.map(order => ({
+          product: order._id,
+          quantity: order.quantity,
+        }))
       }
     })
 
-  }, [createOrders, orderItems, tabId])
+  }, [createOrderCheckout, createOrders, orderItems, tabId])
 
   const requestCloseTab = useCallback(() => {
     requestCloseTabMutation({
@@ -214,8 +248,11 @@ export const AddToOrder = () => {
             </HStack>
             <VStack space={4}>
               <Button
-                isLoading={loading}
-                w={"full"} onPress={onSendToKitchen} isDisabled={orderItems.length <= 0} >
+                w={"full"}
+                isLoading={loading || createOrderCheckoutLoading}
+                onPress={onSendToKitchen}
+                isDisabled={orderItems.length <= 0}
+              >
                 {t("sendToKitchen")}
               </Button>
               <Button
@@ -261,19 +298,20 @@ export const AddToOrder = () => {
                 </HStack>
               </ScrollView>
             </HStack>
-            {tabId ? <SideBySideButtons
-              leftAction={requestCloseTab}
-              rightAction={() => console.log("See Details")}
-              leftLoading={loadingCloseTab}
-              leftText={"Close Tab"}
-              rightText={"See Details"}
-              leftDisabled={false}
-              rightDisabled={false}
-            /> : null}
+            {tabId ?
+              <SideBySideButtons
+                leftAction={requestCloseTab}
+                rightAction={() => console.log("See Details")}
+                leftLoading={loadingCloseTab}
+                leftText={"Close Tab"}
+                rightText={"See Details"}
+                leftDisabled={false}
+                rightDisabled={false}
+              /> : null}
           </UpperSection>
           <BottomSection>
             <HStack space={2}>
-              <Heading pr={10}>Menu</Heading>
+              <Heading pr={10}>{t("menu")}</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
                   {sections.map((section) => (

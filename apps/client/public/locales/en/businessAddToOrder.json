@@ -5,5 +5,10 @@
 	"sendToKitchen": "Send to kitchen",
 	"patrons": "Patrons",
 	"people": "{{number}} People",
-	"tableNumber": "Table {{number}}"
+	"tableNumber": "Table {{number}}",
+	"requestToCloseTabSuccessfully": "Request to close tab successfully",
+	"menu": "Menu",
+	"errorGettingTabData": "Error getting tab data",
+	"ordersCreatedSuccessfully": "Orders created successfully",
+	"errorCreatingOrders": "Error creating orders"
 }

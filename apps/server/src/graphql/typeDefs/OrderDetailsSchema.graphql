@@ -5,6 +5,7 @@ extend type Query {
 }
 
 extend type Mutation {
+	createOrdersCheckout(input: [OrderDetailInput!]!): Checkout!
 	createMultipleOrderDetails(input: [CreateOrderInput!]!): [OrderDetail!]!
 	clientCreateMultipleOrderDetails(input: [ClientCreateOrderInput!]!): [OrderDetail!]!
 	updateOrderDetail(input: UpdateOrderDetailInput!): OrderDetail!
