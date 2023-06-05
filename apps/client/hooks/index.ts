@@ -78,9 +78,14 @@ export const useGetClientSession = () => {
       if (data.getClientSession.request.status === RequestStatus.Rejected) {
         if (businessId) {
           const business = typeof businessId === "string" ? businessId : businessId[0]
+
           clearClientCookies(business)
-          route.push(customerRoute.home(business))
-          return
+          return route.push({
+            pathname: customerRoute.home,
+            query: {
+              businessId: business
+            }
+          })
         }
       }
 

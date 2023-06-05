@@ -25,7 +25,12 @@ export const CustomerLayout: React.FC = ({ children }) => {
     if (!token && (isSettings || isCart)) {
       if (!businessId || typeof businessId !== "string") return
 
-      route.push(customerRoute.home(businessId))
+      route.push({
+        pathname: customerRoute.home,
+        query: {
+          businessId
+        }
+      })
     }
   }, [isCart, isSettings, businessId, token, route])
 

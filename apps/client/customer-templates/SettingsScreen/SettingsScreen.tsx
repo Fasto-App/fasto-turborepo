@@ -91,7 +91,9 @@ const SettingsScreen = () => {
       !clientSession?.getClientSession.user.name ||
       !clientSession?.getClientSession?.tab?.admin) return undefined
 
-    FE_URL.pathname = customerRoute.home(typeof businessId === "string" ? businessId : businessId[0])
+    FE_URL.pathname = customerRoute.home
+    FE_URL.pathname = FE_URL.pathname.replace("[businessId]",
+      typeof businessId === "string" ? businessId : businessId[0])
     FE_URL.searchParams.append(customerRouteParams.tabId, clientSession?.getClientSession.tab?._id)
     FE_URL.searchParams.append(customerRouteParams.name, clientSession?.getClientSession.user.name)
     FE_URL.searchParams.append(customerRouteParams.adminId, clientSession?.getClientSession?.tab?.admin)

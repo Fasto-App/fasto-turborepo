@@ -1,6 +1,6 @@
 import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack, Image, Center } from 'native-base'
 import { useTranslation } from "next-i18next"
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useGetCheckoutByIdQuery } from '../../gen/generated'
 import { showToast } from '../../components/showToast'
@@ -13,6 +13,7 @@ import { Icon } from '../../components/atoms/NavigationButton'
 import { customerRoute } from '../../routes'
 import { useGetClientSession } from '../../hooks'
 import { SuccessAnimation } from '../../components/SuccessAnimation'
+import { clearClientCookies, getClientCookies } from '../../cookies'
 
 export const CheckoutScreen = () => {
   const router = useRouter()
@@ -38,16 +39,35 @@ export const CheckoutScreen = () => {
   const pay = () => {
 
     if (!splitType) {
-      // full payment
       alert(`Pagar`)
     }
   }
 
-  const navigateToSplit = () => {
+  const navigateToSplit = useCallback(() => {
     if (!checkoutId || !businessId) throw new Error("Missing checkoutId or businessId")
 
-    router.push(customerRoute.split(businessId as string, checkoutId as string))
-  }
+    router.push({
+      pathname: customerRoute.split,
+      query: {
+        businessId,
+        checkoutId
+      }
+    })
+  }, [businessId, checkoutId, router])
+
+  const endSession = useCallback(() => {
+    if (!businessId) throw new Error("Missing businessId")
+
+    clearClientCookies(typeof businessId === "string" ? businessId : businessId[0])
+
+    router.push({
+      pathname: customerRoute.home,
+      query: {
+        businessId
+      }
+    })
+
+  }, [businessId, router])
 
   return (
     <>
@@ -106,10 +126,16 @@ export const CheckoutScreen = () => {
               <Divider />
             </VStack>
             <HStack space={"4"} p={4}>
-              <Button flex={1}>
+              <Button
+                flex={1}
+                onPress={endSession}
+              >
                 {t("endSession")}
               </Button>
-              <Button flex={1} colorScheme={"tertiary"} onPress={() => setIsModalOpen(true)}>
+              <Button
+                flex={1}
+                colorScheme={"tertiary"}
+                onPress={() => setIsModalOpen(true)}>
                 {t("seeOrder")}
               </Button>
             </HStack>

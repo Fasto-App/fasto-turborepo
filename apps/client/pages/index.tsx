@@ -67,7 +67,7 @@ export default function Home() {
 
 						return (
 							<Pressable key={business?._id} p="4">
-								<Link href={customerRoute.home(business?._id)}>
+								<Link href={`${customerRoute.home.replace(`[businessId]`, business?._id)}`}>
 									<Center width={width} h="20" bg="secondary.500" rounded="md" shadow={3}>
 										<Text color={"white"} fontSize="lg">{business?.name}</Text>
 									</Center>

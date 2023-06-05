@@ -1,11 +1,11 @@
 import { CUSTOMER } from "./appRoute";
 
 export const customerRoute = {
-  home: (businessId: string) => `${CUSTOMER}/${businessId}`,
+  home: `${CUSTOMER}/[businessId]`,
   cart: (businessId: string) => `${CUSTOMER}/${businessId}/cart/`,
   menu: (businessId: string) => `${CUSTOMER}/${businessId}/menu`,
   checkout: (businessId: string, checkoutId: string) => `${CUSTOMER}/${businessId}/checkout/${checkoutId}`,
-  split: (businessId: string, checkoutId: string) => `${CUSTOMER}/${businessId}/split/${checkoutId}`,
+  split: `${CUSTOMER}/[businessId]/split/[checkoutId]`,
   production_description: (businessId: string, productId: string) => `${CUSTOMER}/${businessId}/product-description/${productId}`,
   settings: (businessId: string) => `${CUSTOMER}/${businessId}/settings`,
 } as const
