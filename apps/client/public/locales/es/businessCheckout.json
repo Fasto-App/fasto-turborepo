@@ -7,7 +7,7 @@
 	"discount": "Descuento",
 	"tip": "Propina",
 	"total": "Total",
-	"patron": "Comensal",
+	"patron": "Invitado",
 	"sharedByTable": "Compartido",
 	"AllByTable": "Solo mesa",
 	"splitBy": "Dividir por",
@@ -17,5 +17,8 @@
 	"leftText": "¡Gracias por su pedido! \nYa casi está. Por favor, revise sus elementos a continuación y proceda al pago cuando esté listo.",
 	"table": "Mesa {{number}}",
 	"viewSummary": "Ver resumen",
-	"remaning": "Restante"
+	"remaning": "Restante",
+	"Equally": "Igualmente",
+	"Custom": "Personalizado",
+	"ByPatron": "Por Invitado"
 }

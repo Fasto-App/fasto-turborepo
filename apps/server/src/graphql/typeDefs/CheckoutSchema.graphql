@@ -6,6 +6,7 @@ extend type Query {
 extend type Mutation {
 	makeCheckoutPayment(input: MakeCheckoutPaymentInput!): Checkout!
 	customerRequestSplit(input: CustomerRequestSplitInput!): Checkout!
+	customerRequestPayFull(input: CustomerRequestPayFullInput!): Checkout!
 }
 
 type Checkout {
@@ -24,6 +25,12 @@ type Checkout {
 	totalPaid: Float!
 	splitType: SplitType
 	created_date: String!
+}
+
+input CustomerRequestPayFullInput {
+	patron: ID!
+	checkout: ID!
+	tip: Float!
 }
 
 input MakeCheckoutPaymentInput {

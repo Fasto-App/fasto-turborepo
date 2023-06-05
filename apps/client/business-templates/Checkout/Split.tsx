@@ -176,23 +176,29 @@ export const Split = ({
     <Box flex={1}>
       <Center>
         <HStack justifyContent={"space-around"} w={"90%"} pb={4} space={2}>
-          {typedKeys(splitTypes).map((type) => (
-            <Pressable
-              key={type}
-              flex={1}
-              justifyContent={"center"}
-              onPress={() => setSelectedSplitType(type)}
-            >
-              <Heading
-                textAlign={"center"}
-                size={"md"}
-                color={selectedSplitType === type ? "primary.500" : "gray.400"}
-              >
-                {splitTypes[type]}
-              </Heading>
-              <Divider mt={1} backgroundColor={selectedSplitType === type ? "primary.500" : "gray.400"} />
-            </Pressable>
-          ))}
+          {typedKeys(splitTypes).reduce((acc, splitType) => {
+            if (splitType !== "Full") {
+              return [...acc, (
+                <Pressable
+                  key={splitType}
+                  flex={1}
+                  justifyContent={"center"}
+                  onPress={() => setSelectedSplitType(splitType)}
+                >
+                  <Heading
+                    textAlign={"center"}
+                    size={"md"}
+                    color={selectedSplitType === splitType ? "primary.500" : "gray.400"}
+                  >
+                    {splitTypes[splitType]}
+                  </Heading>
+                  <Divider mt={1} backgroundColor={selectedSplitType === splitType ? "primary.500" : "gray.400"} />
+                </Pressable>
+              )]
+            }
+            return acc
+
+          }, [] as (Element | JSX.Element)[])}
         </HStack>
       </Center>
       <Box flex={1}>
@@ -211,6 +217,8 @@ export const Split = ({
             }}
           />
           {allUsersFromTab.map((user, index) => {
+            if (selectedSplitType === "Full") return null
+
             const valueOfDiscountPerUser = getPercentageOfValue(split?.[user._id]?.subTotal, discount)
             const valueOfDiscount = getPercentageOfValue(split?.table?.subTotal, discount)
             const tableSubTotal = (split?.table?.subTotal ?? 0) - valueOfDiscount

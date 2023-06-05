@@ -3,7 +3,7 @@
 	"table": "Mesa",
 	"total": "Total",
 	"sendToKitchen": "Enviar a la cocina",
-	"patrons": "Comensales",
+	"patrons": "Invitados",
 	"people": "{{number}} Personas",
 	"tableNumber": "Mesa {{number}}",
 	"requestToCloseTabSuccessfully": "Solicitud de cierre de cuenta enviada",

@@ -7,7 +7,7 @@
 	"discount": "Desconto",
 	"tip": "Gorgeta",
 	"total": "Total",
-	"patron": "Comensal",
+	"patron": "Cliente",
 	"sharedByTable": "Compartilhado",
 	"AllByTable": "Apenas mesa",
 	"splitBy": "Dividir por",
@@ -17,5 +17,8 @@
 	"leftText": "Obrigado pelo seu pedido! \nVocê está quase lá. Por favor, revise seus itens abaixo e prossiga para finalizar a compra quando estiver pronto.",
 	"table": "Mesa {{number}}",
 	"viewSummary": "Ver resumo",
-	"remaning": "Restante"
+	"remaning": "Restante",
+	"Equally": "Igualmente",
+	"Custom": "Personalizado",
+	"ByPatron": "Por Cliente"
 }

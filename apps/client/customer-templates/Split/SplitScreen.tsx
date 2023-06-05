@@ -64,10 +64,12 @@ export const SplitScreen = () => {
         return acc
       }, {} as { [key: string]: boolean })
     })
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [clientSession?.getClientSession?.tab?.users])
 
   const splitOnPress = async () => {
+    if (selectedSplitType === "Full") return
     if (!clientSession?.getClientSession.tab?.checkout) throw new Error("No checkout")
 
     let customSplit: { patron: string; amount: number }[] = [];
@@ -122,13 +124,16 @@ export const SplitScreen = () => {
           <HStack space={4} py={2} width={"100%"}
             justifyContent={"center"}
           >
-            {typedKeys(splitTypes).map((splitType) => {
-              return (
+            {typedKeys(splitTypes).reduce((acc, splitType) => {
+              if (splitType === "Full") return acc;
+
+              return [...acc, (
                 <Radio key={splitType} value={splitType}>
-                  {splitType}
+                  {t(splitType)}
                 </Radio>
-              )
-            })}
+              )];
+
+            }, [] as (Element | JSX.Element)[])}
           </HStack>
         </Radio.Group>
         {selectedSplitType === "ByPatron" ?
@@ -141,12 +146,19 @@ export const SplitScreen = () => {
             </Text>
           </HStack> : selectedSplitType === "Custom" ?
             <HStack pt={4} px={4} justifyContent={"space-between"}>
+
               <Text fontSize={"lg"} bold>
                 {t("totalRemaining")}
               </Text>
-              <Text fontSize={"lg"} bold>
-                {parseToCurrency(customTotalRemaing)}
-              </Text>
+              <VStack>
+                <Text fontSize={"lg"} bold textAlign={"right"}>
+                  {parseToCurrency(customTotalRemaing)}
+                </Text>
+                {customTotalRemaing < 0 ?
+                  <Text fontSize={"sm"} bold color={"error.500"} width={"56"} textAlign={"justify"}>
+                    {t("toAllocateAdditionalFunds")}
+                  </Text> : null}
+              </VStack>
             </HStack> : null}
 
         {loading ? <LoadingSplitScreen /> :

@@ -19,5 +19,6 @@
 	"endSession": "Finalizar sessão",
 	"amountToBePaid": "Quantidade a pagar:",
 	"seeOrder": "Ver pedido",
-	"errorFetchingCheckoutInfo": "Erro ao buscar informações de pagamento"
+	"errorFetchingCheckoutInfo": "Erro ao buscar informações de pagamento",
+	"toAllocateAdditionalFunds": "*Para alocar fundos adicionais, por favor, insira um valor de gorjeta mais alto"
 }

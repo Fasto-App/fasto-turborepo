@@ -3,7 +3,7 @@
 	"table": "Table",
 	"total": "Total",
 	"sendToKitchen": "Send to kitchen",
-	"patrons": "Patrons",
+	"patrons": "Guests",
 	"people": "{{number}} People",
 	"tableNumber": "Table {{number}}",
 	"requestToCloseTabSuccessfully": "Request to close tab successfully",

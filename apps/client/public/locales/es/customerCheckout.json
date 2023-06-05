@@ -13,11 +13,12 @@
 	"payTable": "Pagar mesa",
 	"splitType": "Tipo de división:",
 	"Equally": "Equitativamente",
-	"ByPatron": "Por cliente",
+	"ByPatron": "Por Cliente",
 	"Custom": "Personalizado",
 	"successMessage": "Su cuenta ha sido cerrada exitosamente.\n¡Gracias por elegir ordenar con nosotros!",
 	"endSession": "Finalizar sesión",
 	"amountToBePaid": "Cantidad a pagar:",
 	"seeOrder": "Ver orden",
-	"errorFetchingCheckoutInfo": "Error al obtener la información de pago"
+	"errorFetchingCheckoutInfo": "Error al obtener la información de pago",
+	"toAllocateAdditionalFunds": "*Para asignar fondos adicionales, por favor ingrese un valor de propina más alto"
 }

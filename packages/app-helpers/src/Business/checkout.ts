@@ -12,10 +12,11 @@ export const splitTypes = {
   Equally: "Equally",
   ByPatron: "By Patron",
   Custom: "Custom",
+  Full: "Full",
 } as const;
 
 
 export type SplitType = keyof typeof splitTypes;
-export const splitType = ['ByPatron', 'Equally', 'Custom'] as const
+export const splitType = ['ByPatron', 'Equally', 'Custom', "Full"] as const
 
 export type CheckoutStatusKeys = keyof typeof CheckoutStatus

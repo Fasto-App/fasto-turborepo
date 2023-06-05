@@ -207,6 +207,12 @@ export type CustomSplitInput = {
   patron: Scalars['ID'];
 };
 
+export type CustomerRequestPayFullInput = {
+  checkout: Scalars['ID'];
+  patron: Scalars['ID'];
+  tip: Scalars['Float'];
+};
+
 export type CustomerRequestSplitInput = {
   checkout: Scalars['ID'];
   customSplit?: InputMaybe<Array<InputMaybe<CustomSplitInput>>>;
@@ -380,6 +386,7 @@ export type Mutation = {
   createTab: Tab;
   createTable: Table;
   createUser: User;
+  customerRequestPayFull: Checkout;
   customerRequestSplit: Checkout;
   declineInvitation: Request;
   declineTabRequest: Request;
@@ -503,6 +510,11 @@ export type MutationCreateTableArgs = {
 
 export type MutationCreateUserArgs = {
   input?: InputMaybe<UserInput>;
+};
+
+
+export type MutationCustomerRequestPayFullArgs = {
+  input: CustomerRequestPayFullInput;
 };
 
 
@@ -1181,6 +1193,7 @@ export type ResolversTypes = {
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
   CustomSplitInput: CustomSplitInput;
+  CustomerRequestPayFullInput: CustomerRequestPayFullInput;
   CustomerRequestSplitInput: CustomerRequestSplitInput;
   DaysOfWeek: DaysOfWeek;
   DeleteBusinessPayload: ResolverTypeWrapper<DeleteBusinessPayload>;
@@ -1278,6 +1291,7 @@ export type ResolversParentTypes = {
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
   CustomSplitInput: CustomSplitInput;
+  CustomerRequestPayFullInput: CustomerRequestPayFullInput;
   CustomerRequestSplitInput: CustomerRequestSplitInput;
   DeleteBusinessPayload: DeleteBusinessPayload;
   DeleteEmployee: DeleteEmployee;
@@ -1511,6 +1525,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationCreateTabArgs, 'input'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, Partial<MutationCreateTableArgs>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationCreateUserArgs>>;
+  customerRequestPayFull?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationCustomerRequestPayFullArgs, 'input'>>;
   customerRequestSplit?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationCustomerRequestSplitArgs, 'input'>>;
   declineInvitation?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<MutationDeclineInvitationArgs, 'input'>>;
   declineTabRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<MutationDeclineTabRequestArgs, 'input'>>;

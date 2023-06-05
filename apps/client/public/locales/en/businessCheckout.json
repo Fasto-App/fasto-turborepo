@@ -7,7 +7,7 @@
 	"discount": "Discount",
 	"tip": "Tip",
 	"total": "Total",
-	"patron": "Patron",
+	"patron": "Guest",
 	"sharedByTable": "W/ Shared",
 	"AllByTable": "Table only",
 	"splitBy": "Split by",
@@ -17,5 +17,8 @@
 	"leftText": "Thank you for your order!\n You're almost there. Please review your items below and proceed to checkout when you're ready.",
 	"table": "Table {{number}}",
 	"viewSummary": "View Summary",
-	"remaning": "Remaning"
+	"remaning": "Remaning",
+	"Equally": "Equally",
+	"Custom": "Custom",
+	"ByPatron": "By Guest"
 }
