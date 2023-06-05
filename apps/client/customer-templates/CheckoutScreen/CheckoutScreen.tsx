@@ -2,7 +2,7 @@ import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack, Image, Ce
 import { useTranslation } from "next-i18next"
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useGetCheckoutByIdQuery } from '../../gen/generated'
+import { useCustomerRequestPayFullMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
 import { showToast } from '../../components/showToast'
 import { PastOrdersList, PastOrdersModal } from '../CartScreen/PastOrdersModal'
 import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from '../../business-templates/Checkout/checkoutStore'
@@ -33,14 +33,40 @@ export const CheckoutScreen = () => {
     },
   })
 
+  const [requestPayFull, { loading }] = useCustomerRequestPayFullMutation({
+    onError: (error) => {
+      showToast({
+        status: "error",
+        message: t("errorRequestingfullCheckout"),
+      })
+    },
+    onCompleted: () => {
+      showToast({
+        message: t("successRequestingfullCheckout"),
+      })
+    }
+  })
+
+
+  const { tip } = useCheckoutStore(state => ({
+    tip: state.tip,
+  }), shallow)
+
   const splitType = data?.getCheckoutByID?.splitType
   const payment = splitType && data?.getCheckoutByID?.payments.find(payment => payment?.patron === clientData?.getClientSession.user._id)
 
   const pay = () => {
+    if (!checkoutId || !clientData?.getClientSession.tab?.checkout) throw new Error("Missing checkoutId")
 
-    if (!splitType) {
-      alert(`Pagar`)
-    }
+    requestPayFull({
+      variables: {
+        input: {
+          tip,
+          checkout: clientData?.getClientSession.tab?.checkout,
+          patron: clientData?.getClientSession.user._id,
+        }
+      }
+    })
   }
 
   const navigateToSplit = useCallback(() => {
@@ -83,12 +109,19 @@ export const CheckoutScreen = () => {
                 _text={{ bold: true }}
                 flex={1}
                 colorScheme={"primary"}
-                onPress={pay}>{t("finalize")}</Button>
-              <Button
-                _text={{ bold: true }}
-                flex={1}
-                colorScheme={"tertiary"}
-                onPress={navigateToSplit}>{t("split")}</Button>
+                isDisabled={!checkoutId || !clientData?.getClientSession.tab?.checkout}
+                isLoading={loading}
+                onPress={pay}>
+                {t("finalize")}
+              </Button>
+              {!!clientData?.getClientSession.tab?.users?.length &&
+                clientData?.getClientSession.tab?.users?.length > 1 ? (
+                <Button
+                  _text={{ bold: true }}
+                  flex={1}
+                  colorScheme={"tertiary"}
+                  onPress={navigateToSplit}>{t("split")}</Button>
+              ) : null}
             </HStack>
           </Box>
         </Box> :

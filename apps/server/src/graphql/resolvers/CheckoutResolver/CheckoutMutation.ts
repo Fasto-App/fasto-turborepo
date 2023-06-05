@@ -129,13 +129,37 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
   }
 };
 
+// @ts-ignore
+const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = async (parent, { input }, { db }) => {
+  const Checkout = CheckoutModel(db);
+  const Payment = PaymentModel(db);
+  const User = UserModel(db);
 
-// todo: implement this
-const customerRequestCheckoutPayment = async (parent: any, args: any, { db }: Context, info: any) => {
-  // get all the information from the client and validate it
-  // 
+  const foundCheckout = await Checkout.findById(input.checkout)
+  const foundUser = await User.findById(input.patron)
+
+  if (!foundCheckout || !foundUser) throw ApolloError('BadRequest')
+  if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
+
+  foundCheckout.splitType = "Full"
+  foundCheckout.tip = input.tip
+  foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, input.tip)
+
+  const payment = await Payment.create({
+    checkout: foundCheckout._id,
+    amount: foundCheckout?.total,
+    patron: foundUser._id,
+    tip: foundCheckout?.tip,
+    discount: foundCheckout?.discount,
+    splitType: "Full",
+  })
+
+  foundCheckout.payments = [payment._id]
+
+  return await foundCheckout.save()
 }
 
+// todo: implement all the other split types
 // @ts-ignore
 const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db }) => {
   const Checkout = CheckoutModel(db);
@@ -146,10 +170,10 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
   if (!foundCheckout) throw ApolloError('BadRequest')
   foundCheckout.orders // populate all the orders
 
-
-  if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already split')
+  if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
 
   foundCheckout.splitType = input.splitType
+  // calculate the total adding the tip
   foundCheckout.tip = input.tip
   foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, input.tip)
 
@@ -197,5 +221,6 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
 
 export const CheckoutResolverMutation = {
   makeCheckoutPayment,
-  customerRequestSplit
+  customerRequestSplit,
+  customerRequestPayFull,
 }

@@ -15,10 +15,13 @@
 	"Equally": "Equitativamente",
 	"ByPatron": "Por Cliente",
 	"Custom": "Personalizado",
+	"Full": "Completo",
 	"successMessage": "Su cuenta ha sido cerrada exitosamente.\n¡Gracias por elegir ordenar con nosotros!",
 	"endSession": "Finalizar sesión",
 	"amountToBePaid": "Cantidad a pagar:",
 	"seeOrder": "Ver orden",
 	"errorFetchingCheckoutInfo": "Error al obtener la información de pago",
-	"toAllocateAdditionalFunds": "*Para asignar fondos adicionales, por favor ingrese un valor de propina más alto"
+	"toAllocateAdditionalFunds": "*Para asignar fondos adicionales, por favor ingrese un valor de propina más alto",
+	"errorRequestingfullCheckout": "Error al solicitar el pago completo",
+	"successRequestingfullCheckout": "Solicitud de pago completo exitosa"
 }
