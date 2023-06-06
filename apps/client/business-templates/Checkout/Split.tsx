@@ -190,7 +190,7 @@ export const Split = ({
                     size={"md"}
                     color={selectedSplitType === splitType ? "primary.500" : "gray.400"}
                   >
-                    {splitTypes[splitType]}
+                    {t(splitType)}
                   </Heading>
                   <Divider mt={1} backgroundColor={selectedSplitType === splitType ? "primary.500" : "gray.400"} />
                 </Pressable>

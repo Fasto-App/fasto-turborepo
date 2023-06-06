@@ -34,24 +34,24 @@ export const OrdersModal = ({ isOpen, setIsOpen, checkoutId }: OrdersModalProps)
     <CustomModal
       size={"xl"}
       isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+      HeaderComponent={<VStack space={"2"} pb={"4"}>
+        <Text fontSize={"lg"}>
+          {`${t("status")}: `}
+          <Badge variant={"subtle"}
+            colorScheme={data?.getOrdersByCheckout.status === "Paid" ? "success" : "yellow"}>
+            {data && t(data.getOrdersByCheckout.status)}</Badge>
+        </Text>
+
+        <Text fontSize={"lg"}>
+          {`${t("date")}: ${format(Number(data?.getOrdersByCheckout.created_date || 0),
+            "PPpp", getLocale(router.locale))}`}
+        </Text>
+      </VStack>}
       ModalBody={<>
         {loading ? <LoadingCartItems /> : error ? <Text>Error</Text> :
           <FlatList
             data={data?.getOrdersByCheckout.orders}
-            ListHeaderComponent={
-              <VStack space={"2"} pb={"4"}>
-                <Text fontSize={"lg"}>
-                  {`${t("status")}: `}
-                  <Badge variant={"subtle"}
-                    colorScheme={data?.getOrdersByCheckout.status === "Paid" ? "success" : "yellow"}>
-                    {data && t(data.getOrdersByCheckout.status)}</Badge>
-                </Text>
-
-                <Text fontSize={"lg"}>
-                  {`${t("date")}: ${format(Number(data?.getOrdersByCheckout.created_date || 0),
-                    "PPpp", getLocale(router.locale))}`}
-                </Text>
-              </VStack>}
             renderItem={({ item, index }) => !!item ?
               <PastOrdersTile
                 index={index}

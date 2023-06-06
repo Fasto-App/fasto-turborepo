@@ -20,5 +20,8 @@
 	"remaning": "Restante",
 	"Equally": "Igualmente",
 	"Custom": "Personalizado",
-	"ByPatron": "Por Cliente"
+	"ByPatron": "Por Cliente",
+	"payInFull": "Pagar integralmente",
+	"splitBill": "Dividir conta",
+	"back": "Voltar"
 }

@@ -1,4 +1,3 @@
-import { typedKeys } from 'app-helpers'
 import { Box, Flex, Heading, VStack, Text, HStack, Button, Center } from 'native-base'
 import { Link } from '../../components/atoms/Link';
 import { useRouter } from 'next/router'
@@ -16,14 +15,10 @@ import { businessRoute } from '../../routes';
 import { useCheckoutStore } from './checkoutStore';
 import { useTranslation } from 'next-i18next';
 
-const checkoutOptions = {
-  payFull: "Pay in Full",
-  splitBill: "Split Bill",
-  success: "Success",
-}
+const checkoutOptions = ["payFull", "splitBill", "success"] as const
 
 export const Checkout = () => {
-  const [selectedOption, setSelectedOption] = React.useState<keyof typeof checkoutOptions>("payFull")
+  const [selectedOption, setSelectedOption] = React.useState<typeof checkoutOptions[number]>("payFull")
   const route = useRouter()
   const { checkoutId } = route.query
 
@@ -68,13 +63,27 @@ export const Checkout = () => {
             {t("leftText")}
           </Text>
         </Box>
-        <Button
-          w={"full"}
-          onPress={() => console.log("View Summary")}
-          mb={4}
-        >
-          {t("viewSummary")}
-        </Button>
+
+        <Button.Group flexDirection={"column"} >
+          <Button
+            w={"full"}
+            onPress={() => console.log("View Summary")}
+            mb={6}
+          >
+            {t("viewSummary")}
+          </Button>
+          <Button
+            flex={1}
+            p={0}
+            variant="link"
+            size="sm"
+            colorScheme="info"
+            onPress={() => route.back()}
+            justifyContent={"end"}
+          >
+            {t("back")}
+          </Button>
+        </Button.Group>
       </LeftSideBar>
       <Box flex={1}>
         <OrangeBox />
@@ -84,13 +93,13 @@ export const Checkout = () => {
               {t("table", { number: checkoutId as string })}
             </Heading>
             <HStack space={"4"}>
-              {typedKeys(checkoutOptions).filter((option) => option !== "success").map((option) => (
+              {checkoutOptions.filter((option) => option !== "success").map((option) => (
                 <TileButton
                   key={option}
                   onPress={() => selectedOption !== "success" && setSelectedOption(option)}
                   selected={selectedOption === option}
                 >
-                  {checkoutOptions[option]}
+                  {option === "payFull" ? t("payInFull") : t("splitBill")}
                 </TileButton>
               ))}
             </HStack>
