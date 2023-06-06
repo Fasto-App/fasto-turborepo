@@ -7,5 +7,7 @@
 	"Canceled": "Cancelado",
 	"Paid": "Pagado",
 	"PartiallyPaid": "Pago parcial",
-	"Pending": "Pendiente"
+	"Pending": "Pendiente",
+	"checkout": "Pagar",
+	"close": "Cerrar"
 }

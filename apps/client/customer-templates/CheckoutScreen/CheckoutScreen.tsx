@@ -13,7 +13,7 @@ import { Icon } from '../../components/atoms/NavigationButton'
 import { customerRoute } from '../../routes'
 import { useGetClientSession } from '../../hooks'
 import { SuccessAnimation } from '../../components/SuccessAnimation'
-import { clearClientCookies, getClientCookies } from '../../cookies'
+import { clearClientCookies } from '../../cookies'
 
 export const CheckoutScreen = () => {
   const router = useRouter()

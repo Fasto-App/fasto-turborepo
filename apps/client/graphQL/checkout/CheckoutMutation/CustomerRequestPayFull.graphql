@@ -13,5 +13,13 @@ mutation CustomerRequestPayFull($input: CustomerRequestPayFullInput!) {
 		totalPaid
 		splitType
 		created_date
+		payments {
+			_id
+			amount
+			patron
+			tip
+			splitType
+			discount
+		}
 	}
 }

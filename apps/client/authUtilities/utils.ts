@@ -2,6 +2,7 @@ import { Locale } from "date-fns";
 import es from "date-fns/locale/es";
 import pt from "date-fns/locale/pt";
 
+// todo: deprecate
 export const validateEmail = (email?: string) => {
   return String(email)
     .toLowerCase()
@@ -10,6 +11,7 @@ export const validateEmail = (email?: string) => {
     );
 };
 
+// todo: deprecate
 export const validatePassword = (password: string) => {
 
   return !!(String(password)

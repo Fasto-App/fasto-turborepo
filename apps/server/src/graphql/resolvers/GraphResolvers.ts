@@ -89,6 +89,7 @@ export const resolvers = {
   },
   Checkout: {
     payments: CheckoutResolver.payments,
+    orders: CheckoutResolver.orders,
   },
   Product: {
     category: ProductResolver.getCategoryByProduct,

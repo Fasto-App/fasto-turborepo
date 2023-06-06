@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { OrangeBox } from '../../components/OrangeBox'
-import { Box, Divider, HStack, Heading, Text, VStack, Pressable, ScrollView, Badge } from 'native-base'
+import { Box, Divider, HStack, Heading, Text, VStack, Pressable, ScrollView, Badge, FlatList } from 'native-base'
 import { UpperSection } from '../../components/UpperSection'
 import { FDSSelect } from '../../components/FDSSelect'
 import { BottomSection } from '../../components/BottomSection'
@@ -12,6 +12,7 @@ import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { getLocale } from '../../authUtilities/utils'
 import { ColorSchemeType } from 'native-base/lib/typescript/components/types'
+import { OrdersModal } from './OrdersModal'
 
 const TableHeader: FC = ({ children }) => <Heading textAlign={"center"} flex="1" size={"md"}>{children}</Heading>
 
@@ -38,11 +39,12 @@ type OrderDetailsProps = {
   total: string;
   status: string;
   colorScheme: ColorSchemeType;
+  onPress: () => void;
 }
 
-const OrderDetails = ({ _id, date, total, status, colorScheme = "info" }: OrderDetailsProps) => {
+const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress }: OrderDetailsProps) => {
   return (
-    <Pressable _hover={{ backgroundColor: "secondary.100" }}>
+    <Pressable _hover={{ backgroundColor: "secondary.100" }} onPress={onPress}>
       <HStack justifyContent={"space-between"} py="4">
         <TableData>{_id}</TableData>
         <TableData>{date}</TableData>
@@ -61,11 +63,16 @@ export const OrdersScreen = () => {
   const router = useRouter()
   const { t } = useTranslation("businessOrders")
   const { data, loading, error } = useGetCheckoutsByBusinessQuery()
+  const [modalData, setModalData] = useState({ isOpen: false, checkoutId: "" })
 
   return (
     <Box flex="1">
       <OrangeBox height={"78"} />
-
+      <OrdersModal
+        checkoutId={modalData.checkoutId}
+        isOpen={modalData.isOpen}
+        setIsOpen={(isOpen) => setModalData({ checkoutId: "", isOpen })}
+      />
       <VStack flex={1} p={4} space={4}>
         <UpperSection >
           <Heading>{t("orders")}</Heading>
@@ -97,19 +104,28 @@ export const OrdersScreen = () => {
         <BottomSection>
           {loading ? <LoadingItems /> :
             error || !data?.getCheckoutsByBusiness ? null :
-              <ScrollView stickyHeaderIndices={[0]}>
-                <Header />
-                {data?.getCheckoutsByBusiness.map((checkout, i) => (
+              <FlatList
+                ListHeaderComponent={<Header />}
+                data={data?.getCheckoutsByBusiness}
+                stickyHeaderIndices={[0]}
+                renderItem={({ item: checkout }) => (
                   <OrderDetails
-                    _id={`#${checkout._id.slice(0, 8)}`}
                     key={checkout._id}
+                    _id={`#${checkout._id.slice(0, 8)}`}
                     date={format(Number(checkout.created_date), "PPpp", getLocale(router.locale))}
-                    total={parseToCurrency(checkout.total)}
+                    total={parseToCurrency(checkout.subTotal)}
                     status={t(CheckoutStatusKeys[checkout.status])}
                     colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
+                    onPress={() => {
+                      setModalData({
+                        checkoutId: checkout._id,
+                        isOpen: true
+                      })
+                    }}
                   />
-                )).reverse()}
-              </ScrollView>}
+                )}
+              />
+          }
         </BottomSection>
       </VStack>
     </Box>

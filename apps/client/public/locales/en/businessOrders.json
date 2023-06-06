@@ -7,5 +7,7 @@
 	"Canceled": "Canceled",
 	"Paid": "Paid",
 	"PartiallyPaid": "Partially Paid",
-	"Pending": "Pending"
+	"Pending": "Pending",
+	"checkout": "Checkout",
+	"close": "Close"
 }

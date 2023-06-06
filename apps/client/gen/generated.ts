@@ -782,6 +782,7 @@ export type Query = {
   getClientSession: ClientSession;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
+  getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
@@ -833,6 +834,11 @@ export type QueryGetMenuByIdArgs = {
 
 export type QueryGetOrderDetailByIdArgs = {
   orderDetailID: Scalars['ID'];
+};
+
+
+export type QueryGetOrdersByCheckoutArgs = {
+  input: GetById;
 };
 
 
@@ -1210,7 +1216,7 @@ export type CustomerRequestPayFullMutationVariables = Exact<{
 }>;
 
 
-export type CustomerRequestPayFullMutation = { __typename?: 'Mutation', customerRequestPayFull: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, splitType?: SplitType | null, created_date: string } };
+export type CustomerRequestPayFullMutation = { __typename?: 'Mutation', customerRequestPayFull: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, splitType?: SplitType | null, created_date: string, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron: string, tip: number, splitType?: SplitType | null, discount?: number | null } | null> } };
 
 export type CustomerRequestSplitMutationVariables = Exact<{
   input: CustomerRequestSplitInput;
@@ -1237,6 +1243,13 @@ export type GetCheckoutsByBusinessQueryVariables = Exact<{ [key: string]: never;
 
 
 export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string }> };
+
+export type GetOrdersByCheckoutQueryVariables = Exact<{
+  input: GetById;
+}>;
+
+
+export type GetOrdersByCheckoutQuery = { __typename?: 'Query', getOrdersByCheckout: { __typename?: 'Checkout', _id: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tab: string, created_date: string, orders: Array<{ __typename?: 'OrderDetail', _id: string, user?: string | null, quantity: number, subTotal: number, status: OrderStatus, message?: string | null, product: { __typename?: 'Product', _id: string, name: string, price: number, imageUrl?: string | null } } | null> } };
 
 export type CreateMenuMutationVariables = Exact<{
   input: CreateMenuInput;
@@ -2266,6 +2279,14 @@ export const CustomerRequestPayFullDocument = gql`
     totalPaid
     splitType
     created_date
+    payments {
+      _id
+      amount
+      patron
+      tip
+      splitType
+      discount
+    }
   }
 }
     `;
@@ -2486,6 +2507,60 @@ export function useGetCheckoutsByBusinessLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetCheckoutsByBusinessQueryHookResult = ReturnType<typeof useGetCheckoutsByBusinessQuery>;
 export type GetCheckoutsByBusinessLazyQueryHookResult = ReturnType<typeof useGetCheckoutsByBusinessLazyQuery>;
 export type GetCheckoutsByBusinessQueryResult = Apollo.QueryResult<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>;
+export const GetOrdersByCheckoutDocument = gql`
+    query GetOrdersByCheckout($input: GetById!) {
+  getOrdersByCheckout(input: $input) {
+    orders {
+      _id
+      product {
+        _id
+        name
+        price
+        imageUrl
+      }
+      user
+      quantity
+      subTotal
+      status
+      message
+    }
+    _id
+    status
+    paid
+    subTotal
+    tab
+    created_date
+  }
+}
+    `;
+
+/**
+ * __useGetOrdersByCheckoutQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersByCheckoutQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersByCheckoutQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersByCheckoutQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetOrdersByCheckoutQuery(baseOptions: Apollo.QueryHookOptions<GetOrdersByCheckoutQuery, GetOrdersByCheckoutQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrdersByCheckoutQuery, GetOrdersByCheckoutQueryVariables>(GetOrdersByCheckoutDocument, options);
+      }
+export function useGetOrdersByCheckoutLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersByCheckoutQuery, GetOrdersByCheckoutQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrdersByCheckoutQuery, GetOrdersByCheckoutQueryVariables>(GetOrdersByCheckoutDocument, options);
+        }
+export type GetOrdersByCheckoutQueryHookResult = ReturnType<typeof useGetOrdersByCheckoutQuery>;
+export type GetOrdersByCheckoutLazyQueryHookResult = ReturnType<typeof useGetOrdersByCheckoutLazyQuery>;
+export type GetOrdersByCheckoutQueryResult = Apollo.QueryResult<GetOrdersByCheckoutQuery, GetOrdersByCheckoutQueryVariables>;
 export const CreateMenuDocument = gql`
     mutation CreateMenu($input: CreateMenuInput!) {
   createMenu(input: $input) {

@@ -1,4 +1,4 @@
-import { parseToCurrency } from "app-helpers";
+import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from "app-helpers";
 import { Box, HStack, Text, Image, Pressable } from "native-base";
 import React from "react";
 import { PriceTag } from "./PriceTag";
@@ -10,8 +10,6 @@ type MenuItemProps = {
   description?: string | null;
   onPress: () => void;
 };
-
-const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
 const MenuItem = ({ onPress, name, price, uri, description }: MenuItemProps) => {
   // const { name, ingredients, price, uri } = sectionCellProps;
@@ -34,7 +32,7 @@ const MenuItem = ({ onPress, name, price, uri, description }: MenuItemProps) => 
         <Box>
           <Image
             size={"xl"}
-            source={{ uri: uri || PLACEHOLDER_IMAGE }}
+            source={{ uri: uri || PRODUCT_PLACEHOLDER_IMAGE }}
             alt={""}
             borderRadius={5}
           />

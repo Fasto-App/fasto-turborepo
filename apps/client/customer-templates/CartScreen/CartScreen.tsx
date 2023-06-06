@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { parseToCurrency, typedKeys } from "app-helpers";
+import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency, typedKeys } from "app-helpers";
 import { Box, Button, HStack, SectionList, Skeleton, Text, useTheme } from "native-base";
 import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
@@ -13,8 +13,6 @@ import { showToast } from "../../components/showToast";
 import { LoadingCartItems } from "./LoadingTiles";
 import { getCause } from "../../apollo-client/ErrorLink";
 import { useTranslation } from "next-i18next";
-
-const IMAGE_PLACEHOLDER = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png";
 
 export const CartScreen = () => {
   const theme = useTheme();
@@ -172,7 +170,7 @@ export const CartScreen = () => {
                   key={item._id}
                   index={index}
                   name={item.product.name}
-                  url={item.product.imageUrl || IMAGE_PLACEHOLDER}
+                  url={item.product.imageUrl || PRODUCT_PLACEHOLDER_IMAGE}
                   price={parseToCurrency(item.subTotal)}
                   quantity={item.quantity}
                   editable={item.user._id === clientSession?.getClientSession.user._id}

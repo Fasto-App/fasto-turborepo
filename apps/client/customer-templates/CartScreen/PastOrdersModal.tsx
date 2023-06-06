@@ -2,8 +2,7 @@ import React, { useMemo } from 'react'
 import { Heading, Box, FlatList, Button, HStack, Image, Text, Divider, Pressable, } from 'native-base'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { FDSTab, TabsType } from '../../components/FDSTab'
-// import { texts } from './texts'
-import { parseToCurrency, typedKeys } from 'app-helpers'
+import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency, typedKeys } from 'app-helpers'
 import { OrderStatus, useGetOrdersBySessionQuery } from '../../gen/generated'
 import { LoadingCartItems } from './LoadingTiles'
 import { useGetClientSession } from '../../hooks'
@@ -15,8 +14,6 @@ type PastOrdersModalProps = {
 }
 
 const states = ["✅", "⏳"];
-
-const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
 const tabs = {
   yourOrders: "My Orders",
@@ -74,7 +71,7 @@ export const PastOrdersList = () => {
               <PastOrdersTile
                 index={index}
                 name={item.product.name}
-                url={item.product.imageUrl || PLACEHOLDER_IMAGE}
+                url={item.product.imageUrl || PRODUCT_PLACEHOLDER_IMAGE}
                 price={parseToCurrency(item.subTotal)}
                 quantity={item.quantity}
                 orderStatus={item.status}
@@ -147,7 +144,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
                 <PastOrdersTile
                   index={index}
                   name={item.product.name}
-                  url={item.product.imageUrl || PLACEHOLDER_IMAGE}
+                  url={item.product.imageUrl || PRODUCT_PLACEHOLDER_IMAGE}
                   price={parseToCurrency(item.subTotal)}
                   quantity={item.quantity}
                   orderStatus={item.status}
@@ -179,7 +176,7 @@ type PastOrdersTileProps = {
   orderStatus: OrderStatus;
 }
 
-const PastOrdersTile = (props: PastOrdersTileProps) => {
+export const PastOrdersTile = (props: PastOrdersTileProps) => {
   const { name, index, price, url, quantity, orderStatus } = props;
 
   return (

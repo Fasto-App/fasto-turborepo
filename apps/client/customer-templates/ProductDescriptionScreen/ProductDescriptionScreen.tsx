@@ -5,15 +5,13 @@ import { Box, Button, Image, TextArea, Text, ScrollView, Divider, VStack } from 
 import { useSpring, animated } from "react-spring";
 import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
-import { parseToCurrency } from "app-helpers";
+import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from "app-helpers";
 import { getClientCookies } from "../../cookies";
 import { useAddItemToCartMutation, useGetProductByIdQuery } from "../../gen/generated";
 import { LoadingPDP } from "./LoadingPDP";
 import { customerRoute } from "../../routes";
 import { showToast } from "../../components/showToast";
 import { useTranslation } from "next-i18next";
-
-const PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
 
 const AnimatedBox = animated(Box);
 
@@ -110,7 +108,7 @@ export const ProductDescriptionScreen = () => {
               h={"200"}
               alt="logo"
               resizeMode="cover"
-              source={{ uri: data?.getProductByID?.imageUrl ?? PLACEHOLDER_IMAGE }}
+              source={{ uri: data?.getProductByID?.imageUrl || PRODUCT_PLACEHOLDER_IMAGE }}
               borderRadius={5}
             />
             <PriceTag price={parseToCurrency(data?.getProductByID?.price)} />

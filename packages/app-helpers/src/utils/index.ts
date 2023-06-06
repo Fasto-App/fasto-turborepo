@@ -38,6 +38,8 @@ export const getFixedPointPercentage = (part: number, total: number) => {
 
 export const DICE_BEAR_INITIALS_URL = (name: string) => `https://api.dicebear.com/5.x/initials/svg?seed=${name}`
 
+export const PRODUCT_PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/themes/frontend/default/images/img-placeholder.png"
+
 export const locales = ['en', 'pt', 'es'] as const
 export const localeFlags = {
   en: '🇺🇸',

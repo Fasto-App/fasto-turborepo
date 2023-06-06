@@ -1,6 +1,7 @@
 extend type Query {
 	getCheckoutByID(input: GetById!): Checkout!
 	getCheckoutsByBusiness: [Checkout!]!
+	getOrdersByCheckout(input: GetById!): Checkout!
 }
 
 extend type Mutation {
