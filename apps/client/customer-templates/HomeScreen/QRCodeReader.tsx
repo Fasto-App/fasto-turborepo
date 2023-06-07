@@ -6,7 +6,7 @@ import { CustomModal } from '../../components/CustomModal/CustomModal';
 import { customerRouteParams } from '../../routes';
 import { useTranslation } from 'react-i18next';
 
-// todo - do some exploration  on using html5 code reader
+// TODO - do some exploration  on using html5 code reader
 // import { useHtml5QrCodeScanner } from 'react-html5-qrcode-reader';
 // or use browser native code reader and God
 
@@ -24,7 +24,7 @@ export const QRCodeReader = () => {
 
       try {
         const url = new URL(result.getText());
-        // todo: get the business id from the url and compare to what we have
+        // TODO: get the business id from the url and compare to what we have
         const tabId = url.searchParams.get(customerRouteParams.tabId);
         const name = url.searchParams.get(customerRouteParams.name);
         const adminId = url.searchParams.get(customerRouteParams.adminId);

@@ -25,7 +25,7 @@ export const Checkout = () => {
   const setTotal = useCheckoutStore(state => state.setTotal)
   const { t } = useTranslation("businessCheckout")
 
-  // todo: get the table number from either the Checkout or the Tab
+  // TODO: get the table number from either the Checkout or the Tab
   const { data } = useGetCheckoutByIdQuery({
     skip: !checkoutId,
     variables: {

@@ -102,7 +102,7 @@ export const ProductDescriptionScreen = () => {
       ) :
         <ScrollView h="100%" px={4}>
           <Box>
-            {/* todo: add aspect ration */}
+            {/* TODO: add aspect ration */}
             <Image
               w={"100%"}
               h={"200"}
@@ -126,7 +126,7 @@ export const ProductDescriptionScreen = () => {
             />
           </Box>
           <Divider my={"5"} backgroundColor={"gray.300"} />
-          {/* todo */}
+          {/* TODO */}
           {true ? null : <VStack space={"1"} mb={"4"}>
             <Text fontWeight={"semibold"} fontSize={"25"}>{t("extras")}</Text>
             {addons.map((addon, index) => (

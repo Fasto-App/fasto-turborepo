@@ -33,7 +33,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             const tab = await Tab.create({
                 table: table._id,
                 admin: user?._id,
-                // todo: can we add exsisting users this way?
+                // TODO: can we add exsisting users this way?
                 // perhaps we need to add a new field to existing user emails or ids
                 users: allUsers.map(user => user._id),
             });

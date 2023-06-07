@@ -97,7 +97,7 @@ async function main() {
 
   await apolloServer.start();
 
-  // todo: Configure CORS
+  // TODO: Configure CORS
   app.use('/graphql', cors<cors.CorsRequest>(), express.json(), expressMiddleware(apolloServer, {
     context: async ({ req }) => {
       const bearerToken = req.headers.authorization;

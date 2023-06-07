@@ -10,7 +10,7 @@ const getOrderDetailByID: QueryResolvers["getOrderDetailByID"] = async (_parent:
   return orderDetail || [];
 }
 
-// todo: implement this when theres a way to get OrderDetails from businesses
+// TODO: implement this when theres a way to get OrderDetails from businesses
 // const getAllOrderDetails = async (_parent, _args, { db, business }: Context) => {
 //   const OrderDetail = OrderDetailModel(db);
 //   const allOrderDetails = await OrderDetail.find();

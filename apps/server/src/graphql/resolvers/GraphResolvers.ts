@@ -100,12 +100,12 @@ export const resolvers = {
   Space: {
     tables: TableResolver.resolveTablesFromSpace,
   },
-  // todo
+  // TODO
   // this is bad, a resolver for a resolver?
   Table: {
     tab: TableResolver.getOpenTabByTable,
   },
-  // todo
+  // TODO
   // This can be a problem, if we have a lot of tabs, we will have to make a lot of queries
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,

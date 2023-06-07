@@ -125,7 +125,7 @@ const acceptTabRequest = async (
   const allUsers = await User.insertMany(new Array(numGuests).fill({ isGuest: true }))
   const usersId = allUsers.map(user => user._id)
 
-  //todo: fix this
+  //TODO: fix this
 
   const tab = await Tab.create({
     table: table?._id,
@@ -184,7 +184,7 @@ const declineTabRequest = async (
 }
 
 
-// todo: Create a new Request, from a guest to a requestee
+// TODO: Create a new Request, from a guest to a requestee
 const requestJoinTab = async (
   _parent: any,
   { input }: { input: JoinTabForm & { tab: string, admin: string, business: string } },
@@ -246,7 +246,7 @@ const requestJoinTab = async (
     admin: tabAdmin._id,
     status: 'Pending',
   })
-  //todo: logic for existing user
+  //TODO: logic for existing user
 
   return await tokenClient({
     _id: foundUser._id,

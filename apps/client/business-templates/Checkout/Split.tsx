@@ -147,7 +147,7 @@ export const Split = ({
 
   const splitCustomBillComplete = useCallback(() => {
     let customTotal = 0;
-    //todo: make this an object for faster lookup
+    //TODO: make this an object for faster lookup
     const customUsers: string[] = []; // keep track of which users have a custom subtotal
     for (const userId in customSubTotals) {
       if (customSubTotals[userId]) {

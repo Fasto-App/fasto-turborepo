@@ -159,7 +159,7 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
   return await foundCheckout.save()
 }
 
-// todo: implement all the other split types
+// TODO: implement all the other split types
 // @ts-ignore
 const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db }) => {
   const Checkout = CheckoutModel(db);
