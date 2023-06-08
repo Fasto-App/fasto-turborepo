@@ -41,5 +41,7 @@
 	"itemDeleted": "Elemento eliminado",
 	"errorUpdatingItem": "Error al actualizar el elemento",
 	"errorDeletingItem": "Error al eliminar el elemento",
-	"add": "Agregar"
+	"add": "Agregar",
+	"yourOrders": "Tus Pedidos",
+	"allOrders": "Todos los pedidos"
 }

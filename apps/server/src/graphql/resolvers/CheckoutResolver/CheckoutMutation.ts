@@ -207,11 +207,22 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
     case "ByPatron":
       const orders = await Order.find({ _id: { $in: foundCheckout.orders } })
 
+      // create an object with the key and a subtotal of zero
+      const selectedUsers = foundUsers.reduce((acc, user) => {
+        return {
+          ...acc,
+          [user._id.toString()]: {
+            subTotal: 0,
+          }
+        }
+      }, {} as { [key: string]: { subTotal: number } })
+
       const ordersByPatron = orders.reduce((acc, order) => {
         const patron = order.user?.toString()
         const orderTotal = order.subTotal
 
-        if (!patron) {
+        // or if the the patron was not selected
+        if (!patron || !acc[patron]) {
           return {
             ...acc,
             tab: {
@@ -226,7 +237,9 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
             subTotal: (acc[patron]?.subTotal ?? 0) + orderTotal,
           }
         }
-      }, { tab: { subTotal: 0 } } as { [key: string]: { subTotal: number }, tab: { subTotal: number } })
+      }, { tab: { subTotal: 0 }, ...selectedUsers } as {
+        [key: string]: { subTotal: number }, tab: { subTotal: number }
+      })
 
       // take the total from tab and split it equally among the selected users
       const tipSplited = tipValue / foundUsers.length
@@ -235,6 +248,8 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
       // for each user, create a payment
       for (const user of foundUsers) {
         const individualTotal = ordersByPatron[user._id.toString()].subTotal ?? 0
+
+        if (individualTotal + tipSplited + tabSplited <= 0) return
 
         const payment = await Payment.create({
           checkout: foundCheckout._id,

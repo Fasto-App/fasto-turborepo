@@ -39,11 +39,6 @@ export const CheckoutScreen = () => {
         status: "error",
         message: t("errorRequestingfullCheckout"),
       })
-    },
-    onCompleted: () => {
-      showToast({
-        message: t("successRequestingfullCheckout"),
-      })
     }
   })
 

@@ -23,6 +23,7 @@ export const errorLink = onError(({ graphQLErrors, networkError }) => {
         const businessId = Router.query.businessId as string
         if (businessId) {
           clearClientCookies(businessId)
+          // TODO: navigate here instead of where I have the logic currently
         }
       }
 

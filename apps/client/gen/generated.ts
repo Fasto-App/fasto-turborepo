@@ -215,7 +215,7 @@ export type CustomerRequestPayFullInput = {
 
 export type CustomerRequestSplitInput = {
   checkout: Scalars['ID'];
-  customSplit?: InputMaybe<Array<InputMaybe<CustomSplitInput>>>;
+  customSplit?: InputMaybe<Array<CustomSplitInput>>;
   selectedUsers: Array<Scalars['String']>;
   splitType: SplitType;
   tip: Scalars['Float'];
@@ -1296,7 +1296,7 @@ export type GetMenuByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number }> }> | null } };
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null }> }> | null } };
 
 export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
@@ -2829,6 +2829,7 @@ export const GetMenuByIdDocument = gql`
         name
         imageUrl
         price
+        description
       }
     }
   }

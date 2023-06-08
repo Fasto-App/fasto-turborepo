@@ -332,6 +332,7 @@ export const AddToOrder = () => {
                     key={product._id}
                     name={product.name}
                     imageUrl={product.imageUrl ?? ""}
+                    description={product.description}
                     onPress={() => {
                       const findIndex = orderItems.findIndex(order => (
                         order._id === product._id && order?.selectedUser === selectedUser)

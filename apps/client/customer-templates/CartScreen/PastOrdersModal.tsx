@@ -15,13 +15,10 @@ type PastOrdersModalProps = {
 
 const states = ["✅", "⏳"];
 
-const tabs = {
-  yourOrders: "My Orders",
-  tableOrders: "All Orders",
-} as const
+const tabs = ["yourOrders", "allOrders"] as const
 
 export const PastOrdersList = () => {
-  const [selectedTab, setSelectedTab] = React.useState<keyof typeof tabs>("yourOrders");
+  const [selectedTab, setSelectedTab] = React.useState<typeof tabs[number]>("yourOrders");
 
   const { t } = useTranslation('common')
   const { data: clientSession } = useGetClientSession()
@@ -44,7 +41,7 @@ export const PastOrdersList = () => {
             ListHeaderComponent={
               <Box>
                 <HStack justifyContent={"space-around"} backgroundColor={"white"}>
-                  {typedKeys(tabs).map((key) => {
+                  {tabs.map((key) => {
                     return (
                       <Pressable key={key} flex={1} onPress={() => setSelectedTab(key)}>
                         <Heading
@@ -53,7 +50,7 @@ export const PastOrdersList = () => {
                           color={selectedTab === key ? "primary.500" : "gray.400"}
                           pb={2}
                         >
-                          {`${tabs[key]} (${key === "yourOrders" ?
+                          {`${t(key)} (${key === "yourOrders" ?
                             myOrders?.length ?? 0
                             : data?.getOrdersBySession?.length ?? 0})`}
                         </Heading>
@@ -85,7 +82,7 @@ export const PastOrdersList = () => {
 
 export const PastOrdersModal = (props: PastOrdersModalProps) => {
   const { isModalOpen, setIsModalOpen } = props
-  const [selectedTab, setSelectedTab] = React.useState<keyof typeof tabs>("yourOrders");
+  const [selectedTab, setSelectedTab] = React.useState<typeof tabs[number]>("yourOrders");
 
   const { t } = useTranslation('common')
   const { data: clientSession } = useGetClientSession()
@@ -117,7 +114,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
               ListHeaderComponent={
                 <Box>
                   <HStack justifyContent={"space-around"}>
-                    {typedKeys(tabs).map((key) => {
+                    {tabs.map((key) => {
                       return (
                         <Pressable key={key} flex={1} onPress={() => setSelectedTab(key)}>
                           <Heading
@@ -126,7 +123,7 @@ export const PastOrdersModal = (props: PastOrdersModalProps) => {
                             color={selectedTab === key ? "primary.500" : "gray.400"}
                             pb={2}
                           >
-                            {`${tabs[key]} (${key === "yourOrders" ?
+                            {`${t(key)} (${key === "yourOrders" ?
                               myOrders?.length ?? 0
                               : data?.getOrdersBySession?.length ?? 0})`}
                           </Heading>

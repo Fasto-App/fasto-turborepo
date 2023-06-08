@@ -96,9 +96,9 @@ const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaT
 				<Text color="coolGray.800" bold>
 					{name}
 				</Text>
-				<Text color="coolGray.600" fontSize={"xs"}>
-					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
-				</Text>
+				{formattedDescriptions ? <Text color="coolGray.600" fontSize={"xs"}>
+					{formattedDescriptions}
+				</Text> : null}
 			</VStack>
 			<HStack alignItems="center" space={2} justifyContent="space-between" py={4}>
 				{isChecked !== undefined ?

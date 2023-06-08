@@ -42,5 +42,7 @@
 	"itemDeleted": "Item excluído",
 	"errorUpdatingItem": "Erro ao atualizar item",
 	"errorDeletingItem": "Erro ao excluir item",
-	"add": "Adicionar"
+	"add": "Adicionar",
+	"yourOrders": "Seus Pedidos",
+	"allOrders": "Todos os Pedidos"
 }

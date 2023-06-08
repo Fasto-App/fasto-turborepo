@@ -22,7 +22,7 @@ export const CustomerLayout: React.FC = ({ children }) => {
   const { data } = useGetClientSession()
 
   useEffect(() => {
-    if (!token && (isSettings || isCart)) {
+    if (!token && (isSettings || isCart || isSplit || isCheckout)) {
       if (!businessId || typeof businessId !== "string") return
 
       route.push({
@@ -32,7 +32,7 @@ export const CustomerLayout: React.FC = ({ children }) => {
         }
       })
     }
-  }, [isCart, isSettings, businessId, token, route])
+  }, [isCart, isSettings, businessId, token, route, isSplit, isCheckout])
 
   return (
     <Flex

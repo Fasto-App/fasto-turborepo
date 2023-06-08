@@ -43,5 +43,7 @@
 	"itemDeleted": "Item deleted",
 	"errorUpdatingItem": "Error updating item",
 	"errorDeletingItem": "Error deleting item",
-	"add": "Add"
+	"add": "Add",
+	"yourOrders": "Your Orders",
+	"allOrders": "All Orders"
 }

@@ -11,5 +11,5 @@
 	"errorGettingTabData": "Erro ao obter dados da comanda",
 	"ordersCreatedSuccessfully": "Pedidos criados com sucesso",
 	"errorCreatingOrders": "Erro ao criar pedidos",
-	"addOrder": "Adicionar"
+	"add": "Adicionar"
 }

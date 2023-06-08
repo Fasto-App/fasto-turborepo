@@ -11,5 +11,5 @@
 	"errorGettingTabData": "Error al obtener los datos de la pestaña",
 	"ordersCreatedSuccessfully": "Órdenes creadas exitosamente",
 	"errorCreatingOrders": "Error al crear las órdenes",
-	"addOrder": "Agregar"
+	"add": "Agregar"
 }

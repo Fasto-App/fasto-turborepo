@@ -79,6 +79,7 @@ const SettingsScreen = () => {
   const { t } = useTranslation("customerSettings")
 
   const router = useRouter()
+  const { locale } = router
   const { businessId } = router.query
 
   const { data: clientSession } = useGetClientSession()
@@ -91,14 +92,14 @@ const SettingsScreen = () => {
       !clientSession?.getClientSession.user.name ||
       !clientSession?.getClientSession?.tab?.admin) return undefined
 
-    FE_URL.pathname = customerRoute.home
+    FE_URL.pathname = `/${locale}${customerRoute.home}`
     FE_URL.pathname = FE_URL.pathname.replace("[businessId]",
       typeof businessId === "string" ? businessId : businessId[0])
     FE_URL.searchParams.append(customerRouteParams.tabId, clientSession?.getClientSession.tab?._id)
     FE_URL.searchParams.append(customerRouteParams.name, clientSession?.getClientSession.user.name)
     FE_URL.searchParams.append(customerRouteParams.adminId, clientSession?.getClientSession?.tab?.admin)
     return FE_URL.toString()
-  }, [businessId, clientSession?.getClientSession.tab?._id, clientSession?.getClientSession.tab?.admin, clientSession?.getClientSession.user.name])
+  }, [businessId, clientSession?.getClientSession.tab?._id, clientSession?.getClientSession.tab?.admin, clientSession?.getClientSession.user.name, locale])
 
   const handlePress = useCallback((title: SettingsTileId) => {
     switch (title) {
