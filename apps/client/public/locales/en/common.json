@@ -3,6 +3,9 @@
 	"theSmartestAndFastestWay": "The smartest and easiest way to order",
 	"back": "Back",
 	"cancel": "Cancel",
+	"delete": "Delete",
+	"extras": "Extras",
+	"person": "Person",
 	"email": "Email",
 	"password": "Password",
 	"passwordConfirmation": "Password Confirmation",
@@ -33,5 +36,12 @@
 	"yes": "Yes",
 	"quickSale": "Quick Sale",
 	"save": "Save",
-	"split": "Split"
+	"split": "Split",
+	"noInternetConnection": "No internet connection",
+	"thereWasAnError": "There was an error",
+	"itemUpdated": "Item updated",
+	"itemDeleted": "Item deleted",
+	"errorUpdatingItem": "Error updating item",
+	"errorDeletingItem": "Error deleting item",
+	"add": "Add"
 }

@@ -2,7 +2,6 @@ import React from "react";
 import { VStack } from "native-base";
 import { CategoryList } from "./CategoryList";
 import { ProductList } from "./ProductList";
-import { ModalFeedback } from "../../components/ModalFeedback/ModalFeedback";
 import { Loading } from "../../components/Loading";
 import { useProductMutationHook } from "../../graphQL/ProductQL";
 import { useCategoryMutationHook } from "../../graphQL/CategoryQL";

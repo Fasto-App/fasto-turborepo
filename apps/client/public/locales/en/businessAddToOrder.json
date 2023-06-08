@@ -10,5 +10,6 @@
 	"menu": "Menu",
 	"errorGettingTabData": "Error getting tab data",
 	"ordersCreatedSuccessfully": "Orders created successfully",
-	"errorCreatingOrders": "Error creating orders"
+	"errorCreatingOrders": "Error creating orders",
+	"add": "Add"
 }

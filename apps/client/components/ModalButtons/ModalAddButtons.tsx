@@ -1,13 +1,6 @@
 import { Button } from 'native-base'
 import React from 'react'
-
-const texts = {
-  add: "Add",
-  delete: "Delete Category",
-  cancel: "Cancel",
-  save: "Save",
-
-}
+import { useTranslation } from 'next-i18next';
 
 type ModalAddButtonsProps = {
   cancelAction: () => void;
@@ -20,6 +13,7 @@ const ModalAddButtons = ({
   saveAction,
   isEditing,
 }: ModalAddButtonsProps) => {
+  const { t } = useTranslation("common")
   return (
     <Button.Group space={2} flex={1}>
       <Button w={"100px"}
@@ -27,10 +21,10 @@ const ModalAddButtons = ({
         colorScheme="tertiary"
         onPress={cancelAction}
         flex={1}>
-        {texts.cancel}
+        {t("cancel")}
       </Button>
       <Button w={"100px"} onPress={saveAction} flex={1}>
-        {isEditing ? texts.save : texts.add}
+        {isEditing ? t("save") : t("add")}
       </Button>
     </Button.Group >
   )

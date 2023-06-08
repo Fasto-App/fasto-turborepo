@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
 import { showToast } from "../showToast";
 import { texts } from "./texts";
+import { useTranslation } from "react-i18next";
 
 export type CartTileProps = {
   index: number;
@@ -25,15 +26,16 @@ export const CartTile = (props: CartTileProps) => {
   const { name, index, price, quantity, url, _id, editable, navegateTo } = props;
   const [localQuantity, setLocalQuantity] = React.useState(quantity || 1);
 
+  const { t } = useTranslation("common");
+
   const [updateItem, { loading: loadingUpdate }] = useUpdateItemFromCartMutation({
     refetchQueries: refetchQueries,
     onCompleted: () => {
-      showToast({ message: texts.itemUpdated })
+      showToast({ message: t("itemUpdated") })
     },
     onError: (err) => {
       showToast({
-        message: texts.errorUpdatingItem,
-        subMessage: err.message,
+        message: t("errorUpdatingItem"),
         status: "error"
       })
     }
@@ -42,12 +44,11 @@ export const CartTile = (props: CartTileProps) => {
   const [deleteitem, { loading: deleteLoading }] = useDeleteItemFromCartMutation({
     refetchQueries: refetchQueries,
     onCompleted: () => {
-      showToast({ message: texts.itemDeleted })
+      showToast({ message: t("itemDeleted") })
     },
     onError: (err) => {
       showToast({
-        message: texts.errorDeletingItem,
-        subMessage: err.message,
+        message: t("errorDeletingItem"),
         status: "error"
       })
     }

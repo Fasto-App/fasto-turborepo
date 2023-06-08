@@ -7,6 +7,7 @@ import { customerRoute } from "../routes";
 import { showToast } from "../components/showToast";
 import { texts } from "./texts";
 import { getCause } from "../apollo-client/ErrorLink";
+import { useTranslation } from "next-i18next";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -102,6 +103,8 @@ export const useGetBusinessInformation = () => {
   const route = useRouter()
   const { businessId } = route.query
 
+  const { t } = useTranslation('common')
+
   const data = useGetBusinessByIdQuery({
     skip: !businessId,
     variables: {
@@ -114,7 +117,7 @@ export const useGetBusinessInformation = () => {
     },
     onError: (error) => {
       showToast({
-        message: texts.thereWasAnError,
+        message: t("thereWasAnError"),
         subMessage: getCause(error),
         status: "error"
       })

@@ -2,7 +2,6 @@ import React from 'react'
 import { VStack } from 'native-base'
 import { MenuList } from './MenuList'
 import MenuProducts from './MenuProducts'
-import { ModalFeedback } from '../../components/ModalFeedback/ModalFeedback'
 import { Box } from 'native-base';
 import { useGetAllMenusByBusinessIdQuery } from '../../gen/generated'
 import { useAppStore } from '../UseAppStore'

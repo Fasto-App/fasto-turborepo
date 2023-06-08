@@ -10,7 +10,6 @@ import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
 import { useTheme } from 'native-base';
-import { ModalFeedback } from '../components/ModalFeedback';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { View } from 'react-native';
 import { appWithTranslation } from 'next-i18next'
@@ -70,7 +69,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 						</Wrapper>
 					</AppProvider>
 				</AppApolloProvider>
-				<ModalFeedback />
 			</ThemeProvider>
 		</View >
 	);

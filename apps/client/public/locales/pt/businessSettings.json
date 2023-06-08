@@ -29,5 +29,10 @@
 	"newPassword": "Nova Senha",
 	"newPasswordConfirmation": "Confirmação de Nova Senha",
 	"edit": "Editar",
-	"pending": "Pendente"
+	"pending": "Pendente",
+	"setStandardHours": "Definir Horário Padrão",
+	"configureStandardHours": "Configurar Horário Padrão",
+	"open": "Aberto",
+	"close": "Fechado",
+	"to": "até"
 }

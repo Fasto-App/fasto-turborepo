@@ -3,6 +3,9 @@
 	"theSmartestAndFastestWay": "La manera más inteligente y fácil de hacer un pedido",
 	"back": "Atrás",
 	"cancel": "Cancelar",
+	"delete": "Eliminar",
+	"extras": "Extras",
+	"person": "Persona",
 	"email": "Correo electrónico",
 	"password": "Contraseña",
 	"passwordConfirmation": "Confirmación de contraseña",
@@ -31,5 +34,12 @@
 	"yes": "Sí",
 	"quickSale": "Venta rápida",
 	"save": "Guardar",
-	"split": "Dividir"
+	"split": "Dividir",
+	"noInternetConnection": "Sin conexión a internet",
+	"thereWasAnError": "Se produjo un error",
+	"itemUpdated": "Elemento actualizado",
+	"itemDeleted": "Elemento eliminado",
+	"errorUpdatingItem": "Error al actualizar el elemento",
+	"errorDeletingItem": "Error al eliminar el elemento",
+	"add": "Agregar"
 }

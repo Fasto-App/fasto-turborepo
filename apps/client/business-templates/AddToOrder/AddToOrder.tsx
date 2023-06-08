@@ -328,7 +328,7 @@ export const AddToOrder = () => {
               <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
                 {products.map((product) => (
                   <ProductTile
-                    ctaTitle="Add"
+                    ctaTitle={t("add")}
                     key={product._id}
                     name={product.name}
                     imageUrl={product.imageUrl ?? ""}

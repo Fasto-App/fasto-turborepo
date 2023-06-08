@@ -1,12 +1,10 @@
 import { Slide, Text, Alert } from 'native-base';
 import React, { useEffect, useState } from 'react'
-
-const texts = {
-  noInternetConnection: "No Internet Connection"
-}
+import { useTranslation } from 'next-i18next';
 
 export const ErrorBanner = () => {
   const [isOnline, setIsOnline] = useState(true);
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     // Running on the server, assume online by default
@@ -23,7 +21,7 @@ export const ErrorBanner = () => {
       <Alert justifyContent="center" status="error" safeAreaTop={8}>
         <Alert.Icon />
         <Text color="error.600" fontWeight="medium">
-          {texts.noInternetConnection}
+          {t("noInternetConnection")}
         </Text>
       </Alert>
     </Slide>
