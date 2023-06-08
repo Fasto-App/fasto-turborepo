@@ -47,7 +47,7 @@ input MakeCheckoutPaymentInput {
 input CustomerRequestSplitInput {
 	checkout: ID!
 	splitType: SplitType!
-	customSplit: [CustomSplitInput]
+	customSplit: [CustomSplitInput!]
 	selectedUsers: [String!]!
 	tip: Float!
 }

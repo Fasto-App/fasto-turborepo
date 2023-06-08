@@ -56,13 +56,14 @@ export const SplitScreen = () => {
     },
   })
 
+  // All users are selected by default
   useEffect(() => {
     setSelectedUsers({
-      ...selectedUsers,
       ...clientSession?.getClientSession?.tab?.users?.reduce((acc, user) => {
         acc[user._id] = true
         return acc
-      }, {} as { [key: string]: boolean })
+      }, {} as { [key: string]: boolean }),
+      ...selectedUsers,
     })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,7 +219,8 @@ export const SplitScreen = () => {
         <Button mt={4}
           onPress={splitOnPress}
           isLoading={loadingSplit || loading}
-          isDisabled={selectedSplitType === "Custom" && customTotalRemaing !== 0
+          isDisabled={!(clientSession?.getClientSession.tab?.admin === clientSession?.getClientSession.user._id) ||
+            selectedSplitType === "Custom" && customTotalRemaing !== 0
             || !typedKeys(selectedUsers).some((key) => selectedUsers[key])
           }
         >

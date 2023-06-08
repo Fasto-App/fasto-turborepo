@@ -78,7 +78,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
         return {
           ...acc,
           tab: {
-            subTotal: (acc.tab?.subTotal || 0) + subTotal
+            subTotal: acc.tab?.subTotal + subTotal
           }
         }
       }
@@ -86,7 +86,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
       return ({
         ...acc,
         [user]: {
-          subTotal: (acc[user]?.subTotal || 0) + subTotal
+          subTotal: (acc[user]?.subTotal ?? 0) + subTotal
         }
       })
     }, { tab: { subTotal: 0 } } as SPlitByPatron)

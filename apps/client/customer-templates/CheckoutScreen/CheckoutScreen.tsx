@@ -109,7 +109,8 @@ export const CheckoutScreen = () => {
                 _text={{ bold: true }}
                 flex={1}
                 colorScheme={"primary"}
-                isDisabled={!checkoutId || !clientData?.getClientSession.tab?.checkout}
+                isDisabled={!(clientData?.getClientSession.tab?.admin === clientData?.getClientSession.user._id)
+                  || !checkoutId || !clientData?.getClientSession.tab?.checkout}
                 isLoading={loading}
                 onPress={pay}>
                 {t("finalize")}

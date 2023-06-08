@@ -165,54 +165,122 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
   const Checkout = CheckoutModel(db);
   const Order = OrderDetailModel(db);
   const Payment = PaymentModel(db);
+  const User = UserModel(db);
+
   const foundCheckout = await Checkout.findById(input.checkout)
+  const foundUsers = await User.find({ _id: { $in: input.selectedUsers } })
 
   if (!foundCheckout) throw ApolloError('BadRequest')
-  foundCheckout.orders // populate all the orders
-
   if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
+  if (foundUsers.length < 1) throw ApolloError('BadRequest', 'No users selected')
 
-  foundCheckout.splitType = input.splitType
-  // calculate the total adding the tip
-  foundCheckout.tip = input.tip
-  foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, input.tip)
+  const tipValue = getPercentageOfValue(foundCheckout.subTotal, input.tip)
+  const absoluteTotal = foundCheckout.subTotal + tipValue
 
-  await foundCheckout.save()
+  function updateCheckout() {
+    if (!foundCheckout) throw ApolloError('BadRequest', "No checkout found")
+
+    foundCheckout.splitType = input.splitType
+    foundCheckout.tip = input.tip
+    foundCheckout.total = absoluteTotal
+  }
 
   switch (input.splitType) {
     case "Equally":
-      const paymentAmount = foundCheckout.total / input.selectedUsers.length
-
       // for each user, create a payment
-      for (const user of input.selectedUsers) {
+      for (const user of foundUsers) {
         const payment = await Payment.create({
-          amount: paymentAmount,
-          patron: user,
-          splitType: input.splitType,
+          patron: user._id,
+          amount: absoluteTotal / foundUsers.length,
           tip: input.tip,
+          splitType: input.splitType,
           checkout: foundCheckout._id
         })
 
         foundCheckout.payments?.push(payment._id)
       }
 
+      updateCheckout()
       await foundCheckout.save()
 
       break;
     case "ByPatron":
       const orders = await Order.find({ _id: { $in: foundCheckout.orders } })
-      // separate the orders by user and create a payment for each user
 
-      console.log("ByPatron")
-      console.log(input.selectedUsers)
+      const ordersByPatron = orders.reduce((acc, order) => {
+        const patron = order.user?.toString()
+        const orderTotal = order.subTotal
+
+        if (!patron) {
+          return {
+            ...acc,
+            tab: {
+              subTotal: acc.tab?.subTotal + orderTotal,
+            }
+          }
+        }
+
+        return {
+          ...acc,
+          [patron]: {
+            subTotal: (acc[patron]?.subTotal ?? 0) + orderTotal,
+          }
+        }
+      }, { tab: { subTotal: 0 } } as { [key: string]: { subTotal: number }, tab: { subTotal: number } })
+
+      // take the total from tab and split it equally among the selected users
+      const tipSplited = tipValue / foundUsers.length
+      const tabSplited = ordersByPatron.tab.subTotal / foundUsers.length
+
+      // for each user, create a payment
+      for (const user of foundUsers) {
+        const individualTotal = ordersByPatron[user._id.toString()].subTotal ?? 0
+
+        const payment = await Payment.create({
+          checkout: foundCheckout._id,
+          patron: user._id,
+          amount: individualTotal + tipSplited + tabSplited,
+          splitType: input.splitType,
+          tip: input.tip,
+        })
+
+        foundCheckout.payments?.push(payment._id)
+      }
+
+      updateCheckout()
+      await foundCheckout.save()
+
       break;
     case "Custom":
-      console.log("Custom")
-      console.log(input.customSplit)
+      if (!input?.customSplit || input?.customSplit?.length < 1) {
+        throw ApolloError('BadRequest', 'No users selected')
+      }
+      // make sure that all of them togheter are equal to the total
+      const total = input?.customSplit?.reduce((acc, split) => acc + (split?.amount ?? 0), 0)
+      if (total !== absoluteTotal) {
+        throw ApolloError('BadRequest', 'The total is not equal to the total of the checkout')
+      }
+
+      // for each user, create a payment
+      for (const split of input.customSplit) {
+        const payment = await Payment.create({
+          checkout: foundCheckout._id,
+          patron: split.patron,
+          amount: split.amount,
+          splitType: input.splitType,
+          tip: input.tip,
+        })
+
+        foundCheckout.payments?.push(payment._id)
+      }
+
+      updateCheckout()
+      return foundCheckout.save()
+
       break;
 
     default:
-      throw ApolloError('BadRequest')
+      throw ApolloError('BadRequest', 'Split type not supported')
   }
 
   return foundCheckout

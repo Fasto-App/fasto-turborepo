@@ -3,18 +3,13 @@ import { PaymentModel } from "../../../models/payment";
 import { Context } from "../types";
 
 const getPaymentsByCheckout = async (parent: any, args: any, { db }: Context, info: any) => {
-  // parent is the checkout
-
   const Payment = PaymentModel(db);
-  const payments = await Payment.find({ checkout: parent._id });
-  return payments
+  return await Payment.find({ _id: { $in: parent.payments } });
 }
 
 const getOrdersByCheckout = async (parent: any, args: any, { db }: Context, info: any) => {
   const Order = OrderDetailModel(db);
-  const orders = await Order.find({ _id: { $in: parent.orders } });
-
-  return orders
+  return await Order.find({ _id: { $in: parent.orders } });
 }
 
 export const CheckoutResolver = {

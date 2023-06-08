@@ -215,7 +215,7 @@ export type CustomerRequestPayFullInput = {
 
 export type CustomerRequestSplitInput = {
   checkout: Scalars['ID'];
-  customSplit?: InputMaybe<Array<InputMaybe<CustomSplitInput>>>;
+  customSplit?: InputMaybe<Array<CustomSplitInput>>;
   selectedUsers: Array<Scalars['String']>;
   splitType: SplitType;
   tip: Scalars['Float'];
@@ -782,7 +782,7 @@ export type Query = {
   getClientSession: ClientSession;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
-  getOrdersByCheckout: Array<Checkout>;
+  getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
@@ -1631,7 +1631,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getClientSession?: Resolver<ResolversTypes['ClientSession'], ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
-  getOrdersByCheckout?: Resolver<Array<ResolversTypes['Checkout']>, ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;
+  getOrdersByCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;
   getOrdersBySession?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
