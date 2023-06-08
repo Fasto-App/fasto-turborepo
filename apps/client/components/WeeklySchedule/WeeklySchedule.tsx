@@ -4,14 +4,7 @@ import React from 'react'
 import { shallow } from 'zustand/shallow'
 import { Transition } from '../Transition'
 import { useScheduleStore } from './scheduleStore'
-
-const texts = {
-  open: "Open",
-  close: "Close",
-  setStandardHours: "Set Standard Time",
-  configureStandardHours: "Configure the standard hours of operation for this location.",
-  to: "To"
-}
+import { useTranslation } from 'react-i18next'
 
 const start = new Date();
 start.setHours(0, 0, 0, 0);
@@ -34,15 +27,15 @@ const WeeklySchedule = () => {
     shallow
   )
 
-  console.log("daysOfTheWeek", daysOfTheWeek)
+  const { t } = useTranslation("businessSettings")
 
   return (
     <Box py={"4"} px={"2"}>
       <Heading size={"md"}>
-        {texts.setStandardHours}
+        {t("setStandardHours")}
       </Heading>
       <Text paddingY={"4"} color={"gray.500"}>
-        {texts.configureStandardHours}
+        {t("configureStandardHours")}
       </Text>
       <VStack space={2} p={"2"}>
         {typedKeys(daysOfTheWeek).map((day, index) => (
@@ -68,7 +61,7 @@ const WeeklySchedule = () => {
                 onValueChange={() => togggleDay(day)}
               />
               <Text>
-                {daysOfTheWeek[day]?.isOpen ? texts.open : texts.close}
+                {daysOfTheWeek[day]?.isOpen ? t("open") : t("close")}
               </Text>
             </HStack>
             <Transition isVisible={!!daysOfTheWeek[day]?.isOpen}>
@@ -83,7 +76,7 @@ const WeeklySchedule = () => {
                   placeholder={"Open"}
                 />
                 <Text alignSelf={"center"}>
-                  {texts.to}
+                  {t("to")}
                 </Text>
                 <HoursInput
                   valueHours={daysOfTheWeek[day]?.hours?.close}
