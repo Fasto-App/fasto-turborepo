@@ -16,3 +16,22 @@ export const businessRoute = {
   tables: `${BUSINESS_ADMIN}/tables`,
   resetPassword: `${BUSINESS}/reset-password`,
 } as const;
+
+export const businessPathName = {
+  '/business/login': 'Login',
+  '/business/create-account': 'Create Account',
+  '/business/forgot-password': 'Forgot Password',
+  '/business/signup': 'Signup',
+  '/business/reset-password': 'Reset Password',
+  '/business-admin/settings': 'Settings',
+  '/business-admin/add-products-categories': 'Add Products Categories',
+  '/business-admin/add-to-order': 'Add To Order',
+  '/business-admin/checkout/[checkoutId]': 'Checkout',
+  '/business-admin/dashboard': 'Dashboard',
+  '/business-admin/help': 'Help',
+  '/business-admin/menu': 'Menu',
+  '/business-admin/orders': 'Orders',
+  '/business-admin/tables': 'Tables',
+} as const;
+
+export type BusinessRouteKeys = keyof typeof businessPathName;

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Link from 'next/link';
 import { Image, HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, Pressable } from "native-base"
 import { useGetAllBusinessQuery } from "../gen/generated";
@@ -6,6 +6,8 @@ import { businessRoute, customerRoute } from "../routes";
 import { NavigationButton } from "../components/atoms/NavigationButton";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../firebase/init";
 
 const width = {
 	base: 220,
@@ -29,6 +31,13 @@ const LoadingTiles = () => {
 
 export default function Home() {
 	const { data, loading, error } = useGetAllBusinessQuery()
+
+	useEffect(() => {
+		analytics && logEvent(analytics, "page_view", {
+			page_title: "Landing Page",
+			page_path: "/"
+		})
+	}, [])
 
 	const router = useRouter()
 

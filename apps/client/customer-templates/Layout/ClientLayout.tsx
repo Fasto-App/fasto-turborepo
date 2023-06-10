@@ -6,33 +6,45 @@ import { useRouter } from "next/router";
 import { HourGlassAnimation } from "../../components/SuccessAnimation";
 import { useGetClientSession } from "../../hooks";
 import { getClientCookies } from "../../cookies";
-import { customerRoute, customerTitlePath } from "../../routes";
+import { PathNameKeys, customerPathName, customerRoute, customerTitlePath } from "../../routes";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../../firebase/init";
 
 export const CustomerLayout: React.FC = ({ children }) => {
-  const route = useRouter()
-  const { productId, businessId } = route.query
+  const router = useRouter()
+  const { productId, businessId } = router.query
 
   const token = getClientCookies(businessId as string)
 
-  const isHome = route.pathname === customerTitlePath.Home
-  const isCheckout = route.pathname === customerTitlePath.Checkout
-  const isSettings = route.pathname === customerTitlePath.Settings
-  const isCart = route.pathname === customerTitlePath.Cart
-  const isSplit = route.pathname === customerTitlePath.Split
+  const isHome = router.pathname === customerTitlePath.Home
+  const isCheckout = router.pathname === customerTitlePath.Checkout
+  const isSettings = router.pathname === customerTitlePath.Settings
+  const isCart = router.pathname === customerTitlePath.Cart
+  const isSplit = router.pathname === customerTitlePath.Split
   const { data } = useGetClientSession()
 
   useEffect(() => {
     if (!token && (isSettings || isCart || isSplit || isCheckout)) {
       if (!businessId || typeof businessId !== "string") return
 
-      route.push({
+      router.push({
         pathname: customerRoute.home,
         query: {
           businessId
         }
       })
     }
-  }, [isCart, isSettings, businessId, token, route, isSplit, isCheckout])
+  }, [isCart, isSettings, businessId, token, router, isSplit, isCheckout])
+
+  useEffect(() => {
+
+    analytics && logEvent(analytics, 'page_view', {
+      app: 'customer',
+      page_title: customerPathName[router.pathname as PathNameKeys],
+      page_path: router.pathname,
+    });
+
+  }, [router.pathname])
 
   return (
     <Flex

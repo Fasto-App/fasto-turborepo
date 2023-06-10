@@ -3,10 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useBreakpointValue } from 'native-base';
 import { BusinessScreenContainer } from '../../components/atoms/BusinessScreenContainer';
 import { BusinessNavigationTab } from './BusinessNavigationTab';
-import router from 'next/router';
-import { BUSINESS_ADMIN } from '../../routes';
+import { useRouter } from 'next/router';
+import { BUSINESS_ADMIN, BusinessRouteKeys, businessPathName } from '../../routes';
+import { analytics } from '../../firebase/init';
+import { logEvent } from 'firebase/analytics';
 
 const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
+	const router = useRouter();
+
 	const [hasMounted, setHasMounted] = useState(false);
 	const display = useBreakpointValue({
 		base: false,
@@ -20,7 +24,13 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 
 	useEffect(() => {
 		setHasMounted(true);
-	}, []);
+
+		analytics && logEvent(analytics, 'page_view', {
+			app: 'business',
+			page_title: businessPathName[router.pathname as BusinessRouteKeys],
+			page_path: router.pathname,
+		});
+	}, [router.pathname]);
 
 	if (!hasMounted) {
 		return null;
