@@ -45,5 +45,7 @@
 	"errorDeletingItem": "Error deleting item",
 	"add": "Add",
 	"yourOrders": "Your Orders",
-	"allOrders": "All Orders"
+	"allOrders": "All Orders",
+	"customerCheckout": "Customer Checkout",
+	"customerSettings": "Customer Settings"
 }
