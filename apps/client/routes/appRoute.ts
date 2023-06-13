@@ -5,7 +5,7 @@ export const HOME = "/" as const
 const ADMIN = "/admin" as const
 export const BUSINESS = "/business" as const
 export const CUSTOMER = "/customer" as const
-export const BUSINESS_ADMIN = BUSINESS + ADMIN
+export const BUSINESS_ADMIN = `${BUSINESS}${ADMIN}` as const
 
 export const appRoute = {
   home: HOME,

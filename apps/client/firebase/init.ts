@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAnalytics, isSupported, initializeAnalytics } from "firebase/analytics";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -14,6 +14,12 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-const analytics = await isSupported() ? getAnalytics(firebaseApp) : null
+const analytics = await isSupported() ? initializeAnalytics(firebaseApp, {
+  config: {
+    send_page_view: false,
+    allow_ad_personalization_signals: false,
+    allow_google_signals: false
+  }
+}) : null
 
 export { analytics }

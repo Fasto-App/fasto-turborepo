@@ -77,7 +77,7 @@ export const OrdersModal = ({ isOpen, setIsOpen, checkoutId }: OrdersModalProps)
               onPress={() => {
 
                 router.push({
-                  pathname: businessRoute.checkout,
+                  pathname: businessRoute['checkout/[checkoutId]'],
                   query: {
                     checkoutId: data?.getOrdersByCheckout._id,
                     tabId: data?.getOrdersByCheckout.tab

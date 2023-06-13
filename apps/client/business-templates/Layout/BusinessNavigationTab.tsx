@@ -33,9 +33,9 @@ const BusinessNavigationTab = () => {
         <BusinessNavigationButton
           text={t("categoriesProducts")}
           type={"Fork"}
-          selected={useIsPageSelected(businessRoute.add_products_categories)}
+          selected={useIsPageSelected(businessRoute["add-products-categories"])}
           onPress={() => {
-            router.push(businessRoute.add_products_categories);
+            router.push(businessRoute["add-products-categories"]);
           }}
         />
         <BusinessNavigationButton
@@ -75,7 +75,7 @@ const BusinessNavigationTab = () => {
       <VStack space={10} bottom={0} paddingX={2} w={"full"}>
         <Button
           _text={{ bold: true }}
-          onPress={() => router.push(businessRoute.add_to_order)}>
+          onPress={() => router.push(businessRoute["add-to-order"])}>
           {t("quickSale")}
         </Button>
         <AccountMenu />

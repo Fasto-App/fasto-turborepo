@@ -46,7 +46,7 @@ export const AddToOrder = () => {
       showToast({ message: t("ordersCreatedSuccessfully"), })
 
       route.push({
-        pathname: businessRoute.checkout,
+        pathname: businessRoute["checkout/[checkoutId]"],
         query: {
           checkoutId,
           tabId: data?.createOrdersCheckout.tab
@@ -76,7 +76,7 @@ export const AddToOrder = () => {
           if (!checkoutId) throw new Error("Checkout id is missing")
 
           route.push({
-            pathname: businessRoute.checkout,
+            pathname: businessRoute["checkout/[checkoutId]"],
             query: {
               checkoutId,
               tabId,

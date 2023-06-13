@@ -58,7 +58,7 @@ export const TableModal = () => {
     refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
     onCompleted: (data) => {
       router.push({
-        pathname: businessRoute.add_to_order,
+        pathname: businessRoute["add-to-order"],
         query: { tabId: data.createTab._id }
       })
     },
@@ -113,7 +113,7 @@ export const TableModal = () => {
         // if (tableChoosen?.tab) { }
 
         router.push({
-          pathname: businessRoute.add_to_order,
+          pathname: businessRoute["add-to-order"],
           query: { tabId: tableChoosen?.tab?._id }
         })
         break;

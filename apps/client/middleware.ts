@@ -35,9 +35,9 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   // Auth routes, if token is valid navigate to DASHBOARD
   if (request.nextUrl.pathname.startsWith(businessRoute.login) ||
     request.nextUrl.pathname.startsWith(businessRoute.signup) ||
-    request.nextUrl.pathname.startsWith(businessRoute.forgotPassword) ||
-    request.nextUrl.pathname.startsWith(businessRoute.resetPassword) ||
-    request.nextUrl.pathname.startsWith(businessRoute.createAccount)) {
+    request.nextUrl.pathname.startsWith(businessRoute["forgot-password"]) ||
+    request.nextUrl.pathname.startsWith(businessRoute["reset-password"]) ||
+    request.nextUrl.pathname.startsWith(businessRoute["create-account"])) {
     const { nextUrl: { search } } = request;
     const urlSearchParams = new URLSearchParams(search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -52,8 +52,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
     // if there's a token in the query params, create or reset
     // if there's a token in the query params, they either forgot password or reset password
 
-    if (request.nextUrl.pathname.startsWith(businessRoute.createAccount)
-      || request.nextUrl.pathname.startsWith(businessRoute.resetPassword)) {
+    if (request.nextUrl.pathname.startsWith(businessRoute["create-account"])
+      || request.nextUrl.pathname.startsWith(businessRoute["reset-password"])) {
 
 
       const { token, email } = params

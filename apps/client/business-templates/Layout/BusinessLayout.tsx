@@ -27,7 +27,7 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 
 		analytics && logEvent(analytics, 'page_view', {
 			app: 'business',
-			page_title: businessPathName[router.pathname as BusinessRouteKeys],
+			page_title: businessPathName[router.pathname as BusinessRouteKeys] ?? router.pathname,
 			page_path: router.pathname,
 		});
 	}, [router.pathname]);

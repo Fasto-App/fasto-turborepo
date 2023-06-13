@@ -121,7 +121,7 @@ export const LoginForm = () => {
 						{t("businessLogin:loginHere")}
 					</Button>
 
-					<Link href={businessRoute.forgotPassword}>
+					<Link href={businessRoute['forgot-password']}>
 						{t("businessLogin:forgotPassword")}
 					</Link>
 					{error ?
