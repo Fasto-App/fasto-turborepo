@@ -26,10 +26,10 @@ export const customerPathName = {
   [home]: "home",
   [cart]: 'cart',
   [menu]: 'menu',
-  [checkout]: 'checkout',
+  [checkout]: 'customerCheckout',
   [split]: 'split',
   [productDescription]: 'productDescription',
-  [settings]: 'settings',
+  [settings]: 'customerSettings',
 } as const
 
 export const customerRouteParams = {
