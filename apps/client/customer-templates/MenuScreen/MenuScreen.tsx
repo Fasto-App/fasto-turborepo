@@ -112,8 +112,16 @@ export const MenuScreen = () => {
                 description={item.description}
                 uri={item.imageUrl}
                 onPress={() => {
-                  if (typeof businessId !== "string") return
-                  businessId && router.push(customerRoute.production_description(businessId, item._id))
+                  if (typeof businessId !== "string") throw new Error("businessId is not a string")
+
+                  router.push({
+                    pathname: customerRoute["/customer/[businessId]/product-description/[productId]"],
+                    query: {
+                      businessId,
+                      productId: item._id
+                    }
+                  })
+
                 }}
               />)}
             renderSectionHeader={({ section: { title } }) => (

@@ -68,7 +68,7 @@ export const CheckoutScreen = () => {
     if (!checkoutId || !businessId) throw new Error("Missing checkoutId or businessId")
 
     router.push({
-      pathname: customerRoute.split,
+      pathname: customerRoute['/customer/[businessId]/split/[checkoutId]'],
       query: {
         businessId,
         checkoutId
@@ -82,7 +82,7 @@ export const CheckoutScreen = () => {
     clearClientCookies(typeof businessId === "string" ? businessId : businessId[0])
 
     router.push({
-      pathname: customerRoute.home,
+      pathname: customerRoute['/customer/[businessId]'],
       query: {
         businessId
       }

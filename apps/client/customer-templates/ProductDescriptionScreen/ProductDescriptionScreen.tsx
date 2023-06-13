@@ -45,7 +45,12 @@ export const ProductDescriptionScreen = () => {
         message: t("addedToCart"),
       })
 
-      route.push(customerRoute.menu(businessId as string));
+      route.push({
+        pathname: customerRoute["/customer/[businessId]/menu"],
+        query: {
+          businessId: businessId as string,
+        }
+      })
     },
     onError: (err) => {
       showToast({

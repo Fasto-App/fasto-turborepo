@@ -28,7 +28,12 @@ export const HomeScreen = () => {
   }, [])
 
   const onPress = useCallback(() => {
-    route.push(customerRoute.menu(businessId as string))
+    route.push({
+      pathname: customerRoute["/customer/[businessId]/menu"],
+      query: {
+        businessId: businessId as string,
+      }
+    })
   }, [businessId, route])
 
   const { data: tabData, loading, error } = useGetClientSession()
@@ -48,7 +53,12 @@ export const HomeScreen = () => {
   useEffect(() => {
     const token = getClientCookies(businessId as string)
     if (token) {
-      route.push(customerRoute.menu(businessId as string))
+      route.push({
+        pathname: customerRoute["/customer/[businessId]/menu"],
+        query: {
+          businessId: businessId as string,
+        }
+      })
     }
   }, [businessId, route])
 

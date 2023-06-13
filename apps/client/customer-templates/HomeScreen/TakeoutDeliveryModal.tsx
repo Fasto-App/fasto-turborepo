@@ -63,7 +63,11 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
       }
 
       setClientCookies(businessId, data.createNewTakeoutOrDelivery)
-      router.push(customerRoute.menu(businessId))
+
+      router.push({
+        pathname: customerRoute['/customer/[businessId]/menu'],
+        query: { businessId: businessId }
+      })
     },
     onError: (err) => {
       console.log("Tab Request Error", err)

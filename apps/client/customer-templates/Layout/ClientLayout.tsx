@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { HourGlassAnimation } from "../../components/SuccessAnimation";
 import { useGetClientSession } from "../../hooks";
 import { getClientCookies } from "../../cookies";
-import { PathNameKeys, customerPathName, customerRoute, customerTitlePath } from "../../routes";
+import { PathNameKeys, customerPathName, customerRoute } from "../../routes";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../firebase/init";
 
@@ -16,11 +16,11 @@ export const CustomerLayout: React.FC = ({ children }) => {
 
   const token = getClientCookies(businessId as string)
 
-  const isHome = router.pathname === customerTitlePath.Home
-  const isCheckout = router.pathname === customerTitlePath.Checkout
-  const isSettings = router.pathname === customerTitlePath.Settings
-  const isCart = router.pathname === customerTitlePath.Cart
-  const isSplit = router.pathname === customerTitlePath.Split
+  const isHome = router.pathname === customerRoute["/customer/[businessId]"]
+  const isCheckout = router.pathname === customerRoute["/customer/[businessId]/checkout/[checkoutId]"]
+  const isSettings = router.pathname === customerRoute["/customer/[businessId]/settings"]
+  const isCart = router.pathname === customerRoute["/customer/[businessId]/cart"]
+  const isSplit = router.pathname === customerRoute["/customer/[businessId]/split/[checkoutId]"]
   const { data } = useGetClientSession()
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const CustomerLayout: React.FC = ({ children }) => {
       if (!businessId || typeof businessId !== "string") return
 
       router.push({
-        pathname: customerRoute.home,
+        pathname: customerRoute["/customer/[businessId]"],
         query: {
           businessId
         }

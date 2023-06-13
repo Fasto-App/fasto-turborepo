@@ -82,7 +82,7 @@ export const useGetClientSession = () => {
 
           clearClientCookies(business)
           return route.push({
-            pathname: customerRoute.home,
+            pathname: customerRoute["/customer/[businessId]"],
             query: {
               businessId: business
             }
@@ -90,10 +90,16 @@ export const useGetClientSession = () => {
         }
       }
 
-      if (!checkoutId && data.getClientSession.tab?.status === TabStatus.Pendent &&
-        data.getClientSession.tab.checkout) {
-        route.push(customerRoute.checkout(businessId as string, data.getClientSession.tab.checkout))
-        return
+      if (!checkoutId && data.getClientSession.tab?.status === TabStatus.Pendent
+        && data.getClientSession.tab.checkout) {
+        return route.push({
+          pathname: customerRoute["/customer/[businessId]/checkout/[checkoutId]"],
+          query: {
+            businessId: businessId,
+            checkoutId: data.getClientSession.tab.checkout
+          }
+        })
+
       }
     },
   })

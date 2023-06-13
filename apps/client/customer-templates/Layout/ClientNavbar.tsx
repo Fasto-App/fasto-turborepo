@@ -2,7 +2,7 @@ import React from "react"
 import { useRouter } from "next/router";
 import { Avatar, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { customerPathName, customerTitlePath, PathNameKeys } from "../../routes";
+import { customerPathName, customerRoute, PathNameKeys } from "../../routes";
 import { getClientCookies } from "../../cookies";
 import { useGetBusinessInformation } from "../../hooks";
 import { OrangeBox } from "../../components/OrangeBox";
@@ -18,7 +18,7 @@ const ClientNavBar = (props: { tableNumber?: string }) => {
   const token = getClientCookies(businessId as string)
   const theme = useTheme();
   const { t } = useTranslation("common")
-  const isSplit = route.pathname === customerTitlePath.Split
+  const isSplit = route.pathname === customerRoute["/customer/[businessId]/split/[checkoutId]"]
 
   const { data: businessInfo } = useGetBusinessInformation()
 

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
-import { customerPathName, customerRoute, customerTitlePathKeys, customerTitlePath } from "../../routes";
+import { customerPathName, customerRoute, customerRouteKeys, } from "../../routes";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { useGetClientSession } from "../../hooks";
@@ -10,18 +10,16 @@ const ClientTabBar: React.FC = (props) => {
   const router = useRouter();
   const { businessId } = router.query
 
-  const useIsPageSelected = useCallback((pathname: customerTitlePathKeys, slug?: string) => {
+  const useIsPageSelected = useCallback((pathname: customerRouteKeys, slug?: string) => {
     if (typeof businessId !== "string") return false;
 
-    const pathName = customerTitlePath[pathname]
-
-    return router.pathname === pathName;
+    return router.pathname === pathname;
 
   }, [businessId, router.pathname])
 
-  const isMenu = useIsPageSelected("Menu");
-  const isCart = useIsPageSelected("Cart");
-  const isSettings = useIsPageSelected("Settings");
+  const isMenu = useIsPageSelected("/customer/[businessId]/menu");
+  const isCart = useIsPageSelected("/customer/[businessId]/cart");
+  const isSettings = useIsPageSelected("/customer/[businessId]/settings");
 
 
   const { data: tabData } = useGetClientSession()
@@ -45,7 +43,12 @@ const ClientTabBar: React.FC = (props) => {
         type={"ListStar"}
         selected={isMenu}
         onPress={() => {
-          router.push(customerRoute.menu(businessId));
+          router.push({
+            pathname: customerRoute["/customer/[businessId]/menu"],
+            query: {
+              businessId
+            }
+          })
         }}
       />
       <NavigationButton
@@ -54,14 +57,24 @@ const ClientTabBar: React.FC = (props) => {
         selected={isCart}
         numNotifications={tabData?.getClientSession.tab?.cartItems?.length}
         onPress={() => {
-          router.push(customerRoute.cart(businessId));
+          router.push({
+            pathname: customerRoute["/customer/[businessId]/cart"],
+            query: {
+              businessId
+            }
+          })
         }}
       />
       <NavigationButton
         type={"Settings"}
         selected={isSettings}
         onPress={() => {
-          router.push(customerRoute.settings(businessId));
+          router.push({
+            pathname: customerRoute["/customer/[businessId]/settings"],
+            query: {
+              businessId
+            }
+          })
         }}
       />
     </HStack>

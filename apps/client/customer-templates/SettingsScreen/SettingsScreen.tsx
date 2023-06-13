@@ -92,7 +92,7 @@ const SettingsScreen = () => {
       !clientSession?.getClientSession.user.name ||
       !clientSession?.getClientSession?.tab?.admin) return undefined
 
-    FE_URL.pathname = `/${locale}${customerRoute.home}`
+    FE_URL.pathname = `/${locale}${customerRoute["/customer/[businessId]"]}`
     FE_URL.pathname = FE_URL.pathname.replace("[businessId]",
       typeof businessId === "string" ? businessId : businessId[0])
     FE_URL.searchParams.append(customerRouteParams.tabId, clientSession?.getClientSession.tab?._id)

@@ -55,7 +55,13 @@ export const CartScreen = () => {
       if (data?.requestCloseTab.checkout) {
         showToast({ message: "Tab closed successfully" });
 
-        route.push(customerRoute.checkout(businessId as string, data?.requestCloseTab.checkout))
+        route.push({
+          pathname: customerRoute["/customer/[businessId]/checkout/[checkoutId]"],
+          query: {
+            businessId: businessId as string,
+            checkoutId: data.requestCloseTab.checkout
+          }
+        })
       }
 
     },
@@ -175,7 +181,13 @@ export const CartScreen = () => {
                   quantity={item.quantity}
                   editable={item.user._id === clientSession?.getClientSession.user._id}
                   navegateTo={() => {
-                    route.push(customerRoute.production_description(businessId as string, item.product._id))
+                    route.push({
+                      pathname: customerRoute["/customer/[businessId]/product-description/[productId]"],
+                      query: {
+                        businessId: businessId,
+                        productId: item.product._id
+                      }
+                    })
                   }}
                 />}
               contentContainerStyle={{ paddingHorizontal: 4 }}

@@ -68,7 +68,13 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
       }
 
       setClientCookies(businessId, data?.requestJoinTab)
-      router.push(customerRoute.menu(businessId))
+
+      router.push({
+        pathname: customerRoute["/customer/[businessId]/menu"],
+        query: {
+          businessId
+        }
+      })
     }
   })
 

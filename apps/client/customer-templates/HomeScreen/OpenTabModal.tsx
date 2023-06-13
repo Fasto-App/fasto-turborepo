@@ -71,7 +71,13 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
       if (!data?.openTabRequest || typeof businessId !== "string") return
 
       setClientCookies(businessId, data.openTabRequest)
-      router.push(customerRoute.menu(businessId as string))
+
+      router.push({
+        pathname: customerRoute['/customer/[businessId]/menu'],
+        query: {
+          businessId
+        }
+      })
     },
     onError: (err) => {
       console.log("Tab Request Error")
