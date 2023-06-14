@@ -4,6 +4,7 @@ import { Box, HStack, ScrollView } from "native-base";
 import { ControlledInput, InputProps } from "./ControlledInput";
 import { FormState, Control } from "react-hook-form";
 import { typedKeys } from "app-helpers";
+import { useTranslation } from 'next-i18next';
 
 type ControlledFormType<T extends Record<string, string>> = {
   formState: FormState<T>;
@@ -20,6 +21,7 @@ export const ControlledForm = <T extends Record<string, string>>({
   formState,
   Config
 }: ControlledFormType<T>) => {
+  const { t } = useTranslation("common")
 
   return (
     <ScrollView>
@@ -44,7 +46,8 @@ export const ControlledForm = <T extends Record<string, string>>({
                       control={control}
                       name={keyName as string}
                       label={subKeyConfig[keyName].label}
-                      errorMessage={formState?.errors?.[keyName]?.message as string}
+                      //  @ts-ignore
+                      errorMessage={t(formState?.errors?.[keyName]?.message) as string}
                     />
                   </Box>
                 )
@@ -61,7 +64,8 @@ export const ControlledForm = <T extends Record<string, string>>({
             name={key as string}
             control={control}
             label={config.label}
-            errorMessage={formState.errors?.[key]?.message as string}
+            //  @ts-ignore 
+            errorMessage={t(formState.errors?.[key]?.message) as string}
           />
         )
       })}

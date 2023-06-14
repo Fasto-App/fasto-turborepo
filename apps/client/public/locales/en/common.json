@@ -47,5 +47,9 @@
 	"yourOrders": "Your Orders",
 	"allOrders": "All Orders",
 	"customerCheckout": "Customer Checkout",
-	"customerSettings": "Customer Settings"
+	"customerSettings": "Customer Settings",
+	"error": {
+		"email": "Please provide a valid email address.",
+		"password": "Please provide a password."
+	}
 }

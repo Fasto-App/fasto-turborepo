@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../firebase/init";
+import { Helmet } from "react-helmet";
 
 const width = {
 	base: 220,
@@ -43,9 +44,6 @@ export default function Home() {
 
 	return (
 		<>
-			<Head>
-				<title>Fasto</title>
-			</Head>
 
 			<Box backgroundColor={"pink"} h={"full"}>
 				<HStack position={"revert"} justifyContent={"space-between"} p={8}>
@@ -86,6 +84,14 @@ export default function Home() {
 					})}
 				</HStack>
 			</Box >
+			<Helmet>
+				<title>Fasto</title>
+				<script type="application/javascript" async>
+					{`
+						console.log("Hello World")
+					`}
+				</script>
+			</Helmet>
 		</>
 	);
 }

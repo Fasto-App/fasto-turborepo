@@ -63,8 +63,8 @@ export const forgotPasswordSchema = z.object({
 export type forgotPasswordSchemaInput = z.infer<typeof forgotPasswordSchema>
 
 export const loginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  email: z.string().email({ message: 'error.email' }),
+  password: z.string().min(6, { message: 'error.password' }),
 });
 
 export type loginSchemaInput = z.infer<typeof loginSchema>

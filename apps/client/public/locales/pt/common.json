@@ -44,5 +44,9 @@
 	"errorDeletingItem": "Erro ao excluir item",
 	"add": "Adicionar",
 	"yourOrders": "Seus Pedidos",
-	"allOrders": "Todos os Pedidos"
+	"allOrders": "Todos os Pedidos",
+	"error": {
+		"email": "Por favor, forneça um endereço de e-mail válido.",
+		"password": "Por favor, forneça uma senha."
+	}
 }
