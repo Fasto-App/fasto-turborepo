@@ -21,7 +21,10 @@
 	"Equally": "Igual",
 	"Custom": "Personalizado",
 	"ByPatron": "Individual",
+	"Full": "Total",
 	"payInFull": "Pagar en su totalidad",
 	"splitBill": "Dividir cuenta",
-	"back": "Atrás"
+	"back": "Atrás",
+	"splitType": "Tipo de división",
+	"splitNow": "Dividir ahora"
 }

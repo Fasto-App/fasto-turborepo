@@ -9,4 +9,5 @@ type Payment {
 	tip: Float!
 	splitType: SplitType
 	discount: Float
+	paid: Boolean!
 }

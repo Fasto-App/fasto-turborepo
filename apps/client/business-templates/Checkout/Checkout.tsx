@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, VStack, Text, HStack, Button, Center } from 'native-base'
+import { Box, Flex, Heading, VStack, Text, HStack, Button, Center, Divider, ScrollView } from 'native-base'
 import { Link } from '../../components/atoms/Link';
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -8,22 +8,47 @@ import { OrangeBox } from '../../components/OrangeBox'
 import { SuccessAnimation } from '../../components/SuccessAnimation'
 import { TileButton } from '../../components/TileButton'
 import { UpperSection } from '../../components/UpperSection'
-import { useGetCheckoutByIdQuery } from '../../gen/generated'
+import { GetCheckoutByIdDocument, useGetCheckoutByIdQuery, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
 import { PayInFull } from './PayInFull'
 import { Split } from './Split'
 import { businessRoute } from '../../routes';
 import { useCheckoutStore } from './checkoutStore';
 import { useTranslation } from 'next-i18next';
+import { formatAsPercentage, parseToCurrency, parseToFixedPoint } from 'app-helpers';
+import { PaymentTile } from './TableComponents';
+import { showToast } from '../../components/showToast';
 
 const checkoutOptions = ["payFull", "splitBill", "success"] as const
 
 export const Checkout = () => {
   const [selectedOption, setSelectedOption] = React.useState<typeof checkoutOptions[number]>("payFull")
   const route = useRouter()
-  const { checkoutId } = route.query
+  const { checkoutId, tabId } = route.query
 
   const setTotal = useCheckoutStore(state => state.setTotal)
   const { t } = useTranslation("businessCheckout")
+
+  const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
+    refetchQueries: [
+      {
+        query: GetCheckoutByIdDocument,
+        variables: {
+          input: {
+            _id: checkoutId as string
+          }
+        }
+      }
+    ],
+  })
+
+  const { data: tabData } = useGetTabCheckoutByIdQuery({
+    skip: !tabId,
+    variables: {
+      input: {
+        _id: tabId as string
+      }
+    },
+  })
 
   // TODO: get the table number from either the Checkout or the Tab
   const { data } = useGetCheckoutByIdQuery({
@@ -34,13 +59,29 @@ export const Checkout = () => {
       }
     },
     onCompleted: (data) => {
-      const { status, paid } = data?.getCheckoutByID || {}
-      if (status === "Paid" && paid) {
-        setSelectedOption("success")
+      const { status, paid, splitType, subTotal } = data?.getCheckoutByID || {}
+
+      switch (splitType) {
+        case "Full":
+          console.log("Full")
+          setSelectedOption("payFull")
+          break;
+        case "Equally":
+        case "Custom":
+        case "ByPatron":
+          setSelectedOption("splitBill")
+          break;
       }
 
-      if (data.getCheckoutByID.subTotal) {
-        setTotal(data.getCheckoutByID.subTotal)
+      if (subTotal) {
+        setTotal(subTotal)
+      }
+
+      console.log("status", status)
+      console.log("paid", paid)
+      if (status === "Paid" && paid) {
+        console.log("success")
+        setSelectedOption("success")
       }
     },
 
@@ -53,7 +94,12 @@ export const Checkout = () => {
     tax,
     tip,
     totalPaid,
+    splitType,
+    payments,
     total } = data?.getCheckoutByID || {}
+
+  // if the cehckout has a split type that is not "Full", change the selected option
+  // show some different UI that will allow to make the payments
 
   return (
     <Flex flexDirection={"row"} flex={1}>
@@ -94,7 +140,12 @@ export const Checkout = () => {
             </Heading>
             <HStack space={"4"}>
               {checkoutOptions.filter((option) => option !== "success").map((option) => (
+
                 <TileButton
+
+                  isDisabled={!!data?.getCheckoutByID?.splitType ||
+                    option === "splitBill" && !!tabData?.getTabByID?.users?.length &&
+                    tabData?.getTabByID?.users?.length < 2}
                   key={option}
                   onPress={() => selectedOption !== "success" && setSelectedOption(option)}
                   selected={selectedOption === option}
@@ -105,37 +156,100 @@ export const Checkout = () => {
             </HStack>
           </UpperSection>
           <BottomSection>
-            {selectedOption === "payFull" ? (
-              <PayInFull
-                totalPaid={totalPaid}
-                status={status}
-                paid={paid}
-                tax={tax}
-                subTotal={subTotal}
-                tip={tip}
-                total={total}
-              />) : selectedOption === "splitBill" ? (
-                <Split
-                  tax={tax}
-                  subTotal={subTotal}
-                  payments={data?.getCheckoutByID?.payments || []}
-                />
-              ) : selectedOption === "success" ?
+
+            {selectedOption === "success" ? (
               <Center h={"full"}>
                 <Box size={"32"} mb={12}>
                   <SuccessAnimation />
                 </Box>
                 <Text fontSize={"2xl"}>
                   {t("sessionEnded")}
-                  <Link fontSize={"2xl"} href={businessRoute.tables}>
+                  <Link fontSize={"2xl"} href={businessRoute.orders}>
                     {t("backToManageTables")}
                   </Link>
                 </Text>
               </Center>
-              : null}
+            ) : !!splitType ?
+              <Center flex={1}>
+                {/* Pegar os dados da conta e mostrar para o business */}
+                <ScrollView w={"full"} flex={1}>
+                  <VStack width={"full"} space={4}>
+                    <SummaryRow
+                      label={t("splitType")}
+                      value={t(splitType)} />
+                    <SummaryRow
+                      label={t("subtotal")}
+                      value={parseToCurrency(subTotal)} />
+                    <SummaryRow
+                      label={t("tip")}
+                      value={parseToCurrency(tip ?? 0)} />
+                    <SummaryRow
+                      label={t("feesAndTax")}
+                      value={parseToCurrency(tax)} />
+                    <Divider my={2} />
+                    <SummaryRow
+                      label={t("total")}
+                      value={parseToCurrency(total)} />
+
+                  </VStack>
+                  <Box height={"12"} />
+                  <Text fontSize={"2xl"} textAlign={"center"} pb={4} bold>
+                    {t("splitBill")}
+                  </Text>
+                  {payments?.map((payment) => (
+                    <PaymentTile
+                      key={payment?._id}
+                      customer={payment?._id ?? "Customer"}
+                      subtotal={parseToCurrency(payment?.amount)}
+                      tip={parseToCurrency(payment?.tip)}
+                      loading={loading}
+                      cta={t("pay")}
+                      disable={!!payment?.paid}
+                      onPress={async () => {
+                        if (!payment) return
+
+                        // each of the payments will be made individually
+                        // this will be a diferent function that will take the payment id, checkout id and user id
+                        // and will make the payment, then it will update the checkout and the user
+                        await makeCheckoutPayment({
+                          variables: {
+                            input: {
+                              checkout: checkoutId as string,
+                              payment: payment._id,
+                            }
+                          }
+                        })
+                      }}
+                    />
+                  ))}
+                </ScrollView>
+              </Center>
+              : selectedOption === "payFull" ? (
+                <PayInFull
+                  totalPaid={totalPaid}
+                  status={status}
+                  paid={paid}
+                  tax={tax}
+                  subTotal={subTotal}
+                  tip={tip}
+                  total={total}
+                  setSelectedOption={setSelectedOption}
+                />) : selectedOption === "splitBill" ? (
+                  <Split
+                    tax={tax}
+                    subTotal={subTotal}
+                    payments={data?.getCheckoutByID?.payments || []}
+                  />
+                ) : null}
           </BottomSection>
         </VStack>
       </Box>
     </Flex>
   )
 }
+
+export const SummaryRow = ({ label, value }: { label: string, value: string }) => (
+  <HStack justifyContent={"space-between"} px={12}>
+    <Text fontSize={"xl"}>{label}</Text>
+    <Text fontSize={"lg"}>{value}</Text>
+  </HStack>)

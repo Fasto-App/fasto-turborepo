@@ -7,9 +7,24 @@ import { useTranslation } from "next-i18next";
 const Cell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
   return (
     <Text
-      w={100}
+      w={150}
       alignSelf={"center"}
       textAlign={"center"}
+      fontSize={"lg"}
+      color={isDisabled ? "gray.300" : undefined}
+      bold={bold}
+    >
+      {children}
+    </Text>
+  )
+}
+
+const PaymentCell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
+
+  return (
+    <Text
+      w={150}
+      textAlign={"right"}
       fontSize={"lg"}
       color={isDisabled ? "gray.300" : undefined}
       bold={bold}
@@ -96,7 +111,7 @@ export const Row = ({
 }: RowProps) => {
   const { t } = useTranslation("businessCheckout")
 
-  return (<HStack>
+  return (<HStack h={"10"}>
     <Box justifyContent={"center"}>
       <Checkbox
         isChecked={isUserSelected}
@@ -111,7 +126,10 @@ export const Row = ({
     {type === "Custom" ?
       <Input
         w={140}
-        h={"6"}
+        h={"8"}
+        isDisabled={!isUserSelected || hasUserPaid}
+        variant="underlined"
+        fontSize={"lg"}
         textAlign={"center"}
         onChangeText={onCustominputChange}
         value={isUserSelected ? customSubTotal : parseToCurrency(0)}
@@ -131,7 +149,7 @@ export const Row = ({
     <Cell isDisabled={!isUserSelected || hasUserPaid} bold key={"total"}>
       {isUserSelected ? total : parseToCurrency(0)}
     </Cell>
-    <Box flex={1} justifyContent={"center"} alignItems={"center"} >
+    {/* <Box flex={1} justifyContent={"center"} alignItems={"center"} >
       <Button
         isDisabled={!isUserSelected || hasUserPaid}
         isLoading={isLoading}
@@ -145,6 +163,42 @@ export const Row = ({
       >
         {hasUserPaid ? t("paid") : t("pay")}
       </Button>
-    </Box>
+    </Box> */}
   </HStack >)
+}
+
+export const PaymentTile = (props: {
+  customer: string;
+  subtotal: string;
+  tip: string;
+  cta: string;
+  onPress: () => void;
+  loading?: boolean;
+  disable?: boolean;
+}) => {
+  const { customer,
+    subtotal,
+    tip,
+    cta,
+    onPress,
+    loading,
+    disable
+  } = props
+  return (
+    <HStack justifyContent={"space-between"} w={"100%"} py={1} opacity={disable ? 0.5 : 1}>
+      <PaymentCell>{customer}</PaymentCell>
+      <PaymentCell>{subtotal}</PaymentCell>
+      <PaymentCell>{tip}</PaymentCell>
+      <Button
+        w={"40"}
+        h={"10"}
+        colorScheme={"tertiary"}
+        onPress={onPress}
+        isLoading={loading}
+        isDisabled={disable}
+      >
+        {cta}
+      </Button>
+    </HStack>
+  )
 }

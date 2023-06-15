@@ -50,7 +50,7 @@ const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress 
         <TableData>{date}</TableData>
         <TableData>{total}</TableData>
         <TableData>
-          <Badge variant={"subtle"} colorScheme={colorScheme}>{status}</Badge>
+          <Badge w={"full"} variant={"subtle"} colorScheme={colorScheme}>{status}</Badge>
         </TableData>
       </HStack>
     </Pressable>

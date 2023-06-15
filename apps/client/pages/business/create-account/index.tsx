@@ -1,3 +1,4 @@
+import React from "react";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { CreateAccountScreen } from "../../../business-templates/CreateaAccount";

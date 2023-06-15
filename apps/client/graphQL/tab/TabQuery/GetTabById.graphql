@@ -1,6 +1,7 @@
 query GetTabByID($input: GetById!) {
 	getTabByID(input: $input) {
 		_id
+		admin
 		users {
 			_id
 			name

@@ -339,7 +339,7 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
-export type MakeCheckoutPaymentInput = {
+export type MakeCheckoutFullPaymentInput = {
   amount: Scalars['Float'];
   checkout: Scalars['ID'];
   discount: Scalars['Float'];
@@ -347,6 +347,11 @@ export type MakeCheckoutPaymentInput = {
   paymentMethod?: InputMaybe<Scalars['String']>;
   splitType?: InputMaybe<SplitType>;
   tip: Scalars['Float'];
+};
+
+export type MakeCheckoutPaymentInput = {
+  checkout: Scalars['ID'];
+  payment: Scalars['ID'];
 };
 
 export type ManageBusinessEmployeesInput = {
@@ -402,6 +407,7 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   linkCategoryToProducts?: Maybe<Category>;
+  makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
   manageBusinessEmployees: Employee;
   openTabRequest?: Maybe<Scalars['String']>;
@@ -588,6 +594,11 @@ export type MutationLinkCategoryToProductsArgs = {
 };
 
 
+export type MutationMakeCheckoutFullPaymentArgs = {
+  input: MakeCheckoutFullPaymentInput;
+};
+
+
 export type MutationMakeCheckoutPaymentArgs = {
   input: MakeCheckoutPaymentInput;
 };
@@ -739,6 +750,7 @@ export type Payment = {
   _id: Scalars['ID'];
   amount: Scalars['Float'];
   discount?: Maybe<Scalars['Float']>;
+  paid: Scalars['Boolean'];
   patron: Scalars['ID'];
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
@@ -1224,6 +1236,7 @@ export type ResolversTypes = {
   JoinTabForm: JoinTabForm;
   LinkCategoryToProductInput: LinkCategoryToProductInput;
   LoginInput: LoginInput;
+  MakeCheckoutFullPaymentInput: MakeCheckoutFullPaymentInput;
   MakeCheckoutPaymentInput: MakeCheckoutPaymentInput;
   ManageBusinessEmployeesInput: ManageBusinessEmployeesInput;
   Menu: ResolverTypeWrapper<Menu>;
@@ -1321,6 +1334,7 @@ export type ResolversParentTypes = {
   JoinTabForm: JoinTabForm;
   LinkCategoryToProductInput: LinkCategoryToProductInput;
   LoginInput: LoginInput;
+  MakeCheckoutFullPaymentInput: MakeCheckoutFullPaymentInput;
   MakeCheckoutPaymentInput: MakeCheckoutPaymentInput;
   ManageBusinessEmployeesInput: ManageBusinessEmployeesInput;
   Menu: Menu;
@@ -1548,6 +1562,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteTable?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType, Partial<MutationDeleteTableArgs>>;
   deleteUser?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType>;
   linkCategoryToProducts?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationLinkCategoryToProductsArgs, 'input'>>;
+  makeCheckoutFullPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutFullPaymentArgs, 'input'>>;
   makeCheckoutPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutPaymentArgs, 'input'>>;
   manageBusinessEmployees?: Resolver<ResolversTypes['Employee'], ParentType, ContextType, RequireFields<MutationManageBusinessEmployeesArgs, 'input'>>;
   openTabRequest?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationOpenTabRequestArgs, 'input'>>;
@@ -1588,6 +1603,7 @@ export type PaymentResolvers<ContextType = Context, ParentType extends Resolvers
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   discount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  paid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   patron?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   splitType?: Resolver<Maybe<ResolversTypes['SplitType']>, ParentType, ContextType>;
   tip?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;

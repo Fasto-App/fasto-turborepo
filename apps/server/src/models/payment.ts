@@ -1,6 +1,6 @@
 import { Connection, Types } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import type { SplitType } from 'app-helpers';
+import type { PaymentOption, SplitType } from 'app-helpers';
 
 export class Payment {
   @prop({ required: true })
@@ -16,10 +16,10 @@ export class Payment {
   public patron!: Types.ObjectId;
 
   @prop()
-  public paymentMethod?: string;
+  public paymentMethod?: PaymentOption;
 
-  @prop()
-  public splitType?: SplitType;
+  @prop({ required: true })
+  public splitType!: SplitType;
 
   @prop({ required: true, default: false })
   public paid!: boolean;

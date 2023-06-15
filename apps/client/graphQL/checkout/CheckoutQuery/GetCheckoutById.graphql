@@ -19,6 +19,7 @@ query GetCheckoutByID($input: GetById!) {
 			patron
 			tip
 			discount
+			paid
 		}
 	}
 }

@@ -1,18 +1,21 @@
 import { formatAsPercentage, getPercentageOfValue } from 'app-helpers'
-import { Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
-import React, { useCallback, useMemo } from 'react'
+import { Box, Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
+import React, { SetStateAction, useCallback, useMemo } from 'react'
 import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { parseToCurrency } from 'app-helpers'
 import { Percentages, percentages, percentageSelectData, useCheckoutStore, useComputedChekoutStore } from './checkoutStore'
 import { Checkout } from './types'
-import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
+import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutFullPaymentMutation, useMakeCheckoutPaymentMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import { SummaryRow } from './Checkout'
+import { showToast } from '../../components/showToast'
 
 export const PayInFull = ({
   subTotal,
   tax,
-}: Checkout) => {
+  setSelectedOption,
+}: Checkout & { setSelectedOption: (value: React.SetStateAction<"splitBill" | "success" | "payFull">) => void }) => {
 
   const route = useRouter()
   const { tabId, checkoutId } = route.query
@@ -58,7 +61,19 @@ export const PayInFull = ({
     discountCalculation,
   } = useComputedChekoutStore()
 
-  const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
+  const [makeCheckoutPayment, { loading }] = useMakeCheckoutFullPaymentMutation({
+    onCompleted: (data) => {
+      if (data.makeCheckoutFullPayment.paid) {
+        setSelectedOption("success")
+      }
+    },
+    onError: (error) => {
+      showToast({
+        message: "error.message",
+        status: "error"
+      })
+
+    },
     refetchQueries: [{
       query: GetCheckoutByIdDocument,
       variables: {
@@ -70,7 +85,8 @@ export const PayInFull = ({
   })
 
   const handlePay = useCallback(async () => {
-    if (!selectedUser) return
+    if (!selectedUser) throw new Error("No user selected")
+
     await makeCheckoutPayment({
       variables: {
         input: {
@@ -87,22 +103,11 @@ export const PayInFull = ({
 
   return (
     <Center>
-      <Heading size={"2xl"} p={4}>
-        {t("checkout")}
-      </Heading>
-      <VStack w={"70%"} minW={"lg"} space={4}>
-        <Divider />
+      <VStack w={"full"} minW={"lg"} space={4}>
+        <SummaryRow label={t("subtotal")} value={parseToCurrency(subTotal)} />
+        <SummaryRow label={t("feesAndTax")} value={parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)} />
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{t("subtotal")}</Text>
-          <Text fontSize={"lg"}>{parseToCurrency(subTotal)}</Text>
-        </HStack>
-        <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{t("feesAndTax")}</Text>
-          <Text fontSize={"lg"}>{parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)}
-          </Text>
-        </HStack>
-        <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{t("discount")}</Text>
+          <Text fontSize={"xl"}>{t("discount")}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
               w={100} h={10}
@@ -136,7 +141,7 @@ export const PayInFull = ({
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{t("tip")}</Text>
+          <Text fontSize={"xl"}>{t("tip")}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
               w={100} h={10}
@@ -169,7 +174,7 @@ export const PayInFull = ({
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{t("paymentBy")}</Text>
+          <Text fontSize={"xl"}>{t("paymentBy")}</Text>
           <FDSSelect
             array={allUsersFromTab}
             selectedValue={selectedUser}
@@ -181,16 +186,16 @@ export const PayInFull = ({
           <Text fontSize={"3xl"} bold>{t("total")}</Text>
           <Text fontSize={"3xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
         </HStack>
-        <Button
-          isLoading={loading}
-          w={"full"}
-          mb={4}
-          mt={6}
-          colorScheme={"tertiary"}
-          onPress={handlePay}
-        >
-          {t("pay")}
-        </Button>
+        <Box alignItems={"center"} px={'24'} py={8}>
+          <Button
+            isLoading={loading}
+            w={"full"}
+            colorScheme={"tertiary"}
+            onPress={handlePay}
+          >
+            {t("pay")}
+          </Button>
+        </Box>
       </VStack>
     </Center>
   )

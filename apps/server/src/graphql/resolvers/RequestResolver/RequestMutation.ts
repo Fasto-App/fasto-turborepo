@@ -376,6 +376,7 @@ const createNewTakeoutOrDelivery = async (
   // see if the user has a request and/or a tab
   const foundRequest = await Request.findOne({
     requestor: foundUser._id,
+    business: input.business,
     // status either pending or accepted
     $or: [
       { status: 'Pending' },
@@ -395,6 +396,7 @@ const createNewTakeoutOrDelivery = async (
   const newTab = await Tab.create({
     business: input.business,
     admin: foundUser._id,
+    users: [foundUser._id],
     status: 'Open',
     type: 'Takeout',
   })

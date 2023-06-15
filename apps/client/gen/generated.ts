@@ -339,7 +339,7 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
-export type MakeCheckoutPaymentInput = {
+export type MakeCheckoutFullPaymentInput = {
   amount: Scalars['Float'];
   checkout: Scalars['ID'];
   discount: Scalars['Float'];
@@ -347,6 +347,11 @@ export type MakeCheckoutPaymentInput = {
   paymentMethod?: InputMaybe<Scalars['String']>;
   splitType?: InputMaybe<SplitType>;
   tip: Scalars['Float'];
+};
+
+export type MakeCheckoutPaymentInput = {
+  checkout: Scalars['ID'];
+  payment: Scalars['ID'];
 };
 
 export type ManageBusinessEmployeesInput = {
@@ -402,6 +407,7 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   linkCategoryToProducts?: Maybe<Category>;
+  makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
   manageBusinessEmployees: Employee;
   openTabRequest?: Maybe<Scalars['String']>;
@@ -588,6 +594,11 @@ export type MutationLinkCategoryToProductsArgs = {
 };
 
 
+export type MutationMakeCheckoutFullPaymentArgs = {
+  input: MakeCheckoutFullPaymentInput;
+};
+
+
 export type MutationMakeCheckoutPaymentArgs = {
   input: MakeCheckoutPaymentInput;
 };
@@ -739,6 +750,7 @@ export type Payment = {
   _id: Scalars['ID'];
   amount: Scalars['Float'];
   discount?: Maybe<Scalars['Float']>;
+  paid: Scalars['Boolean'];
   patron: Scalars['ID'];
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
@@ -1225,19 +1237,26 @@ export type CustomerRequestSplitMutationVariables = Exact<{
 
 export type CustomerRequestSplitMutation = { __typename?: 'Mutation', customerRequestSplit: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string } };
 
+export type MakeCheckoutFullPaymentMutationVariables = Exact<{
+  input: MakeCheckoutFullPaymentInput;
+}>;
+
+
+export type MakeCheckoutFullPaymentMutation = { __typename?: 'Mutation', makeCheckoutFullPayment: { __typename?: 'Checkout', _id: string, paid: boolean, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, subTotal: number, status: CheckoutStatusKeys } };
+
 export type MakeCheckoutPaymentMutationVariables = Exact<{
   input: MakeCheckoutPaymentInput;
 }>;
 
 
-export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, paid: boolean, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, subTotal: number, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron: string, splitType?: SplitType | null, tip: number } | null> } };
+export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, splitType?: SplitType | null, created_date: string, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron: string, tip: number, splitType?: SplitType | null, discount?: number | null, paid: boolean } | null> } };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
 }>;
 
 
-export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null } | null> } };
+export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null, paid: boolean } | null> } };
 
 export type GetCheckoutsByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2360,9 +2379,9 @@ export function useCustomerRequestSplitMutation(baseOptions?: Apollo.MutationHoo
 export type CustomerRequestSplitMutationHookResult = ReturnType<typeof useCustomerRequestSplitMutation>;
 export type CustomerRequestSplitMutationResult = Apollo.MutationResult<CustomerRequestSplitMutation>;
 export type CustomerRequestSplitMutationOptions = Apollo.BaseMutationOptions<CustomerRequestSplitMutation, CustomerRequestSplitMutationVariables>;
-export const MakeCheckoutPaymentDocument = gql`
-    mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
-  makeCheckoutPayment(input: $input) {
+export const MakeCheckoutFullPaymentDocument = gql`
+    mutation MakeCheckoutFullPayment($input: MakeCheckoutFullPaymentInput!) {
+  makeCheckoutFullPayment(input: $input) {
     _id
     paid
     totalPaid
@@ -2372,12 +2391,59 @@ export const MakeCheckoutPaymentDocument = gql`
     tab
     subTotal
     status
+  }
+}
+    `;
+export type MakeCheckoutFullPaymentMutationFn = Apollo.MutationFunction<MakeCheckoutFullPaymentMutation, MakeCheckoutFullPaymentMutationVariables>;
+
+/**
+ * __useMakeCheckoutFullPaymentMutation__
+ *
+ * To run a mutation, you first call `useMakeCheckoutFullPaymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMakeCheckoutFullPaymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [makeCheckoutFullPaymentMutation, { data, loading, error }] = useMakeCheckoutFullPaymentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useMakeCheckoutFullPaymentMutation(baseOptions?: Apollo.MutationHookOptions<MakeCheckoutFullPaymentMutation, MakeCheckoutFullPaymentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MakeCheckoutFullPaymentMutation, MakeCheckoutFullPaymentMutationVariables>(MakeCheckoutFullPaymentDocument, options);
+      }
+export type MakeCheckoutFullPaymentMutationHookResult = ReturnType<typeof useMakeCheckoutFullPaymentMutation>;
+export type MakeCheckoutFullPaymentMutationResult = Apollo.MutationResult<MakeCheckoutFullPaymentMutation>;
+export type MakeCheckoutFullPaymentMutationOptions = Apollo.BaseMutationOptions<MakeCheckoutFullPaymentMutation, MakeCheckoutFullPaymentMutationVariables>;
+export const MakeCheckoutPaymentDocument = gql`
+    mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
+  makeCheckoutPayment(input: $input) {
+    _id
+    business
+    tab
+    status
+    paid
+    subTotal
+    tip
+    discount
+    tax
+    total
+    totalPaid
+    splitType
+    created_date
     payments {
       _id
       amount
       patron
-      splitType
       tip
+      splitType
+      discount
+      paid
     }
   }
 }
@@ -2430,6 +2496,7 @@ export const GetCheckoutByIdDocument = gql`
       patron
       tip
       discount
+      paid
     }
   }
 }
@@ -3933,6 +4000,7 @@ export const GetTabByIdDocument = gql`
     query GetTabByID($input: GetById!) {
   getTabByID(input: $input) {
     _id
+    admin
     users {
       _id
       name

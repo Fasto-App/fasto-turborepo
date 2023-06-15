@@ -16,7 +16,7 @@
 	"ByPatron": "Individual",
 	"Custom": "Personalizado",
 	"Full": "Completo",
-	"successMessage": "Su cuenta ha sido cerrada exitosamente.\n¡Gracias por elegir ordenar con nosotros!",
+	"successMessage": "Su cuenta ha sido cerrada exitosamente.\nPor favor, diríjase a la caja.",
 	"endSession": "Finalizar sesión",
 	"amountToBePaid": "Cantidad a pagar:",
 	"seeOrder": "Ver orden",

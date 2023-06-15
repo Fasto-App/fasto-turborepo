@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
 import { customerRoute } from "../../routes";
-import { GetCartItemsPerTabDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery, useRequestCloseTabMutation } from "../../gen/generated";
+import { GetCartItemsPerTabDocument, GetClientSessionDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
 import { useGetClientSession } from "../../hooks";
@@ -37,7 +37,7 @@ export const CartScreen = () => {
 
   const [createOrder, { loading: loadingCreateOrder }] =
     useClientCreateMultipleOrderDetailsMutation({
-      refetchQueries: [{ query: GetCartItemsPerTabDocument }],
+      refetchQueries: [{ query: GetCartItemsPerTabDocument }, { query: GetClientSessionDocument }],
       onCompleted: () => {
         showToast({ message: "Order placed successfully" });
       },

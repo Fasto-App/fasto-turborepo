@@ -4,41 +4,67 @@ import { OrderDetailModel, TableModel, TabModel, UserModel } from "../../../mode
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
-import { Context } from "../types";
 import { MutationResolvers } from "../../../generated/graphql";
 
-export const makeCheckoutPayment = async (parent: any, args: { input: PaymentType }, { db }: Context, info: any) => {
+// @ts-ignore
+const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (parent, { input }, { db }) => {
+  console.log("makeCheckoutPayment", input)
+  // make the payment, set the payment to true and update the checkout
+  const Checkout = CheckoutModel(db);
+  const Payment = PaymentModel(db);
 
-  console.log("makeCheckoutPayment", args.input)
+  const foundPayment = await Payment.findById(input.payment)
+  const foundCheckout = await Checkout.findById(input.checkout)
 
+  if (!foundPayment || !foundCheckout) throw ApolloError('BadRequest')
 
-  const { amount, patron, paymentMethod, tip, checkout, splitType, discount } = paymentSchema.parse(args.input);
+  foundPayment.paid = true
+
+  foundCheckout.totalPaid = foundCheckout.totalPaid + foundPayment.amount
+
+  if (foundCheckout.totalPaid >= foundCheckout.total) {
+    foundCheckout.status = "Paid"
+    foundCheckout.paid = true
+  }
+
+  foundPayment.save()
+  return await foundCheckout.save()
+}
+
+// TODO I will probably going to have to re-do this
+// @ts-ignore
+const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = async (parent, { input }, { db }) => {
+  console.log("makeCheckoutFullPayment", input)
+
   const Checkout = CheckoutModel(db);
   const Payment = PaymentModel(db);
   const User = UserModel(db);
   const Tab = TabModel(db);
   const Table = TableModel(db);
+
+  const { patron, paymentMethod, tip, checkout, discount } = paymentSchema.parse(input);
+
   const foundCheckout = await Checkout.findById(checkout);
 
   if (!foundCheckout) throw ApolloError('BadRequest')
 
-  if (foundCheckout?.discount == undefined) {
+  if (foundCheckout?.discount === undefined && discount) {
     foundCheckout.discount = discount
     foundCheckout.total = foundCheckout.subTotal - getPercentageOfValue(foundCheckout.subTotal, discount)
     await foundCheckout.save()
   }
 
-  if (foundCheckout?.tip === undefined) {
+  if (foundCheckout?.tip === undefined && tip) {
     foundCheckout.tip = tip
-    foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, tip)
+    foundCheckout.total = foundCheckout.total + getPercentageOfValue(foundCheckout.subTotal, tip)
     await foundCheckout.save()
   }
 
   async function verifiePatron(patron: string) {
     const foundUser = await User.findById(patron);
-    // this will fails because I changed the user model
-    // I need to perform a payment to then enforce the user to be part of the checkout
-    return foundUser ?? patron
+
+    if (!foundUser) throw ApolloError('BadRequest', 'User not found')
+    return foundUser
   }
 
   async function updateTabAndTable() {
@@ -46,7 +72,7 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
       status: "Closed",
     }, { new: true })
 
-    await Table.findByIdAndUpdate(foundTab?.table, {
+    foundTab?.table && await Table.findByIdAndUpdate(foundTab.table, {
       status: "Available",
     }, { new: true })
   }
@@ -55,70 +81,33 @@ export const makeCheckoutPayment = async (parent: any, args: { input: PaymentTyp
     case "PartiallyPaid":
     case "Pending":
 
-      if (foundCheckout?.splitType && foundCheckout?.splitType !== splitType) {
-        throw ApolloError('BadRequest', 'Split type does not match the checkout split type')
-      }
-      // payment will only be valid if enough money to pay the bill
-      // or if not enough, but payment is intended to be a split of the check
-      if (splitType) {
-        const foundPatron = await verifiePatron(patron);
-
-        const payment = await Payment.create({
-          amount,
-          paymentMethod,
-          splitType,
-          tip,
-          discount,
-          patron: typeof foundPatron === "string" ? foundPatron : foundPatron?._id,
-        })
-
-        foundCheckout.totalPaid = foundCheckout?.totalPaid + amount
-        foundCheckout.status = "PartiallyPaid"
-        foundCheckout.splitType = splitType
-        foundCheckout.payments = [...(foundCheckout?.payments ?? []), payment._id]
-
-        if (foundCheckout?.totalPaid >= foundCheckout?.total) {
-          foundCheckout.status = "Paid"
-          foundCheckout.paid = true
-
-          await updateTabAndTable()
-        }
-
-        await foundCheckout?.save();
-
-        return foundCheckout
-      }
-      // the payment is not a split of the check
-      // so it will only be valid if the amount is equal to the total
-      if (amount < foundCheckout?.total) {
-        throw ApolloError('BadRequest', 'Payment amount is less than the total amount')
+      if (foundCheckout?.splitType) {
+        throw ApolloError('BadRequest', 'Split type is already set')
       }
 
       const foundPatron = await verifiePatron(patron);
 
-      console.log("before creating Payment")
-
+      // from the found checkout, create the payment method and update the checkout
       const payment = await Payment.create({
-        amount,
+        checkout: foundCheckout._id,
+        amount: foundCheckout.total,
         tip,
         discount,
         patron: typeof foundPatron === "string" ? foundPatron : foundPatron?._id,
         paymentMethod,
+        paid: true,
+        splitType: "Full",
       })
 
-      const savedCheckout = await foundCheckout.update({
-        totalPaid: foundCheckout?.totalPaid + amount,
-        totalTip: foundCheckout?.tip ?? 0 + (tip ?? 0),
-        status: "Paid",
-        paid: true,
-        payments: [...(foundCheckout?.payments ?? []), payment._id],
-      }, { new: true })
+      foundCheckout.totalPaid = foundCheckout.totalPaid + payment.amount
+      foundCheckout.status = "Paid"
+      foundCheckout.paid = true
+      foundCheckout.payments = [payment._id]
+      foundCheckout.splitType = "Full"
 
       await updateTabAndTable()
 
-      return savedCheckout
-
-
+      return await foundCheckout.save()
     case "Paid":
     case "Cancelled":
     case "Refunded":
@@ -159,7 +148,6 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
   return await foundCheckout.save()
 }
 
-// TODO: implement all the other split types
 // @ts-ignore
 const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db }) => {
   const Checkout = CheckoutModel(db);
@@ -299,11 +287,11 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
   }
 
   return foundCheckout
-
 }
 
 export const CheckoutResolverMutation = {
-  makeCheckoutPayment,
+  makeCheckoutFullPayment,
   customerRequestSplit,
   customerRequestPayFull,
+  makeCheckoutPayment,
 }

@@ -1,14 +1,16 @@
 import { getPercentageOfValue, SplitType, splitTypes, typedKeys } from 'app-helpers'
-import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Switch } from 'native-base'
+import { HStack, Heading, Center, Divider, Pressable, Box, Input, Text, VStack, Switch, Button, ScrollView } from 'native-base'
 import { useRouter } from 'next/router'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FDSSelect } from '../../components/FDSSelect'
-import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation, SplitType as SplitTypeGen } from '../../gen/generated'
+import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation, SplitType as SplitTypeGen, useCustomerRequestSplitMutation } from '../../gen/generated'
 import { parseToCurrency } from 'app-helpers'
 import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from './checkoutStore'
 import { Transition } from '../../components/Transition'
 import { Header, Row } from './TableComponents'
 import { useTranslation } from 'next-i18next'
+import { SummaryRow } from './Checkout'
+import { showToast } from '../../components/showToast'
 
 type SplitProps = {
   subTotal?: number
@@ -64,12 +66,40 @@ export const Split = ({
   const route = useRouter()
   const { tabId, checkoutId } = route.query
 
-  const { data } = useGetTabCheckoutByIdQuery({
+  const [requestSplit, { loading: loadingSplit }] = useCustomerRequestSplitMutation({
+    onError: (error) => {
+      showToast({
+        status: "error",
+        message: error.message,
+      })
+    },
+    refetchQueries: [
+      {
+        query: GetCheckoutByIdDocument,
+        variables: {
+          input: {
+            _id: checkoutId as string
+          }
+        }
+      }
+    ]
+  })
+
+  const { data: tabData } = useGetTabCheckoutByIdQuery({
     skip: !tabId,
     variables: {
       input: {
         _id: tabId as string
       }
+    },
+    onCompleted: (data) => {
+      setSelectedUsers({
+        ...tabData?.getTabByID?.users?.reduce((acc, user) => {
+          acc[user._id] = true
+          return acc
+        }, {} as { [key: string]: boolean }),
+        ...selectedUsers,
+      })
     }
   })
 
@@ -99,7 +129,7 @@ export const Split = ({
     totalPaid: number
   })
 
-  const allUsersFromTab = useMemo(() => data?.getTabByID?.users ?? [], [data?.getTabByID?.users])
+  const allUsersFromTab = useMemo(() => tabData?.getTabByID?.users ?? [], [tabData?.getTabByID?.users])
 
   // calculate the split, but we need to check if the user is selected
   // this should never be less than 1, we should always have at least one user
@@ -111,7 +141,7 @@ export const Split = ({
   // memoize the split
   // recalculate split based on the selected users
   const split = useMemo(() => {
-    return data?.getTabByID?.orders.reduce((acc, order) => {
+    return tabData?.getTabByID?.orders.reduce((acc, order) => {
       const subtotal = order?.subTotal ?? 0
       const isUserSelected = areAllUsersSelected || selectedUsers[order?.user ?? ""]
 
@@ -132,7 +162,7 @@ export const Split = ({
         }
       })
     }, {} as { [key: string]: { subTotal: number }, table: { subTotal: number } })
-  }, [areAllUsersSelected, data?.getTabByID?.orders, selectedUsers])
+  }, [areAllUsersSelected, tabData?.getTabByID?.orders, selectedUsers])
 
   const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
     refetchQueries: [{
@@ -174,7 +204,85 @@ export const Split = ({
 
   return (
     <Box flex={1}>
-      <Center>
+      <VStack w={"full"} minW={"lg"} space={4}>
+        {selectedSplitType === "ByPatron" ?
+          <SummaryRow label={t("AllByTable")} value={parseToCurrency(total)} /> : null}
+        <SummaryRow label={t("subtotal")} value={parseToCurrency(subTotal)} />
+        <SummaryRow label={t("feesAndTax")} value={parseToCurrency((tax ?? 0) * (subTotal ?? 0))} />
+
+        <HStack justifyContent={"space-between"} px={12}>
+          <Text fontSize={"xl"}>{t("discount")}</Text>
+          <HStack space={2} alignItems={"self-end"}>
+            <FDSSelect
+              w={100} h={10}
+              array={percentageSelectData}
+              selectedValue={selectedDiscount}
+              //@ts-ignore
+              setSelectedValue={setSelectedDiscount}
+            />
+            {selectedDiscount === "Custom" ?
+              <Input
+                w={100} h={10}
+                fontSize={"lg"}
+                textAlign={"right"}
+                value={(customDiscount / 100)
+                  .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                onChangeText={(value) => {
+                  const text = value.replace(/[$,.]/g, '');
+                  const convertedValue = Number(text);
+
+                  if (isNaN(convertedValue)) return
+
+                  return setCustomDiscount(convertedValue)
+                }}
+              />
+              :
+              <Text
+                textAlign={"right"}
+                alignSelf={"center"}
+                w={100} fontSize={"lg"}>
+                {parseToCurrency(discountCalculation)}
+              </Text>}
+          </HStack>
+        </HStack>
+        <HStack justifyContent={"space-between"} px={12}>
+          <Text fontSize={"xl"}>{t("tip")}</Text>
+          <HStack space={2}>
+            <FDSSelect
+              w={100} h={10}
+              array={percentageSelectData}
+              selectedValue={selectedTip}
+              //@ts-ignore
+              setSelectedValue={setSelectedTip}
+            />
+            {selectedTip === "Custom" ?
+              <Input
+                w={100} h={10}
+                fontSize={"lg"}
+                textAlign={"right"}
+                value={(customTip / 100)
+                  .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                onChangeText={(value) => {
+                  const text = value.replace(/[$,.]/g, '');
+                  const convertedValue = Number(text);
+
+                  if (isNaN(convertedValue)) return
+
+                  return setCustomTip(convertedValue)
+                }}
+              /> :
+              <Text
+                textAlign={"right"}
+                alignSelf={"center"}
+                w={100} fontSize={"lg"}>
+                {parseToCurrency(tipCalculation)}
+              </Text>}
+          </HStack>
+        </HStack>
+        <Divider marginY={2} />
+        <SummaryRow label={t("total")} value={parseToCurrency(absoluteTotal)} />
+      </VStack>
+      <Center pt={2}>
         <HStack justifyContent={"space-around"} w={"90%"} pb={4} space={2}>
           {typedKeys(splitTypes).reduce((acc, splitType) => {
             if (splitType !== "Full") {
@@ -201,18 +309,22 @@ export const Split = ({
           }, [] as (Element | JSX.Element)[])}
         </HStack>
       </Center>
-      <Box flex={1}>
-        <Box flex={1}>
+      <ScrollView flex={1} w={"full"} showsHorizontalScrollIndicator>
+        <Center flex={1}>
           <Header
             type={selectedSplitType}
             // if all users are selected, them this checkbox is enabled
-            areAllUsersSelected={areAllUsersSelected || allSelectedUsers.length === allUsersFromTab.length}
+            areAllUsersSelected={allSelectedUsers.length === allUsersFromTab.length}
             onCheckboxChange={(value) => {
+              console.log("value", value)
               // se o value for negativo, zerar todos os checkboxes selecionados
               if (!value) {
                 setSelectedUsers({})
                 clearCustomSubTotals()
               }
+
+              // TODO: set all users as selected
+              // remove this state
               setAreAllUsersSelected(value)
             }}
           />
@@ -274,7 +386,7 @@ export const Split = ({
                 }
               }}
               hasUserPaid={!!paymentsByUser?.[user._id]}
-              isUserSelected={areAllUsersSelected || !!selectedUsers[user._id]} // if all is selected or if the object state has the user id set to true
+              isUserSelected={!!selectedUsers[user._id]} // if all is selected or if the object state has the user id set to true
               key={user._id}
               user={`Person ${(index + 1).toString()}`}
               type={selectedSplitType}
@@ -289,107 +401,61 @@ export const Split = ({
               }}
             />
           })}
-          <Transition isVisible={selectedSplitType !== "Equally"} >
+          <Transition isVisible={selectedSplitType !== "Equally"}>
             <HStack alignItems={"center"} space={"4"} pt={4}>
               <Switch size="md" onValueChange={setShareTip} colorScheme={"green"} isChecked={shareTip} />
               <Text fontSize={"lg"}>{"Share tip equally"}</Text>
             </HStack>
           </Transition>
-        </Box>
-        <VStack w={"50%"} minW={"lg"} pt={8} space={4}>
-          <HStack justifyContent={"space-between"} px={8}>
-            {selectedSplitType === "ByPatron" ? <>
-              <Text fontSize={"lg"}>{t("AllByTable")}</Text>
-              <Text fontSize={"lg"}>{parseToCurrency(total)}</Text>
-            </> : null}
-          </HStack>
-          <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{t("subtotal")}</Text>
-            <Text fontSize={"lg"}>{parseToCurrency(subTotal)}</Text>
-          </HStack>
-          <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{t("feesAndTax")}</Text>
-            <Text fontSize={"lg"}>{parseToCurrency((tax ?? 0) * (subTotal ?? 0))}</Text>
-          </HStack>
-          <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{t("discount")}</Text>
-            <HStack space={2} alignItems={"self-end"}>
-              <FDSSelect
-                w={100} h={10}
-                array={percentageSelectData}
-                selectedValue={selectedDiscount}
-                //@ts-ignore
-                setSelectedValue={setSelectedDiscount}
-              />
-              {selectedDiscount === "Custom" ?
-                <Input
-                  w={100} h={10}
-                  fontSize={"lg"}
-                  textAlign={"right"}
-                  value={(customDiscount / 100)
-                    .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-                  onChangeText={(value) => {
-                    const text = value.replace(/[$,.]/g, '');
-                    const convertedValue = Number(text);
 
-                    if (isNaN(convertedValue)) return
+        </Center>
+      </ScrollView>
+      <Box alignItems={"center"} px={'24'} py={4} w={"full"}>
+        <Button w={"full"} colorScheme={"tertiary"}
+          onPress={() => {
 
-                    return setCustomDiscount(convertedValue)
-                  }}
-                />
-                :
-                <Text
-                  textAlign={"right"}
-                  alignSelf={"center"}
-                  w={100} fontSize={"lg"}>
-                  {parseToCurrency(discountCalculation)}
-                </Text>}
-            </HStack>
-          </HStack>
-          <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"lg"}>{t("tip")}</Text>
-            <HStack space={2}>
-              <FDSSelect
-                w={100} h={10}
-                array={percentageSelectData}
-                selectedValue={selectedTip}
-                //@ts-ignore
-                setSelectedValue={setSelectedTip}
-              />
-              {selectedTip === "Custom" ?
-                <Input
-                  w={100} h={10}
-                  fontSize={"lg"}
-                  textAlign={"right"}
-                  value={(customTip / 100)
-                    .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-                  onChangeText={(value) => {
-                    const text = value.replace(/[$,.]/g, '');
-                    const convertedValue = Number(text);
+            // same call made by client
+            console.log("Requesting split")
+            console.log({
+              checkout: checkoutId as string,
+              splitType: selectedSplitType,
+              tip,
+              selectedUsers,
+              customSubTotals
+            })
 
-                    if (isNaN(convertedValue)) return
+            let customSplit: { patron: string; amount: number }[] = [];
 
-                    return setCustomTip(convertedValue)
-                  }}
-                /> :
-                <Text
-                  textAlign={"right"}
-                  alignSelf={"center"}
-                  w={100} fontSize={"lg"}>
-                  {parseToCurrency(tipCalculation)}
-                </Text>}
-            </HStack>
-          </HStack>
-          <Divider marginY={2} />
-          <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"xl"} bold>{t("total")}</Text>
-            <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
-          </HStack>
-          <HStack justifyContent={"space-between"} px={8}>
-            <Text fontSize={"xl"} bold>{t("remaning")}</Text>
-            <Text fontSize={"xl"} bold>{parseToCurrency(paymentsByUser?.totalPaid)}</Text>
-          </HStack>
-        </VStack>
+            if (selectedSplitType === "Custom") {
+              customSplit = typedKeys(selectedUsers).reduce((acc, curr) => {
+
+                if (selectedUsers[curr] && customSubTotals[curr]) {
+                  acc.push({
+                    patron: curr.toString(),
+                    amount: customSubTotals[curr]
+                  })
+
+                  return acc
+                }
+
+                return acc
+              }, [] as { patron: string, amount: number }[])
+            }
+
+            requestSplit({
+              variables: {
+                input: {
+                  checkout: checkoutId as string,
+                  splitType: SplitTypeGen[selectedSplitType],
+                  tip,
+                  selectedUsers: typedKeys(selectedUsers).filter((key) => !!selectedUsers[key]) as string[],
+                  customSplit
+                }
+              }
+            })
+          }}>
+          {t("splitNow")}
+        </Button>
       </Box>
     </Box>
   )

@@ -1,20 +1,26 @@
 mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
 	makeCheckoutPayment(input: $input) {
 		_id
-		paid
-		totalPaid
-		total
-		tip
-		tax
+		business
 		tab
-		subTotal
 		status
+		paid
+		subTotal
+		tip
+		discount
+		tax
+		total
+		totalPaid
+		splitType
+		created_date
 		payments {
 			_id
 			amount
 			patron
-			splitType
 			tip
+			splitType
+			discount
+			paid
 		}
 	}
 }
