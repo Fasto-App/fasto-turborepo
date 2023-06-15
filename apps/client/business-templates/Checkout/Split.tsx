@@ -164,17 +164,6 @@ export const Split = ({
     }, {} as { [key: string]: { subTotal: number }, table: { subTotal: number } })
   }, [areAllUsersSelected, tabData?.getTabByID?.orders, selectedUsers])
 
-  const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
-    refetchQueries: [{
-      query: GetCheckoutByIdDocument,
-      variables: {
-        input: {
-          _id: checkoutId as string
-        }
-      }
-    }],
-  })
-
   const splitCustomBillComplete = useCallback(() => {
     let customTotal = 0;
     //TODO: make this an object for faster lookup
@@ -354,30 +343,6 @@ export const Split = ({
             const finalCustomTotal = splitCustomBillComplete();
 
             return <Row
-              isLoading={loading}
-              onPress={async () => {
-                await makeCheckoutPayment({
-                  variables: {
-                    input: {
-                      checkout: checkoutId as string,
-                      amount: finalCustomTotal[user._id] ?? total,
-                      tip: userTip,
-                      discount: valueOfDiscountPerUser,
-                      splitType: SplitTypeGen[selectedSplitType],
-                      patron: user._id
-                    }
-                  }
-                })
-
-                console.log({
-                  user: user._id,
-                  subTotal: userSubTotal,
-                  total: finalCustomTotal[user._id] ?? total,
-                  tip: userTip,
-                  discount: valueOfDiscountPerUser,
-                  splitType: selectedSplitType,
-                })
-              }}
               onCheckboxChange={(value) => {
                 setSelectedUsers({ ...selectedUsers, [user._id]: value })
                 // if it's a false value, then we need to uncheck the all users checkbox

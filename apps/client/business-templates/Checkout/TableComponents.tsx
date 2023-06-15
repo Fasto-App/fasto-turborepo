@@ -88,8 +88,6 @@ type RowProps = {
   onCheckboxChange: (value: boolean) => void;
   customSubTotal: string;
   onCustominputChange: (value: string) => void;
-  onPress: () => void;
-  isLoading: boolean;
   hasUserPaid: boolean;
 }
 
@@ -103,8 +101,6 @@ export const Row = ({
   user,
   isUserSelected,
   customSubTotal,
-  isLoading,
-  onPress,
   onCheckboxChange,
   onCustominputChange,
   hasUserPaid
@@ -149,21 +145,6 @@ export const Row = ({
     <Cell isDisabled={!isUserSelected || hasUserPaid} bold key={"total"}>
       {isUserSelected ? total : parseToCurrency(0)}
     </Cell>
-    {/* <Box flex={1} justifyContent={"center"} alignItems={"center"} >
-      <Button
-        isDisabled={!isUserSelected || hasUserPaid}
-        isLoading={isLoading}
-        w={"80%"}
-        minW={"100"}
-        maxW={"400"}
-        fontSize={"2xl"}
-        h={"80%"}
-        colorScheme={"tertiary"}
-        onPress={onPress}
-      >
-        {hasUserPaid ? t("paid") : t("pay")}
-      </Button>
-    </Box> */}
   </HStack >)
 }
 
