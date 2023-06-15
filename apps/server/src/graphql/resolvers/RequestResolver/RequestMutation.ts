@@ -213,6 +213,7 @@ const requestJoinTab = async (
     })
 
     const newRequest = await Request.create({
+      admin: input.admin,
       requestor: newUser._id,
       status: 'Pending',
       business: input.business,
@@ -242,6 +243,7 @@ const requestJoinTab = async (
   }
 
   const newRequest = await Request.create({
+    admin: input.admin,
     requestor: foundUser._id,
     status: 'Pending',
     business: input.business,
