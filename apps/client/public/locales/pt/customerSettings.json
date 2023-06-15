@@ -13,5 +13,11 @@
 	"errorDecliningInvitation": "Erro ao recusar convite",
 	"invitationDeclined": "Convite recusado",
 	"errorAcceptingInvitation": "Erro ao aceitar convite",
-	"invitationAccepted": "Convite aceito"
+	"invitationAccepted": "Convite aceito",
+	"Accepted": "Aceito",
+	"Canceled": "Cancelado",
+	"Completed": "Concluído",
+	"Expired": "Expirado",
+	"Pending": "Pendente",
+	"Rejected": "Rejeitado"
 }

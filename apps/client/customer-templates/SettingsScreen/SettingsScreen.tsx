@@ -132,11 +132,17 @@ const SettingsScreen = () => {
             <Text fontSize={"16"}>
               {clientSession?.getClientSession.user.name}
             </Text>
-            <Badge colorScheme="warning" variant={"outline"} w={"20"}>
-              {`Tab ${isAdmin ? "Admin" : "Guest"}`}
+            <Badge colorScheme="warning" variant={"outline"}>
+              {`${t("tab")} ${isAdmin ? t("admin") : t("guest")}`}
             </Badge>
           </VStack>
         </HStack>
+
+        {clientSession?.getClientSession.request.status ? (
+          <Badge colorScheme={isAdmin ? "success" : "warning"} variant={"solid"} >
+            {t(clientSession?.getClientSession.request.status)}
+          </Badge>) : null
+        }
         {/* <ChevronRightIcon color={"secondary.900"} /> */}
       </ListBorderTile>
       <Box backgroundColor={"white"} borderRadius={"md"}>

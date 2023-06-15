@@ -52,10 +52,10 @@ export const CustomerLayout: React.FC = ({ children }) => {
       justifyContent={"space-between"}
       h={"100%"}
       bg={isSettings ? "gray.100" : "white"}>
-      {data?.getClientSession.request?.status === "Pending" ?
+      {/* {data?.getClientSession.request?.status === "Pending" ?
         <Box position={"absolute"} zIndex={999} right={0} top={0} >
           <HourGlassAnimation />
-        </Box> : null}
+        </Box> : null} */}
       {isHome ? null :
         <ClientNavBar tableNumber={data?.getClientSession.tab?.table?.tableNumber} />}
       <Box flex={1}>

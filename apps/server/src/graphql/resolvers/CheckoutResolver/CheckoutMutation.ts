@@ -1,6 +1,6 @@
 
 import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
-import { OrderDetailModel, TableModel, TabModel, UserModel } from "../../../models";
+import { OrderDetailModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
@@ -12,6 +12,9 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
   // make the payment, set the payment to true and update the checkout
   const Checkout = CheckoutModel(db);
   const Payment = PaymentModel(db);
+  const Tab = TabModel(db);
+  const Table = TableModel(db);
+  const Request = RequestModel(db);
 
   const foundPayment = await Payment.findById(input.payment)
   const foundCheckout = await Checkout.findById(input.checkout)
@@ -22,9 +25,31 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
 
   foundCheckout.totalPaid = foundCheckout.totalPaid + foundPayment.amount
 
+  // If the check is ready to be closed, update the value of: Table, Tab, Checkout, and Requests
   if (foundCheckout.totalPaid >= foundCheckout.total) {
+    const foundTab = await Tab.findById(foundCheckout.tab)
+    if (!foundTab) throw ApolloError('BadRequest', 'Tab not found')
+
+    foundTab.table && await Table.findByIdAndUpdate(foundTab.table, {
+      status: "Available",
+    }, { new: true })
+
+    foundTab.status = "Closed"
+    foundTab.save()
+
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
+
+    // update all the requests associated with this tab
+    const foundRequests = await Request.find({ tab: foundTab?._id })
+    if (foundRequests.length > 0) {
+      const savePromises = foundRequests.map((request) => {
+        request.status = "Completed"
+        return request.save()
+      });
+
+      await Promise.all(savePromises);
+    }
   }
 
   foundPayment.save()
@@ -41,12 +66,14 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
   const User = UserModel(db);
   const Tab = TabModel(db);
   const Table = TableModel(db);
+  const Request = RequestModel(db);
 
   const { patron, paymentMethod, tip, checkout, discount } = paymentSchema.parse(input);
 
   const foundCheckout = await Checkout.findById(checkout);
 
-  if (!foundCheckout) throw ApolloError('BadRequest')
+  if (!foundCheckout) throw ApolloError('BadRequest', 'Checkout not found')
+  if (!foundCheckout.splitType) throw ApolloError('BadRequest', 'Split type is already set')
 
   if (foundCheckout?.discount === undefined && discount) {
     foundCheckout.discount = discount
@@ -67,7 +94,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
     return foundUser
   }
 
-  async function updateTabAndTable() {
+  async function updateTabTableAndRequests() {
     const foundTab = await Tab.findByIdAndUpdate(foundCheckout?.tab, {
       status: "Closed",
     }, { new: true })
@@ -75,16 +102,23 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
     foundTab?.table && await Table.findByIdAndUpdate(foundTab.table, {
       status: "Available",
     }, { new: true })
+
+    // update all the requests associated with this tab
+    const foundRequests = await Request.find({ tab: foundTab?._id })
+
+    if (foundRequests.length > 0) {
+      const savePromises = foundRequests.map((request) => {
+        request.status = "Completed"
+        return request.save()
+      });
+
+      await Promise.all(savePromises);
+    }
   }
 
   switch (foundCheckout.status) {
     case "PartiallyPaid":
     case "Pending":
-
-      if (foundCheckout?.splitType) {
-        throw ApolloError('BadRequest', 'Split type is already set')
-      }
-
       const foundPatron = await verifiePatron(patron);
 
       // from the found checkout, create the payment method and update the checkout
@@ -105,7 +139,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
       foundCheckout.payments = [payment._id]
       foundCheckout.splitType = "Full"
 
-      await updateTabAndTable()
+      await updateTabTableAndRequests()
 
       return await foundCheckout.save()
     case "Paid":

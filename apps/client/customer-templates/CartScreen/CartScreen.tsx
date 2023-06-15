@@ -6,7 +6,7 @@ import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
 import { customerRoute } from "../../routes";
 import { GetCartItemsPerTabDocument, GetClientSessionDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery, useRequestCloseTabMutation } from "../../gen/generated";
-import { getClientCookies } from "../../cookies";
+import { clearClientCookies, getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
 import { useGetClientSession } from "../../hooks";
 import { showToast } from "../../components/showToast";
@@ -43,8 +43,8 @@ export const CartScreen = () => {
       },
       onError: (error) => {
         showToast({
-          message: "Error placing order",
-          subMessage: getCause(error),
+          message: t("errorPlacingOrder"),
+          // subMessage: getCause(error),
           status: "error"
         });
       },
@@ -53,13 +53,24 @@ export const CartScreen = () => {
   const [closeTab, { loading: closeTabLoading }] = useRequestCloseTabMutation({
     onCompleted: (data) => {
       if (data?.requestCloseTab.checkout) {
-        showToast({ message: "Tab closed successfully" });
+        showToast({ message: t("tabClosedSuccess") });
 
         route.push({
           pathname: customerRoute["/customer/[businessId]/checkout/[checkoutId]"],
           query: {
             businessId: businessId as string,
             checkoutId: data.requestCloseTab.checkout
+          }
+        })
+      }
+
+      if (data?.requestCloseTab.status === "Closed") {
+        showToast({ message: t("tabClosedSuccess") });
+        clearClientCookies(businessId as string);
+        route.push({
+          pathname: customerRoute["/customer/[businessId]"],
+          query: {
+            businessId: businessId as string,
           }
         })
       }
@@ -74,7 +85,7 @@ export const CartScreen = () => {
     },
   })
 
-  const placeOrder = () => {
+  const placeOrder = useCallback(async () => {
     console.log("Place Order");
 
     const mappedOrders = data?.getCartItemsPerTab.map((item) => {
@@ -87,18 +98,18 @@ export const CartScreen = () => {
 
     if (!mappedOrders) return;
 
-    createOrder({
+    await createOrder({
       variables: {
         input: mappedOrders
       }
     })
-  };
+  }, [createOrder, data?.getCartItemsPerTab]);
 
-  const payBill = useCallback(() => {
-    console.log("Pay Bill")
+  const payBill = useCallback(async () => {
+    await placeOrder();
     closeTab()
 
-  }, [closeTab]);
+  }, [closeTab, placeOrder]);
 
   const groupedData = useMemo(() => {
     return data?.getCartItemsPerTab.reduce((acc, item) => {
@@ -210,21 +221,32 @@ export const CartScreen = () => {
         setIsModalOpen={setIsModalOpen} />
       {!isAdmin ? <Box backgroundColor={"white"} p='4' textAlign={"center"}>
         {t("askToAdmin")}
-      </Box> : <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
-        <Button
-          flex={1}
-          isDisabled={!data?.getCartItemsPerTab || data?.getCartItemsPerTab.length === 0}
-          isLoading={loading || loadingCreateOrder || closeTabLoading}
-          _text={{ bold: true }}
-          colorScheme={"primary"}
-          onPress={placeOrder}>{t("cta1")}</Button>
-        <Button
-          isLoading={loading || loadingCreateOrder || closeTabLoading}
-          _text={{ bold: true }}
-          flex={1}
-          colorScheme={"tertiary"}
-          onPress={payBill}>{t("cta2")}</Button>
-      </HStack>}
+      </Box> :
+        <HStack space={"4"} p={4} backgroundColor={"rgba(187, 5, 5, 0)"}>
+          {clientSession.getClientSession.tab?.table ?
+            <>
+              <Button
+                flex={1}
+                isDisabled={!data?.getCartItemsPerTab || data?.getCartItemsPerTab.length === 0}
+                isLoading={loading || loadingCreateOrder || closeTabLoading}
+                _text={{ bold: true }}
+                colorScheme={"primary"}
+                onPress={placeOrder}>{t("cta1")}</Button>
+              <Button
+                isLoading={loading || loadingCreateOrder || closeTabLoading}
+                _text={{ bold: true }}
+                flex={1}
+                colorScheme={"tertiary"}
+                onPress={() => closeTab()}>{t("cta2")}</Button>
+            </> : (
+              <Button
+                isLoading={loading || loadingCreateOrder || closeTabLoading}
+                _text={{ bold: true }}
+                flex={1}
+                onPress={payBill}>{t("cta1")}</Button>
+            )}
+        </HStack>
+      }
     </>
   );
 };

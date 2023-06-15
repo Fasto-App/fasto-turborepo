@@ -9,5 +9,7 @@
 	"modalTitle": "Placed Orders",
 	"error": "Something went wrong!\nPlease try again later",
 	"me": "☝️ Me",
-	"askToAdmin": "*Ask the tab admin to submit the orders"
+	"askToAdmin": "*Ask the tab admin to submit the orders",
+	"tabClosedSuccess": "Tab closed successfully",
+	"errorPlacingOrder": "Error placing order"
 }

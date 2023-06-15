@@ -9,5 +9,7 @@
 	"modalTitle": "Pedidos realizados",
 	"error": "Algo deu errado!\nPor favor, tente novamente mais tarde",
 	"me": "☝️ Eu",
-	"askToAdmin": "*Peça ao administrador da mesa para enviar os pedidos"
+	"askToAdmin": "*Peça ao administrador da mesa para enviar os pedidos",
+	"tabClosedSuccess": "A comanda foi fechada com sucesso",
+	"errorPlacingOrder": "Erro ao fazer o pedido"
 }

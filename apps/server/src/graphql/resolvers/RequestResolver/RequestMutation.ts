@@ -23,7 +23,7 @@ const openTabRequest = async (
   const Business = BusinessModel(db)
   const Request = RequestModel(db)
   const User = UserModel(db)
-  const foundBusiness = await Business.find({ _id: business })
+  const foundBusiness = await Business.findById(business)
 
   if (!foundBusiness) {
     throw ApolloError('BadRequest', "Business Not Found")
@@ -62,6 +62,7 @@ const openTabRequest = async (
   // the status should be either pending or accepted
   const foundRequest = await Request.findOne({
     requestor: foundUserByPhone._id,
+    business: foundBusiness._id,
     status: { $in: ['Pending', 'Accepted'] as RequestStatusType[] }
   })
 
@@ -230,6 +231,7 @@ const requestJoinTab = async (
   // does the user already have a request to this tab?
   const foundRequest = await Request.findOne({
     requestor: foundUser._id,
+    business: input.business,
     status: { $in: ['Pending', 'Accepted'] as RequestStatusType[] }
   })
 
@@ -331,15 +333,9 @@ const createNewTakeoutOrDelivery = async (
   { input }: { input: JoinTabForm & { business: string } },
   { db, client }: Context
 ) => {
-  // 
-
-  //create new request with accepted status
-
   const Request = RequestModel(db)
   const User = UserModel(db)
   const Tab = TabModel(db)
-
-  // get the user if exists
 
   const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
 
@@ -364,8 +360,6 @@ const createNewTakeoutOrDelivery = async (
       status: 'Accepted',
     })
 
-    console.log("newTab", newTab)
-
     return await tokenClient({
       _id: newUser._id,
       request: newRequest._id,
@@ -378,10 +372,7 @@ const createNewTakeoutOrDelivery = async (
     requestor: foundUser._id,
     business: input.business,
     // status either pending or accepted
-    $or: [
-      { status: 'Pending' },
-      { status: 'Accepted' }
-    ]
+    $or: [{ status: 'Pending' }, { status: 'Accepted' }]
   })
 
   if (foundRequest) {

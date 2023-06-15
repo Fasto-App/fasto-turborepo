@@ -88,6 +88,7 @@ const ProductList = (
 			name={item.name}
 			imageUrl={item.imageUrl ?? ""}
 			onPress={() => setProductValues(item)}
+			description={item.description}
 			ctaTitle={t("editItem")}
 		/>
 	}, [addProduct, setProductValues, t])

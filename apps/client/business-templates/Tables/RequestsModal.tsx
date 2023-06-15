@@ -52,8 +52,9 @@ const TileRequest = ({ name,
         <Icon type={"People"} size={"1.3em"} />
         <Text fontSize={"20"}>{people}</Text>
         <FDSSelect
+          w={"100"}
           array={array}
-          placeholder={t("selectTable")}
+          placeholder={t("table")}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
         />

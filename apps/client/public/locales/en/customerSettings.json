@@ -13,5 +13,11 @@
 	"errorDecliningInvitation": "Error declining invitation",
 	"invitationDeclined": "Invitation declined",
 	"errorAcceptingInvitation": "Error accepting invitation",
-	"invitationAccepted": "Invitation accepted"
+	"invitationAccepted": "Invitation accepted",
+	"Accepted": "Accepted",
+	"Canceled": "Canceled",
+	"Completed": "Completed",
+	"Expired": "Expired",
+	"Pending": "Pending",
+	"Rejected": "Rejected"
 }

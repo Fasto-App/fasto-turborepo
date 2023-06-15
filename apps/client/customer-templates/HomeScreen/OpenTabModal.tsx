@@ -63,12 +63,12 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
     },
   })
 
-  const [clientRequestTab, { loading }] = useOpenTabRequestMutation({
+  const [openTabRequest, { loading }] = useOpenTabRequestMutation({
     refetchQueries: [
       { query: GetTabRequestsDocument }],
     onCompleted: (data) => {
       console.log("Tab Request Completed")
-      if (!data?.openTabRequest || typeof businessId !== "string") return
+      if (!data?.openTabRequest || typeof businessId !== "string") throw new Error("Tab Request Error")
 
       setClientCookies(businessId, data.openTabRequest)
 
@@ -88,7 +88,7 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
     const { name, phoneNumber, totalGuests, ...rest } = data
     const array = typedValues(rest).filter((i) => (i as string).trim() !== "") as string[]
 
-    await clientRequestTab({
+    await openTabRequest({
       variables: {
         input: {
           name,
@@ -102,7 +102,7 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
 
     setModalVisibility()
 
-  }, [clientRequestTab, setModalVisibility, businessId])
+  }, [openTabRequest, setModalVisibility, businessId])
 
   return (
     <>
