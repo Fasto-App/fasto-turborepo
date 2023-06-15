@@ -35,7 +35,7 @@ const openTabRequest = async (
     // creating a new request
     return await Request.create({
       business,
-      requestor: client,
+      admin: client,
       totalGuests,
       names: input.names,
     })
@@ -61,8 +61,8 @@ const openTabRequest = async (
 
   // the status should be either pending or accepted
   const foundRequest = await Request.findOne({
-    requestor: foundUserByPhone._id,
     business: foundBusiness._id,
+    $or: [{ requestor: foundUserByPhone._id }, { admin: foundUserByPhone._id }],
     status: { $in: ['Pending', 'Accepted'] as RequestStatusType[] }
   })
 
@@ -126,12 +126,10 @@ const acceptTabRequest = async (
   const allUsers = await User.insertMany(new Array(numGuests).fill({ isGuest: true }))
   const usersId = allUsers.map(user => user._id)
 
-  //TODO: fix this
-
   const tab = await Tab.create({
     table: table?._id,
-    admin: foundRequest?.requestor,
-    users: [foundRequest.requestor._id, ...usersId],
+    admin: foundRequest?.admin,
+    users: [foundRequest?.admin, ...usersId],
     type: 'DineIn',
   });
 
@@ -216,8 +214,8 @@ const requestJoinTab = async (
 
     const newRequest = await Request.create({
       requestor: newUser._id,
-      admin: tabAdmin._id,
       status: 'Pending',
+      business: input.business,
     })
     console.log('newRequest', newRequest)
 
@@ -245,8 +243,8 @@ const requestJoinTab = async (
 
   const newRequest = await Request.create({
     requestor: foundUser._id,
-    admin: tabAdmin._id,
     status: 'Pending',
+    business: input.business,
   })
   //TODO: logic for existing user
 
@@ -299,9 +297,9 @@ const acceptInvitation = async (
 
   const Tab = TabModel(db);
   const Request = RequestModel(db)
-  const foundrequest = await Request.findOne({ _id: input._id })
+  const pendingRequest = await Request.findOne({ _id: input._id })
 
-  if (!foundrequest) {
+  if (!pendingRequest) {
     throw ApolloError('BadRequest', "Request Not Found")
   }
 
@@ -318,14 +316,14 @@ const acceptInvitation = async (
   }
 
   // change Request status to accepted
-  foundrequest.status = 'Accepted';
-  foundrequest.tab = foundTab._id;
-  await foundrequest.save();
+  pendingRequest.status = 'Accepted';
+  pendingRequest.tab = foundTab._id;
+  await pendingRequest.save();
 
-  foundTab.users = [...foundTab.users, foundrequest.requestor]
+  foundTab.users = [...foundTab.users, pendingRequest.requestor]
   await foundTab.save();
 
-  return foundrequest;
+  return pendingRequest;
 }
 
 const createNewTakeoutOrDelivery = async (
@@ -354,10 +352,10 @@ const createNewTakeoutOrDelivery = async (
     })
 
     const newRequest = await Request.create({
-      requestor: newUser._id,
       admin: newUser._id,
       tab: newTab._id,
       status: 'Accepted',
+      business: input.business,
     })
 
     return await tokenClient({
@@ -369,11 +367,17 @@ const createNewTakeoutOrDelivery = async (
 
   // see if the user has a request and/or a tab
   const foundRequest = await Request.findOne({
-    requestor: foundUser._id,
     business: input.business,
+    $or: [
+      { admin: foundUser._id }, // Find requests with the admin matching the ID
+      { requestor: foundUser._id }, // Find requests with the requestor matching the ID
+    ],
     // status either pending or accepted
-    $or: [{ status: 'Pending' }, { status: 'Accepted' }]
-  })
+    status: { $in: ['Pending', 'Accepted'] }, // Include requests with status 'Pending' or 'Accepted'
+  });
+
+  console.log('foundRequest', foundRequest)
+  console.log('foundRequest', foundRequest)
 
   if (foundRequest) {
 
@@ -393,10 +397,10 @@ const createNewTakeoutOrDelivery = async (
   })
 
   const newRequest = await Request.create({
-    requestor: foundUser._id,
     admin: foundUser._id,
     tab: newTab._id,
     status: 'Accepted',
+    business: input.business,
   })
 
   return await tokenClient({

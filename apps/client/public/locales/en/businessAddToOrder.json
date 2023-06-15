@@ -11,5 +11,6 @@
 	"errorGettingTabData": "Error getting tab data",
 	"ordersCreatedSuccessfully": "Orders created successfully",
 	"errorCreatingOrders": "Error creating orders",
-	"add": "Add"
+	"add": "Add",
+	"closeTab": "Close Tab"
 }

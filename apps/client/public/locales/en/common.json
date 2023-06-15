@@ -48,6 +48,12 @@
 	"allOrders": "All Orders",
 	"customerCheckout": "Customer Checkout",
 	"customerSettings": "Customer Settings",
+	"Accepted": "Accepted",
+	"Canceled": "Canceled",
+	"Completed": "Completed",
+	"Expired": "Expired",
+	"Pending": "Pending",
+	"Rejected": "Rejected",
 	"error": {
 		"email": "Please provide a valid email address.",
 		"password": "Please provide a password."

@@ -148,8 +148,8 @@ export const RequestsModal = ({
               <TileRequest
                 status={item.status}
                 _id={item._id}
-                name={item.requestor.name}
-                phone={item.requestor.phoneNumber}
+                name={item.requestor?.name || item.admin.name}
+                phone={item.requestor?.phoneNumber || item.admin.phoneNumber}
                 people={item.totalGuests}
                 onPress1={onAcceptPress}
                 onPress2={onDeclinePress}

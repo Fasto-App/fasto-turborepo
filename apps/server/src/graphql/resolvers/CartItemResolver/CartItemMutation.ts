@@ -25,6 +25,7 @@ const addItemToCart = async (_parent: any, { input }: { input: addItemToCartInpu
 
   const foundTab = await Tab.findById(foundRequest.tab);
   if (!foundTab) throw ApolloError('NotFound')
+  if (foundTab.status !== 'Open') throw ApolloError('Forbidden', 'Tab is not open')
 
   const foundProduct = await Product.findById(input.product);
   if (!foundProduct) throw ApolloError('NotFound')

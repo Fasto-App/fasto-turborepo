@@ -884,7 +884,7 @@ export type Request = {
   admin?: Maybe<User>;
   business?: Maybe<Scalars['ID']>;
   names?: Maybe<Array<Maybe<Scalars['String']>>>;
-  requestor: User;
+  requestor?: Maybe<User>;
   status: RequestStatus;
   tab?: Maybe<Scalars['ID']>;
   totalGuests?: Maybe<Scalars['Int']>;
@@ -1440,7 +1440,7 @@ export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { 
 export type GetPendingInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPendingInvitationsQuery = { __typename?: 'Query', getPendingInvitations: Array<{ __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
+export type GetPendingInvitationsQuery = { __typename?: 'Query', getPendingInvitations: Array<{ __typename?: 'Request', _id: string, business?: string | null, totalGuests?: number | null, names?: Array<string | null> | null, status: RequestStatus, tab?: string | null, requestor?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null }> };
 
 export type GetTabRequestQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1452,17 +1452,17 @@ export type GetTabRequestsQueryVariables = Exact<{
 }>;
 
 
-export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } }> };
+export type GetTabRequestsQuery = { __typename?: 'Query', getTabRequests: Array<{ __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, requestor?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null, admin?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null }> };
 
 export type OnTabRequestSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OnTabRequestSubscription = { __typename?: 'Subscription', onTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, requestor: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } } };
+export type OnTabRequestSubscription = { __typename?: 'Subscription', onTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null, requestor?: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null } | null } };
 
 export type OnTabRequestResponseSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OnTabRequestResponseSubscription = { __typename?: 'Subscription', onTabRequestResponse: { __typename?: 'Request', _id: string, status: RequestStatus, tab?: string | null, requestor: { __typename?: 'User', _id: string }, admin?: { __typename?: 'User', _id: string } | null } };
+export type OnTabRequestResponseSubscription = { __typename?: 'Subscription', onTabRequestResponse: { __typename?: 'Request', _id: string, status: RequestStatus, tab?: string | null, requestor?: { __typename?: 'User', _id: string } | null, admin?: { __typename?: 'User', _id: string } | null } };
 
 export type SubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -3707,6 +3707,11 @@ export const GetTabRequestsDocument = gql`
   getTabRequests(input: $input) {
     _id
     requestor {
+      _id
+      name
+      phoneNumber
+    }
+    admin {
       _id
       name
       phoneNumber

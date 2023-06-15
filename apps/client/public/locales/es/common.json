@@ -43,5 +43,15 @@
 	"errorDeletingItem": "Error al eliminar el elemento",
 	"add": "Agregar",
 	"yourOrders": "Tus Pedidos",
-	"allOrders": "Todos los pedidos"
+	"allOrders": "Todos los pedidos",
+	"Accepted": "Aceptado",
+	"Canceled": "Cancelado",
+	"Completed": "Completado",
+	"Expired": "Caducado",
+	"Pending": "Pendiente",
+	"Rejected": "Rechazado",
+	"error": {
+		"email": "Por favor, proporciona una dirección de correo electrónico válida.",
+		"password": "Por favor, proporciona una contraseña."
+	}
 }

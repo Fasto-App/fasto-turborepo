@@ -38,7 +38,10 @@ const getMenuByID: QueryResolvers["getMenuByID"] = async (_parent, args, { db, b
     } else {
         menu = await Menu.findOne({ business, isFavorite: true });
 
-        if (!menu) throw ApolloError('NotFound', 'No favorite menu found for this business');
+        if (!menu) {
+            menu = await Menu.findOne({ business });
+            if (!menu) throw ApolloError('NotFound', 'Menu not found');
+        };
     }
 
     return menu

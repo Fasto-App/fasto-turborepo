@@ -187,9 +187,13 @@ export const AddToOrder = () => {
       <LeftSideBar>
         <Flex flex={1} pt={2} pb={4}>
           <Flex direction="row" justify="space-evenly" mb={4}>
-            <Text py="2">{t("tableNumber", { number: 2 })}</Text>
-            <Divider orientation="vertical" mx="3" />
-            <Text py="2">{t("people", { number: 2 })}</Text>
+            {tabData?.getTabByID?.table?.tableNumber ?
+              <Text py="2">{t("tableNumber", { number: tabData?.getTabByID?.table?.tableNumber })}</Text> : null}
+            {tabData?.getTabByID?.table?.tableNumber && (tabData?.getTabByID?.users?.length ?? 0) > 1 ?
+              <Divider orientation="vertical" mx="3" /> : null
+            }
+            {(tabData?.getTabByID?.users?.length ?? 0) > 1 ?
+              <Text py="2">{t("people", { number: tabData?.getTabByID?.users?.length })}</Text> : null}
           </Flex>
           <ScrollView flex={1}>
             {orderItems?.map((order, index) => {
@@ -277,7 +281,7 @@ export const AddToOrder = () => {
           <UpperSection>
             <Heading>{t("patrons")}</Heading>
             <HStack space={2}>
-              <SmallAddMoreButton onPress={() => console.log("Hello")} />
+              {/* <SmallAddMoreButton onPress={() => console.log("Hello")} /> */}
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
                   <Tile
@@ -299,15 +303,15 @@ export const AddToOrder = () => {
               </ScrollView>
             </HStack>
             {tabId ?
-              <SideBySideButtons
-                leftAction={requestCloseTab}
-                rightAction={() => console.log("See Details")}
-                leftLoading={loadingCloseTab}
-                leftText={"Close Tab"}
-                rightText={"See Details"}
-                leftDisabled={false}
-                rightDisabled={false}
-              /> : null}
+              <Button
+                colorScheme={"primary"}
+                width={"100px"}
+                onPress={requestCloseTab}
+                isLoading={loadingCloseTab}
+              >
+                {t("closeTab")}
+              </Button>
+              : null}
           </UpperSection>
           <BottomSection>
             <HStack space={2}>

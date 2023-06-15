@@ -6,6 +6,11 @@ query GetTabRequests($input: GetTabRequestInput) {
 			name
 			phoneNumber
 		}
+		admin {
+			_id
+			name
+			phoneNumber
+		}
 		status
 		totalGuests
 	}

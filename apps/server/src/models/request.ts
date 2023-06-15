@@ -3,14 +3,14 @@ import { prop, getModelForClass } from '@typegoose/typegoose';
 import type { RequestStatus, RequestStatusType } from 'app-helpers';
 
 export class Request {
-  @prop()
-  public business?: Types.ObjectId;
+  @prop({ required: true })
+  public business!: Types.ObjectId;
 
   @prop()
   public admin?: Types.ObjectId;
 
-  @prop({ required: true })
-  public requestor!: Types.ObjectId;
+  @prop()
+  public requestor?: Types.ObjectId;
 
   @prop()
   public tab?: Types.ObjectId;

@@ -1,17 +1,19 @@
 import React from "react"
 import { useRouter } from "next/router";
-import { Avatar, HStack, Text, useTheme, VStack } from "native-base";
+import { Avatar, Badge, Box, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { customerPathName, customerRoute, PathNameKeys } from "../../routes";
 import { getClientCookies } from "../../cookies";
 import { useGetBusinessInformation } from "../../hooks";
 import { OrangeBox } from "../../components/OrangeBox";
 import { useTranslation } from "next-i18next";
+import { HourGlassAnimation } from "../../components/SuccessAnimation";
+import { RequestStatus } from "../../gen/generated";
 
 const plaholderImage = "https://via.placeholder.com/150"
 
-const ClientNavBar = (props: { tableNumber?: string }) => {
-  const { tableNumber } = props
+const ClientNavBar = (props: { tableNumber?: string, status?: RequestStatus }) => {
+  const { tableNumber, status } = props
 
   const route = useRouter();
   const { productId, businessId } = route.query
@@ -53,13 +55,23 @@ const ClientNavBar = (props: { tableNumber?: string }) => {
         <Text textAlign={"center"} w={"50%"} fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold>
           {t(customerPathName[route.pathname as PathNameKeys])}
         </Text>
+
+        {/* dont show table is none, show hour glass or badge when loading */}
         <VStack alignItems={"center"}>
-          <Text fontSize={"lg"} color="coolGray.800" bold>
-            {t("table")}
-          </Text>
-          <Text fontSize={"lg"} color="coolGray.800" bold>
-            {tableNumber || "∞"}
-          </Text>
+          {status === "Pending" ?
+            <Badge colorScheme={"warning"} variant={"solid"} >
+              {t(status)}
+            </Badge> :
+            tableNumber ?
+              <>
+                <Text fontSize={"lg"} color="coolGray.800" bold>
+                  {t("table")}
+                </Text>
+                <Text fontSize={"lg"} color="coolGray.800" bold>
+                  {tableNumber || "∞"}
+                </Text>
+              </> : null
+          }
         </VStack>
       </HStack>
     </>

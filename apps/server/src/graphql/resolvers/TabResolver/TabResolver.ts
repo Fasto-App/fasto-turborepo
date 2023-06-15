@@ -4,7 +4,7 @@ import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
-import { getPercentageOfValue, TableStatus, TabStatus } from "app-helpers";
+import { getPercentageOfValue, RequestStatus, TableStatus, TabStatus } from "app-helpers";
 import { BusinessModel, OrderDetailModel, RequestModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { MutationResolvers } from "../../../generated/graphql";
@@ -192,6 +192,12 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
     // if there are no open orders, we can close the tab
     if (foundOrderDetails.length === 0) {
         foundTab.status = TabStatus.Closed;
+
+        // find all the requests associated with this tab and close them
+        const foundRequests = await RequestModel(db).find({ tab: foundTab._id });
+        if (foundRequests.length > 0) {
+            await RequestModel(db).updateMany({ tab: foundTab._id }, { status: RequestStatus.Completed });
+        }
         // upadate the table status to available
         changeTableStatus()
 

@@ -3,9 +3,14 @@ import { CheckoutModel } from "../../../models/checkout";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 
-export const getCheckoutByID = async (parent: any, args: any, { db }: Context, info: any) => {
+// @ts-ignore
+export const getCheckoutByID: QueryResolvers["getCheckoutByID"] = async (parent, { input }, { db, client, user }) => {
   const Checkout = CheckoutModel(db);
-  const checkout = await Checkout.findById(args.input._id);
+
+  if (!client && !user) throw ApolloError("Unauthorized", "You must be logged in to perform this action")
+
+  const checkout = await Checkout.findOne({ _id: input._id, business: client?.business || user?.business });
+  if (!checkout) throw ApolloError("NotFound", "Checkout not found");
   return checkout
 }
 

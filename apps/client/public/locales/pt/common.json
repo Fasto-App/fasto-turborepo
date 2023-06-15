@@ -47,6 +47,12 @@
 	"allOrders": "Todos os Pedidos",
 	"error": {
 		"email": "Por favor, forneça um endereço de e-mail válido.",
-		"password": "Por favor, forneça uma senha."
+		"password": "Por favor, forneça uma senha.",
+		"Accepted": "Aceito",
+		"Canceled": "Cancelado",
+		"Completed": "Concluído",
+		"Expired": "Expirado",
+		"Pending": "Pendente",
+		"Rejected": "Rejeitado"
 	}
 }

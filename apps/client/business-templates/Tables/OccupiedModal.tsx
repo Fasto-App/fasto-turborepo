@@ -112,7 +112,7 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
   const { t } = useTranslation("businessTables")
 
   return (<HStack borderRadius={"md"} p={1} backgroundColor={"white"} flex={1} justifyContent={"space-between"}>
-    <HStack>
+    <HStack flex={1}>
       <Center>
         <Image src={imageUrl ?? ""}
           width={100} height={60}
@@ -123,10 +123,10 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
         <Text>{`${parseToCurrency(price)}`}</Text>
       </VStack>
     </HStack>
-    <Center>
+    <Center flex={1}>
       <Select
         mt={1}
-        minWidth="400"
+        maxW={200}
         selectedValue={status}
         placeholder={t("orderStatus")}
         accessibilityLabel={t("chooseService")}
@@ -136,14 +136,12 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
         )}
       </Select>
     </Center>
-    <Center>
+    <HStack flex={1} justifyContent={"space-between"}>
       <Text>{`${parseToCurrency(subTotal)}`}</Text>
-    </Center>
-    <Center>
       <Text >{`${quantity}x`}</Text>
-    </Center>
-    <Center p={6}>
-      <CheckIcon />
-    </Center>
+      <Center p={6}>
+        <CheckIcon />
+      </Center>
+    </HStack>
   </HStack>)
 }
