@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { PendingInvitationModal } from "./PendingInvitationModal";
 import { QRCodeReaderModal } from "./QRCodeReaderModal";
 import { useTranslation } from "next-i18next";
+import { clearClientCookies } from "../../cookies";
 
 const ListBorderTile: React.FC = ({ children }) => {
   return (
@@ -48,6 +49,12 @@ const settingsTiles = [
     icon: "People",
     title: "pendingInvitations",
     iconBackgroundColor: "violet.500" //"indigo.500"
+  },
+  {
+    _id: "endSession",
+    icon: "Logout",
+    title: "endSession",
+    iconBackgroundColor: "indigo.500" //"indigo.500"
   }
 ] as const
 
@@ -109,10 +116,21 @@ const SettingsScreen = () => {
       case "invitations":
         setIsModalOpen2(true)
         break;
+      case "endSession":
+        if (!businessId) throw new Error("businessId is undefined")
+
+        clearClientCookies(typeof businessId === "string" ? businessId : businessId[0])
+        router.push({
+          pathname: customerRoute["/customer/[businessId]"],
+          query: {
+            businessId: typeof businessId === "string" ? businessId : businessId[0]
+          }
+        })
+        break;
       default:
         break;
     }
-  }, [])
+  }, [businessId, router])
 
   const shouldBeDisabled = useCallback((title: SettingsTileId) => {
     switch (title) {

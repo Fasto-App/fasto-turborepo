@@ -29,8 +29,7 @@ export const QRCodeReaderModal = ({
         <Center flex={1}>
           <QRCode
             value={QR_CODE}
-            size={320}
-            level={"L"}
+            size={300}
           />
         </Center>
       }

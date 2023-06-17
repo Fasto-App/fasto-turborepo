@@ -14,7 +14,7 @@ export class Tab {
     public checkout?: Types.ObjectId;
 
     @prop({ ref: () => User })
-    public admin?: Ref<User>;
+    public admin!: Ref<User>;
 
     @prop({ default: TabStatus.Open })
     public status?: TabStatusType;

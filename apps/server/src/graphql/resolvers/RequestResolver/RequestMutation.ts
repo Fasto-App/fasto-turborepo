@@ -5,6 +5,7 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { NUMBER_INCREMENTED, pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from "../pubSub";
 import { Context } from "../types"
 import { tokenClient } from "../utils";
+import { MutationResolvers } from "../../../generated/graphql";
 
 // client request a table
 const openTabRequest = async (
@@ -85,64 +86,65 @@ const openTabRequest = async (
   })
 }
 
-// business accepts table request
-const acceptTabRequest = async (
-  _parent: any,
-  { input }: {
-    input: {
-      request: string,
-      table: string
-    }
-  },
-  { db, business }: Context
+// Business accepts a Request to get a Table
+// @ts-ignore
+const acceptTabRequest: MutationResolvers["acceptTabRequest"] = async (
+  _parent,
+  { input },
+  { db, business }
 ) => {
   const Tab = TabModel(db);
   const Request = RequestModel(db)
   const Table = TableModel(db);
   const User = UserModel(db)
 
-  const foundRequest = await Request.findOne({ _id: input.request })
+  const foundRequest = await Request.findOne({
+    _id: input.request,
+    business,
+    status: 'Pending',
+  })
 
   if (!foundRequest) {
-    throw ApolloError('BadRequest', "Request Not Found")
+    throw ApolloError('BadRequest', "Request Not Found or Not Pending")
   }
 
-  // check if the request belongs to the business
-  if (foundRequest.business?.toString() !== business) {
-    throw ApolloError('BadRequest', "Request Not Found")
-  }
+  const foundAdmin = await User.findOne({ _id: foundRequest.admin })
 
-  // check if the request is pending
-  if (foundRequest.status !== 'Pending') {
-    throw ApolloError('BadRequest', "Request Not Pending")
-  }
+  if (!foundAdmin) throw ApolloError('BadRequest', "Admin Not Found")
 
   const table = await Table.findOne({ _id: input.table, business });
 
   if (!table) throw ApolloError('BadRequest', "Table Not Found")
   if (table.status !== 'Available') throw ApolloError('BadRequest', "Table Not Available")
 
-  const numGuests = (foundRequest.totalGuests ?? 1) - 1;
-  const allUsers = await User.insertMany(new Array(numGuests).fill({ isGuest: true }))
-  const usersId = allUsers.map(user => user._id)
+  // create all the other users. total guests - 1
+  const numGuests = (foundRequest.totalGuests || 1) - 1;
+
+  let allUsersIds: string[] = []
+
+  if (numGuests > 0) {
+    const allUsers = await User.insertMany(new Array(numGuests).fill({ isGuest: true }))
+    allUsers.forEach(user => {
+      if (user._id) allUsersIds.push(user._id)
+    })
+  }
 
   const tab = await Tab.create({
-    table: table?._id,
-    admin: foundRequest?.admin,
-    users: [foundRequest?.admin, ...usersId],
+    table: table._id,
+    admin: foundAdmin._id,
+    users: [foundAdmin._id, ...allUsersIds],
     type: 'DineIn',
   });
 
   if (!tab) throw ApolloError('BadRequest', "Tab Not Created")
 
+  foundRequest.status = 'Accepted';
+  foundRequest.tab = tab._id;
+  await foundRequest.save();
+
   table.status = 'Occupied';
   table.tab = tab._id;
   await table.save();
-
-  foundRequest.status = 'Accepted';
-  foundRequest.tab = tab._id;
-
-  await foundRequest.save();
 
   pubsub.publish(TAB_REQUEST_RESPONSE, { onTabRequestResponse: foundRequest })
 

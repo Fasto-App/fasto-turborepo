@@ -19,5 +19,6 @@
 	"Completed": "Completed",
 	"Expired": "Expired",
 	"Pending": "Pending",
-	"Rejected": "Rejected"
+	"Rejected": "Rejected",
+	"endSession": "End Session"
 }
