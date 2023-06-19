@@ -640,7 +640,7 @@ export type MutationRequestJoinTabArgs = {
 
 
 export type MutationRequestUserAccountCreationArgs = {
-  input?: InputMaybe<RequestUserAccountInput>;
+  input: RequestUserAccountInput;
 };
 
 
@@ -884,7 +884,7 @@ export type Request = {
   admin?: Maybe<User>;
   business?: Maybe<Scalars['ID']>;
   names?: Maybe<Array<Maybe<Scalars['String']>>>;
-  requestor: User;
+  requestor?: Maybe<User>;
   status: RequestStatus;
   tab?: Maybe<Scalars['ID']>;
   totalGuests?: Maybe<Scalars['Int']>;
@@ -1571,7 +1571,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   recoverPassword?: Resolver<Maybe<ResolversTypes['RequestResponseOK']>, ParentType, ContextType, RequireFields<MutationRecoverPasswordArgs, 'input'>>;
   requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, Partial<MutationRequestCloseTabArgs>>;
   requestJoinTab?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRequestJoinTabArgs, 'input'>>;
-  requestUserAccountCreation?: Resolver<ResolversTypes['AccountCreationResponse'], ParentType, ContextType, Partial<MutationRequestUserAccountCreationArgs>>;
+  requestUserAccountCreation?: Resolver<ResolversTypes['AccountCreationResponse'], ParentType, ContextType, RequireFields<MutationRequestUserAccountCreationArgs, 'input'>>;
   updateAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, Partial<MutationUpdateAddressArgs>>;
   updateBusinessInformation?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationUpdateBusinessInformationArgs, 'input'>>;
   updateBusinessLocation?: Resolver<Maybe<ResolversTypes['Business']>, ParentType, ContextType, RequireFields<MutationUpdateBusinessLocationArgs, 'input'>>;
@@ -1666,7 +1666,7 @@ export type RequestResolvers<ContextType = Context, ParentType extends Resolvers
   admin?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   business?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   names?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  requestor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  requestor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['RequestStatus'], ParentType, ContextType>;
   tab?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   totalGuests?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;

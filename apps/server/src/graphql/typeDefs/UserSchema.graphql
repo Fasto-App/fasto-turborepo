@@ -6,7 +6,7 @@ extend type Query {
 }
 
 extend type Mutation {
-	requestUserAccountCreation(input: RequestUserAccountInput): AccountCreationResponse!
+	requestUserAccountCreation(input: RequestUserAccountInput!): AccountCreationResponse!
 	createUser(input: UserInput): User!
 	postUserLogin(input: LoginInput!): User!
 	updateUserInformation(input: UpdateUserInput!): User!

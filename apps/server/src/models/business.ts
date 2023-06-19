@@ -39,9 +39,11 @@ export class Business {
     @prop()
     public hoursOfOperation?: HoursOfOperationType;
 
+    // TODO: remove this
     @prop({ ref: () => Product, default: [] })
     public products!: Ref<Product>[];
 
+    // TODO: Remove this
     // FIX: Next time add documentation if you dont understand what this is
     @prop({
         ref: Category,
@@ -51,6 +53,7 @@ export class Business {
     })
     public categories!: Ref<Category>[];
 
+    // TODO: remove this
     @prop({ ref: () => Menu })
     public menus!: Ref<Menu>[];
 
