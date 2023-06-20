@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, Pressable, ScrollView, Text } from 'native-base'
+import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text } from 'native-base'
 import { ProductCard, ProductTile } from '../../components/Product/Product'
 import { useNumOfColumns } from '../../hooks'
 import { useProductMutationHook } from '../../graphQL/ProductQL'
@@ -9,7 +9,7 @@ import { BsPencilSquare } from 'react-icons/bs';
 import { Product } from './types'
 import { GetAllMenusByBusinessIdDocument, useDeleteMenuMutation, useGetAllCategoriesByBusinessQuery, useGetAllMenusByBusinessIdQuery, useUpdateMenuMutation } from '../../gen/generated'
 import { Icon } from '../../components/atoms/NavigationButton'
-
+import { Pressable } from 'react-native'
 import { useTranslation } from 'next-i18next'
 
 function MenuProducts() {
@@ -247,7 +247,7 @@ function MenuProducts() {
       <HStack flexDirection={"row"} mb={"2"} space={4}>
         <HStack space={2}>
           <Pressable
-            isDisabled={!isEditingMenu}
+            disabled={!isEditingMenu}
             onPress={() => selectedMenu?._id && setFavoriteMenus({
               ...favoriteMenus,
               [selectedMenu?._id]: !favoriteMenus[selectedMenu?._id]
@@ -279,7 +279,7 @@ function MenuProducts() {
               mr={2}
               m={0}
               minW={"100px"}
-              isDisabled={categoryId === category._id}
+              disabled={categoryId === category._id}
               textDecorationColor={"black"}
               variant={categoryId === category._id ? 'subtle' : 'outline'}
               colorScheme={categoryId === category._id ? "success" : "black"}

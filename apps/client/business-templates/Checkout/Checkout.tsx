@@ -142,6 +142,7 @@ export const Checkout = () => {
               {checkoutOptions.filter((option) => option !== "success").map((option) => (
 
                 <TileButton
+
                   isDisabled={!!data?.getCheckoutByID?.splitType ||
                     option === "splitBill" && !!tabData?.getTabByID?.users?.length &&
                     tabData?.getTabByID?.users?.length < 2}

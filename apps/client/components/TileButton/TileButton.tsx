@@ -17,6 +17,7 @@ export const TileButton: React.FC<TileButtonProps> = ({ selected, onPress, child
       maxH={"40px"}
       isDisabled={isDisabled}
       borderColor={selected ? 'primary.500' : "gray.300"}
+      disabled={selected}
       variant={selected ? 'outline' : 'outline'}
       colorScheme={selected ? "primary" : "black"}
       onPress={onPress}
