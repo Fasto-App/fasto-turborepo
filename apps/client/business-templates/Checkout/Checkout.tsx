@@ -161,7 +161,7 @@ export const Checkout = () => {
                 <Box size={"32"} mb={12}>
                   <SuccessAnimation />
                 </Box>
-                <Text fontSize={"2xl"}>
+                <Text fontSize={"2xl"} textAlign={"center"}>
                   {t("sessionEnded")}
                   <Link fontSize={"2xl"} href={businessRoute.orders}>
                     {t("backToManageTables")}

@@ -73,7 +73,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
   const foundCheckout = await Checkout.findById(checkout);
 
   if (!foundCheckout) throw ApolloError('BadRequest', 'Checkout not found')
-  if (!foundCheckout.splitType) throw ApolloError('BadRequest', 'Split type is already set')
+  if (foundCheckout.splitType) throw ApolloError('BadRequest', 'Split type is already set')
 
   if (foundCheckout?.discount === undefined && discount) {
     foundCheckout.discount = discount
