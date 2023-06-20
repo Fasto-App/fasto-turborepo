@@ -45,7 +45,7 @@ export const SettingsScreen = () => {
         m={0}
         minW={"100px"}
         borderColor={selected ? 'primary.500' : "gray.300"}
-        disabled={selected}
+        isDisabled={selected}
         variant={selected ? 'outline' : 'outline'}
         colorScheme={selected ? "primary" : "black"}
         onPress={() => setSelectedTab(item)}

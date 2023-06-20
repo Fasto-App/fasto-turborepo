@@ -26,9 +26,7 @@ export const AllAndEditButtons = ({
       </Button>
 
       <Button
-        disabled={!categoryId}
         isDisabled={!categoryId}
-
         width={"100px"}
         colorScheme="tertiary"
         onPress={() => editAction(categoryId)}>

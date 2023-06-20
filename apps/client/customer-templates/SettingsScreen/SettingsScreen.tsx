@@ -64,7 +64,7 @@ const FE_URL = new URL(process.env.FRONTEND_URL ?? "http://localhost:3000")
 
 const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor, onPress, disabled }) => {
   return (
-    <Pressable onPress={onPress} disabled={disabled} _disabled={{ opacity: 0.6 }}>
+    <Pressable onPress={onPress} isDisabled={disabled}>
       <ListBorderTile>
         <HStack space={4}>
           <Box p={"2"} borderRadius={"md"} backgroundColor={iconBackgroundColor}>
