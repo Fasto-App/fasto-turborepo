@@ -12,6 +12,7 @@ import { PendingInvitationModal } from "./PendingInvitationModal";
 import { QRCodeReaderModal } from "./QRCodeReaderModal";
 import { useTranslation } from "next-i18next";
 import { clearClientCookies } from "../../cookies";
+import { showToast } from "../../components/showToast";
 
 const ListBorderTile: React.FC = ({ children }) => {
   return (
@@ -42,24 +43,31 @@ const settingsTiles = [
     _id: "qrcode",
     icon: "QRCode",
     title: "inviteGuestWithQRCode",
-    iconBackgroundColor: "blueGray.500" //"amber.500"
+    iconBackgroundColor: "blueGray.500"
+  },
+  {
+    _id: "share",
+    icon: "UserAdd",
+    title: "shareLink",
+    iconBackgroundColor: "amber.500"
   },
   {
     _id: "invitations",
     icon: "People",
     title: "pendingInvitations",
-    iconBackgroundColor: "violet.500" //"indigo.500"
+    iconBackgroundColor: "violet.500"
   },
   {
     _id: "endSession",
     icon: "Logout",
     title: "endSession",
-    iconBackgroundColor: "indigo.500" //"indigo.500"
+    iconBackgroundColor: "indigo.500"
   }
 ] as const
 
 type SettingsTileId = typeof settingsTiles[number]["_id"]
 
+//"http://192.168.0.150:3000" ??
 const FE_URL = new URL(process.env.FRONTEND_URL ?? "http://localhost:3000")
 
 const SettingsTile: FC<SettingsTileProps> = ({ icon, title, iconBackgroundColor, onPress, disabled }) => {
@@ -108,8 +116,23 @@ const SettingsScreen = () => {
     return FE_URL.toString()
   }, [businessId, clientSession?.getClientSession.tab?._id, clientSession?.getClientSession.tab?.admin, clientSession?.getClientSession.user.name, locale])
 
-  const handlePress = useCallback((title: SettingsTileId) => {
+  const handlePress = useCallback(async (title: SettingsTileId) => {
     switch (title) {
+      case "share":
+        try {
+          await navigator.share({
+            title: t("shareTitle"),
+            text: t("shareText"),
+            url: QR_CODE,
+          });
+
+        } catch (error) {
+          showToast({
+            message: t("shareError"),
+            status: "error"
+          })
+        }
+        break;
       case "qrcode":
         setIsModalOpen(true)
         break;
@@ -130,11 +153,12 @@ const SettingsScreen = () => {
       default:
         break;
     }
-  }, [businessId, router])
+  }, [QR_CODE, businessId, router, t])
 
   const shouldBeDisabled = useCallback((title: SettingsTileId) => {
     switch (title) {
       case "qrcode":
+      case "share":
         return !isAdmin || !QR_CODE
       default:
         return false
@@ -169,7 +193,9 @@ const SettingsScreen = () => {
       {/* // if not admin, disable the QR Code and the Pending Invitations tiles */}
       {settingsTiles.map((tile, index) =>
       (
-        !isAdmin && tile._id === "qrcode" || !isAdmin && tile._id === "invitations" ? null : (
+        !isAdmin && tile._id === "share" ||
+          !isAdmin && tile._id === "qrcode" ||
+          !isAdmin && tile._id === "invitations" ? null : (
           <SettingsTile
             _id={tile._id}
             key={index}

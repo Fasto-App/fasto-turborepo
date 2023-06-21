@@ -28,7 +28,7 @@ export const PendingInvitationModal = (props: PendingInvitationModalProps) => {
   const token = getClientCookies(businessId as string)
 
   const { data, loading } = useGetPendingInvitationsQuery({
-    skip: !token,
+    skip: !token || !isModalOpen,
     pollInterval: 1000 * 60,
     fetchPolicy: "network-only"
   })

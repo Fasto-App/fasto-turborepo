@@ -20,5 +20,9 @@
 	"Expired": "Caducado",
 	"Pending": "Pendiente",
 	"Rejected": "Rechazado",
-	"endSession": "Finalizar sesión"
+	"endSession": "Finalizar sesión",
+	"shareLink": "Compartir enlace",
+	"shareTitle": "¡Ordenemos juntos con Fasto!",
+	"shareText": "¡Vamos a ordenar juntos con Fasto!",
+	"shareError": "Error al compartir el enlace. Asegúrese de que su navegador sea capaz de esto."
 }

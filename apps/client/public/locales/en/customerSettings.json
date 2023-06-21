@@ -20,5 +20,9 @@
 	"Expired": "Expired",
 	"Pending": "Pending",
 	"Rejected": "Rejected",
-	"endSession": "End Session"
+	"endSession": "End Session",
+	"shareLink": "Invite Guest With Link",
+	"shareTitle": "Join me at FASTO",
+	"shareText": "Let's Order Together with Fasto!",
+	"shareError": "Error sharing link. Make sure your browser is capable of this."
 }

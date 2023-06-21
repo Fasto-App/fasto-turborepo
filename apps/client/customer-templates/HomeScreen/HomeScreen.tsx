@@ -102,11 +102,11 @@ export const HomeScreen = () => {
         <Button onPress={() => setIsTakeoutDeliveryModalOpen(true)}
           _text={{ bold: true }}
           colorScheme={"secondary"}>{t("takeoutOrDelivery")}</Button>
-        <Button
+        {/* <Button
           isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
           onPress={joinTab}
           _text={{ bold: true }}
-          colorScheme={"tertiary"}>{t("joinTab")}</Button>
+          colorScheme={"tertiary"}>{t("joinTab")}</Button> */}
         <Button onPress={onPress}
           _text={{ bold: true }}
           colorScheme={"blueGray"}>{t("viewMenu")}</Button>

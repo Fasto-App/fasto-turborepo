@@ -11,7 +11,7 @@ export default function SettingsPage() {
 
   return <>
     <Head>
-      <title>{t("checkout")}</title>
+      <title>{t("settings")}</title>
     </Head>
     <SettingsScreen />
   </>

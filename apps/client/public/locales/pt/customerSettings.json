@@ -1,5 +1,5 @@
 {
-	"inviteGuestWithQRCode": "Convidar convidado com código QR",
+	"inviteGuestWithQRCode": "Convidar com QR code",
 	"pendingInvitations": "Convites pendentes",
 	"guests": "Convidados",
 	"tab": "Comanda",
@@ -20,5 +20,9 @@
 	"Expired": "Expirado",
 	"Pending": "Pendente",
 	"Rejected": "Rejeitado",
-	"endSession": "Encerrar sessão"
+	"endSession": "Encerrar sessão",
+	"shareLink": "Convidar com um link",
+	"shareTitle": "Junte-se a mim na Fasto!",
+	"shareText": "Vamos fazer o pedido com a Fasto!",
+	"shareError": "Erro ao compartilhar link. Verifique se o seu navegador é capaz disso."
 }

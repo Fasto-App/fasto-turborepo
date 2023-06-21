@@ -113,7 +113,7 @@ export const OrdersScreen = () => {
                     key={checkout._id}
                     _id={`#${checkout._id.slice(0, 8)}`}
                     date={format(Number(checkout.created_date), "PPpp", getLocale(router.locale))}
-                    total={parseToCurrency(checkout.subTotal)}
+                    total={parseToCurrency(checkout.total)}
                     status={t(CheckoutStatusKeys[checkout.status])}
                     colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
                     onPress={() => {

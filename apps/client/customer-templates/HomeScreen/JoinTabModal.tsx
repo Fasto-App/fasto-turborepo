@@ -107,23 +107,21 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
 
   }, [adminId, requestJoinTab, router.query.businessId, setModalVisibility, tabId])
 
+  if (!tabId || !name) null
 
   return (
     <CustomModal
       onClose={() => setModalVisibility(false)}
       isOpen={isOpen}
       HeaderComponent={<Heading>{
-        tabId && name ? t("yourAboutToJoin", { name: typeof name === "string" ? name : name?.[0] })
-          : t("scanTheCode")
-      }</Heading>}
-      ModalBody={tabId && name ? (
+        t("yourAboutToJoin", { name: typeof name === "string" ? name : name?.[0] })}</Heading>}
+      ModalBody={(
         <ControlledForm
           Config={Config}
           control={control}
           formState={formState}
         />
-      ) :
-        <QRCodeReader />}
+      )}
       ModalFooter={
         <Button.Group flex={1}>
           <Box flex={1}>
