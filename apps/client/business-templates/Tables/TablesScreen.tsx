@@ -50,11 +50,11 @@ export const TablesScreen = () => {
 
   const { t } = useTranslation("businessTables")
 
-  // TODO: get all the spaces and default to the first one
-  // const { allSpaces } = useSpacesMutationHook(setSelectedSpace);
   const { data, loading: spaceLoading } = useGetSpacesFromBusinessQuery({
     onCompleted: (data) => {
-      setSelectedSpace?.(data.getSpacesFromBusiness?.[0]._id)
+      if (!selectedSpaceId) {
+        setSelectedSpace?.(data.getSpacesFromBusiness?.[0]._id)
+      }
     },
   });
 

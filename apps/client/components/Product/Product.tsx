@@ -63,12 +63,12 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 					}} alt="image" borderRadius={"sm"} />
 				</AspectRatio>
 			</Box>
-			<Stack pt={8} p={2} space={2}>
+			<Stack pt={8} p={2} space={2} flex={1}>
 				<Heading size="md" textAlign={"center"}>
 					{name}
 				</Heading>
-				<Text fontWeight="400" textAlign={"center"}>
-					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
+				<Text fontWeight="400" textAlign={"center"} flex={1}>
+					{formattedDescriptions}
 				</Text>
 				<VStack alignItems="center" space={2} justifyContent="space-between" pb={2}>
 					{singleButton ?? <Price price={price} />}
