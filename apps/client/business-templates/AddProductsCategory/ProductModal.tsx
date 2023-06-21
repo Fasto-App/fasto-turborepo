@@ -130,11 +130,10 @@ const ProductModal = ({
 		closeModalAndClearQueryParams()
 	}
 
-	const onProductSubmit = (values: ProductFields) => {
-		console.log(values)
+	const onProductSubmit = async (values: ProductFields) => {
 
 		if (!!productId) {
-			updateProduct({
+			await updateProduct({
 				variables: {
 					input: {
 						_id: productId,
@@ -149,7 +148,7 @@ const ProductModal = ({
 
 		} else {
 
-			createProduct({
+			await createProduct({
 				variables: {
 					input: {
 						name: values.name,
@@ -194,7 +193,6 @@ const ProductModal = ({
 			name: 'description',
 			label: t("description"),
 			placeholder: t("description"),
-
 			inputType: 'TextArea'
 		}
 	}), [allCategories, t])

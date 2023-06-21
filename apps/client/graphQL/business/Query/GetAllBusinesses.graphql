@@ -2,5 +2,8 @@ query GetAllBusiness {
 	getAllBusiness {
 		name
 		_id
+		picture
+		description
+		cuisine
 	}
 }

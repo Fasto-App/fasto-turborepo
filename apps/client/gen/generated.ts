@@ -1147,7 +1147,7 @@ export type UpdateBusinessLocationMutation = { __typename?: 'Mutation', updateBu
 export type GetAllBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllBusinessQuery = { __typename?: 'Query', getAllBusiness: Array<{ __typename?: 'Business', name: string, _id: string } | null> };
+export type GetAllBusinessQuery = { __typename?: 'Query', getAllBusiness: Array<{ __typename?: 'Business', name: string, _id: string, picture?: string | null, description?: string | null, cuisine?: Array<string> | null } | null> };
 
 export type GetAllEmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1739,6 +1739,9 @@ export const GetAllBusinessDocument = gql`
   getAllBusiness {
     name
     _id
+    picture
+    description
+    cuisine
   }
 }
     `;

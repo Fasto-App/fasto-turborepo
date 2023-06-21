@@ -8,7 +8,7 @@ const productSchema = z.object({
   name: z.string().min(3, { message: 'Name Required' }),
   price: z.number().min(1, { message: 'Price Required' }),
   category: z.string().min(1, { message: 'Category Required' }),
-  file: z.string().optional(),
+  file: z.string().optional().nullable(),
   description: z.string().optional()
 });
 
@@ -30,7 +30,7 @@ export const useProductFormHook = () => {
       category: '',
       description: '',
       price: 0,
-      file: ''
+      file: undefined,
     },
     resolver: zodResolver(productSchema),
   });

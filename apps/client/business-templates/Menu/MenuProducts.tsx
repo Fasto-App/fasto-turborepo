@@ -336,6 +336,7 @@ function MenuProducts() {
                 console.log(sectionMap)
                 const newSections: { category: string, products: string[] }[] = []
 
+                // TODO: THERE"S a bug here where the menu is favorite but the user doesn't change anything and it gets unmarked as favorite
                 if (!sectionMap.size) {
                   console.warn("Nothing to do here")
                   return;
