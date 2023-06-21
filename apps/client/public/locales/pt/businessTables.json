@@ -32,5 +32,6 @@
 	"selectedNumberOfGuests": "Entre com o número de convidados",
 	"Delivered": "Entregue",
 	"Open": "Aberto",
-	"Pendent": "Pendente"
+	"Pendent": "Pendente",
+	"checkout": "Fechar Comanda"
 }

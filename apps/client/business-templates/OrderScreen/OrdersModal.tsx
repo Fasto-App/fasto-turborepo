@@ -72,9 +72,10 @@ export const OrdersModal = ({ isOpen, setIsOpen, checkoutId }: OrdersModalProps)
           {t("close")}
         </Button>
         <>
-          {data?.getOrdersByCheckout.paid ? null :
+          {data?.getOrdersByCheckout.paid || router.pathname === businessRoute['checkout/[checkoutId]'] ? null :
             <Button flex={1}
               onPress={() => {
+                setIsOpen(false)
 
                 router.push({
                   pathname: businessRoute['checkout/[checkoutId]'],
@@ -83,7 +84,6 @@ export const OrdersModal = ({ isOpen, setIsOpen, checkoutId }: OrdersModalProps)
                     tabId: data?.getOrdersByCheckout.tab
                   }
                 })
-                setIsOpen(false)
               }
               }>
               {`${t("checkout")} ${parseToCurrency(data?.getOrdersByCheckout.subTotal)}`}

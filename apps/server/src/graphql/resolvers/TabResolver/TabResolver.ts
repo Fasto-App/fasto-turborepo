@@ -4,7 +4,7 @@ import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
-import { getPercentageOfValue, RequestStatus, TableStatus, TabStatus } from "app-helpers";
+import { getPercentageOfValue, RequestStatus, TableStatus, TableStatusType, TabStatus } from "app-helpers";
 import { BusinessModel, OrderDetailModel, RequestModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { MutationResolvers } from "../../../generated/graphql";
@@ -56,8 +56,12 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             admin: allUsers[0]._id,
             users: allUsers.map(user => user._id),
         });
-        // change the status table to occupied
-        await table.updateOne({ status: TableStatus.Occupied, tab: tab._id });
+
+        if (!tab) throw ApolloError("InternalServerError", "Error creating Tab")
+
+        table.status = TableStatus.Occupied;
+        table.tab = tab._id;
+        await table.save();
 
         return tab
 
@@ -127,7 +131,10 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
         // if the Tab is associated with a table, change the status of the table to available
         if (tab?.table) {
             const Table = TableModel(db);
-            await Table.findByIdAndUpdate(tab.table, { status: TableStatus.Available });
+            await Table.findByIdAndUpdate(tab.table, {
+                status: TableStatus.Available,
+                tab: undefined
+            });
         }
 
         return tab;
@@ -171,11 +178,11 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
 
     const foundTab = await Tab.findById(tabId || args.input?._id);
 
-    const changeTableStatus = async () => {
+    const changeTableStatus = async (toStatus: TableStatusType) => {
         if (foundTab?.table) {
             const foundTable = await Table.findById(foundTab.table);
             if (foundTable) {
-                foundTable.status = TableStatus.Available;
+                foundTable.status = toStatus;
                 await foundTable.save();
             }
         }
@@ -199,7 +206,7 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
             await RequestModel(db).updateMany({ tab: foundTab._id }, { status: RequestStatus.Completed });
         }
         // upadate the table status to available
-        changeTableStatus()
+        changeTableStatus(TableStatus.Available)
 
         await foundTab.save();
         return foundTab;
@@ -218,8 +225,6 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
 
     foundTab.checkout = checkout._id;
     foundTab.status = TabStatus.Pendent;
-    // upadate the table status to available
-    changeTableStatus()
 
     return await foundTab.save();
 }

@@ -103,7 +103,7 @@ export const resolvers = {
   // TODO
   // this is bad, a resolver for a resolver?
   Table: {
-    tab: TableResolver.getOpenTabByTable,
+    tab: TableResolver.getTabByTable,
   },
   // TODO
   // This can be a problem, if we have a lot of tabs, we will have to make a lot of queries

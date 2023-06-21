@@ -30,12 +30,17 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
     const foundTab = await Tab.findById(foundCheckout.tab)
     if (!foundTab) throw ApolloError('BadRequest', 'Tab not found')
 
-    foundTab.table && await Table.findByIdAndUpdate(foundTab.table, {
-      status: "Available",
-    }, { new: true })
+    if (foundTab?.table) {
+      const foundTable = await Table.findByIdAndUpdate(foundTab.table)
+      if (!foundTable) throw ApolloError('BadRequest', 'Table not found')
+
+      foundTable.status = "Available"
+      foundTable.tab = undefined
+      await foundTable.save()
+    }
 
     foundTab.status = "Closed"
-    foundTab.save()
+    await foundTab.save()
 
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
@@ -73,6 +78,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
   const foundCheckout = await Checkout.findById(checkout);
 
   if (!foundCheckout) throw ApolloError('BadRequest', 'Checkout not found')
+  if (!foundCheckout?.tab) throw ApolloError('BadRequest', 'Tab not found')
   if (foundCheckout.splitType) throw ApolloError('BadRequest', 'Split type is already set')
 
   if (foundCheckout?.discount === undefined && discount) {
@@ -99,9 +105,14 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
       status: "Closed",
     }, { new: true })
 
-    foundTab?.table && await Table.findByIdAndUpdate(foundTab.table, {
-      status: "Available",
-    }, { new: true })
+    if (foundTab?.table) {
+      const foundTable = await Table.findByIdAndUpdate(foundTab.table)
+      if (!foundTable) throw ApolloError('BadRequest', 'Table not found')
+
+      foundTable.status = "Available"
+      foundTable.tab = undefined
+      await foundTable.save()
+    }
 
     // update all the requests associated with this tab
     const foundRequests = await Request.find({ tab: foundTab?._id })

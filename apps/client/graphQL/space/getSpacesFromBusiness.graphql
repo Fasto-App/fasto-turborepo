@@ -7,6 +7,9 @@ query GetSpacesFromBusiness {
 			_id
 			status
 			tableNumber
+			tab {
+				_id
+			}
 		}
 	}
 }

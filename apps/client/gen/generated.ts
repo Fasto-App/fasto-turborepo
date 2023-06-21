@@ -640,7 +640,7 @@ export type MutationRequestJoinTabArgs = {
 
 
 export type MutationRequestUserAccountCreationArgs = {
-  input?: InputMaybe<RequestUserAccountInput>;
+  input: RequestUserAccountInput;
 };
 
 
@@ -799,7 +799,7 @@ export type Query = {
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
-  getTabByID?: Maybe<Tab>;
+  getTabByID: Tab;
   getTabRequest: Request;
   getTabRequests: Array<Request>;
   getTableById: Table;
@@ -1479,7 +1479,7 @@ export type CreateSpaceMutation = { __typename?: 'Mutation', createSpace: { __ty
 export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string }> | null }> | null };
+export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string } | null }> | null }> | null };
 
 export type CreateTabMutationVariables = Exact<{
   input: CreateTabInput;
@@ -1500,14 +1500,14 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, admin: string, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', imageUrl?: string | null, price: number, name: string } }> } | null };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID: { __typename?: 'Tab', checkout?: string | null, _id: string, status: TabStatus, admin: string, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', _id: string, imageUrl?: string | null, price: number, name: string } }> } };
 
 export type GetTabCheckoutByIdQueryVariables = Exact<{
   input: GetById;
 }>;
 
 
-export type GetTabCheckoutByIdQuery = { __typename?: 'Query', getTabByID?: { __typename?: 'Tab', _id: string, status: TabStatus, users?: Array<{ __typename?: 'User', _id: string }> | null, orders: Array<{ __typename?: 'OrderDetail', user?: string | null, _id: string, subTotal: number }> } | null };
+export type GetTabCheckoutByIdQuery = { __typename?: 'Query', getTabByID: { __typename?: 'Tab', _id: string, status: TabStatus, users?: Array<{ __typename?: 'User', _id: string }> | null, orders: Array<{ __typename?: 'OrderDetail', user?: string | null, _id: string, subTotal: number }> } };
 
 export type CreateTableMutationVariables = Exact<{
   input?: InputMaybe<CreateTableInput>;
@@ -1566,7 +1566,7 @@ export type RecoverPasswordMutationVariables = Exact<{
 export type RecoverPasswordMutation = { __typename?: 'Mutation', recoverPassword?: { __typename?: 'RequestResponseOK', ok?: boolean | null } | null };
 
 export type RequestUserAccountCreationMutationVariables = Exact<{
-  input?: InputMaybe<RequestUserAccountInput>;
+  input: RequestUserAccountInput;
 }>;
 
 
@@ -3894,6 +3894,9 @@ export const GetSpacesFromBusinessDocument = gql`
       _id
       status
       tableNumber
+      tab {
+        _id
+      }
     }
   }
 }
@@ -4004,7 +4007,9 @@ export type RequestCloseTabMutationOptions = Apollo.BaseMutationOptions<RequestC
 export const GetTabByIdDocument = gql`
     query GetTabByID($input: GetById!) {
   getTabByID(input: $input) {
+    checkout
     _id
+    status
     admin
     users {
       _id
@@ -4022,6 +4027,7 @@ export const GetTabByIdDocument = gql`
       quantity
       subTotal
       product {
+        _id
         imageUrl
         price
         name
@@ -4411,7 +4417,7 @@ export type RecoverPasswordMutationHookResult = ReturnType<typeof useRecoverPass
 export type RecoverPasswordMutationResult = Apollo.MutationResult<RecoverPasswordMutation>;
 export type RecoverPasswordMutationOptions = Apollo.BaseMutationOptions<RecoverPasswordMutation, RecoverPasswordMutationVariables>;
 export const RequestUserAccountCreationDocument = gql`
-    mutation RequestUserAccountCreation($input: RequestUserAccountInput) {
+    mutation RequestUserAccountCreation($input: RequestUserAccountInput!) {
   requestUserAccountCreation(input: $input) {
     ok
     url

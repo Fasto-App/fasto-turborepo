@@ -32,5 +32,6 @@
 	"selectedNumberOfGuests": "Enter number of guests",
 	"Delivered": "Delivered",
 	"Open": "Open",
-	"Pendent": "Pendent"
+	"Pendent": "Pendent",
+	"checkout": "Checkout"
 }

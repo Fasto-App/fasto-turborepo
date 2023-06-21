@@ -1,4 +1,4 @@
-import { TableStatus } from "../../gen/generated"
+import { TabStatus, TableStatus } from "../../gen/generated"
 import { TableStatusType } from "app-helpers"
 
 type statStruct = {
@@ -38,7 +38,7 @@ export const borderColor = (status?: TableStatusType) => {
   }
 }
 
-export const badgeScheme = (status?: TableStatus) => {
+export const badgeScheme = (status?: TableStatus | TabStatus) => {
   switch (status) {
     case "Occupied":
       return "danger"

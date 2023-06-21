@@ -1,7 +1,6 @@
 import React from "react"
-import { Box, Center, Heading } from "native-base"
+import { Box, Center, Heading, Pressable } from "native-base"
 import { AiOutlinePlus } from "react-icons/ai"
-import { Pressable } from "react-native"
 import { TableStatus } from "../../gen/generated"
 import { borderColor } from "./config"
 
