@@ -13,6 +13,7 @@ import { customerRoute } from '../../routes'
 import { showToast } from '../../components/showToast'
 import { getCause } from '../../apollo-client/ErrorLink'
 import { useTranslation } from 'next-i18next'
+import { getCustomerName, getCustomerPhone, setCustomerName, setCustomerPhone } from '../../localStorage/customerStorage'
 
 type JoinTabModalProps = {
   isOpen: boolean
@@ -46,8 +47,8 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
   const { control, formState, handleSubmit } = useForm({
     resolver: zodResolver(joinTabSchema),
     defaultValues: {
-      name: "",
-      phoneNumber: "",
+      name: getCustomerName() || "",
+      phoneNumber: getCustomerPhone() || "",
     },
   })
 
@@ -98,6 +99,9 @@ export const JoinTabModal = ({ isOpen, setModalVisibility }: JoinTabModalProps) 
         }
       }
     })
+
+    setCustomerName(data.name)
+    setCustomerPhone(data.phoneNumber)
 
     setModalVisibility(false)
 

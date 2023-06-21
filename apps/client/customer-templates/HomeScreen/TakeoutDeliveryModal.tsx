@@ -11,8 +11,7 @@ import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies'
 import { customerRoute } from '../../routes'
 import { useTranslation } from 'next-i18next'
-// import { texts } from './texts'
-// import { string } from 'zod'
+import { getCustomerName, getCustomerPhone, setCustomerName, setCustomerPhone } from '../../localStorage/customerStorage'
 
 const Config: SideBySideInputConfig = {
   name: {
@@ -46,8 +45,8 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
   const { control, formState, handleSubmit } = useForm({
     resolver: zodResolver(joinTabSchema),
     defaultValues: {
-      name: "",
-      phoneNumber: "",
+      name: getCustomerName() || "",
+      phoneNumber: getCustomerPhone() || "",
     },
   })
 
@@ -88,6 +87,9 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
         },
       },
     })
+
+    setCustomerName(name)
+    setCustomerPhone(phoneNumber)
 
     setModalVisibility()
 

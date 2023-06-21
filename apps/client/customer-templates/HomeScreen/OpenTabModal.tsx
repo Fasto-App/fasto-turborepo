@@ -11,6 +11,7 @@ import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies'
 import { customerRoute } from '../../routes'
 import { useTranslation } from 'next-i18next'
+import { getCustomerName, getCustomerPhone, setCustomerName, setCustomerPhone } from '../../localStorage/customerStorage'
 
 const array1to5 = Array.from({ length: 5 }, (_, i) => i + 1).map(
   (i) => ({ name: i.toString(), _id: i.toString() })
@@ -57,8 +58,8 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
   const { control, formState, watch, handleSubmit } = useForm({
     resolver: zodResolver(newTabSchema),
     defaultValues: {
-      name: "",
-      phoneNumber: "",
+      name: getCustomerName() || "",
+      phoneNumber: getCustomerPhone() || "",
       totalGuests: "1",
     },
   })
@@ -99,6 +100,9 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
         },
       },
     })
+
+    setCustomerName(name)
+    setCustomerPhone(phoneNumber)
 
     setModalVisibility()
 

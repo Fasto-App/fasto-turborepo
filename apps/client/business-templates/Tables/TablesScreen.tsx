@@ -212,7 +212,7 @@ export const TablesScreen = () => {
                 <HStack space={30} pb={"6"}>
                   <Heading alignSelf={"center"}>{t("tables")}</Heading>
                   <ButtonWithBadge
-                    onPress={() => setAddNewTableModalOpen(true)}
+                    onPress={() => setIsRequestModalOpen(true)}
                     badgeCount={pendingRequestsData?.getTabRequests.length}>
                     {t("requests")}
                   </ButtonWithBadge>
