@@ -1,6 +1,12 @@
 import { BusinessesScreen } from "../customer-templates/BusinessesScreen";
+import React from "react"
 
-export default BusinessesScreen
+// export default BusinessesScreen
+
+export default function Index() {
+
+  return <iframe src="html/index.html" width={"100%"} height={"100%"}></iframe>
+}
 
 // import React, { useEffect } from "react"
 // import Link from 'next/link';

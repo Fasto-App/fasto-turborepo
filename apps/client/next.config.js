@@ -42,20 +42,6 @@ const nextConfig = {
 		config.experiments = { ...config.experiments, topLevelAwait: true };
 		return config;
 	},
-	async rewrites() {
-		return {
-			beforeFiles: [
-				{
-					source: '/',
-					destination: '/html/index.html',
-				},
-				{
-					source: '/pt',
-					destination: '/html/index.html',
-				},
-			],
-		};
-	},
 };
 
 module.exports = withPlugins(
