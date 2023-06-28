@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text } from 'native-base'
-import { ProductCard, ProductTile } from '../../components/Product/Product'
+import { ProductCard, ProductTileWithCheckbox } from '../../components/Product/Product'
 import { useNumOfColumns } from '../../hooks'
 import { useProductMutationHook } from '../../graphQL/ProductQL'
 import { DeleteAlert } from '../../components/DeleteAlert'
@@ -37,6 +37,9 @@ function MenuProducts() {
 
   const { t } = useTranslation("businessMenu")
 
+
+  // todo: unnecessary memoization
+  // Getting all categories
   const { data } = useGetAllCategoriesByBusinessQuery();
   const allCategories = useMemo(() => data?.getAllCategoriesByBusiness ?? [], [data?.getAllCategoriesByBusiness])
 
@@ -171,12 +174,12 @@ function MenuProducts() {
     }
 
     return (
-      <ProductTile
+      <ProductTileWithCheckbox
         name={item.name}
         ctaTitle={"Edit Item"}
         imageUrl={item.imageUrl ?? ""}
         isChecked={isSelected}
-        onCheckboxClick={(selected) => setProductCheckbox(selected, item._id)}
+        onCheck={(selected) => setProductCheckbox(selected, item._id)}
         description={item.description}
       />)
   }, [categoryId, sectionMap, setProductCheckbox])
