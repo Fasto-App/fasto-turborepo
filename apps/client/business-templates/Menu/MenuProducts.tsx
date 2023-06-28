@@ -157,8 +157,6 @@ function MenuProducts() {
         ctaTitle={"Edit Item"}
         imageUrl={item.imageUrl ?? ""}
         name={item.name}
-        onPress={() => console.log("HELLO")}
-        singleButton={true}
       />)
   }, [])
 
@@ -322,7 +320,7 @@ function MenuProducts() {
             <Button
               w={"100"}
               colorScheme="tertiary"
-              isLoading={loadingDelete || loadingUpdate}
+              isLoading={loadingDelete || loadingUpdate || loadingQuery}
               onPress={async () => {
                 console.log(sectionMap)
                 const newSections: { category: string, products: string[] }[] = []
@@ -337,6 +335,8 @@ function MenuProducts() {
                 for (const [key, value] of sectionMap.entries()) {
                   // array width all the products that are selected
                   const selectedProducts = Array.from(value.keys()).filter(productKey => value.get(productKey))
+                  if (!key) continue;
+
                   newSections.push({ category: key, products: selectedProducts as string[] })
                 }
 

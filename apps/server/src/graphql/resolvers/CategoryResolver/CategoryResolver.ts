@@ -1,6 +1,5 @@
 import { Ref } from "@typegoose/typegoose";
-import { Connection } from "mongoose"
-import { CategoryModel, Category, BusinessModel, ProductModel, IUserModel, MenuModel, Section, SectionModel } from "../../../models";
+import { CategoryModel, Category, BusinessModel, ProductModel, MenuModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateCategoryInput, UpdateCategoryInput } from "./types";
@@ -179,29 +178,13 @@ const updateCategory = async (_parent: any, { input }: { input: UpdateCategoryIn
 
 // delete category
 const deleteCategory = async (_parent: any, args: { id: string }, { db, business }: Context) => {
-
     if (!business) throw ApolloError("NotFound")
-    const Category = CategoryModel(db);
-    const category = await Category.findById(args.id);
-
+    const category = await CategoryModel(db).findById(args.id);
     if (!category) throw ApolloError('NotFound')
 
-    // if the category has products, delete them. or at least set them to null
-    const products = await ProductModel(db).find({ category: category._id })
-    if (products.length > 0) {
-        products.forEach(async product => {
-            product.category = null
-            await product.save()
-        })
-    }
-
-    if (category.parentCategory) throw ApolloError('BadRequest')
-
-    await category.remove();
-
-    const section = await SectionModel(db).findOne({ category: category._id })
-
-    await section?.remove()
+    await MenuModel(db).updateMany({}, { $pull: { sections: { categories: category._id } } })
+    await ProductModel(db).deleteMany({ category: category._id })
+    await category.deleteOne();
 
     return { ok: true }
 };

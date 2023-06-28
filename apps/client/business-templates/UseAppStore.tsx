@@ -21,7 +21,7 @@ interface AppState {
 }
 
 const useAppStore = create<AppState>()(
-  (
+  (devtools(
     (set, get) => ({
       networkState: "idle",
       category: null,
@@ -42,7 +42,7 @@ const useAppStore = create<AppState>()(
         isEditingMenu: false
       }))
     })
-  )
+  ))
 )
 
 export { useAppStore }

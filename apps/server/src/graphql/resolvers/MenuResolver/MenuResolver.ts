@@ -79,7 +79,6 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
     if (!user) throw Error('User not found');
     if (!business) throw Error('Business not found');
 
-    // const Section = SectionModel(db);
     const Product = ProductModel(db);
     const Menu = MenuModel(db)
     const Category = CategoryModel(db);
@@ -217,14 +216,16 @@ const getSectionsByMenu = async (_parent: any, args: any, { db }: { db: Connecti
 
 const getProductsBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
     const Product = ProductModel(db);
-    const products = await Product.find({ _id: { $in: _parent.products } })
-    return products;
+    if (!_parent.products.length) return []
+
+    return await Product.find({ _id: { $in: _parent.products } })
 }
 
 const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
     const Category = CategoryModel(db);
-    const category = await Category.findById(_parent.category)
-    return category;
+    if (!_parent.category) return null
+
+    return await Category.findById(_parent.category)
 }
 
 const MenuResolver = {

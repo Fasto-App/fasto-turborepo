@@ -17,7 +17,6 @@ import { useTranslation } from 'next-i18next';
 type ProductTileProps = {
 	_id?: string;
 	onPress?: () => void;
-	singleButton?: boolean;
 	ctaTitle: string;
 	name: string;
 	imageUrl?: string;
@@ -43,7 +42,7 @@ const Price = ({ price }: { price: number }) => (
 		{`$${(price / 100).toFixed(2)}`}
 	</Text>)
 
-const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton }: ProductCardProps) => {
+const ProductCard = ({ name, price, imageUrl, description, onPress }: ProductCardProps) => {
 	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
@@ -74,12 +73,10 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 				<Text fontWeight="400" textAlign={"center"} flex={1}>
 					{formattedDescriptions}
 				</Text>
-				<VStack alignItems="center" space={2} justifyContent="space-between" pb={2}>
-					{singleButton ?? <Price price={price} />}
-					<HStack alignItems="center" space={2} justifyContent="space-between">
-						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{t("edit")}</Button>
-					</HStack>
-				</VStack>
+				<HStack alignItems="center" space={2} justifyContent="center">
+					<Price price={price} />
+					{onPress ? <Button w={"100"} colorScheme="tertiary" onPress={onPress}>{t("edit")}</Button> : null}
+				</HStack>
 			</Stack>
 		</Box>)
 };
