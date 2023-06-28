@@ -184,36 +184,6 @@ function MenuProducts() {
       />)
   }, [categoryId, sectionMap, setProductCheckbox])
 
-
-  const renderListCard = useCallback(() => {
-    return (
-
-      <FlatList
-        key={numColumns}
-        data={productsFiltereOnMenu}
-        numColumns={numColumns}
-        renderItem={renderProductCard}
-        keyExtractor={(item) => `${item?._id}`}
-        ItemSeparatorComponent={() => <Box height={"4"} />}
-        ListEmptyComponent={<Text>{t("emptyProducts")}</Text>}
-      />
-
-    )
-  }, [numColumns, productsFiltereOnMenu, renderProductCard, t])
-
-  const renderListTile = useCallback(() => {
-    return (
-      <FlatList
-        key={numColumns}
-        data={productsFiltereByCategory}
-        numColumns={numColumns}
-        renderItem={renderProductTile}
-        keyExtractor={(item) => `${item?._id}`}
-        ItemSeparatorComponent={() => <Box height={"4"} />}
-      />
-    )
-  }, [numColumns, productsFiltereByCategory, renderProductTile])
-
   const onEditMEnu = useCallback(() => {
     const sectionMap = new Map()
     const selectedMenuSections = menusData?.getAllMenusByBusinessID.find(menu => menu?._id === menuId)?.sections ?? []
@@ -274,6 +244,8 @@ function MenuProducts() {
           }
 
         </HStack>
+
+        {/* Categories */}
         <ScrollView flex={1} horizontal>
           {(isEditingMenu ? allCategories : selectedCategories).map((category) => (
             <Button
@@ -297,6 +269,7 @@ function MenuProducts() {
       <Box flex={1} p={"4"}>
         {isEditingMenu ?
           <>
+            {/* TODO: SELECT ALL */}
             {false ?? <Checkbox
               value="Select All"
               my="1"
@@ -304,11 +277,26 @@ function MenuProducts() {
               alignSelf={"flex-end"}>
               Select All
             </Checkbox>}
-            {renderListTile()}
+            <FlatList
+              key={numColumns}
+              data={productsFiltereByCategory}
+              numColumns={numColumns}
+              renderItem={renderProductTile}
+              keyExtractor={(item) => `${item?._id}`}
+              ItemSeparatorComponent={() => <Box height={"4"} />}
+            />
             { }
           </>
           :
-          renderListCard()}
+          <FlatList
+            key={numColumns}
+            data={productsFiltereOnMenu}
+            numColumns={numColumns}
+            renderItem={renderProductCard}
+            keyExtractor={(item) => `${item?._id}`}
+            ItemSeparatorComponent={() => <Box height={"4"} />}
+            ListEmptyComponent={<Text>{t("emptyProducts")}</Text>}
+          />}
       </Box>
       {isEditingMenu ?
         <HStack justifyContent="space-between">
