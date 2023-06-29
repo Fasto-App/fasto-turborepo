@@ -25,21 +25,21 @@ export const MenuScreen = () => {
       }
     },
     onCompleted: (data) => {
-      if (data.getClientMenu.sections) {
+      if (data.getClientMenu?.sections) {
         setSelectedCategory(data.getClientMenu.sections[0].category._id)
       }
     }
   });
 
   const formatToSectionData = useMemo(() => {
-    if (!data?.getClientMenu.sections) return []
+    if (!data?.getClientMenu?.sections) return []
     return data?.getClientMenu.sections.map((section) => {
       return {
         title: section.category,
         data: section.products
       }
     })
-  }, [data?.getClientMenu.sections])
+  }, [data?.getClientMenu?.sections])
 
   useEffect(() => {
     if (selectedCategory && scrollViewRef.current) {
