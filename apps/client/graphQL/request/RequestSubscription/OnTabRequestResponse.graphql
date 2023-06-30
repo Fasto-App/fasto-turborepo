@@ -1,0 +1,13 @@
+subscription OnTabRequestResponse {
+	onTabRequestResponse {
+		_id
+		requestor {
+			_id
+		}
+		admin {
+			_id
+		}
+		status
+		tab
+	}
+}

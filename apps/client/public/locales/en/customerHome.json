@@ -1,0 +1,16 @@
+{
+	"openNewTab": "Open a New Tab",
+	"joinTab": "Join a Tab",
+	"viewMenu": "View Menu",
+	"takeoutOrDelivery": "Takeout or Delivery",
+	"cancel": "Cancel",
+	"requestTab": "Request a Tab",
+	"yourAboutToJoin": "You are about to join {{name}} tab",
+	"join": "Join",
+	"scanTheCode": "Scan the code to join the tab",
+	"pleaseScanAValidCode": "Please, scan a valid code",
+	"continue": "Continue",
+	"guestName": "Guest Name",
+	"phoneNumber": "Phone Number",
+	"totalGuests": "Total Guests"
+}

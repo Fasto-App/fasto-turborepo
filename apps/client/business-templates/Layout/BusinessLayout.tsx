@@ -1,15 +1,16 @@
 
 import React, { useEffect, useState } from 'react';
-import { Box, useBreakpointValue } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { useBreakpointValue } from 'native-base';
 import { BusinessScreenContainer } from '../../components/atoms/BusinessScreenContainer';
-import { colors } from '../../theme/colors';
 import { BusinessNavigationTab } from './BusinessNavigationTab';
-import { AppBar } from '../../components/AppBar/AppBar';
-import router from 'next/router';
-import { BUSINESS_ADMIN } from '../../routes';
+import { useRouter } from 'next/router';
+import { BUSINESS_ADMIN, BusinessRouteKeys, businessPathName } from '../../routes';
+import { analytics } from '../../firebase/init';
+import { logEvent } from 'firebase/analytics';
 
 const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
+	const router = useRouter();
+
 	const [hasMounted, setHasMounted] = useState(false);
 	const display = useBreakpointValue({
 		base: false,
@@ -23,23 +24,22 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 
 	useEffect(() => {
 		setHasMounted(true);
-	}, []);
+
+		analytics && logEvent(analytics, 'page_view', {
+			app: 'business',
+			page_title: businessPathName[router.pathname as BusinessRouteKeys] ?? router.pathname,
+			page_path: router.pathname,
+		});
+	}, [router.pathname]);
 
 	if (!hasMounted) {
 		return null;
 	}
 
-	// if (!isAdminRoute) return null;
 	return (
 		<BusinessScreenContainer>
 			{shouldShowSideBar ? <BusinessNavigationTab /> : null}
-			{/* <Box style={styles.rightContainer}> */}
-			{/* {isAdminRoute && 
-				<Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"}/>
-					<AppBar />
-				</Box>} */}
 			{children}
-			{/* </Box> */}
 		</BusinessScreenContainer>
 	);
 };

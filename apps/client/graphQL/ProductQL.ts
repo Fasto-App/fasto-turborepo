@@ -1,4 +1,5 @@
-import { useAppStore } from "../business-templates/UseAppStore";
+import { showToast } from "../components/showToast";
+import { useTranslation } from "next-i18next";
 import {
   useGetAllProductsByBusinessIdQuery,
   useCreateProductMutation,
@@ -8,16 +9,14 @@ import {
 } from "../gen/generated";
 
 
-export const useProductMutationHook = (useAddProductButton = false) => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
-
+export const useProductMutationHook = () => {
   // READ
   const {
     data: allProducts,
     loading: getProductsIsLoading
   } = useGetAllProductsByBusinessIdQuery();
 
-
+  const { t } = useTranslation("businessCategoriesProducts");
 
   const [createProduct,
     {
@@ -28,11 +27,16 @@ export const useProductMutationHook = (useAddProductButton = false) => {
     }
   ] = useCreateProductMutation({
     onCompleted: (data) => {
-      setNetworkState("success")
+      showToast({
+        message: t("productCreated")
+      })
 
     },
-    onError: (error) => {
-      setNetworkState("error")
+    onError: () => {
+      showToast({
+        status: "error",
+        message: t("productCreatedError"),
+      })
     },
     refetchQueries: [GetAllProductsByBusinessIdDocument]
   });
@@ -40,13 +44,19 @@ export const useProductMutationHook = (useAddProductButton = false) => {
 
   const [deleteProduct, {
     data: productDeleted,
-    reset: resetDeleteProduct
+    reset: resetDeleteProduct,
+    loading: deleteProductIsLoading,
   }] = useDeleteProductMutation({
-    onCompleted: (data) => {
-      setNetworkState("success")
+    onCompleted: () => {
+      showToast({
+        message: t("productDeleted"),
+      })
     },
-    onError: (error) => {
-      setNetworkState("error")
+    onError: () => {
+      showToast({
+        status: "error",
+        message: t("productDeletedError"),
+      })
     },
     refetchQueries: [GetAllProductsByBusinessIdDocument]
   });
@@ -54,13 +64,19 @@ export const useProductMutationHook = (useAddProductButton = false) => {
   // MARK UPDATE
   const [updateProduct,
     { reset: resetUpdateProduct,
+      loading: updateProductIsLoading,
       data: productUpdated, }] =
     useUpdateProductByIdMutation({
-      onCompleted: (data) => {
-        setNetworkState("success")
+      onCompleted: () => {
+        showToast({
+          message: t("productUpdated"),
+        })
       },
-      onError: (error) => {
-        setNetworkState("error")
+      onError: () => {
+        showToast({
+          status: "error",
+          message: t("productUpdatedError"),
+        })
       },
       refetchQueries: [GetAllProductsByBusinessIdDocument]
     });
@@ -70,7 +86,7 @@ export const useProductMutationHook = (useAddProductButton = false) => {
     createProduct,
     createProductIsLoading,
     deleteProduct,
-    loadingProduct: createProductIsLoading || getProductsIsLoading,
+    loadingProduct: createProductIsLoading || getProductsIsLoading || updateProductIsLoading || deleteProductIsLoading,
     updateProduct,
     productError: isProductError?.message,
     productUpdated,

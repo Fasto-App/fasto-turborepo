@@ -1,0 +1,13 @@
+mutation MakeCheckoutFullPayment($input: MakeCheckoutFullPaymentInput!) {
+	makeCheckoutFullPayment(input: $input) {
+		_id
+		paid
+		totalPaid
+		total
+		tip
+		tax
+		tab
+		subTotal
+		status
+	}
+}

@@ -1,6 +1,7 @@
 
 import React from "react"
 import { Avatar, Box, VStack, Text, HStack, Button, Badge } from "native-base";
+import { useTranslation } from "next-i18next";
 
 export const BorderTile: React.FC<{ width: string | number }> = ({ children, ...props }) => {
   return (
@@ -41,6 +42,8 @@ export const EmployeeTile = ({
   ctaTitle,
   isPending
 }: EmployeeTileProps) => {
+  const { t } = useTranslation("businessSettings")
+
   return (
     <BorderTile width={420}>
       <HStack alignItems="center"
@@ -55,7 +58,7 @@ export const EmployeeTile = ({
               {name}
             </Text>
             {isPending ? <Badge ml={"4"} colorScheme="warning" alignSelf="center" variant={"outline"}>
-              Pending
+              {t("pending")}
             </Badge> : null}
           </Box>
           <Text color="coolGray.600" bold>

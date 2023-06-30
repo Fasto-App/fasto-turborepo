@@ -9,42 +9,40 @@ import {
 } from "../utils"
 import { Connection } from "mongoose"
 import { Context } from "../types";
-import { UserInputError } from "apollo-server-express";
 import { BusinessModel } from "../../../models/business";
-import { typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation, ResetPasswordSchemaInput, CreateEmployeeAccountInput, createEmployeeAccountSchema } from "app-helpers";
+import { typedKeys, SignUpSchemaInput, CreateAccountField, createAccountSchema, AccountInformation, ResetPasswordSchemaInput, CreateEmployeeAccountInput, createEmployeeAccountSchema, loginSchema, signUpSchema } from "app-helpers";
 import {
   sendWelcomeEmail,
   sendResetPasswordEmail,
 } from "../../../email-tool";
 import { uploadFileS3Bucket } from "../../../s3/s3";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { MutationResolvers } from "../../../generated/graphql";
 
 const hashPassword = (password: string) => {
   const salt = bcrypt.genSaltSync(10);
   return bcrypt.hashSync(password, salt);
 }
 
-export const requestUserAccountCreation = async (_parent: any,
-  { input }: { input: SignUpSchemaInput },
-  { db }: Context) => {
+export const requestUserAccountCreation: MutationResolvers["requestUserAccountCreation"] = async (_parent,
+  { input },
+  { db }) => {
 
-  if (!validateEmail(input.email)) {
-    throw new UserInputError("Invalid email");
-  }
+  const { email } = signUpSchema.parse(input)
 
   const Session = SessionModel(db)
   const User = UserModel(db)
-  const user = await User.findOne({ email: input.email })
+  const user = await User.findOne({ email })
 
   if (user) throw new Error("An account with this email already exists");
 
   let newSession;
 
-  const existingSession = await Session.findOne({ email: input.email })
+  const existingSession = await Session.findOne({ email })
 
   if (!existingSession) {
     newSession = await Session.create({
-      email: input.email,
+      email,
     })
   } else {
     newSession = existingSession
@@ -62,7 +60,7 @@ export const requestUserAccountCreation = async (_parent: any,
     if (!token) throw new Error("Token not found");
 
     return await sendWelcomeEmail({
-      email: input.email,
+      email,
       token,
     })
   } catch (err) {
@@ -79,7 +77,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
     const Business = BusinessModel(db)
     const findSession = await Session.findOne({ email: validInput.email })
 
-    if (!findSession) throw new UserInputError('Session not found. Check you email again or request a new access token.');
+    if (!findSession) throw ApolloError('NotFound', 'Session not found. Check you email again or request a new access token.');
 
     const hashedPassword = hashPassword(validInput.password)
     const User = UserModel(db)
@@ -88,6 +86,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
       name: validInput.name,
       email: validInput.email.toLowerCase(),
       password: hashedPassword,
+      isGuest: false,
     })
 
     const savedUser = await user.save()
@@ -125,20 +124,15 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
 
 
 // Enter credentials to get existing user
-// TODO: Add email verification from ZOD
 export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: Connection }) => {
-  const { email, password } = input
-
-  if (!validateEmail(email)) {
-    throw ApolloError('BadRequest', 'Invalid email bitchass')
-  }
+  const { email, password } = loginSchema.parse(input)
 
   const User = UserModel(db)
   const user = await User.findOne({ email })
 
-  if (!user) throw new Error("User not found")
+  if (!user || !user.password) throw new Error("User not found")
 
-  const isPasswordMatch = await bcrypt.compare(password, user.password as string);
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) throw new Error("User not found")
 
   const allBusiness = typedKeys(user.businesses)
@@ -305,6 +299,7 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
       name,
       email,
       password: hashedPassword,
+      isGuest: false,
       businesses: {
         [businessFound._id]: {
           privilege,

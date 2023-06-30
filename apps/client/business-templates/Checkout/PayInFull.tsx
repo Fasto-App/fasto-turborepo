@@ -1,23 +1,27 @@
 import { formatAsPercentage, getPercentageOfValue } from 'app-helpers'
-import { Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
-import React, { useCallback, useMemo } from 'react'
-import { FDSSelect } from '../../components/FDSSelect'
+import { Box, Button, Center, Divider, Heading, HStack, Input, Text, VStack } from 'native-base'
+import React, { SetStateAction, useCallback, useMemo } from 'react'
+import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { parseToCurrency } from 'app-helpers'
-import { Percentages, percentages, useCheckoutStore } from './checkoutStore'
-import { texts } from './texts'
+import { Percentages, percentages, percentageSelectData, useCheckoutStore, useComputedChekoutStore } from './checkoutStore'
 import { Checkout } from './types'
-import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
+import { GetCheckoutByIdDocument, useGetTabCheckoutByIdQuery, useMakeCheckoutFullPaymentMutation, useMakeCheckoutPaymentMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import { SummaryRow } from './Checkout'
+import { showToast } from '../../components/showToast'
 
 export const PayInFull = ({
   subTotal,
   tax,
-}: Checkout) => {
+  setSelectedOption,
+}: Checkout & { setSelectedOption: (value: React.SetStateAction<"splitBill" | "success" | "payFull">) => void }) => {
 
   const route = useRouter()
   const { tabId, checkoutId } = route.query
 
   const [selectedUser, setSelectedUser] = React.useState<string>()
+  const { t } = useTranslation("businessCheckout")
 
   const { data } = useGetTabCheckoutByIdQuery({
     skip: !tabId,
@@ -31,10 +35,13 @@ export const PayInFull = ({
     },
   })
 
-  const allUsersFromTab = useMemo(() => data?.getTabByID?.users?.map(user => user._id) ?? [], [data?.getTabByID?.users])
+  const allUsersFromTab = useMemo(() => data?.getTabByID?.users?.map(user => ({
+    _id: user._id,
+    value: user._id
+  })) ?? [], [data?.getTabByID?.users])
 
 
-  const { tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
+  const { total, tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
     tip: state.tip,
     discount: state.discount,
     setSelectedTip: state.setSelectedTip,
@@ -45,43 +52,28 @@ export const PayInFull = ({
     customDiscount: state.customDiscount,
     setCustomTip: state.setCustomTip,
     setCustomDiscount: state.setCustomDiscount,
+    total: state.total,
   }))
 
-  const formatedTip = selectedTip === "Custom" ? "Custom" : formatAsPercentage(tip)
-  const formatedDiscount = selectedDiscount === "Custom" ? "Custom" : formatAsPercentage(discount)
-  const tipFieldValue = selectedTip === "Custom" ?
-    parseToCurrency(customTip) :
-    parseToCurrency(getPercentageOfValue(subTotal, tip))
-  const discountValue = getPercentageOfValue(subTotal, discount)
+  const {
+    absoluteTotal,
+    tipCalculation,
+    discountCalculation,
+  } = useComputedChekoutStore()
 
-  const discountFieldValue = selectedDiscount === "Custom" ?
-    parseToCurrency(customDiscount) :
-    parseToCurrency(discountValue)
+  const [makeCheckoutPayment, { loading }] = useMakeCheckoutFullPaymentMutation({
+    onCompleted: (data) => {
+      if (data.makeCheckoutFullPayment.paid) {
+        setSelectedOption("success")
+      }
+    },
+    onError: (error) => {
+      showToast({
+        message: "error.message",
+        status: "error"
+      })
 
-  const total = useMemo(() => {
-    const discountAmount = getPercentageOfValue(subTotal, discount)
-    const tipAmount = getPercentageOfValue(subTotal, tip)
-
-    return (subTotal ?? 0) - discountAmount + tipAmount
-  }, [subTotal, tip, discount])
-
-  const handleDiscountChange = (value: string) => {
-    const text = value.replace(/[$,.]/g, '')
-    const convertedValue = Number(text)
-    if (Number.isInteger(convertedValue)) {
-      setCustomDiscount(convertedValue, subTotal)
-    }
-  }
-
-  const handleTipChange = (value: string) => {
-    const text = value.replace(/[$,.]/g, '')
-    const convertedValue = Number(text)
-    if (Number.isInteger(convertedValue)) {
-      setCustomTip(convertedValue, subTotal)
-    }
-  }
-
-  const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
+    },
     refetchQueries: [{
       query: GetCheckoutByIdDocument,
       variables: {
@@ -93,7 +85,8 @@ export const PayInFull = ({
   })
 
   const handlePay = useCallback(async () => {
-    if (!selectedUser) return
+    if (!selectedUser) throw new Error("No user selected")
+
     await makeCheckoutPayment({
       variables: {
         input: {
@@ -110,58 +103,78 @@ export const PayInFull = ({
 
   return (
     <Center>
-      <Heading size={"2xl"} p={4}>
-        {texts.checkout}
-      </Heading>
-      <VStack w={"70%"} minW={"lg"} space={4}>
-        <Divider />
+      <VStack w={"full"} minW={"lg"} space={4}>
+        <SummaryRow label={t("subtotal")} value={parseToCurrency(subTotal)} />
+        <SummaryRow label={t("feesAndTax")} value={parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)} />
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.subtotal}</Text>
-          <Text fontSize={"2xl"}>{parseToCurrency(subTotal)}</Text>
-        </HStack>
-        <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.feesAndTax}</Text>
-          <Text fontSize={"2xl"}>{parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)}
-          </Text>
-        </HStack>
-        <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.discount}</Text>
+          <Text fontSize={"xl"}>{t("discount")}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
-              array={percentages}
-              selectedValue={formatedDiscount}
+              w={100} h={10}
+              array={percentageSelectData}
+              selectedValue={selectedDiscount}
               setSelectedValue={(string) => setSelectedDiscount(string as Percentages)}
             />
-            <Input
-              h={"6"}
-              w={100}
-              value={discountFieldValue}
-              isDisabled={selectedDiscount === "Custom" ? false : true}
-              textAlign={"right"}
-              onChangeText={handleDiscountChange}
-            />
+            {selectedDiscount === "Custom" ?
+              <Input
+                w={100} h={10}
+                fontSize={"lg"}
+                textAlign={"right"}
+                value={(customDiscount / 100)
+                  .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                onChangeText={(value) => {
+                  const text = value.replace(/[$,.]/g, '');
+                  const convertedValue = Number(text);
+
+                  if (isNaN(convertedValue)) return
+
+                  return setCustomDiscount(convertedValue)
+                }}
+              />
+              :
+              <Text
+                textAlign={"right"}
+                alignSelf={"center"}
+                w={100} fontSize={"lg"}>
+                {parseToCurrency(discountCalculation)}
+              </Text>}
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.tip}</Text>
+          <Text fontSize={"xl"}>{t("tip")}</Text>
           <HStack space={2} alignItems={"self-end"}>
             <FDSSelect
-              array={percentages}
-              selectedValue={formatedTip}
+              w={100} h={10}
+              array={percentageSelectData}
+              selectedValue={selectedTip}
               setSelectedValue={(string) => setSelectedTip(string as Percentages)}
             />
-            <Input
-              h={"6"}
-              value={tipFieldValue}
-              w={100}
-              isDisabled={selectedTip === "Custom" ? false : true}
-              textAlign={"right"}
-              onChangeText={handleTipChange}
-            />
+            {selectedTip === "Custom" ?
+              <Input
+                w={100} h={10}
+                fontSize={"lg"}
+                textAlign={"right"}
+                value={(customTip / 100)
+                  .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                onChangeText={(value) => {
+                  const text = value.replace(/[$,.]/g, '');
+                  const convertedValue = Number(text);
+
+                  if (isNaN(convertedValue)) return
+
+                  return setCustomTip(convertedValue)
+                }}
+              /> :
+              <Text
+                textAlign={"right"}
+                alignSelf={"center"}
+                w={100} fontSize={"lg"}>
+                {parseToCurrency(tipCalculation)}
+              </Text>}
           </HStack>
         </HStack>
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"2xl"}>{texts.paymentBy}</Text>
+          <Text fontSize={"xl"}>{t("paymentBy")}</Text>
           <FDSSelect
             array={allUsersFromTab}
             selectedValue={selectedUser}
@@ -170,19 +183,19 @@ export const PayInFull = ({
         </HStack>
         <Divider marginY={6} />
         <HStack justifyContent={"space-between"} px={12}>
-          <Text fontSize={"3xl"} bold>{texts.total}</Text>
-          <Text fontSize={"3xl"} bold>{parseToCurrency(total)}</Text>
+          <Text fontSize={"3xl"} bold>{t("total")}</Text>
+          <Text fontSize={"3xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
         </HStack>
-        <Button
-          isLoading={loading}
-          w={"full"}
-          mb={4}
-          mt={6}
-          colorScheme={"tertiary"}
-          onPress={handlePay}
-        >
-          {texts.pay}
-        </Button>
+        <Box alignItems={"center"} px={'24'} py={8}>
+          <Button
+            isLoading={loading}
+            w={"full"}
+            colorScheme={"tertiary"}
+            onPress={handlePay}
+          >
+            {t("pay")}
+          </Button>
+        </Box>
       </VStack>
     </Center>
   )

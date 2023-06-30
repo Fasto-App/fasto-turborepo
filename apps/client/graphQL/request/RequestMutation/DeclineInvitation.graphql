@@ -1,0 +1,10 @@
+mutation DeclineInvitation($input: GetById!) {
+	declineInvitation(input: $input) {
+		_id
+		business
+		totalGuests
+		names
+		status
+		tab
+	}
+}

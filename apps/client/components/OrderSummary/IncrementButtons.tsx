@@ -26,7 +26,7 @@ export const IncrementButtons = (props: IncrementButtonsProps) => {
   const { quantity, onPlusPress, onMinusPress, disabled } = props
 
   return (
-    <HStack space={2} opacity={disabled ? 50 : undefined}>
+    <HStack alignItems={"center"} space={2} opacity={disabled ? 50 : undefined}>
       <StyledIconButton type={"minus"} onPress={disabled ? () => { } : onMinusPress} />
       <Text
         fontSize={quantity > 99 ? 12 : 16}

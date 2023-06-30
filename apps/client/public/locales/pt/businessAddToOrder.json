@@ -1,0 +1,16 @@
+{
+	"back": "Voltar",
+	"table": "Mesa",
+	"total": "Total",
+	"sendToKitchen": "Enviar para a cozinha",
+	"patrons": "Clientes",
+	"people": "{{number}} Pessoas",
+	"tableNumber": "Mesa {{number}}",
+	"requestToCloseTabSuccessfully": "Pedido para fechar a conta enviado com sucesso",
+	"menu": "Menu",
+	"errorGettingTabData": "Erro ao obter dados da comanda",
+	"ordersCreatedSuccessfully": "Pedidos criados com sucesso",
+	"errorCreatingOrders": "Erro ao criar pedidos",
+	"add": "Adicionar",
+	"closeTab": "Fechar Conta"
+}

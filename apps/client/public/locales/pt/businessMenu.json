@@ -1,0 +1,17 @@
+{
+	"title": "Menu",
+	"emptyListText": "Comece a adicionar Menus clicando no botão acima.",
+	"editMenu": "Editar Menu",
+	"cancel": "Cancelar",
+	"save": "Salvar",
+	"delete": "Excluir",
+	"addMenu": "Adicionar Menu",
+	"menuName": "Nome do Menu",
+	"maxChar": "Máximo de 50 caracteres",
+	"errorMenu": "O nome do menu é obrigatório",
+	"add": "Adicionar",
+	"edit": "Editar",
+	"emptyProducts": "Para começar a adicionar produtos pressione 'Editar Menu'",
+	"deleteMenu": "Deletar Menu",
+	"deleteMenuBody": "Isso removerá todos os dados relacionados a este menu. Esta ação não pode ser revertida."
+}

@@ -1,4 +1,5 @@
-import { useAppStore } from "../business-templates/UseAppStore";
+import { useTranslation } from "next-i18next";
+import { showToast } from "../components/showToast";
 import {
   GetAllCategoriesByBusinessDocument,
   GetAllProductsByBusinessIdDocument,
@@ -9,12 +10,12 @@ import {
 } from "../gen/generated";
 
 export const useCategoryMutationHook = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
 
   const { data: allCategories,
     loading: getCategoriesIsLoading,
-    error: getCategoriesError,
   } = useGetAllCategoriesByBusinessQuery();
+
+  const { t } = useTranslation("businessCategoriesProducts");
 
   const [createCategory, {
     data: categoryCreated,
@@ -22,11 +23,16 @@ export const useCategoryMutationHook = () => {
     error: isCategoryError,
     reset: resetCreateCategories
   }] = useCreateCategoryMutation({
-    onCompleted: (data) => {
-      setNetworkState("success")
+    onCompleted: () => {
+      showToast({
+        message: t("categoryCreated"),
+      })
     },
-    onError: (error) => {
-      setNetworkState("error")
+    onError: () => {
+      showToast({
+        status: "error",
+        message: t("categoryCreatedError"),
+      })
     },
     update: (cache, { data }) => {
       // @ts-ignore
@@ -49,11 +55,16 @@ export const useCategoryMutationHook = () => {
     error: isCategoryUpdatedError,
   }] =
     useUpdateCategoryMutation({
-      onCompleted: (data) => {
-        setNetworkState("success")
+      onCompleted: () => {
+        showToast({
+          message: t("categoryUpdated"),
+        })
       },
-      onError: (error) => {
-        setNetworkState("error")
+      onError: () => {
+        showToast({
+          status: "error",
+          message: t("categoryUpdatedError"),
+        })
       },
       update: (cache, { data }) => {
         // @ts-ignore
@@ -79,11 +90,16 @@ export const useCategoryMutationHook = () => {
     data: categoryDeleted,
     reset: resetDeleteCategory
   }] = useDeleteCategoryMutation({
-    onCompleted: (data) => {
-      setNetworkState("success")
+    onCompleted: () => {
+      showToast({
+        message: t("categoryDeleted")
+      })
     },
     onError: (error) => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: t("categoryDeletedError"),
+      })
     },
     refetchQueries: [GetAllCategoriesByBusinessDocument, GetAllProductsByBusinessIdDocument]
   });

@@ -2,14 +2,29 @@ import React from "react"
 import { SplitType, parseToCurrency } from "app-helpers";
 import { HStack, Box, Checkbox, Input, Text, Button } from "native-base";
 import { FC } from "react";
-import { texts } from "./texts";
+import { useTranslation } from "next-i18next";
 
 const Cell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
   return (
     <Text
-      w={100}
+      w={150}
       alignSelf={"center"}
       textAlign={"center"}
+      fontSize={"lg"}
+      color={isDisabled ? "gray.300" : undefined}
+      bold={bold}
+    >
+      {children}
+    </Text>
+  )
+}
+
+const PaymentCell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
+
+  return (
+    <Text
+      w={150}
+      textAlign={"right"}
       fontSize={"lg"}
       color={isDisabled ? "gray.300" : undefined}
       bold={bold}
@@ -26,6 +41,8 @@ type HeaderProps = {
 }
 
 export const Header = ({ type, areAllUsersSelected, onCheckboxChange }: HeaderProps) => {
+  const { t } = useTranslation("businessCheckout")
+
   return (
     <HStack py={2}>
       <Box justifyContent={"center"}>
@@ -37,22 +54,22 @@ export const Header = ({ type, areAllUsersSelected, onCheckboxChange }: HeaderPr
         />
       </Box>
       <Cell bold>
-        {texts.patron}
+        {t("patron")}
       </Cell>
       <Cell bold>
-        {texts.subtotal}
+        {t("subtotal")}
       </Cell>
       {type === "ByPatron" ? <Cell bold>
-        {texts.sharedByTable}
+        {t("sharedByTable")}
       </Cell> : null}
       <Cell bold>
-        {texts.feesAndTax}
+        {t("feesAndTax")}
       </Cell>
       <Cell bold>
-        {texts.tip}
+        {t("tip")}
       </Cell>
       <Cell bold>
-        {texts.total}
+        {t("total")}
       </Cell>
       <Box flex={1} />
     </HStack>
@@ -71,8 +88,6 @@ type RowProps = {
   onCheckboxChange: (value: boolean) => void;
   customSubTotal: string;
   onCustominputChange: (value: string) => void;
-  onPress: () => void;
-  isLoading: boolean;
   hasUserPaid: boolean;
 }
 
@@ -86,13 +101,13 @@ export const Row = ({
   user,
   isUserSelected,
   customSubTotal,
-  isLoading,
-  onPress,
   onCheckboxChange,
   onCustominputChange,
   hasUserPaid
 }: RowProps) => {
-  return (<HStack>
+  const { t } = useTranslation("businessCheckout")
+
+  return (<HStack h={"10"}>
     <Box justifyContent={"center"}>
       <Checkbox
         isChecked={isUserSelected}
@@ -107,7 +122,10 @@ export const Row = ({
     {type === "Custom" ?
       <Input
         w={140}
-        h={"6"}
+        h={"8"}
+        isDisabled={!isUserSelected || hasUserPaid}
+        variant="underlined"
+        fontSize={"lg"}
         textAlign={"center"}
         onChangeText={onCustominputChange}
         value={isUserSelected ? customSubTotal : parseToCurrency(0)}
@@ -127,20 +145,41 @@ export const Row = ({
     <Cell isDisabled={!isUserSelected || hasUserPaid} bold key={"total"}>
       {isUserSelected ? total : parseToCurrency(0)}
     </Cell>
-    <Box flex={1} justifyContent={"center"} alignItems={"center"} >
+  </HStack >)
+}
+
+export const PaymentTile = (props: {
+  customer: string;
+  subtotal: string;
+  tip: string;
+  cta: string;
+  onPress: () => void;
+  loading?: boolean;
+  disable?: boolean;
+}) => {
+  const { customer,
+    subtotal,
+    tip,
+    cta,
+    onPress,
+    loading,
+    disable
+  } = props
+  return (
+    <HStack justifyContent={"space-between"} w={"100%"} py={1} opacity={disable ? 0.5 : 1}>
+      <PaymentCell>{customer}</PaymentCell>
+      <PaymentCell>{subtotal}</PaymentCell>
+      <PaymentCell>{tip}</PaymentCell>
       <Button
-        isDisabled={!isUserSelected || hasUserPaid}
-        isLoading={isLoading}
-        w={"80%"}
-        minW={"100"}
-        maxW={"400"}
-        fontSize={"2xl"}
-        h={"80%"}
+        w={"40"}
+        h={"10"}
         colorScheme={"tertiary"}
         onPress={onPress}
+        isLoading={loading}
+        isDisabled={disable}
       >
-        {hasUserPaid ? texts.paid : texts.pay}
+        {cta}
       </Button>
-    </Box>
-  </HStack >)
+    </HStack>
+  )
 }

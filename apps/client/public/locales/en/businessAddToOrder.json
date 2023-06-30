@@ -1,0 +1,16 @@
+{
+	"back": "Back",
+	"table": "Table",
+	"total": "Total",
+	"sendToKitchen": "Send to kitchen",
+	"patrons": "Guests",
+	"people": "{{number}} People",
+	"tableNumber": "Table {{number}}",
+	"requestToCloseTabSuccessfully": "Request to close tab successfully",
+	"menu": "Menu",
+	"errorGettingTabData": "Error getting tab data",
+	"ordersCreatedSuccessfully": "Orders created successfully",
+	"errorCreatingOrders": "Error creating orders",
+	"add": "Add",
+	"closeTab": "Close Tab"
+}

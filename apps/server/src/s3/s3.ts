@@ -14,7 +14,7 @@ export const uploadFileS3Bucket = async (file: any) => {
 
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME as string,
-    Key: filename + new Date().getMilliseconds(),
+    Key: new Date().toISOString() + filename,
     Body: stream,
     ContentType: mimetype,
   };

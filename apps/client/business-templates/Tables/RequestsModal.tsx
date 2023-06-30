@@ -1,10 +1,10 @@
 import { Box, Button, FlatList, Heading, HStack, Text } from 'native-base'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Icon } from '../../components/atoms/NavigationButton'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
-import { FDSSelect } from '../../components/FDSSelect'
+import { FDSSelect, SelectData } from '../../components/FDSSelect'
 import { GetSpacesFromBusinessDocument, GetTabRequestsDocument, RequestStatus, useAcceptTabRequestMutation, useDeclineTabRequestMutation } from '../../gen/generated'
-import { texts } from './texts'
+import { useTranslation } from 'next-i18next'
 
 type TileProps = {
   name?: string | null,
@@ -15,7 +15,7 @@ type TileProps = {
   onPress2: (_id: string) => void,
   isLoading?: boolean;
   status: RequestStatus;
-  array: string[];
+  array: SelectData[];
 }
 
 const refetchQueries = [{
@@ -35,8 +35,13 @@ const TileRequest = ({ name,
   status,
   array }: TileProps) => {
   const [selectedValue, setSelectedValue] = useState<string | undefined>(undefined)
+  const { t } = useTranslation("businessTables")
 
-  return (<HStack borderRadius={"md"} borderWidth={1} paddingY={1} paddingX={2}>
+  return (<HStack
+    borderRadius={"md"}
+    borderWidth={1}
+    paddingY={1}
+    paddingX={2}>
     <Box flex={1}>
       <Text fontSize={"20"}>{name}</Text>
       <HStack alignItems={"center"} space={1}>
@@ -47,7 +52,9 @@ const TileRequest = ({ name,
         <Icon type={"People"} size={"1.3em"} />
         <Text fontSize={"20"}>{people}</Text>
         <FDSSelect
+          w={"100"}
           array={array}
+          placeholder={t("table")}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
         />
@@ -66,12 +73,12 @@ const TileRequest = ({ name,
           isLoading={isLoading}
           isDisabled={!selectedValue}
           colorScheme={"tertiary"}
-          flex={1}>{texts.accept}</Button>
+          flex={1}>{t("accept")}</Button>
         <Button
           onPress={() => onPress2(_id)}
           isLoading={isLoading}
           colorScheme={"secondary"}
-          flex={1}>{texts.decline}</Button>
+          flex={1}>{t("decline")}</Button>
       </HStack>
     </Box>
   </HStack>
@@ -81,9 +88,10 @@ const TileRequest = ({ name,
 type RequestsModalProps = {
   isOpen: boolean,
   onClose: () => void,
-  availableTables?: string[];
+  availableTables?: SelectData[];
   requests?: any[];
   isLoading?: boolean;
+  subscribeToRequests?: () => void;
 }
 
 
@@ -93,7 +101,9 @@ export const RequestsModal = ({
   requests,
   isLoading,
   availableTables,
+  subscribeToRequests
 }: RequestsModalProps) => {
+  const { t } = useTranslation("businessTables")
 
   const [decline, { loading: loadingDecline }] = useDeclineTabRequestMutation({ refetchQueries })
   const [accept, { loading: loadingAccept }] = useAcceptTabRequestMutation({ refetchQueries })
@@ -119,12 +129,17 @@ export const RequestsModal = ({
     })
   }, [accept])
 
+  useEffect(() => {
+    subscribeToRequests?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <CustomModal
       size={"xl"}
       isOpen={isOpen}
       onClose={onClose}
-      HeaderComponent={<Heading>Pending Requests</Heading>}
+      HeaderComponent={<Heading>{t("pendingRequests")}</Heading>}
       ModalBody={
         <>
           {isLoading ? <Text>Loading</Text> : <FlatList
@@ -133,8 +148,8 @@ export const RequestsModal = ({
               <TileRequest
                 status={item.status}
                 _id={item._id}
-                name={item.admin.name}
-                phone={item.admin.phoneNumber}
+                name={item.requestor?.name || item.admin.name}
+                phone={item.requestor?.phoneNumber || item.admin.phoneNumber}
                 people={item.totalGuests}
                 onPress1={onAcceptPress}
                 onPress2={onDeclinePress}
@@ -143,11 +158,11 @@ export const RequestsModal = ({
               />}
             keyExtractor={(item, index) => index.toString()}
             ItemSeparatorComponent={() => <Box h={4} />}
-            ListEmptyComponent={() => <Text textAlign="center">No pending requests</Text>}
+            ListEmptyComponent={() => <Text textAlign="center">{t("noPendingRequests")}</Text>}
           />}
         </>
       }
-      ModalFooter={<Button onPress={onClose} flex={1} colorScheme={"gray"}>Close</Button>}
+      ModalFooter={<Button onPress={onClose} flex={1} colorScheme={"gray"}>{t("close")}</Button>}
     />
   )
 }

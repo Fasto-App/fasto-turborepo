@@ -17,8 +17,8 @@ import {
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
 import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
-import { Badge, Box, Pressable, Text } from "native-base";
-import { IoIosArrowBack } from "react-icons/io";
+import { Badge, Box, Pressable, Text, } from "native-base";
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line } from "react-icons/ri"
@@ -26,11 +26,12 @@ import { BiLogOutCircle } from "react-icons/bi"
 import { MdOutlineFrontHand } from "react-icons/md"
 import { BsTrash } from "react-icons/bs"
 import { RiUserSettingsLine } from "react-icons/ri"
-import { RiShoppingBag3Line } from "react-icons/ri"
 import { ImQrcode } from "react-icons/im"
 import { BsBag } from "react-icons/bs"
 import { BsPeopleFill } from "react-icons/bs"
 import { MdOutlinePhoneIphone } from "react-icons/md"
+import { AiFillStar, AiOutlineStar } from "react-icons/ai"
+import { HiOutlineClipboardList } from "react-icons/hi"
 
 type IconProps = {
   type: NavigationButtonType;
@@ -40,6 +41,16 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "ArrowUp":
+      return <IoIosArrowUp color={color} size={size} />;
+    case "ArrowDown":
+      return <IoIosArrowDown color={color} size={size} />;
+    case "ClipBoard":
+      return <HiOutlineClipboardList color={color} size={size} />;
+    case "StarFill":
+      return <AiFillStar color={color} size={size} />;
+    case "StarOutline":
+      return <AiOutlineStar color={color} size={size} />;
     case "Phone":
       return <MdOutlinePhoneIphone color={color} size={size} />;
     case "People":
@@ -142,12 +153,14 @@ const NavigationButton = ({
       {numNotifications ?
         <Badge
           position={"absolute"}
-          colorScheme="fuchsia" rounded="full" mr={-2} zIndex={1} variant="solid" alignSelf="flex-end" _text={{
-            fontSize: 8,
-            bold: true
+          backgroundColor={"black"}
+          rounded="full" mr={-3} zIndex={1} variant="solid" alignSelf="flex-end"
+          _text={{
+            fontSize: 12,
           }}>
           {numNotifications}
-        </Badge> : null}
+        </Badge>
+        : null}
       <Icon type={type} size={"2em"} color={color ?? selectedColor} />
       <Box w={"2"} />
       <Text

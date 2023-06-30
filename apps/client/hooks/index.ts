@@ -1,8 +1,13 @@
 import { useBreakpointValue } from "native-base";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getClientCookies, setClientCookies } from "../cookies/businessCookies";
-import { useGetBusinessByIdQuery, useGetClientInformationQuery, useGetTabByIdQuery, useGetTabRequestQuery } from "../gen/generated";
+import { clearClientCookies, getClientCookies } from "../cookies";
+import { RequestStatus, TabStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from "../gen/generated";
+import { customerRoute } from "../routes";
+import { showToast } from "../components/showToast";
+import { texts } from "./texts";
+import { getCause } from "../apollo-client/ErrorLink";
+import { useTranslation } from "next-i18next";
 
 export const useIsSsr = () => {
   const [isSsr, setIsSsr] = useState(true);
@@ -30,7 +35,10 @@ export const useUploadFileHook = () => {
 
 
   const handleFileOnChange = (evt: any) => {
-    const file = evt.target.files[0]
+    const file = evt?.target?.files?.[0]
+
+    console.log("handleFileOnChange")
+    console.log("file", file)
 
     if (!file) {
       setImageUrl("")
@@ -55,51 +63,53 @@ export const useUploadFileHook = () => {
   }
 }
 
-export const useGetTabRequest = () => {
-  const clientToken = getClientCookies("token")
+export const useGetClientSession = () => {
+  const route = useRouter()
+  const { businessId, checkoutId } = route.query
 
-  const data = useGetTabRequestQuery({
-    skip: !clientToken,
+  const token = getClientCookies(businessId as string)
+
+
+  return useGetClientSessionQuery({
+    skip: !token,
+    pollInterval: 1000 * 60, // 1 minute
     onCompleted: (data) => {
-      if (data.getTabRequest.status === "Accepted" && data.getTabRequest.tab) {
-        setClientCookies("tab", data.getTabRequest.tab)
+      // if the data has the request is successfull but the tab is not there
+      // then we need to get a new token
+      if (data.getClientSession.request.status === RequestStatus.Rejected) {
+        if (businessId) {
+          const business = typeof businessId === "string" ? businessId : businessId[0]
+
+          clearClientCookies(business)
+          return route.push({
+            pathname: customerRoute["/customer/[businessId]"],
+            query: {
+              businessId: business
+            }
+          })
+        }
+      }
+
+      if (!checkoutId && data.getClientSession.tab?.status === TabStatus.Pendent
+        && data.getClientSession.tab.checkout) {
+        return route.push({
+          pathname: customerRoute["/customer/[businessId]/checkout/[checkoutId]"],
+          query: {
+            businessId: businessId,
+            checkoutId: data.getClientSession.tab.checkout
+          }
+        })
+
       }
     },
-    onError: (error) => {
-      console.log("error", error)
-      // clear cache
-    },
   })
-
-  return data
-}
-
-export const useGetTabInformation = () => {
-  const tab = getClientCookies("tab")
-
-  // get the information of the tab and make a request
-  const data = useGetTabByIdQuery({
-    skip: !tab,
-    variables: {
-      input: {
-        _id: tab as string
-      },
-    },
-    onCompleted: (data) => {
-      console.log("data", data)
-    },
-    onError: (error) => {
-      console.log("error", error)
-      // clear cache
-    }
-  })
-
-  return data
 }
 
 export const useGetBusinessInformation = () => {
   const route = useRouter()
   const { businessId } = route.query
+
+  const { t } = useTranslation('common')
 
   const data = useGetBusinessByIdQuery({
     skip: !businessId,
@@ -112,23 +122,11 @@ export const useGetBusinessInformation = () => {
       console.log("data", data)
     },
     onError: (error) => {
-      console.log("error", error)
-      // clear cache
-    }
-  })
-
-  return data
-}
-
-export const useGetClientInformation = () => {
-  const data = useGetClientInformationQuery({
-    skip: !getClientCookies("token"),
-    onCompleted: (data) => {
-      console.log("data", data)
-    },
-    onError: (error) => {
-      console.log("error", error)
-      // clear cache
+      showToast({
+        message: t("thereWasAnError"),
+        subMessage: getCause(error),
+        status: "error"
+      })
     }
   })
 

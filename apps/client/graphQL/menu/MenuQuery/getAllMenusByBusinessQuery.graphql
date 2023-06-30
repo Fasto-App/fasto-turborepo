@@ -1,0 +1,20 @@
+query GetAllMenusByBusinessID {
+	getAllMenusByBusinessID {
+		_id
+		name
+		isFavorite
+		sections {
+			category {
+				_id
+				name
+			}
+			products {
+				_id
+				name
+				description
+				imageUrl
+				price
+			}
+		}
+	}
+}

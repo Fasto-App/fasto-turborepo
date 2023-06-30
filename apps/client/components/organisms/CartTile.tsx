@@ -1,21 +1,92 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { Box, HStack, Image, Pressable, Text } from "native-base";
+import React, { useCallback } from "react";
+import { Box, HStack, Image, Pressable, Text, } from "native-base";
 import { IncrementButtons } from "../OrderSummary/IncrementButtons";
-import { Icon } from "../atoms/NavigationButton";
-
-const uri = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
+import debounce from 'lodash/debounce';
+import { useUpdateItemFromCartMutation, useDeleteItemFromCartMutation, GetCartItemsPerTabDocument } from "../../gen/generated";
+import { showToast } from "../showToast";
+import { texts } from "./texts";
+import { useTranslation } from "react-i18next";
 
 export type CartTileProps = {
   index: number;
   name: string;
   price: string;
+  url: string;
+  quantity: number;
+  _id: string;
+  editable?: boolean;
+  navegateTo?: () => void;
 };
 
-const states = ["✅", "⏳"];
+const refetchQueries = [{
+  query: GetCartItemsPerTabDocument,
+}]
 
 export const CartTile = (props: CartTileProps) => {
-  const { name, index, price } = props;
+  const { name, index, price, quantity, url, _id, editable, navegateTo } = props;
+  const [localQuantity, setLocalQuantity] = React.useState(quantity || 1);
+
+  const { t } = useTranslation("common");
+
+  const [updateItem, { loading: loadingUpdate }] = useUpdateItemFromCartMutation({
+    refetchQueries: refetchQueries,
+    onCompleted: () => {
+      showToast({ message: t("itemUpdated") })
+    },
+    onError: (err) => {
+      showToast({
+        message: t("errorUpdatingItem"),
+        status: "error"
+      })
+    }
+  })
+
+  const [deleteitem, { loading: deleteLoading }] = useDeleteItemFromCartMutation({
+    refetchQueries: refetchQueries,
+    onCompleted: () => {
+      showToast({ message: t("itemDeleted") })
+    },
+    onError: (err) => {
+      showToast({
+        message: t("errorDeletingItem"),
+        status: "error"
+      })
+    }
+  })
+
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debounceditemUpdate = useCallback(debounce((qnt: number) => {
+    console.log("sending patch request");
+
+    updateItem({
+      variables: {
+        input: {
+          quantity: qnt,
+          cartItem: _id,
+        }
+      }
+    })
+
+  }, 1000), [])
+
+  const handleDeleteItem = () => {
+
+    deleteitem({
+      variables: {
+        input: {
+          cartItem: _id,
+        }
+      }
+    })
+  }
+
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity < 1) return;
+
+    setLocalQuantity(newQuantity);
+    debounceditemUpdate(newQuantity)
+  }
 
   return (
     <HStack
@@ -23,75 +94,43 @@ export const CartTile = (props: CartTileProps) => {
       p={2}
       backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
       justifyContent={"space-between"}
-      alignItems={"center"}>
-      <HStack space={2}>
-        <Box>
-          <Image
-            size={"xs"}
-            source={{ uri: uri }}
-            alt={""}
-            borderRadius={5}
-          />
-        </Box>
-        <Text alignSelf={"center"} maxW={100}>{name}</Text>
-      </HStack>
-
+      alignItems={"center"}
+      flex={1}
+    >
+      <Pressable onPress={navegateTo}>
+        <HStack space={2}>
+          <Box>
+            <Image
+              size={"xs"}
+              source={{ uri: url }}
+              alt={""}
+              borderRadius={5}
+            />
+          </Box>
+          <Text alignSelf={"center"} w={70}>{name}</Text>
+        </HStack>
+      </Pressable>
       <Text>{price}</Text>
-      <Box>
+      <HStack space={4}>
         <IncrementButtons
-          quantity={10}
-          onPlusPress={() => { }}
-          onMinusPress={() => { }}
+          quantity={localQuantity}
+          onPlusPress={() => handleQuantityChange(localQuantity + 1)}
+          onMinusPress={() => handleQuantityChange(localQuantity - 1)}
+          disabled={!editable || loadingUpdate || deleteLoading}
         />
-      </Box>
-      <Box style={{ flexDirection: "row" }}>
         <Pressable
+          isDisabled={!editable || deleteLoading || loadingUpdate}
+          _disabled={{ opacity: 0.5, }}
           backgroundColor={"tertiary.300"}
           borderRadius={"md"}
-          onPress={() => console.log("")}
+          onPress={handleDeleteItem}
           p={2}
         >
           <Text fontSize={"18"}>
             🗑
           </Text>
         </Pressable>
-      </Box>
-    </HStack>
-
-  );
-};
-
-export const PastOrdersTile = (props: CartTileProps) => {
-  const { name, index, price } = props;
-
-  return (
-    <HStack
-      borderRadius={"sm"}
-      p={2}
-      backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
-      justifyContent={"space-between"}
-      alignItems={"center"}>
-      <HStack space={2}>
-        <Box>
-          <Image
-            size={"xs"}
-            source={{ uri: uri }}
-            alt={""}
-            borderRadius={5}
-          />
-        </Box>
-        <Text alignSelf={"center"} maxW={100}>{name}</Text>
       </HStack>
-
-      <Text>{price}</Text>
-
-      <Text>{"x3"}</Text>
-
-      <Text fontSize={"18"}>
-
-        {index > 5 ? states[0] : states[1]}
-
-      </Text>
     </HStack>
 
   );

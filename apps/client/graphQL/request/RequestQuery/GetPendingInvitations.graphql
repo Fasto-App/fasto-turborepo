@@ -1,0 +1,15 @@
+query GetPendingInvitations {
+	getPendingInvitations {
+		_id
+		business
+		totalGuests
+		names
+		status
+		tab
+		requestor {
+			_id
+			name
+			phoneNumber
+		}
+	}
+}

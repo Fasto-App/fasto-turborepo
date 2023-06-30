@@ -1,19 +1,17 @@
 import React, { useCallback } from "react"
-import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import { Badge, Button, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { OrderDetail, Table, useGetAllMenusByBusinessIdQuery, useGetTabByIdQuery, useGetTableByIdQuery, User } from "../../gen/generated";
-import { useTabMutationHook } from "../../graphQL/TabQL";
+import { ControlledForm, RegularInputConfig } from "../../components/ControlledForm/ControlledForm";
+import { GetSpacesFromBusinessDocument, useCreateTabMutation, useGetTabByIdQuery, useGetTableByIdQuery } from "../../gen/generated";
 import { businessRoute } from "../../routes";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
 import * as z from "zod"
-import { useTableScreenStore } from "./tableScreenStore";
 import { CustomModal } from "../../components/CustomModal/CustomModal";
+import { useTranslation } from "next-i18next";
+import { showToast } from "../../components/showToast";
 
 const tableSchema = z.object({
   admin: z.string().optional(),
@@ -22,62 +20,34 @@ const tableSchema = z.object({
   }),
 })
 
-const TabConfig: RegularInputConfig = {
-  totalUsers: {
-    name: "totalUsers",
-    label: "Num Guests",
-    placeholder: "Select number of guests",
-    errorMessage: "Please, enter a number of guests",
-    helperText: "Number of guests",
-    formatOnChange: (value: string, fieldOnchange: (num: number) => void) => {
-      if (Number.isInteger(Number(value))) {
-        return fieldOnchange(Number(value))
-      }
-    }
-  },
-  admin: {
-    name: "admin",
-    label: "Admin",
-    placeholder: "Select an admin user",
-  },
-}
+type TableSchema = z.infer<typeof tableSchema>
 
-const { totalUsers, admin } = TabConfig
-
-const SideBySideTabConfig: SideBySideInputConfig = {
-  info: [{ totalUsers }, { admin }]
-}
-
-const texts = {
-  addNewItem: "Add New Item",
-  openTab: "Open a New Tab",
-  cancel: "Cancel",
-}
-
-
-export const TableModal = () => {
+export const NewTabModal = ({ tableId, setIsModalOpen }:
+  {
+    tableId?: string,
+    setIsModalOpen: () => void
+  }) => {
   const router = useRouter()
-  const { createTab } = useTabMutationHook();
 
-  const tableId = useTableScreenStore(state => state.tableChoosen)
-  const setTableChoosen = useTableScreenStore(state => state.setTableChoosen)
-  const { data } = useGetTableByIdQuery({
+  const { t } = useTranslation("businessTables")
+
+  const { data: tableData, loading } = useGetTableByIdQuery({
     skip: !tableId,
     variables: {
       input: {
-        _id: tableId!
+        _id: tableId as string
       }
     }
   })
 
-  const tableChoosen = data?.getTableById
-
-  // fetch to get information about the table
-  const isOcuppiedTable = tableChoosen?.status === "Occupied"
-  const isAvailableTable = tableChoosen?.status === "Available"
-  const isReservedTable = tableChoosen?.status === "Reserved"
-
-  const { data: menusData, loading: loadingGetMenus } = useGetAllMenusByBusinessIdQuery();
+  const SideBySideTabConfig: RegularInputConfig = {
+    totalUsers: {
+      name: "totalUsers",
+      label: t("numberOfGuests"),
+      placeholder: t("selectedNumberOfGuests"),
+      inputType: "Number",
+    }
+  }
 
   const {
     control,
@@ -93,90 +63,163 @@ export const TableModal = () => {
     resolver: zodResolver(tableSchema)
   })
 
-  const onSubmit = useCallback(async (data: any) => {
-    const menuId = menusData?.getAllMenusByBusinessID[0]._id
-
-    if (!menuId) throw ("Menu id is undefined")
-
-    switch (tableChoosen?.status) {
-      case "Available":
-        try {
-
-          if (!tableChoosen?._id) throw ("Table id is undefined")
-
-          const result = await createTab({
-            variables: {
-              input: {
-                table: tableChoosen?._id,
-                admin: data.admin,
-                totalUsers: data.totalUsers
-              }
-            }
-          })
-
-          router.push(businessRoute.add_to_order(`${result.data?.createTab._id}`, menuId))
-        } catch { }
-        break;
-
-      case "Occupied":
-        console.log(tableChoosen)
-        router.push(businessRoute.add_to_order(`${tableChoosen?.tab?._id}`, menuId))
-        break;
+  const [createTab] = useCreateTabMutation({
+    refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
+    onCompleted: (data) => {
+      router.push({
+        pathname: businessRoute["add-to-order"],
+        query: { tabId: data.createTab._id }
+      })
+    },
+    onError: (error) => {
+      showToast({
+        status: "error",
+        message: t("errorCreatingTab"),
+      })
     }
+  })
 
-  }, [createTab, menusData?.getAllMenusByBusinessID, router, tableChoosen])
+  const onSubmit = useCallback(async (data: TableSchema) => {
+    if (!tableData?.getTableById._id) throw ("Table id is undefined")
 
-  const onCancel = () => {
-    setTableChoosen(undefined)
-    reset()
-    clearErrors()
-  }
+    createTab({
+      variables: {
+        input: {
+          table: tableData?.getTableById?._id,
+          admin: data.admin,
+          totalUsers: data.totalUsers
+        }
+      }
+    })
+
+  }, [createTab, tableData?.getTableById._id])
+
+  if (!tableId) return null
 
   return (
-    <>
-      <DevTool control={control} />
+    <CustomModal
+      size={"lg"}
+      isOpen={!!tableId}
+      HeaderComponent={
+        <>
+          <Badge
+            mt={2}
+            width={'20'}
+            colorScheme={"success"}>
+            {t("Available")}
+          </Badge>
+        </>}
+      ModalBody={
+        <ControlledForm
+          control={control}
+          formState={formState}
+          Config={SideBySideTabConfig}
+        />
+      }
+      ModalFooter={
+        <Button.Group flex={1} justifyContent={"center"} space={4}>
+          <Button
+            flex={1}
+            w={"200px"}
+            variant="outline"
+            colorScheme="tertiary" onPress={setIsModalOpen}>
+            {t("cancel")}
+          </Button>
+          <Button flex={1} w={"200px"}
+            // @ts-ignore
+            onPress={handleSubmit(onSubmit)}
+            isLoading={loading}
+          >
+            {t("openTab")}
+          </Button>
+        </Button.Group>
+      }
+    />
+  )
+}
 
-      <CustomModal
-        size={isOcuppiedTable ? "full" : "lg"}
-        isOpen={!!tableChoosen}
-        HeaderComponent={
-          <>
-            <Text fontSize={"20"}>
-              {"Table " + tableChoosen?.tableNumber}
-            </Text>
-            <Badge mt={2} width={'20'} colorScheme={badgeScheme(tableChoosen?.status)}>
-              {tableChoosen?.status?.toUpperCase() ?? "AVAILABLE"}
-            </Badge>
-          </>}
-        ModalBody={
-          isOcuppiedTable ? <OccupiedModal
-            orders={tableChoosen?.tab?.orders}
-            users={tableChoosen?.tab?.users}
-          /> : isAvailableTable ?
-            <ControlledForm
-              control={control}
-              formState={formState}
-              Config={SideBySideTabConfig}
-            /> : isReservedTable ? <>
-              <Text>{"tableChoosen.reservation.name"}</Text>
-              <Text>{"tableChoosen.reservation.phone"}</Text>
-              <Text>{format(new Date(), "PPpp")}</Text>
-            </> : null
+export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
+  { tabId?: string, setIsModalOpen: () => void }) => {
+  const { t } = useTranslation("businessTables")
+
+  const router = useRouter()
+  const { data, loading } = useGetTabByIdQuery({
+    variables: {
+      input: {
+        _id: tabId as string
+      }
+    },
+    skip: !tabId,
+    onError: (error) => {
+      showToast({
+        status: "error",
+        message: "ERROR FETCHING TAB"//t("errorGettingTabData"),
+      })
+    }
+  })
+
+  const onSubmit = useCallback(async (d: any) => {
+    if (!data?.getTabByID?._id) throw new Error("Tab id is undefined")
+
+    if (data?.getTabByID?.status === "Pendent" && data?.getTabByID.checkout) {
+      router.push({
+        pathname: businessRoute["checkout/[checkoutId]"],
+        query: {
+          checkoutId: data.getTabByID.checkout,
+          tabId: data.getTabByID._id,
         }
-        ModalFooter={
-          <Button.Group flex={1} justifyContent={"center"} space={4}>
-            <Button w={"200px"} variant="outline" colorScheme="tertiary" onPress={onCancel}>
-              {texts.cancel}
-            </Button>
-            <Button w={"200px"}
-              onPress={isOcuppiedTable ? onSubmit : handleSubmit(onSubmit)}
-              isLoading={loadingGetMenus}
-            >
-              {isOcuppiedTable ? texts.addNewItem : texts.openTab}
-            </Button>
-          </Button.Group>
-        }
-      />
-    </>
+      })
+
+      return
+    }
+
+    router.push({
+      pathname: businessRoute["add-to-order"],
+      query: { tabId: data.getTabByID._id }
+    })
+
+  }, [data?.getTabByID._id, data?.getTabByID.checkout, data?.getTabByID?.status, router])
+
+  if (!tabId) return null
+
+  return (
+    <CustomModal
+      size={"full"}
+      isOpen={!!tabId}
+      HeaderComponent={
+        <>
+          <Text fontSize={"20"}>
+            {`${t("table")} ${1}`}
+          </Text>
+          <Badge
+            mt={2}
+            width={'20'}
+            colorScheme={badgeScheme(data?.getTabByID?.status)}>
+            {!!data?.getTabByID?.status && t(data?.getTabByID?.status)}
+          </Badge>
+        </>}
+      ModalBody={
+        <OccupiedModal
+          orders={data?.getTabByID?.orders}
+          users={data?.getTabByID?.users}
+        />
+      }
+      ModalFooter={
+        <Button.Group flex={1} justifyContent={"center"} space={4}>
+          <Button flex={1} w={"200px"}
+            variant="outline"
+            colorScheme="tertiary"
+            onPress={setIsModalOpen}>
+            {t("cancel")}
+          </Button>
+          <Button flex={1} w={"200px"}
+            onPress={onSubmit}
+            isLoading={loading}
+          >
+            {data?.getTabByID?.status === "Pendent" ? t("checkout") : t("addNewItem")}
+          </Button>
+        </Button.Group>
+      }
+    />
   )
 }

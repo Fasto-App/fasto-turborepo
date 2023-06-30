@@ -2,42 +2,36 @@ import { RegularInputConfig, SideBySideInputConfig } from "../../components/Cont
 import { businessLocationSchemaInputKeys, Privileges, typedKeys } from "app-helpers"
 import { InputProps } from "../../components/ControlledForm/ControlledInput";
 
-export const ManageLocationConfig: SideBySideInputConfig = {
+export const ManageLocationConfig: RegularInputConfig = {
   streetAddress: {
     isRequired: true,
     name: "street_name",
     label: "Street Name",
   },
-  complementAndPostal: [{
-    complement: {
-      name: "complement",
-      label: "Complement",
-    },
-  }, {
-    postalCode: {
-      name: "zipCode",
-      label: "Zip/Postal",
-      isRequired: true,
-    },
-  }],
+  complement: {
+    name: "complement",
+    label: "Complement",
+  },
+  postalCode: {
+    name: "zipCode",
+    label: "Zip/Postal",
+    isRequired: true,
+  },
   city: {
     name: "city",
     label: "City",
     isRequired: true,
   },
-  stateCountry: [{
-    stateOrProvince: {
-      name: "state",
-      label: "State",
-      isRequired: true,
-    }
-  }, {
-    country: {
-      name: "country",
-      label: "Country",
-      isRequired: true,
-    }
-  }],
+  stateOrProvince: {
+    name: "state",
+    label: "State",
+    isRequired: true,
+  },
+  country: {
+    name: "country",
+    label: "Country",
+    isRequired: true,
+  },
 };
 
 export const ManageAccountConfig: RegularInputConfig = {
@@ -118,25 +112,25 @@ export const ManageEmployeeConfig: SideBySideInputConfig = {
     label: "Name",
     placeholder: "Enter Name"
   },
-  rolePrivileges: [
-    {
-      jobTitle: {
-        name: "jobTitle",
-        label: "Job Title",
-        isRequired: true,
-        placeholder: "Enter Role",
-      }
-    }, {
-      privilege: {
-        name: "privilege",
-        label: "Privilege",
-        isRequired: true,
-        placeholder: "Choose a privilege",
-        inputType: "Select",
-        array: privilegesArray,
-      }
-    }
-  ],
+  // rolePrivileges: [
+  //   {
+  jobTitle: {
+    name: "jobTitle",
+    label: "Job Title",
+    isRequired: true,
+    placeholder: "Enter Role",
+  },
+  // }, {
+  privilege: {
+    name: "privilege",
+    label: "Privilege",
+    isRequired: true,
+    placeholder: "Choose a privilege",
+    inputType: "Select",
+    array: privilegesArray,
+  },
+  //   }
+  // ],
   email: {
     isRequired: true,
     name: "email",

@@ -61,11 +61,10 @@ const deleteTable = async (parent: any, args: any, { db, business }: Context) =>
 }
 
 // FIX: refactor this to return a tab by the ID
-const getOpenTabByTable = async (table: any, _: any, { db }: { db: Connection }) => {
-  return await TabModel(db).findOne({
-    table: table._id,
-    status: { $in: [TabStatus.Open, TabStatus.Pendent] }
-  })
+const getTabByTable = async (table: any, _: any, { db }: { db: Connection }) => {
+  if (!table.tab) return null
+
+  return await TabModel(db).findById(table.tab)
 }
 
 const getTableById = async (parent: any, { input }: any, { db }: { db: Connection }) => {
@@ -85,7 +84,7 @@ const TableResolverQuery = {
 const TableResolverMutation = { deleteTable, createTable }
 
 const TableResolver = {
-  getOpenTabByTable,
+  getTabByTable,
   resolveTablesFromSpace,
 }
 

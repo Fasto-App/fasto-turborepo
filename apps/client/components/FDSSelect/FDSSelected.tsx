@@ -1,34 +1,48 @@
 import React from "react"
-import { Select, CheckIcon } from "native-base"
-import { Percentages } from "../../business-templates/Checkout/checkoutStore"
+import { Select, CheckIcon, ChevronDownIcon } from "native-base"
+import { ResponsiveValue } from "native-base/lib/typescript/components/types"
 
-type FDSSelecteProps<T extends string> = {
-  selectedValue?: T
-  setSelectedValue: (value: T) => void
-  array: T[] // todo: {_id: string, value: string}[]
+export type SelectData = {
+  _id: string
+  value: string
 }
 
-export const FDSSelect = <T extends string>({ selectedValue, setSelectedValue, array }: FDSSelecteProps<T>) => {
+type FDSSelecteProps<T extends SelectData> = {
+  selectedValue?: T["_id"]
+  setSelectedValue: (value: T["_id"]) => void
+  array: T[],
+  placeholder?: string,
+  w?: ResponsiveValue<number | string>,
+  h?: ResponsiveValue<number | string>,
+}
+
+export const NotMemoizedFDSSelect = <T extends SelectData>({
+  selectedValue, setSelectedValue, array, placeholder, w, h }: FDSSelecteProps<T>) => {
+
   return (
     <Select
+      w={w}
+      h={h}
       overflow={"hidden"}
-      w={130}
-      h={"6"}
+      fontSize={"lg"}
       selectedValue={selectedValue}
-      accessibilityLabel="Choose Service"
-      placeholder="0%"
-      onValueChange={itemValue => setSelectedValue(itemValue as T)}
+      placeholder={placeholder}
+      onValueChange={setSelectedValue}
+      dropdownIcon={<ChevronDownIcon size="4" p="1" />}
       _selectedItem={{
         bg: "teal.600",
         endIcon: <CheckIcon size="5" />
-      }} mt={1}>
-      {array.map((percentage) =>
+      }}
+    >
+      {array.map((item) =>
         <Select.Item
-          key={percentage}
-          label={percentage}
-          value={percentage}
+          key={item._id}
+          label={item.value}
+          value={item._id}
         />
       )}
     </Select>
   )
 }
+
+export const FDSSelect = React.memo(NotMemoizedFDSSelect) as typeof NotMemoizedFDSSelect

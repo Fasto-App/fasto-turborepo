@@ -11,7 +11,7 @@ export const BottomSection = ({ children }: PropsWithChildren<{}>) => {
       borderRadius={"md"}
       borderColor={"trueGray.400"}
       backgroundColor={"white"}
-      overflow={"scroll"}
+      overflow={"hidden"}
     >
       {children}
     </Box>)

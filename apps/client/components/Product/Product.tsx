@@ -12,12 +12,11 @@ import {
 	Spacer, Checkbox
 } from 'native-base';
 import { BorderTile } from '../BorderTile';
+import { useTranslation } from 'next-i18next';
 
 type ProductTileProps = {
+	_id?: string;
 	onPress?: () => void;
-	onCheckboxClick?: (selected: boolean) => void;
-	singleButton?: boolean;
-	isChecked?: boolean;
 	ctaTitle: string;
 	name: string;
 	imageUrl?: string;
@@ -29,12 +28,12 @@ type ProductCardProps = ProductTileProps & {
 	price: number;
 }
 
-const texts = {
-	addToMenu: 'Add to Menu',
-	editItem: 'Edit Item',
+type ProductTileWithCheckboxProps = ProductTileProps & {
+	isChecked: boolean;
+	onCheck: (selected: boolean) => void;
 }
 
-const maxLength = 115;
+const maxLength = 120;
 
 const IMAGE_PLACEHOLDER = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJtmXoCwCBNSm0w3SLD1aWW9m6kpRUoCFp2qmT7i5TTKE_KMRIfZUNReWEyJ6QWtx3Iww&usqp=CAU"
 
@@ -43,20 +42,19 @@ const Price = ({ price }: { price: number }) => (
 		{`$${(price / 100).toFixed(2)}`}
 	</Text>)
 
-const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton }: ProductCardProps) => {
+const ProductCard = ({ name, price, imageUrl, description, onPress }: ProductCardProps) => {
+	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
 
 	return (
 		<Box
-			w={"280px"}
-			h={"320px"}
+			w={"72"}
 			rounded="lg"
 			overflow="hidden"
 			borderColor="coolGray.200"
 			backgroundColor="white"
-			justifyContent={"space-between"}
 			shadow="4"
 			mr={"4"}
 			mb={"4"}
@@ -68,26 +66,24 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, singleButton
 					}} alt="image" borderRadius={"sm"} />
 				</AspectRatio>
 			</Box>
-			<Stack p="3" space={2}>
+			<Stack pt={8} p={2} space={2} flex={1}>
 				<Heading size="md" textAlign={"center"}>
 					{name}
 				</Heading>
-				<Text fontWeight="400" h={"75"} overflow="hidden" textAlign={"center"}>
-					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
+				<Text fontWeight="400" textAlign={"center"} flex={1}>
+					{formattedDescriptions}
 				</Text>
-				<VStack alignItems="center" space={2} justifyContent="space-between">
-					{singleButton ?? <Price price={price} />}
-					<HStack alignItems="center" space={2} justifyContent="space-between">
-						{singleButton ? <Price price={price} /> : <Button w={"100"}>{texts.addToMenu}</Button>}
-						<Button w={"100"} colorScheme="tertiary" onPress={onPress}>{texts.editItem}</Button>
-					</HStack>
-				</VStack>
-
+				<HStack alignItems="center" space={2} justifyContent="center">
+					<Price price={price} />
+					{onPress ? <Button w={"100"} colorScheme="tertiary" onPress={onPress}>{t("edit")}</Button> : null}
+				</HStack>
 			</Stack>
 		</Box>)
 };
 
-const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaTitle, description }: ProductTileProps) => {
+// create a new component that accepts the same props as ProductTile
+const ProductTile = ({ name, imageUrl, onPress, ctaTitle, description }: ProductTileProps) => {
+	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
 		(description.substring(0, maxLength) + "...") : description
@@ -97,33 +93,62 @@ const ProductTile = ({ name, imageUrl, onPress, isChecked, onCheckboxClick, ctaT
 			<Avatar size="48px" source={{
 				uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER
 			}} />
-			<VStack flex={1}>
+			<VStack flex={1} h={"100%"} justifyContent={"space-between"}>
 				<Text color="coolGray.800" bold>
 					{name}
 				</Text>
-				<Text color="coolGray.600" fontSize={"xs"}>
-					{formattedDescriptions ? formattedDescriptions : "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
-				</Text>
+				{formattedDescriptions ? <Text color="coolGray.600" fontSize={"xs"}>
+					{formattedDescriptions}
+				</Text> : null}
 			</VStack>
 			<HStack alignItems="center" space={2} justifyContent="space-between" py={4}>
-				{isChecked !== undefined ?
-					<Checkbox
-						value="Add to Menu"
-						my="1"
-						isChecked={isChecked}
-						onChange={onCheckboxClick}
-					>
-						Add to Menu
-					</Checkbox>
-					:
-					<Button w={"100"} colorScheme="tertiary"
-						onPress={onPress}>{ctaTitle}
-					</Button>
-				}
+				<Button w={"100"} colorScheme="tertiary"
+					onPress={onPress}>{ctaTitle}
+				</Button>
 			</HStack>
 		</HStack>
 	</BorderTile>
 }
 
+const ProductTileWithCheckbox = (
+	{ name, imageUrl, description, _id, isChecked, onCheck }: ProductTileWithCheckboxProps) => {
+	const { t } = useTranslation("common");
 
-export { ProductCard, ProductTile };
+	const formattedDescriptions = description && description.length > maxLength ?
+		(description.substring(0, maxLength) + "...") : description
+
+	return (
+		<BorderTile width={"96"}>
+			<HStack alignItems="center" space={3} flex={1}>
+				<Avatar size="48px" source={{ uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER }} />
+
+				<VStack flex={1} h={"100%"} justifyContent={"space-between"}>
+					<Text color="coolGray.800" bold>
+						{name}
+					</Text>
+					{formattedDescriptions ? <Text color="coolGray.600" fontSize={"xs"}>
+						{formattedDescriptions}
+					</Text> : null}
+					<Box
+						flex={1}
+						justifyContent={"flex-end"}
+						pt={2}
+					>
+						<Checkbox
+							alignContent={"flex-end"}
+							value={_id ?? name}
+							my="1"
+							isChecked={isChecked}
+							onChange={onCheck}
+						>
+							{t("addToMenu")}
+						</Checkbox>
+					</Box>
+				</VStack>
+			</HStack>
+		</BorderTile>
+	)
+}
+
+
+export { ProductCard, ProductTile, ProductTileWithCheckbox };

@@ -3,6 +3,7 @@ import { MenuModel, ProductModel, CategoryModel, Section, Product } from "../../
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMenuInput, UpdateMenuInput } from "./types";
+import { QueryResolvers } from "../../../generated/graphql";
 
 type UpdateMenuInfo = Pick<UpdateMenuInput, 'name' | '_id'>;
 
@@ -26,13 +27,22 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
     }
 }
 
-const getMenuByID = async (_parent: any, args: any, { db }: { db: Connection }) => {
-
-    console.log(args)
+// @ts-ignore
+const getMenuByID: QueryResolvers["getMenuByID"] = async (_parent, args, { db, business }) => {
 
     const Menu = MenuModel(db);
-    const menu = await Menu.findOne({ _id: args.input.id });
-    if (!menu) throw Error('Menu not found');
+    let menu;
+    if (args.input?.id) {
+        menu = await Menu.findOne({ _id: args.input?.id });
+        if (!menu) throw ApolloError('NotFound', 'Menu not found');
+    } else {
+        menu = await Menu.findOne({ business, isFavorite: true });
+
+        if (!menu) {
+            menu = await Menu.findOne({ business });
+            if (!menu) throw ApolloError('NotFound', 'Menu not found');
+        };
+    }
 
     return menu
 }
@@ -65,11 +75,10 @@ const updateMenuInfo = async (_parent: any, args: { input: UpdateMenuInfo }, { d
 }
 
 const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, { db, user, business }: Context) => {
-    console.log(input)
+
     if (!user) throw Error('User not found');
     if (!business) throw Error('Business not found');
 
-    // const Section = SectionModel(db);
     const Product = ProductModel(db);
     const Menu = MenuModel(db)
     const Category = CategoryModel(db);
@@ -77,10 +86,26 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
     const menu = await Menu.findById(input._id);
     if (!menu) throw Error('Menu not found')
 
+    if (input.name) {
+        menu.name = input.name
+    }
+
+    console.log("Updating isFavorite")
+
+    if (input.isFavorite) {
+        const currentFavorite = await Menu.findOne({ isFavorite: true })
+
+        if (currentFavorite) {
+            currentFavorite.isFavorite = false
+            await currentFavorite.save()
+        }
+    }
+
+    menu.isFavorite = input.isFavorite
+
     if (input.sections.length === 0) {
-        return await menu.update({
-            sections: []
-        })
+        menu.sections = [];
+        return await menu.save();
     }
 
     const newSections = input.sections.map(async (section) => {
@@ -113,12 +138,7 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
 
     menu.sections = allSectionsResolved
 
-    if (input.name) {
-        menu.name = input.name
-    }
-
-    await menu.save()
-    return menu
+    return await menu.save()
 }
 
 
@@ -143,6 +163,40 @@ const deleteMenu = async (_parent: any, args: { id: string }, { db, user, busine
     }
 }
 
+const getClientMenu = async (_parent: any, args: {
+    input: {
+        _id?: string,
+        business: string
+    }
+}, { db }: { db: Connection }) => {
+    console.log("getClientMenu")
+
+    const Menu = MenuModel(db);
+
+    if (!args.input._id) {
+
+        const favoriteMenu = await Menu.findOne({
+            business: args.input.business,
+            isFavorite: true
+        })
+
+        if (!favoriteMenu) {
+            return await Menu.findOne({
+                business: args.input.business
+            })
+        }
+
+        return favoriteMenu
+    }
+
+    const menu = await Menu.findOne({ _id: args.input._id });
+    if (!menu) throw ApolloError('BadRequest', 'Menu not found');
+
+    console.log("retuning menu")
+
+    return menu
+}
+
 
 const MenuResolverMutation = {
     createMenu,
@@ -153,26 +207,25 @@ const MenuResolverMutation = {
 const MenuResolverQuery = {
     getAllMenusByBusinessID,
     getMenuByID,
+    getClientMenu
 }
 
 const getSectionsByMenu = async (_parent: any, args: any, { db }: { db: Connection }) => {
-    console.log(_parent)
-
     return _parent;
 }
 
 const getProductsBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
     const Product = ProductModel(db);
-    const products = await Product.find({ _id: { $in: _parent.products } })
-    return products;
+    if (!_parent.products.length) return []
+
+    return await Product.find({ _id: { $in: _parent.products } })
 }
 
 const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
-
-    console.log(_parent)
     const Category = CategoryModel(db);
-    const category = await Category.findById(_parent.category)
-    return category;
+    if (!_parent.category) return null
+
+    return await Category.findById(_parent.category)
 }
 
 const MenuResolver = {

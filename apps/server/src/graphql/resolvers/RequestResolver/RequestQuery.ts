@@ -1,15 +1,39 @@
-import { RequestStatus } from "app-helpers"
-import { RequestModel, UserModel } from "../../../models"
+import { RequestStatus, RequestStatusType } from "app-helpers"
+import { RequestModel, TabModel, UserModel } from "../../../models"
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended"
 import { Context } from "../types"
 
-export const getTabRequest = async (
+
+const getClientSession = async (
   _parent: any,
-  { input }: {
-    input: {
-      business: string, phoneNumber: string
-    }
-  },
+  _args: any,
+  { db, client }: Context
+) => {
+  if (!client) {
+    throw ApolloError('Unauthorized', "invalid client token", "client")
+  }
+
+  const User = UserModel(db)
+  const Request = RequestModel(db)
+  const Tab = TabModel(db)
+
+  // if the request is accepted, but the tab is null
+  // we need to send a new token with the tab
+  const foundRequest = await Request.findOne({ _id: client.request })
+
+  return ({
+    request: foundRequest,
+    user: await User.findOne({ _id: client._id }),
+    tab: await Tab.findOne({ _id: foundRequest?.tab })
+  })
+}
+
+// This request if for the client to get their request
+// the request will be the one that is pending or accepted
+// if they are already in a tab, they will be redirected to the tab
+const getTabRequest = async (
+  _parent: any,
+  args: any,
   { db, client }: Context
 ) => {
   console.log('client', client)
@@ -18,10 +42,7 @@ export const getTabRequest = async (
     throw ApolloError('Unauthorized', "invalid client token", "client")
   }
 
-  const User = UserModel(db)
   const Request = RequestModel(db)
-
-  const foundClient = await User.findOne({ _id: client._id })
   const foundRequest = await Request.findOne({ _id: client.request })
 
   return foundRequest
@@ -31,26 +52,40 @@ const getTabRequests = async (
   _parent: any,
   { input }: {
     input: {
-      filterBy?: RequestStatus
+      filterBy?: RequestStatusType
     }
   },
   { db, business }: Context
 ) => {
-
   const Request = RequestModel(db)
   const foundRequests = await Request.find({
     business: business,
+    tab: undefined,
     ...(input?.filterBy ? { status: input.filterBy } : {})
   })
-
-  console.log('foundRequests', foundRequests)
 
   return foundRequests
 }
 
+const getPendingInvitations = async (
+  _parent: any,
+  _args: any,
+  { db, client }: Context
+) => {
+  if (!client) throw ApolloError("Unauthorized", "You're no one", "client");
+
+  const Request = RequestModel(db)
+  return await Request.find({
+    admin: client._id,
+    status: RequestStatus.Pending
+  })
+}
+
 export const RequestResolverQuery = {
   getTabRequest,
-  getTabRequests
+  getTabRequests,
+  getPendingInvitations,
+  getClientSession
 }
 
 // get all the requests for a business, and accept filters

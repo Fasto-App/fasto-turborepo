@@ -1,0 +1,32 @@
+extend type Query {
+	getTablesFromSpace(input: GetById!): [Table!]!
+	getTableById(input: GetById!): Table!
+}
+
+extend type Mutation {
+	createTable(input: CreateTableInput): Table!
+	deleteTable(input: DeleteTableInput): RequestResponseOK!
+}
+
+input CreateTableInput {
+	space: ID!
+}
+
+input DeleteTableInput {
+	table: ID!
+}
+
+type Table {
+	_id: ID!
+	space: ID!
+	tableNumber: String!
+	status: TableStatus!
+	tab: Tab
+}
+
+enum TableStatus {
+	Available
+	Occupied
+	Reserved
+	Closed
+}

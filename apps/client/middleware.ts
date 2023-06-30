@@ -22,14 +22,11 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   const DASHBOARD_URL = getDashboardUrl()
 
   const requestCookiesToken = request.cookies.get(businessCookies.token)
-  const requestCookiesEmail = request.cookies.get(businessCookies.email)
 
   if (process.env.NEXT_PUBLIC_ENVIRONMENT !== "development" &&
     request.headers.get("x-forwarded-proto") !== "https") {
 
-
     return NextResponse.redirect(
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
       `https://www.${process.env.HOST_NAME}${request.nextUrl.pathname}`,
       301
     )
@@ -38,9 +35,9 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   // Auth routes, if token is valid navigate to DASHBOARD
   if (request.nextUrl.pathname.startsWith(businessRoute.login) ||
     request.nextUrl.pathname.startsWith(businessRoute.signup) ||
-    request.nextUrl.pathname.startsWith(businessRoute.forgotPassword) ||
-    request.nextUrl.pathname.startsWith(businessRoute.resetPassword) ||
-    request.nextUrl.pathname.startsWith(businessRoute.createAccount)) {
+    request.nextUrl.pathname.startsWith(businessRoute["forgot-password"]) ||
+    request.nextUrl.pathname.startsWith(businessRoute["reset-password"]) ||
+    request.nextUrl.pathname.startsWith(businessRoute["create-account"])) {
     const { nextUrl: { search } } = request;
     const urlSearchParams = new URLSearchParams(search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -55,8 +52,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
     // if there's a token in the query params, create or reset
     // if there's a token in the query params, they either forgot password or reset password
 
-    if (request.nextUrl.pathname.startsWith(businessRoute.createAccount)
-      || request.nextUrl.pathname.startsWith(businessRoute.resetPassword)) {
+    if (request.nextUrl.pathname.startsWith(businessRoute["create-account"])
+      || request.nextUrl.pathname.startsWith(businessRoute["reset-password"])) {
 
 
       const { token, email } = params
@@ -87,8 +84,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   if (request.nextUrl.pathname.startsWith(BUSINESS_ADMIN)) {
     if (requestCookiesToken) {
       console.log("token", requestCookiesToken)
-      console.log("email", requestCookiesEmail)
-
 
       try {
         // const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))

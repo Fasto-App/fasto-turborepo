@@ -1,0 +1,13 @@
+{
+	"orders": "Pedidos",
+	"hereIsYourList": "Aqui está sua lista de pedidos",
+	"date": "Data",
+	"amount": "Valor",
+	"status": "Status",
+	"Canceled": "Cancelado",
+	"Paid": "Pago",
+	"PartiallyPaid": "Pago parcialmente",
+	"Pending": "Pendente",
+	"checkout": "Finalizar compra",
+	"close": "Fechar"
+}

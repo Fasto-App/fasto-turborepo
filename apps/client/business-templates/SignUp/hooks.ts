@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form";
 import { SideBySideInputConfig } from "../../components/ControlledForm";
+import { signUpSchema } from "app-helpers";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const SignUpConfig: SideBySideInputConfig = {
   email: {
@@ -27,6 +29,7 @@ export const useSignUpHook = () => {
   } = useForm({
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: '',
       emailConfirmation: '',

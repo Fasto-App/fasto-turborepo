@@ -1,22 +1,18 @@
 import React, { useState } from 'react'
-import { Box, Button, FlatList, FormControl, Heading, HStack, Input, Modal, Pressable, ScrollView, Text, VStack } from 'native-base'
-import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
-import { Controller } from 'react-hook-form';
+import { Box, Button, Heading, HStack, Modal, ScrollView, VStack } from 'native-base'
+import { SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { useAppStore } from '../UseAppStore';
-import { AllAndEditButtons } from '../AllAndAddButons';
 import { Tile } from '../../components/Tile';
 import { MenuConfig, useMenuHook } from './hooks';
 import { ControlledForm } from '../../components/ControlledForm';
-import { GetAllMenusByBusinessIdDocument, GetAllMenusByBusinessIdQueryResult, useCreateMenuMutation } from '../../gen/generated';
+import { GetAllMenusByBusinessIdDocument, useCreateMenuMutation } from '../../gen/generated';
 import { menuSchemaInput } from 'app-helpers';
 import { AllMenusbyBusiness } from './types';
-
-const texts = {
-  title: "Menu",
-  emptyListText: "Start adding Menus by clicking in the button above.",
-}
+import { useTranslation } from 'next-i18next';
+import { Icon } from '../../components/atoms/NavigationButton';
 
 export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
+  const { t } = useTranslation("businessMenu")
 
   const [showModal, setShowModal] = useState(false)
   const setMenu = useAppStore(state => state.setMenu)
@@ -36,26 +32,30 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
       <Box flex={1}>
         <Box flexDirection={"row"} mb={"2"}>
           <Heading flex={1}>
-            {texts.title}
+            {t("title")}
           </Heading>
         </Box>
-
         <VStack space={4}>
           <HStack space={2}>
             <SmallAddMoreButton onPress={() => setShowModal(true)} />
-            <ScrollView horizontal={true} pb={2}>
+            <ScrollView horizontal={true} pb={2} >
               <HStack space={2}>
                 {menusData?.map((item) => (
-                  <Tile
-                    key={item?._id}
-                    selected={item?._id === menu}
-                    onPress={() => {
-                      setMenu(item?._id)
-                      resetEditingAndSectionMap()
-                    }}
-                  >
-                    {item?.name}
-                  </Tile>
+                  <Box key={item?._id} >
+                    {item.isFavorite ? <Box position={"absolute"} >
+                      <Icon type={"StarFill"} size={"1em"} />
+                    </Box> : null}
+                    <Tile
+                      key={item?._id}
+                      selected={item?._id === menu}
+                      onPress={() => {
+                        setMenu(item?._id)
+                        resetEditingAndSectionMap()
+                      }}
+                    >
+                      {item?.name}
+                    </Tile>
+                  </Box>
                 ))}
               </HStack>
             </ScrollView>
@@ -78,22 +78,14 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
   );
 }
 
-const textsMenu = {
-  addMenu: "Add Menu",
-  editMenu: "Edit Menu",
-  menuName: "Menu Name",
-  maxChar: "Max. 50 characters",
-  errorMenu: "Menu name is required",
-  add: "Add",
-  cancel: "Cancel",
-  edit: "Edit",
-}
 
 const MenuModal = ({ showModal, setShowModal }: {
   showModal: boolean,
   setShowModal: (value: boolean) => void
 }) => {
   const { control, handleSubmit, formState } = useMenuHook()
+
+  const { t } = useTranslation("businessMenu")
 
   const [createMenu] = useCreateMenuMutation({
     update: (cache, { data }) => {
@@ -131,7 +123,7 @@ const MenuModal = ({ showModal, setShowModal }: {
     <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
       <Modal.Content maxWidth="40%" minW={"400px"}>
         <Modal.CloseButton />
-        <Modal.Header>{isEditing ? textsMenu.editMenu : textsMenu.addMenu}</Modal.Header>
+        <Modal.Header>{isEditing ? t("editMenu") : t("addMenu")}</Modal.Header>
         <Modal.Body>
           <ControlledForm
             Config={MenuConfig}
@@ -139,17 +131,18 @@ const MenuModal = ({ showModal, setShowModal }: {
             formState={formState}
           />
         </Modal.Body>
-        <Modal.Footer>
-          <Button.Group space={2}>
+        <Modal.Footer borderColor={"white"}>
+          <Button.Group space={2} flex={1} >
             <Button
               w={"100px"}
-              variant="ghost"
+              variant="outline"
               colorScheme="tertiary"
-              onPress={() => setShowModal(false)}>
-              {textsMenu.cancel}
+              onPress={() => setShowModal(false)}
+              flex={1}>
+              {t("cancel")}
             </Button>
-            <Button w={"100px"} onPress={handleSubmit(onMenuSubmit)}>
-              {isEditing ? textsMenu.edit : textsMenu.add}
+            <Button w={"100px"} onPress={handleSubmit(onMenuSubmit)} flex={1}>
+              {isEditing ? t("edit") : t("add")}
             </Button>
           </Button.Group>
         </Modal.Footer>

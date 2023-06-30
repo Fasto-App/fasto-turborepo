@@ -1,35 +1,29 @@
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Center } from "native-base";
+import { Button, Center, VStack, Image } from "native-base";
 import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
 import { AppNavigation, appRoute, businessRoute } from "../../routes";
 import { LeftSideBar } from "../../components";
-import { HamburgerMenu } from "../MenuHamburguer";
-
-const navigationTitle = {
-  dashboard: "Dashboard",
-  categories_products: "Categories / Products",
-  menu: "Menu",
-  tables: "Manage Tabs",
-  settings: "Settings",
-  logout: "Logout"
-}
-
+import { AccountMenu } from "../../components/MenuHamburguer";
+import { useTranslation } from "next-i18next";
 
 const BusinessNavigationTab = () => {
   const router = useRouter();
   const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
     pathname === router.pathname, [router.pathname])
 
+  const { t } = useTranslation("common")
+
   return (
     <LeftSideBar>
-      <Center
-        alignItems={"center"}
-        justifyContent={"center"}
-        h={"full"}
-      >
+      <Center>
+        <Image src="/images/fasto-logo.svg"
+          alt="Fasto Logo"
+          height={36} width={180} />
+      </Center>
+      <Center      >
         <BusinessNavigationButton
-          text={navigationTitle.dashboard}
+          text={t("dashboard")}
           type={"Dashboard"}
           selected={useIsPageSelected(businessRoute.dashboard)}
           onPress={() => {
@@ -37,15 +31,15 @@ const BusinessNavigationTab = () => {
           }}
         />
         <BusinessNavigationButton
-          text={navigationTitle.categories_products}
+          text={t("categoriesProducts")}
           type={"Fork"}
-          selected={useIsPageSelected(businessRoute.add_products_categories)}
+          selected={useIsPageSelected(businessRoute["add-products-categories"])}
           onPress={() => {
-            router.push(businessRoute.add_products_categories);
+            router.push(businessRoute["add-products-categories"]);
           }}
         />
         <BusinessNavigationButton
-          text={navigationTitle.menu}
+          text={t("menu")}
           type={"Menu"}
           selected={useIsPageSelected(businessRoute.menu)}
           onPress={() => {
@@ -54,7 +48,7 @@ const BusinessNavigationTab = () => {
         />
 
         <BusinessNavigationButton
-          text={navigationTitle.tables}
+          text={t("tables")}
           type={"Table"}
           selected={useIsPageSelected(businessRoute.tables)}
           onPress={() => {
@@ -62,7 +56,15 @@ const BusinessNavigationTab = () => {
           }}
         />
         <BusinessNavigationButton
-          text={navigationTitle.settings}
+          text={t("placedOrders")}
+          type={"ClipBoard"}
+          selected={useIsPageSelected(businessRoute.orders)}
+          onPress={() => {
+            router.push(businessRoute.orders);
+          }}
+        />
+        <BusinessNavigationButton
+          text={t("settings")}
           type={"Settings"}
           selected={useIsPageSelected(businessRoute.settings)}
           onPress={() => {
@@ -70,9 +72,14 @@ const BusinessNavigationTab = () => {
           }}
         />
       </Center>
-      <Box position={"absolute"} bottom={"0"} flex={1} pl={2} pb={4}>
-        <HamburgerMenu />
-      </Box>
+      <VStack space={10} bottom={0} paddingX={2} w={"full"}>
+        <Button
+          _text={{ bold: true }}
+          onPress={() => router.push(businessRoute["add-to-order"])}>
+          {t("quickSale")}
+        </Button>
+        <AccountMenu />
+      </VStack>
     </LeftSideBar>
   );
 };

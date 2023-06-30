@@ -10,15 +10,7 @@ import { useAppStore } from '../UseAppStore';
 import { useCategoryMutationHook } from '../../graphQL/CategoryQL';
 import { useProductFormHook } from './useProductFormHook';
 import { GetAllProductsByBusinessIdQuery } from '../../gen/generated';
-
-
-const texts = {
-	all: "All",
-	editItem: "Edit Item",
-	showList: "Show List",
-	showCards: "Show Cards",
-	emptyListText: "Start adding dishes by clicking in the button below.",
-}
+import { useTranslation } from 'next-i18next';
 
 type Products = GetAllProductsByBusinessIdQuery["getAllProductsByBusinessID"];
 
@@ -48,6 +40,8 @@ const ProductList = (
 		productControl,
 		resetProduct
 	} = useProductFormHook()
+
+	const { t } = useTranslation("businessCategoriesProducts");
 
 	const setProductValues = useCallback((item) => {
 		const { _id, name, description, price, imageUrl } = item
@@ -82,9 +76,9 @@ const ProductList = (
 			imageUrl={item.imageUrl ?? ""}
 			onPress={() => setProductValues(item)}
 			key={item._id}
-			ctaTitle={texts.editItem}
+			ctaTitle={t("editItem")}
 		/>
-	}, [addProduct, setProductValues])
+	}, [addProduct, setProductValues, t])
 
 	const renderProductTile = useCallback(({ item, index }: { item: Products[number], index: number }) => {
 		if (index === 0) return <AddMoreButton horizontal onPress={addProduct} />
@@ -94,21 +88,22 @@ const ProductList = (
 			name={item.name}
 			imageUrl={item.imageUrl ?? ""}
 			onPress={() => setProductValues(item)}
-			ctaTitle={texts.editItem}
+			description={item.description}
+			ctaTitle={t("editItem")}
 		/>
-	}, [addProduct, setProductValues])
+	}, [addProduct, setProductValues, t])
 
-	const EmptyState = () => {
+	const EmptyState = useMemo(() => {
 		return (
 			<Box>
-				<Text fontSize={"xl"}>{texts.emptyListText}</Text>
+				<Text fontSize={"xl"}>{t("emptyListText")}</Text>
 				<AddMoreButton
 					empty
 					onPress={() => setShowProductModal(true)}
 				/>
 			</Box>
 		)
-	}
+	}, [])
 
 
 	const productsWithButton = useMemo(() => [{ name: "Button" } as Products[number], ...products], [products])
@@ -130,7 +125,7 @@ const ProductList = (
 					null}
 			</>
 		)
-	}, [numColumns, productsWithButton, renderProductTile, showTilesList])
+	}, [EmptyState, numColumns, productsWithButton, renderProductTile, showTilesList])
 
 	const renderListCard = useCallback(() => {
 		if (showTilesList) return null
@@ -165,14 +160,14 @@ const ProductList = (
 
 			<Box flexDirection={"column"}>
 				<Heading flex={1}>
-					{selectedCategory?.name ?? texts.all}
+					{selectedCategory?.name ?? t("all")}
 				</Heading>
 				{products?.length ?
 					<Link isUnderlined={false} alignSelf={"self-end"} p={4}
 						_text={{
 							color: "blue.400"
 						}} onPress={() => setShowTileList(!showTilesList)}>
-						{showTilesList ? texts.showCards : texts.showList}
+						{showTilesList ? t("showCards") : t("showList")}
 					</Link> :
 					null}
 			</Box>

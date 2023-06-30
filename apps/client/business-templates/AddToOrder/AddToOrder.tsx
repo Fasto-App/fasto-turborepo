@@ -15,40 +15,57 @@ import { SummaryComponent } from "../../components/OrderSummary";
 import { LeftSideBar } from "../../components";
 import { parseToCurrency } from 'app-helpers';
 import { UpperSection } from "../../components/UpperSection";
-import { SideBySideButtons } from "../AllAndAddButons";
 import { Tile } from "../../components/Tile";
-import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
-import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
-import { useAppStore } from "../UseAppStore";
+import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useCreateOrdersCheckoutMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { businessRoute } from "../../routes";
-
-const texts = {
-  back: "Back",
-  table: "Table",
-  total: "Total",
-  sendToKitchen: "Send to kitchen",
-  patrons: "Patrons",
-  people: (number: string | number) => `${number} People`,
-  tableNumber: (number: string | number) => `Table ${number}`,
-}
+import { useTranslation } from "next-i18next";
+import { showToast } from "../../components/showToast";
+import { OrangeBox } from "../../components/OrangeBox";
 
 type NewOrder = Product & { quantity: number, selectedUser?: string }
 
 export const AddToOrder = () => {
   const route = useRouter()
-  const { tabId, menuId } = route.query
+  const { tabId } = route.query
+
   const [orderItems, setOrderItems] = React.useState<NewOrder[]>([])
   const [selectedUser, setSelectedUser] = React.useState<string>()
   const [selectedCategory, setSelectedCategory] = React.useState<string>()
 
-  const setNetworkState = useAppStore(state => state.setNetworkState)
+  const { t } = useTranslation("businessAddToOrder")
+
+  const [createOrderCheckout, { loading: createOrderCheckoutLoading }] = useCreateOrdersCheckoutMutation({
+    onCompleted: (data) => {
+      const checkoutId = data?.createOrdersCheckout?._id
+      if (!checkoutId) throw new Error("Checkout id is missing")
+
+      showToast({ message: t("ordersCreatedSuccessfully"), })
+
+      route.push({
+        pathname: businessRoute["checkout/[checkoutId]"],
+        query: {
+          checkoutId,
+          tabId: data?.createOrdersCheckout.tab
+        }
+      })
+    },
+    onError: () => {
+      showToast({
+        status: "error",
+        message: t("errorCreatingOrders")
+      })
+    }
+  })
 
   const [requestCloseTabMutation, { loading: loadingCloseTab }] = useRequestCloseTabMutation({
     refetchQueries: ["GetSpacesFromBusiness"],
     onCompleted: (data) => {
-      setNetworkState("success")
+      showToast({
+        message: t("requestToCloseTabSuccessfully"),
+      })
+
       const status = data?.requestCloseTab?.status
       const checkoutId = data?.requestCloseTab?.checkout
 
@@ -56,7 +73,13 @@ export const AddToOrder = () => {
         case "Pendent":
           if (!checkoutId) throw new Error("Checkout id is missing")
 
-          route.push(businessRoute.checkout(checkoutId, tabId as string))
+          route.push({
+            pathname: businessRoute["checkout/[checkoutId]"],
+            query: {
+              checkoutId,
+              tabId,
+            }
+          })
           break;
         default:
           route.back()
@@ -66,12 +89,6 @@ export const AddToOrder = () => {
   })
 
   const { data: menuData } = useGetMenuByIdQuery({
-    skip: !menuId,
-    variables: {
-      input: {
-        id: menuId as string,
-      }
-    },
     onCompleted: (data) => {
       if (data?.getMenuByID?.sections?.[0].category._id) {
         setSelectedCategory(data?.getMenuByID?.sections?.[0].category._id)
@@ -80,52 +97,72 @@ export const AddToOrder = () => {
   })
 
   const { data: tabData } = useGetTabByIdQuery({
+    skip: !tabId,
     variables: {
       input: {
         _id: tabId as string,
       }
     },
     onCompleted: (data) => {
-      // if data has status of pending, send to 
+      // if data has status of pending, send to checkout
       // if (data?.getTabByID?. === "pending") {
-
       // }
+    },
+    // TODO: translate
+    onError: () => {
+      showToast({
+        status: "error",
+        message: t("errorGettingTabData")
+      })
     }
   })
 
-  const [createOrders] = useCreateMultipleOrderDetailsMutation({
+  const [createOrders, { loading }] = useCreateMultipleOrderDetailsMutation({
     refetchQueries: [{
       query: GetTableByIdDocument, variables: {
         input: {
           _id: tabData?.getTabByID?.table?._id,
-        }
-      }
+        },
+      },
     }],
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: t("ordersCreatedSuccessfully") })
+
       route.back()
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: t("errorCreatingOrders")
+      })
     }
   })
 
   const onSendToKitchen = useCallback(async () => {
-    const orderDetails = orderItems.map(order => ({
-      ...(order?.selectedUser && { user: order?.selectedUser }),
-      tab: tabId as string,
-      product: order._id,
-      quantity: order.quantity,
-    }))
 
+    if (tabId) {
+      return await createOrders({
+        variables: {
+          input: orderItems.map(order => ({
+            ...(order?.selectedUser && { user: order?.selectedUser }),
+            tab: Array.isArray(tabId) ? tabId[0] : tabId,
+            product: order._id,
+            quantity: order.quantity,
+          })),
+        }
+      })
+    }
 
-    await createOrders({
+    return await createOrderCheckout({
       variables: {
-        input: orderDetails,
+        input: orderItems.map(order => ({
+          product: order._id,
+          quantity: order.quantity,
+        }))
       }
     })
 
-  }, [createOrders, orderItems, tabId])
+  }, [createOrderCheckout, createOrders, orderItems, tabId])
 
   const requestCloseTab = useCallback(() => {
     requestCloseTabMutation({
@@ -148,9 +185,13 @@ export const AddToOrder = () => {
       <LeftSideBar>
         <Flex flex={1} pt={2} pb={4}>
           <Flex direction="row" justify="space-evenly" mb={4}>
-            <Text py="2">{texts.tableNumber(1)}</Text>
-            <Divider orientation="vertical" mx="3" />
-            <Text py="2">{texts.people(2)}</Text>
+            {tabData?.getTabByID?.table?.tableNumber ?
+              <Text py="2">{t("tableNumber", { number: tabData?.getTabByID?.table?.tableNumber })}</Text> : null}
+            {tabData?.getTabByID?.table?.tableNumber && (tabData?.getTabByID?.users?.length ?? 0) > 1 ?
+              <Divider orientation="vertical" mx="3" /> : null
+            }
+            {(tabData?.getTabByID?.users?.length ?? 0) > 1 ?
+              <Text py="2">{t("people", { number: tabData?.getTabByID?.users?.length })}</Text> : null}
           </Flex>
           <ScrollView flex={1}>
             {orderItems?.map((order, index) => {
@@ -203,13 +244,18 @@ export const AddToOrder = () => {
           </ScrollView>
           <Box w={"100%"} justifyContent={"end"} pt={2}>
             <Divider mb="3" />
-            <HStack justifyContent={"space-between"} pb={2}>
-              <Heading size={"md"}>{texts.total}</Heading>
+            <HStack justifyContent={"space-between"} pb={4}>
+              <Heading size={"md"}>{t("total")}</Heading>
               <Heading size={"md"}>{parseToCurrency(total)}</Heading>
             </HStack>
             <VStack space={4}>
-              <Button w={"full"} onPress={onSendToKitchen} isDisabled={orderItems.length <= 0} >
-                {texts.sendToKitchen}
+              <Button
+                w={"full"}
+                isLoading={loading || createOrderCheckoutLoading}
+                onPress={onSendToKitchen}
+                isDisabled={orderItems.length <= 0}
+              >
+                {t("sendToKitchen")}
               </Button>
               <Button
                 flex={1}
@@ -220,7 +266,7 @@ export const AddToOrder = () => {
                 onPress={() => route.back()}
                 justifyContent={"end"}
               >
-                {texts.back}
+                {t("back")}
               </Button>
             </VStack>
           </Box>
@@ -228,19 +274,19 @@ export const AddToOrder = () => {
       </LeftSideBar>
 
       <Box flex={1}>
-        <Box backgroundColor={"primary.500"} h={150} w={"100%"} position={"absolute"} zIndex={-1} />
+        <OrangeBox />
         <VStack flex={1} p={4} space={4}>
           <UpperSection>
-            <Heading>{texts.patrons}</Heading>
+            <Heading>{t("patrons")}</Heading>
             <HStack space={2}>
-              <SmallAddMoreButton onPress={() => console.log("Hello")} />
+              {/* <SmallAddMoreButton onPress={() => console.log("Hello")} /> */}
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
                   <Tile
                     selected={!selectedUser}
                     onPress={() => setSelectedUser(undefined)}
                   >
-                    {texts.table}
+                    {t("table")}
                   </Tile>
                   {tabData?.getTabByID?.users?.map((user, index) => (
                     <Tile
@@ -254,19 +300,20 @@ export const AddToOrder = () => {
                 </HStack>
               </ScrollView>
             </HStack>
-            <SideBySideButtons
-              leftAction={requestCloseTab}
-              rightAction={() => console.log("See Details")}
-              leftLoading={loadingCloseTab}
-              leftText={"Close Tab"}
-              rightText={"See Details"}
-              leftDisabled={false}
-              rightDisabled={false}
-            />
+            {tabId ?
+              <Button
+                colorScheme={"primary"}
+                width={"100px"}
+                onPress={requestCloseTab}
+                isLoading={loadingCloseTab}
+              >
+                {t("closeTab")}
+              </Button>
+              : null}
           </UpperSection>
           <BottomSection>
             <HStack space={2}>
-              <Heading pr={10}>Menu</Heading>
+              <Heading pr={10}>{t("menu")}</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
                   {sections.map((section) => (
@@ -283,10 +330,11 @@ export const AddToOrder = () => {
               <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
                 {products.map((product) => (
                   <ProductTile
-                    ctaTitle="Add"
+                    ctaTitle={t("add")}
                     key={product._id}
                     name={product.name}
                     imageUrl={product.imageUrl ?? ""}
+                    description={product.description}
                     onPress={() => {
                       const findIndex = orderItems.findIndex(order => (
                         order._id === product._id && order?.selectedUser === selectedUser)

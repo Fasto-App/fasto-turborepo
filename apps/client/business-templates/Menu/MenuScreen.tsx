@@ -2,7 +2,6 @@ import React from 'react'
 import { VStack } from 'native-base'
 import { MenuList } from './MenuList'
 import MenuProducts from './MenuProducts'
-import { ModalFeedback } from '../../components/ModalFeedback/ModalFeedback'
 import { Box } from 'native-base';
 import { useGetAllMenusByBusinessIdQuery } from '../../gen/generated'
 import { useAppStore } from '../UseAppStore'
@@ -28,9 +27,7 @@ const MenuScreen = () => {
       <VStack flex={1} m={"4"} space={"4"}>
         <MenuList menusData={data?.getAllMenusByBusinessID ?? []} />
         {data?.getAllMenusByBusinessID ? (
-          <MenuProducts
-            menusData={data?.getAllMenusByBusinessID}
-          />
+          <MenuProducts />
         ) : null}
       </VStack>
       <Loading isLoading={loadingQuery} />

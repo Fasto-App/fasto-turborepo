@@ -1,18 +1,52 @@
 import { BUSINESS_ADMIN, BUSINESS } from "./appRoute";
 
+const addProductsCategories = "add-products-categories";
+const addToOrder = "add-to-order";
+const checkout = "checkout/[checkoutId]";
+const createAccount = "create-account";
+const dashboard = "dashboard";
+const forgotPassword = "forgot-password";
+const settings = "settings";
+const help = "help";
+const login = "login";
+const menu = "menu";
+const orders = "orders";
+const signup = "signup";
+const tables = "tables";
+const resetPassword = "reset-password";
+
 export const businessRoute = {
-  add_products_categories: `${BUSINESS_ADMIN}/add-products-categories`,
-  add_to_order: (orderId: string, menuId: string) => `${BUSINESS_ADMIN}/add-to-order/${orderId}?menuId=${menuId}`,
-  checkout: (checkoutId: string, tabId: string) => `${BUSINESS_ADMIN}/checkout/${checkoutId}?tabId=${tabId}`,
-  createAccount: `${BUSINESS}/create-account`,
-  dashboard: `${BUSINESS_ADMIN}/dashboard`,
-  forgotPassword: `${BUSINESS}/forgot-password`,
-  settings: `${BUSINESS_ADMIN}/settings`,
-  help: `${BUSINESS_ADMIN}/help`,
-  login: `${BUSINESS}/login`,
-  menu: `${BUSINESS_ADMIN}/menu`,
-  orders: `${BUSINESS_ADMIN}/orders`,
-  signup: `${BUSINESS}/signup`,
-  tables: `${BUSINESS_ADMIN}/tables`,
-  resetPassword: `${BUSINESS}/reset-password`,
+  [addProductsCategories]: `${BUSINESS_ADMIN}/${addProductsCategories}`,
+  [addToOrder]: `${BUSINESS_ADMIN}/${addToOrder}`,
+  [checkout]: `${BUSINESS_ADMIN}/${checkout}`,
+  [createAccount]: `${BUSINESS}/${createAccount}`,
+  [dashboard]: `${BUSINESS_ADMIN}/${dashboard}`,
+  [forgotPassword]: `${BUSINESS}/${forgotPassword}`,
+  [settings]: `${BUSINESS_ADMIN}/${settings}`,
+  [help]: `${BUSINESS_ADMIN}/${help}`,
+  [login]: `${BUSINESS}/${login}`,
+  [menu]: `${BUSINESS_ADMIN}/${menu}`,
+  [orders]: `${BUSINESS_ADMIN}/${orders}`,
+  [signup]: `${BUSINESS}/${signup}`,
+  [tables]: `${BUSINESS_ADMIN}/${tables}`,
+  [resetPassword]: `${BUSINESS}/${resetPassword}`,
 } as const;
+
+export const businessPathName = {
+  [`${BUSINESS}/${login}`]: 'login',
+  [`${BUSINESS}/${createAccount}`]: 'createAccount',
+  [`${BUSINESS}/${forgotPassword}`]: 'forgotPassword',
+  [`${BUSINESS}/${signup}`]: 'signup',
+  [`${BUSINESS}/${resetPassword}`]: 'resetPassword',
+  [`${BUSINESS_ADMIN}/${settings}`]: 'businessSettings',
+  [`${BUSINESS_ADMIN}/${addProductsCategories}`]: 'productsCategories',
+  [`${BUSINESS_ADMIN}/${addToOrder}`]: 'addToOrder',
+  [`${BUSINESS_ADMIN}/${checkout}`]: 'businessCheckout',
+  [`${BUSINESS_ADMIN}/${dashboard}`]: 'dashboard',
+  [`${BUSINESS_ADMIN}/${help}`]: 'help',
+  [`${BUSINESS_ADMIN}/${menu}`]: 'menus',
+  [`${BUSINESS_ADMIN}/${orders}`]: 'orders',
+  [`${BUSINESS_ADMIN}/${tables}`]: 'tables',
+} as const;
+
+export type BusinessRouteKeys = keyof typeof businessPathName;

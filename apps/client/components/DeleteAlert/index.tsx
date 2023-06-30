@@ -1,31 +1,26 @@
 import { Center, Button, AlertDialog } from "native-base";
-import React from "react";
-
-
-const alertText = {
-	title: "Delete Product",
-	body: "This will remove all data relating to this product. This action cannot be reversed.",
-	delete: "Delete",
-	cancel: "Cancel",
-}
+import React, { useCallback } from "react";
 
 type DeleteAlertProps = {
-	title: string,
-	deleteItem: () => void
+	deleteItem: () => void;
+	title: string;
+	body: string;
+	cancel: string;
 }
 
-export const DeleteAlert = ({ title, deleteItem }: DeleteAlertProps) => {
+export const DeleteAlert = (props: DeleteAlertProps) => {
+	const { title, cancel, body, deleteItem } = props;
+
 	const [isOpen, setIsOpen] = React.useState(false);
 	const onClose = () => setIsOpen(false);
 	const cancelRef = React.useRef(null);
 
-	const closeDeleteAlert = () => {
+	const closeDeleteAlert = useCallback(() => {
 		deleteItem();
 		setIsOpen(false);
-	}
+	}, [deleteItem])
 
 	return (
-
 		<Center>
 			<Button w={"100%"} my={2} colorScheme="error" onPress={() => setIsOpen(!isOpen)}>
 				{title}
@@ -33,17 +28,17 @@ export const DeleteAlert = ({ title, deleteItem }: DeleteAlertProps) => {
 			<AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
 				<AlertDialog.Content>
 					<AlertDialog.CloseButton />
-					<AlertDialog.Header>{alertText.title}</AlertDialog.Header>
+					<AlertDialog.Header>{title}</AlertDialog.Header>
 					<AlertDialog.Body>
-						{alertText.body}
+						{body}
 					</AlertDialog.Body>
 					<AlertDialog.Footer>
 						<Button.Group space={2}>
 							<Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef}>
-								{alertText.cancel}
+								{cancel}
 							</Button>
 							<Button colorScheme="error" onPress={closeDeleteAlert}>
-								{alertText.delete}
+								{title}
 							</Button>
 						</Button.Group>
 					</AlertDialog.Footer>

@@ -1,27 +1,28 @@
 import { Types, Connection } from 'mongoose'
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import type { RequestStatus } from 'app-helpers';
+import type { RequestStatus, RequestStatusType } from 'app-helpers';
 
 export class Request {
   @prop({ required: true })
   public business!: Types.ObjectId;
 
-  @prop({ required: true })
-  public admin!: Types.ObjectId;
+  @prop()
+  public admin?: Types.ObjectId;
+
+  @prop()
+  public requestor?: Types.ObjectId;
 
   @prop()
   public tab?: Types.ObjectId;
 
-  @prop({ required: true })
-  public totalGuests!: number;
+  @prop()
+  public totalGuests?: number;
 
   @prop()
   public names?: string[];
 
   @prop({ default: "Pending" })
-  public status?: RequestStatus;
-
-
+  public status?: RequestStatusType;
 
   @prop({ default: Date.now() })
   public created_date!: Date;

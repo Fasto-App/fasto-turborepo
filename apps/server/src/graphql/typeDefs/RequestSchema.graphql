@@ -1,0 +1,79 @@
+extend type Query {
+	getClientSession: ClientSession!
+	getTabRequest: Request!
+	getTabRequests(input: GetTabRequestInput): [Request!]!
+	getPendingInvitations: [Request!]!
+}
+
+extend type Mutation {
+	openTabRequest(input: OpenTabRequestInput!): String
+	requestJoinTab(input: JoinTabForm!): String
+	acceptTabRequest(input: AcceptTabRequestInput!): Request
+	declineTabRequest(input: GetById!): Request!
+	declineInvitation(input: GetById!): Request!
+	acceptInvitation(input: GetById!): Request!
+	createNewTakeoutOrDelivery(input: CreateNewTakeoutOrDeliveryInput!): String!
+}
+
+extend type Subscription {
+	onTabRequest: Request!
+	onTabRequestResponse: Request!
+	numberIncremented: Int!
+}
+
+type ClientSession {
+	user: User!
+	request: Request!
+	tab: Tab
+}
+
+input CreateNewTakeoutOrDeliveryInput {
+	business: ID!
+	phoneNumber: String!
+	name: String!
+}
+
+input JoinTabForm {
+	name: String!
+	phoneNumber: String!
+	tab: ID!
+	admin: ID!
+	business: ID!
+}
+
+input GetTabRequestInput {
+	filterBy: RequestStatus
+}
+
+input OpenTabRequestInput {
+	business: ID!
+	phoneNumber: String!
+	name: String!
+	totalGuests: Int!
+	names: [String]
+}
+
+input AcceptTabRequestInput {
+	request: ID!
+	table: String
+}
+
+type Request {
+	_id: ID!
+	requestor: User
+	business: ID
+	admin: User
+	totalGuests: Int
+	names: [String]
+	status: RequestStatus!
+	tab: ID
+}
+
+enum RequestStatus {
+	Pending
+	Accepted
+	Rejected
+	Canceled
+	Completed
+	Expired
+}

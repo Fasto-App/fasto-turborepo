@@ -6,6 +6,6 @@ export * from "./Business/enums"
 export * from "./Business/privileges"
 export * from "./Business/checkout"
 export * from "./Business/payment"
-export * from "./Client/home"
+export * from "./Customer/home"
 export * from "./Business/request"
 

@@ -1,54 +1,47 @@
 import React from 'react'
-import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text } from "native-base";
+import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text, Image } from "native-base";
 import NextLink from "next/link";
 import { businessRoute } from '../../routes';
 import { ResetPasswordConfig, useResetPasswordHook } from './hook';
 import { useRouter } from 'next/router';
 import { usePasswordResetMutation } from '../../gen/generated';
-import { ResetPasswordSchemaInput } from 'app-helpers';
-import { setCookies } from '../../cookies/businessCookies';
+import { Locale, ResetPasswordSchemaInput, localeObj } from 'app-helpers';
+import { setBusinessCookies } from '../../cookies';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
+import { useTranslation } from 'next-i18next';
+import { FDSSelect } from '../../components/FDSSelect';
 
-const texts = {
-  resetPassword: "Reset Password",
-  imAlreadyAUser: "I'm already a user ",
-  pleaseEnterYourPassword: (email: string) => `${email}, Please enter and confirm your new password`,
-  newPassword: "New Password",
-  reset: "Reset",
-  passwordConfirmation: "Password Confirmation",
-  passwordConfirmationError: "Password Confirmation does not match",
-  passwordError: "Password must be at least 8 characters long",
-  goBack: "Go Back",
-  login: "Login",
-}
-
-export const ResetPasswordScreen = ({ token, email }: { token: string, email: string }) => {
+export const ResetPasswordScreen = () => {
   const { control, formState, reset, handleSubmit } = useResetPasswordHook()
   const [showPass, setShowPass] = React.useState(false);
+
+  const { query } = useRouter();
+  const { email, token } = query;
+
+  const { t } = useTranslation(["businessResetPassword", "common"])
 
   const router = useRouter();
   const [resetPassword, { loading }] = usePasswordResetMutation({
     onCompleted: (data) => {
       console.log("Reset password completed")
 
-      const { token, email, name } = data.passwordReset;
-      setCookies("token", token);
-      email && setCookies("email", email);
-      name && setCookies("name", name);
+      const { token } = data.passwordReset;
+      setBusinessCookies("token", token);
 
       router.push(businessRoute.dashboard);
     }
   });
 
   const onResetSubmit = async (formData: ResetPasswordSchemaInput) => {
+    if (!token) throw new Error("Token is required");
 
     await resetPassword({
       variables: {
         input: {
           password: formData.password,
           passwordConfirmation: formData.passwordConfirmation,
-          token,
+          token: typeof token === "string" ? token : token[0],
         }
       }
     })
@@ -61,6 +54,8 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
     password: {
       ...ResetPasswordConfig.password,
       type: showPass ? "text" : "password",
+      placeholder: t("common:password"),
+      label: t("common:password"),
       rightElement: (
         <PasswordIcon
           setShowPass={setShowPass}
@@ -71,6 +66,8 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
     passwordConfirmation: {
       ...ResetPasswordConfig.passwordConfirmation,
       type: showPass ? "text" : "password",
+      placeholder: t("common:passwordConfirmation"),
+      label: t("common:passwordConfirmation"),
       rightElement: (
         <PasswordIcon
           setShowPass={setShowPass}
@@ -80,47 +77,64 @@ export const ResetPasswordScreen = ({ token, email }: { token: string, email: st
     }
   };
 
+  if (!email || !token) return <Center><Text>{t("businessResetPassword:goBack")}</Text></Center>
 
-  return (<Center w="100%" height={"100%"}>
-    <Box safeArea p="2" py="8" w="90%" maxW="600">
-      <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{
-        color: "warmGray.50"
-      }}>
-        {texts.resetPassword}
-      </Heading>
-      <Center>
-        <Heading maxWidth={"400px"} mt="2" alignContent={"center"} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-          {texts.pleaseEnterYourPassword(email)}
+  return (
+    <Center w="100%" height={"100%"}>
+      <Box position={"absolute"} top={"5"} left={"5"}>
+        <Image src="/images/fasto-logo.svg"
+          alt="Fasto Logo"
+          height={36} width={180} />
+      </Box>
+      <Box position={"absolute"} top={"5"} right={"5"}>
+        <FDSSelect
+          w="70"
+          h="8"
+          array={localeObj}
+          selectedValue={router.locale as Locale}
+          setSelectedValue={(value) => {
+            const path = router.asPath;
+            return router.push(path, path, { locale: value });
+          }} />
+      </Box>
+      <Box safeArea p="2" py="8" w="90%" maxW="600">
+        <Heading size="xl" fontWeight="600" color="coolGray.800" textAlign={"center"} _dark={{
+          color: "warmGray.50"
+        }}>
+          {t("businessResetPassword:resetPassword")}
         </Heading>
-      </Center>
-      <ControlledForm
-        control={control}
-        formState={formState}
-        Config={passwordInputProps}
-      />
-
-      <VStack space={3} mt="5">
-        <Button isLoading={loading} mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
-          {texts.reset}
-        </Button>
-        <HStack mt="6" justifyContent="center">
-          <Text fontSize="sm" color="coolGray.600">
-            {texts.imAlreadyAUser}
-          </Text>
-          <Pressable>
-            <NextLink href={businessRoute.login}>
-              <Link _text={{
-                color: "indigo.500",
-                fontWeight: "medium",
-                fontSize: "sm"
-              }}>
-                {texts.login}
-              </Link>
-            </NextLink>
-          </Pressable>
-        </HStack>
-      </VStack>
-    </Box>
-  </Center>
+        <Center>
+          <Heading maxWidth={"400px"} mt="2" alignContent={"center"} color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
+            {t("businessResetPassword:pleaseEnterYourPassword", { email: typeof email === "string" ? email : email[0] })}
+          </Heading>
+        </Center>
+        <ControlledForm
+          control={control}
+          formState={formState}
+          Config={passwordInputProps}
+        />
+        <VStack space={3} mt="5">
+          <Button isLoading={loading} mt="2" bg="primary.500" onPress={handleSubmit(onResetSubmit)}>
+            {t("businessResetPassword:reset")}
+          </Button>
+          <HStack mt="6" justifyContent="center">
+            <Text fontSize="sm" color="coolGray.600">
+              {t("common:imAlreadyAUser")}
+            </Text>
+            <Pressable>
+              <NextLink href={businessRoute.login}>
+                <Link _text={{
+                  color: "indigo.500",
+                  fontWeight: "medium",
+                  fontSize: "sm"
+                }}>
+                  {t("common:login")}
+                </Link>
+              </NextLink>
+            </Pressable>
+          </HStack>
+        </VStack>
+      </Box>
+    </Center>
   )
 }

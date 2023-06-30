@@ -7,6 +7,7 @@ const CreateMenu = z.object({
 const UpdateMenu = z.object({
   _id: z.string(),
   name: z.string(),
+  isFavorite: z.boolean(),
   sections: z.array(
     z.object({
       category: z.string(),

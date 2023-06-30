@@ -1,0 +1,17 @@
+query GetCartItemsPerTab {
+	getCartItemsPerTab {
+		_id
+		product {
+			_id
+			name
+			imageUrl
+		}
+		quantity
+		notes
+		subTotal
+		user {
+			_id
+			name
+		}
+	}
+}

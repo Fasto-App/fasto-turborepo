@@ -1,0 +1,9 @@
+mutation UpdateItemFromCart($input: updateItemFromCartInput!) {
+	updateItemFromCart(input: $input) {
+		_id
+		quantity
+		notes
+		options
+		subTotal
+	}
+}

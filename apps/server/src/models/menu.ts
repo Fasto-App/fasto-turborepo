@@ -26,7 +26,10 @@ export class Menu {
     public sections?: Section[];
 
     @prop({ ref: () => Business })
-    public business!: Types.ObjectId;;
+    public business!: Types.ObjectId;
+
+    @prop({ default: false })
+    public isFavorite?: boolean
 
     @prop({ default: Date.now() })
     public created_date!: Date;
@@ -36,3 +39,6 @@ export class Menu {
 
 export const MenuModel = (conn: Connection) =>
     getModelForClass(Menu, { existingConnection: conn, schemaOptions: { collection: 'Menu' } })
+
+export const SectionModel = (conn: Connection) =>
+    getModelForClass(Section, { existingConnection: conn, schemaOptions: { collection: 'Section' } })

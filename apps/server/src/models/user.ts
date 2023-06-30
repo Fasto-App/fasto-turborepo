@@ -1,7 +1,8 @@
 import { Document, Connection } from 'mongoose'
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, getModelForClass, Severity, modelOptions } from '@typegoose/typegoose';
 import type { Businesses } from 'app-helpers';
 
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class User {
     @prop({ unique: false })
     public name?: string;
@@ -24,7 +25,7 @@ export class User {
     @prop()
     public picture?: string;
 
-    @prop({ default: false })
+    @prop({ default: true })
     public isGuest!: boolean;
 
     @prop({ default: Date.now() })

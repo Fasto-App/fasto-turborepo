@@ -24,6 +24,14 @@ export const TabStatus = {
   Closed: 'Closed'
 } as const
 
+export const TabType = {
+  Takeout: 'Takeout',
+  Delivery: 'Delivery',
+  DineIn: 'DineIn'
+} as const
+
+export type TabTypeType = typeof TabType[keyof typeof TabType];
+
 export type TabStatusType = typeof TabStatus[keyof typeof TabStatus];
 
 export type BusinessRelationship = {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
 	Button,
 	Modal
@@ -9,26 +9,19 @@ import { useProductMutationHook } from '../../graphQL/ProductQL';
 import { useAppStore } from '../UseAppStore';
 import { ProductFields } from './useProductFormHook';
 import { DevTool } from "@hookform/devtools";
-import { useUploadFileMutation } from '../../gen/generated';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm/ControlledForm';
 import { UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form';
-
-const texts = {
-	addTitle: "Add New Product",
-	editTitle: "Edit Product",
-	category: "Category",
-	dishesProducts: "Dish / Product Name",
-	productsHelperText: "Max 25 characters",
-	description: "Description",
-	descriptionHelperText: "Max 5 lines",
-	photo: "Photo",
-	price: "Price",
-	pricePlaceholder: "$12.99",
-	create: "Create",
-	delete: "Delete Product",
-	cancel: "Cancel",
-	edit: "Save",
-}
+import { useTranslation } from 'next-i18next';
+import { useUploadFileHook } from '../../hooks';
+import { ControlledInput, InputProps } from '../../components/ControlledForm';
+import {
+	useGetAllProductsByBusinessIdQuery,
+	useCreateProductMutation,
+	GetAllProductsByBusinessIdDocument,
+	useDeleteProductMutation,
+	useUpdateProductByIdMutation
+} from "../../gen/generated";
+import { showToast } from '../../components/showToast';
 
 type ProductModalProps = {
 	showModal: boolean,
@@ -48,31 +41,75 @@ const ProductModal = ({
 	handleProductSubmit,
 	productFormState,
 	productControl,
-	setProductValue,
 	resetProduct
 }: ProductModalProps) => {
 	const productId = useAppStore(state => state.product)
 	const setProduct = useAppStore(state => state.setProduct)
 
-	const [uploadFile] = useUploadFileMutation({
-		onCompleted: (data) => {
-			console.log(data)
-		},
-		onError: (error) => {
-			console.log(error)
-		}
-	})
+	const { t } = useTranslation("businessCategoriesProducts");
+
+	const { imageFile, imageSrc, handleFileOnChange } = useUploadFileHook()
 
 	const isEditing = !!productId
 
 	const { allCategories } = useCategoryMutationHook()
-	const {
-		deleteProduct,
-		updateProduct,
-		createProduct
-	} = useProductMutationHook()
+
+	const [createProduct,
+		{
+			loading: createProductIsLoading,
+		}
+	] = useCreateProductMutation({
+		onCompleted: () => {
+			showToast({
+				message: t("productCreated"),
+			})
+
+		},
+		onError: () => {
+			showToast({
+				status: "error",
+				message: t('productCreatedError'),
+			})
+		},
+		refetchQueries: [GetAllProductsByBusinessIdDocument]
+	});
+
+	const [updateProduct,
+		{ loading: updateProductIsLoading }] =
+		useUpdateProductByIdMutation({
+			onCompleted: () => {
+				showToast({
+					message: t("productUpdated"),
+				})
+			},
+			onError: () => {
+				showToast({
+					status: "error",
+					message: t("productUpdatedError"),
+				})
+			},
+			refetchQueries: [GetAllProductsByBusinessIdDocument]
+		});
+
+	const [deleteProduct, {
+		loading: deleteProductIsLoading,
+	}] = useDeleteProductMutation({
+		onCompleted: () => {
+			showToast({
+				message: t('productDeleted')
+			})
+		},
+		onError: () => {
+			showToast({
+				status: "error",
+				message: t('productDeletedError')
+			})
+		},
+		refetchQueries: [GetAllProductsByBusinessIdDocument]
+	});
 
 	const closeModalAndClearQueryParams = () => {
+		handleFileOnChange(null)
 		setShowModal(false)
 		setProduct(null)
 		resetAll()
@@ -81,7 +118,7 @@ const ProductModal = ({
 
 	const deleteProductCb = () => {
 
-		if (!productId) return
+		if (!productId) throw new Error("No product id")
 
 
 		deleteProduct({
@@ -93,18 +130,17 @@ const ProductModal = ({
 		closeModalAndClearQueryParams()
 	}
 
-	const onProductSubmit = (values: ProductFields) => {
-		console.log(values)
+	const onProductSubmit = async (values: ProductFields) => {
 
 		if (!!productId) {
-			updateProduct({
+			await updateProduct({
 				variables: {
 					input: {
 						_id: productId,
 						name: values.name,
 						description: values.description,
 						price: Number(values.price),
-						file: values.file,
+						file: imageFile,
 						category: values.category
 					}
 				}
@@ -112,13 +148,13 @@ const ProductModal = ({
 
 		} else {
 
-			createProduct({
+			await createProduct({
 				variables: {
 					input: {
 						name: values.name,
 						description: values.description,
 						price: Number(values.price),
-						file: values.file,
+						file: imageFile,
 						category: values.category
 					},
 				},
@@ -128,100 +164,91 @@ const ProductModal = ({
 		closeModalAndClearQueryParams();
 	};
 
-
-	const handleFileUpload = async (evt: any) => {
-
-		try {
-			const { data } = await uploadFile({
-				variables: {
-					file: evt.target.files[0]
-				}
-			})
-
-			setProductValue('file', data?.uploadFile)
-		} catch { }
-	}
-
-	const ProductFormConfig: RegularInputConfig = {
+	const ProductFormConfig: RegularInputConfig = useMemo(() => ({
 		name: {
 			isRequired: true,
 			name: 'name',
-			label: texts.dishesProducts,
-			placeholder: texts.dishesProducts,
-			helperText: texts.productsHelperText,
+			label: t("dishesProducts"),
+			placeholder: t("dishesProducts"),
+
 		},
 		price: {
 			isRequired: true,
 			name: 'price',
-			label: texts.price,
-			placeholder: texts.pricePlaceholder,
-			helperText: texts.productsHelperText,
-			formatValue: (value: string) => {
-				return value ?
-					(Number(value) / 100)
-						.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-					: ""
-			},
-			formatOnChange: (value: string, fieldOnchange: (num: number) => void) => {
-				const text = value.replace(/[$,.]/g, '')
-				const convertedValue = Number(text)
-				if (Number.isInteger(convertedValue)) {
-					return fieldOnchange(convertedValue)
-				}
-			}
+			label: t("price"),
+			placeholder: t("pricePlaceholder"),
+
+			inputType: "Currency",
 		},
 		category: {
 			isRequired: true,
 			name: 'category',
-			label: texts.category,
-			placeholder: texts.category,
-			helperText: texts.productsHelperText,
+			label: t("category"),
+			placeholder: t("category"),
+
 			inputType: 'Select',
 			array: allCategories.map(cat => ({ name: cat.name, _id: cat._id })) ?? []
 		},
 		description: {
 			name: 'description',
-			label: texts.description,
-			placeholder: texts.description,
-			helperText: texts.descriptionHelperText,
+			label: t("description"),
+			placeholder: t("description"),
 			inputType: 'TextArea'
-		},
-		file: {
-			name: 'file',
-			label: texts.photo,
-			placeholder: texts.photo,
-			helperText: texts.productsHelperText,
-			inputType: 'File',
-			handleOnChange: handleFileUpload,
 		}
-	}
+	}), [allCategories, t])
 
+	const uploadPicture: InputProps = useMemo(() => ({
+		name: 'file',
+		label: t("photo"),
+		placeholder: t("photo"),
+		inputType: 'File',
+	}), [t])
 
 	return (
 		<>
-			<Modal isOpen={showModal} onClose={closeModalAndClearQueryParams}>
+			<Modal isOpen={showModal} onClose={closeModalAndClearQueryParams} size={"lg"} height={"full"}>
 				<DevTool control={productControl} />
-				<Modal.Content maxWidth="400px">
+				<Modal.Content>
 					<Modal.CloseButton />
-					<Modal.Header>{isEditing ? texts.editTitle : texts.addTitle}</Modal.Header>
+					<Modal.Header>{isEditing ? t("editTitle") : t("addTitle")}</Modal.Header>
 					<Modal.Body>
 						<ControlledForm
 							control={productControl}
 							formState={productFormState}
 							Config={ProductFormConfig}
 						/>
-						{isEditing ? <DeleteAlert deleteItem={deleteProductCb} title={texts.delete} /> : null}
+						<ControlledInput
+							{...uploadPicture}
+							name='file'
+							handleOnChange={handleFileOnChange}
+							src={imageSrc}
+							control={productControl}
+							label={t("uploadPicture")}
+						/>
+						{isEditing ?
+							<DeleteAlert
+								deleteItem={deleteProductCb}
+								title={t("delete")}
+								body={t("deleteProductBody")}
+								cancel={t("cancel")}
+							/> : null}
 					</Modal.Body>
 
-					<Modal.Footer>
-						<Button.Group space={2}>
-							<Button w={"100px"} variant="ghost" colorScheme="tertiary" onPress={() => {
-								closeModalAndClearQueryParams();
-							}}>
-								{texts.cancel}
+					<Modal.Footer borderColor={"white"}>
+						<Button.Group space={2} flex={1}>
+							<Button
+								flex={1}
+								isLoading={createProductIsLoading || updateProductIsLoading || deleteProductIsLoading}
+								w={"100px"} variant="outline" colorScheme="tertiary" onPress={() => {
+									closeModalAndClearQueryParams();
+								}}>
+								{t("cancel")}
 							</Button>
-							<Button w={"100px"} onPress={handleProductSubmit(onProductSubmit)}>
-								{isEditing ? texts.edit : texts.create}
+							<Button
+								flex={1}
+								isLoading={createProductIsLoading || updateProductIsLoading || deleteProductIsLoading}
+								w={"100px"} onPress={handleProductSubmit(onProductSubmit)}>
+								{isEditing ? t("save") : t("create")}
 							</Button>
 						</Button.Group>
 					</Modal.Footer>
@@ -230,7 +257,5 @@ const ProductModal = ({
 		</>
 	);
 };
-
-// TODO: extract into it's own component
 
 export { ProductModal };

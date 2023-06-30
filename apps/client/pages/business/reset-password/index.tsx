@@ -1,44 +1,29 @@
-import type { GetServerSidePropsContext } from "next"
+import React from "react";
+import type { GetStaticProps } from "next"
 import { ResetPasswordScreen } from "../../../business-templates/ResetPassword";
-import * as jose from 'jose'
-import { businessRoute } from "../../../routes";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from 'next/head';
+import { useTranslation } from "next-i18next";
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { email, token, _id } = context.query
-  let jwtData: jose.JWTPayload;
+export default function ResetPasswordPage() {
+  const { t } = useTranslation('businessResetPassword');
 
-  try {
-
-    // TODO: validate token
-    // const { payload } = await jose.jwtVerify(
-    //   token as string, new TextEncoder().encode(secret)
-    // )
-
-    // 
-
-    // // [TODO] check to see if email from URL matches email from JWT, or don't even send email
-    // if (!payload._id) {
-    //   
-    //   throw new Error("[ERROR]: Email and token don't match. Redirecting.");
-    // }
-
-
-    return {
-      props: {
-        private: true,
-        email,
-        token
-      }
-    }
-
-  } catch {
-    return {
-      redirect: {
-        destination: businessRoute.login,
-        permanent: false,
-      },
-    };
-  }
+  return (
+    <>
+      <Head>
+        <title>{t("resetPassword")}</title>
+      </Head>
+      <ResetPasswordScreen />
+    </>)
 }
 
-export default ResetPasswordScreen
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? "en", [
+        'common',
+        'businessResetPassword'
+      ])),
+    },
+  };
+};

@@ -6,7 +6,8 @@ import { useCategoryMutationHook } from "../../graphQL/CategoryQL";
 import { useAppStore } from "../UseAppStore";
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm";
 import { CategoryFields } from "./useCategoryFormHook";
-import { ModalAddButtons } from "../ModalButtons";
+import { ModalAddButtons } from "../../components/ModalButtons";
+import { useTranslation } from "next-i18next";
 
 type CategoriesModalProps = {
   showModal: boolean;
@@ -15,19 +16,6 @@ type CategoriesModalProps = {
   categoryFormState: FormState<CategoryFields>;
   handleCategorySubmit: UseFormHandleSubmit<CategoryFields>;
   resetCategoryForm: () => void;
-};
-
-const texts = {
-  addTitle: "Add New Category",
-  editTitle: "Edit Category",
-  dishesCategories: "Category name",
-  categoriesHelperText: "Max 12 characters",
-  description: "Description",
-  descriptionHelperText: "Max 5 lines",
-  add: "Add",
-  delete: "Delete Category",
-  cancel: "Cancel",
-  save: "Save",
 };
 
 const CategoryModal = ({
@@ -44,6 +32,8 @@ const CategoryModal = ({
     state.networkState === "error" ? state.networkState : ""
   );
   const isEditing = !!categoryId;
+
+  const { t } = useTranslation("businessCategoriesProducts");
 
   const { updateCategory, createCategory, deleteCategory, categoryError } =
     useCategoryMutationHook();
@@ -96,7 +86,7 @@ const CategoryModal = ({
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header>
-            {isEditing ? texts.editTitle : texts.addTitle}
+            {isEditing ? t("editTitle") : t("addTitle")}
           </Modal.Header>
           <Modal.Body>
             {/* Name */}
@@ -106,9 +96,9 @@ const CategoryModal = ({
               Config={{
                 categoryName: {
                   name: "categoryName",
-                  label: texts.dishesCategories,
-                  placeholder: texts.dishesCategories,
-                  helperText: texts.categoriesHelperText,
+                  label: t("dishesCategories"),
+                  placeholder: t("dishesCategories"),
+                  helperText: t("categoriesHelperText"),
                 },
               }}
             />
@@ -118,11 +108,13 @@ const CategoryModal = ({
                   deleteCategoryCb();
                   setShowModal(false);
                 }}
-                title={texts.delete}
+                title={t("delete")}
+                body={t("deleteCategoryBody")}
+                cancel={t("cancel")}
               />
             ) : null}
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer borderColor={"white"}>
             <ModalAddButtons
               isEditing={isEditing}
               cancelAction={closeModalAndClearQueryParams}

@@ -40,7 +40,7 @@ const getAllBusinessByUser = async (_parent: any, _args: any, { db, user }: Cont
 }
 
 const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection }) => {
-  return await BusinessModel(db).find({})
+  return await BusinessModel(db).find({ picture: { $ne: null } })
 }
 
 const getBusinessById = async (_parent: any, { input }: { input: { _id: string } }, { db }: { db: Connection }) => {

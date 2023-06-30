@@ -2,7 +2,7 @@ import { OrderStatus } from "app-helpers"
 import { z } from "zod";
 
 export const CreateOrderDetail = z.object({
-  tab: z.string(),
+  tab: z.string().optional(),
   product: z.string(),
   user: z.string().optional(),
   quantity: z.number().optional().default(1),

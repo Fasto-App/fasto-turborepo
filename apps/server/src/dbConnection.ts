@@ -1,15 +1,13 @@
 
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import { MONGO_DB_URI } from "./constants";
 dotenv.config();
 
-const RAILWAY_MONGO_DB = "mongodb://mongo:8sIXR7VXmZ1d7fEZIYUn@containers-us-west-62.railway.app:6178"
 function dbConnection() {
 
   mongoose.Promise = global.Promise;
   mongoose.connect(
-    MONGO_DB_URI,
+    process.env.MONGO_DB_URI ?? "",
     {
       dbName: process.env.DB_NAME,
       //@ts-ignore

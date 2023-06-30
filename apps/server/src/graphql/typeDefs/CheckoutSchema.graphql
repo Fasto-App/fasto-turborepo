@@ -1,0 +1,78 @@
+extend type Query {
+	getCheckoutByID(input: GetById!): Checkout!
+	getCheckoutsByBusiness: [Checkout!]!
+	getOrdersByCheckout(input: GetById!): Checkout!
+}
+
+extend type Mutation {
+	makeCheckoutFullPayment(input: MakeCheckoutFullPaymentInput!): Checkout!
+	makeCheckoutPayment(input: MakeCheckoutPaymentInput!): Checkout!
+	customerRequestSplit(input: CustomerRequestSplitInput!): Checkout!
+	customerRequestPayFull(input: CustomerRequestPayFullInput!): Checkout!
+}
+
+type Checkout {
+	_id: ID!
+	business: ID!
+	tab: ID!
+	status: CheckoutStatusKeys!
+	paid: Boolean!
+	orders: [OrderDetail]!
+	payments: [Payment]!
+	subTotal: Float!
+	tip: Float
+	discount: Float
+	tax: Float!
+	total: Float!
+	totalPaid: Float!
+	splitType: SplitType
+	created_date: String!
+}
+
+input CustomerRequestPayFullInput {
+	patron: ID!
+	checkout: ID!
+	tip: Float!
+}
+
+input MakeCheckoutPaymentInput {
+	checkout: ID!
+	payment: ID!
+}
+
+input MakeCheckoutFullPaymentInput {
+	checkout: ID!
+	amount: Float!
+	tip: Float!
+	patron: ID!
+	discount: Float!
+	splitType: SplitType
+	paymentMethod: String
+}
+
+input CustomerRequestSplitInput {
+	checkout: ID!
+	splitType: SplitType!
+	customSplit: [CustomSplitInput!]
+	selectedUsers: [String!]!
+	tip: Float!
+}
+
+input CustomSplitInput {
+	patron: ID!
+	amount: Float!
+}
+
+enum CheckoutStatusKeys {
+	Pending
+	Paid
+	PartiallyPaid
+	Canceled
+}
+
+enum SplitType {
+	ByPatron
+	Equally
+	Custom
+	Full
+}

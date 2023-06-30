@@ -1,30 +1,23 @@
-import React from 'react';
-import NextLink from 'next/link';
+import React, { useMemo } from 'react';
 import { LoginFormFields } from '../types';
-import { Center, Box, Heading, VStack, HStack, Text, Button, } from "native-base"
+import { Center, Box, Heading, VStack, HStack, Text, Button, Image } from "native-base"
 import { useRouter } from 'next/router';
 import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm';
 import { LoginConfig, useLoginFormHook } from './hooks';
 import { usePostUserLoginMutation } from '../../gen/generated';
-import { setCookies } from '../../cookies/businessCookies';
+import { setBusinessCookies } from '../../cookies';
 import { businessRoute } from '../../routes';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 import { Link } from '../../components/atoms/Link';
-
-const texts = {
-	welcomeToFasto: "Welcome to openTab",
-	theSmartestAndFastestWay: "The Smartest and Fastest Way to Order",
-	ImNewUser: "I'm a new user ",
-	loginHere: "Login Here",
-	login: "Login",
-	signup: "Sign Up",
-	forgotPassword: "Forgot Password?",
-};
+import { FDSSelect } from '../../components/FDSSelect';
+import { localeObj, Locale } from 'app-helpers';
+import { useTranslation } from 'next-i18next';
 
 export const LoginForm = () => {
 	const router = useRouter();
 	const [showPass, setShowPass] = React.useState(false);
 	const [error, setError] = React.useState<string | undefined>(undefined);
+	const { t } = useTranslation(["businessLogin", "common"]);
 
 	const {
 		control,
@@ -40,9 +33,7 @@ export const LoginForm = () => {
 				throw new Error("Invalid data returned from server")
 			}
 
-			setCookies("name", name);
-			setCookies("token", token);
-			setCookies("email", email);
+			setBusinessCookies("token", token);
 			router.push(businessRoute.dashboard);
 		},
 		onError: (error) => {
@@ -68,11 +59,18 @@ export const LoginForm = () => {
 		}
 	};
 
-	const passwordInputProps: RegularInputConfig = {
+	const passwordInputProps: RegularInputConfig = useMemo(() => ({
 		...LoginConfig,
+		email: {
+			...LoginConfig.email,
+			label: t("common:email"),
+			placeholder: t("common:email"),
+		},
 		password: {
 			...LoginConfig.password,
 			type: showPass ? "text" : "password",
+			label: t("common:password"),
+			placeholder: t("common:password"),
 			rightElement: (
 				<PasswordIcon
 					setShowPass={setShowPass}
@@ -80,17 +78,33 @@ export const LoginForm = () => {
 				/>
 			),
 		}
-	};
-
+	}), [showPass, t]);
 
 	return (
-		<Center w="100%" height={"100vh"}>
+		<Center w="100%" height={"100%"}>
+			<Box position={"absolute"} top={"5"} left={"5"}>
+				<Image src="/images/fasto-logo.svg"
+					alt="Fasto Logo"
+					height={36} width={180} />
+			</Box>
+
+			<Box position={"absolute"} top={"5"} right={"5"}>
+				<FDSSelect
+					w="70"
+					h="8"
+					array={localeObj}
+					selectedValue={router.locale as Locale}
+					setSelectedValue={(value) => {
+						const path = router.asPath;
+						return router.push(path, path, { locale: value });
+					}} />
+			</Box>
 			<Box safeArea p="2" py="8" w="90%" maxW="600">
 				<Heading size="2xl" fontWeight="600" color="coolGray.800" textAlign={"center"}>
-					{texts.welcomeToFasto}
+					{t("common:welcomeToFasto")}
 				</Heading>
 				<Heading mt="2" color="coolGray.600" fontWeight="medium" size="sm" textAlign={"center"}>
-					{texts.theSmartestAndFastestWay}
+					{t("common:theSmartestAndFastestWay")}
 				</Heading>
 				<VStack space={3} mt="5">
 					<ControlledForm
@@ -104,11 +118,11 @@ export const LoginForm = () => {
 						onPress={handleSubmit(onSubmit)}
 						isLoading={loading}
 					>
-						{texts.loginHere}
+						{t("businessLogin:loginHere")}
 					</Button>
 
-					<Link href={businessRoute.forgotPassword}>
-						{texts.forgotPassword}
+					<Link href={businessRoute['forgot-password']}>
+						{t("businessLogin:forgotPassword")}
 					</Link>
 					{error ?
 						<Text
@@ -124,12 +138,11 @@ export const LoginForm = () => {
 							fontSize="sm"
 							color="coolGray.600"
 						>
-							{texts.ImNewUser}
+							{t("businessLogin:ImNewUser")}
 						</Text>
 						<Link href={businessRoute.signup}>
-							{texts.signup}
+							{t("common:signUp")}
 						</Link>
-
 					</HStack>
 				</VStack>
 			</Box>

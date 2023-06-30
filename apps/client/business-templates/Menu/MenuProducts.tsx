@@ -1,22 +1,45 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text, VStack } from 'native-base'
-import { ProductCard, ProductTile } from '../../components/Product/Product'
+import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text } from 'native-base'
+import { ProductCard, ProductTileWithCheckbox } from '../../components/Product/Product'
 import { useNumOfColumns } from '../../hooks'
 import { useProductMutationHook } from '../../graphQL/ProductQL'
 import { DeleteAlert } from '../../components/DeleteAlert'
 import { useAppStore } from '../UseAppStore'
 import { BsPencilSquare } from 'react-icons/bs';
-import { AllMenusbyBusiness, Product } from './types'
-import { GetAllMenusByBusinessIdDocument, useDeleteMenuMutation, useGetAllCategoriesByBusinessQuery, useUpdateMenuMutation } from '../../gen/generated'
+import { Product } from './types'
+import { GetAllMenusByBusinessIdDocument, useDeleteMenuMutation, useGetAllCategoriesByBusinessQuery, useGetAllMenusByBusinessIdQuery, useUpdateMenuMutation } from '../../gen/generated'
+import { Icon } from '../../components/atoms/NavigationButton'
+import { Pressable } from 'react-native'
+import { useTranslation } from 'next-i18next'
 
-const texts = {
-  editMenu: "Edit Menu",
-  cancel: "Cancel",
-  save: "Save",
-  delete: "Delete",
-}
+function MenuProducts() {
+  const { favoriteMenus, setFavoriteMenus } = useAppStore(state => ({
+    favoriteMenus: state.favoriteMenus,
+    setFavoriteMenus: state.setFavoriteMenus
+  }))
 
-function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
+  const setNetworkState = useAppStore(state => state.setNetworkState)
+  const { data: menusData, loading: loadingQuery } = useGetAllMenusByBusinessIdQuery({
+    onCompleted: (data) => {
+
+      const reducedMenus = data?.getAllMenusByBusinessID?.reduce((acc, menu) => {
+        acc[menu?._id] = menu.isFavorite
+        return acc
+      }, {} as any)
+
+      setFavoriteMenus(reducedMenus)
+
+    },
+    onError: () => {
+      setNetworkState("error")
+    }
+  });
+
+  const { t } = useTranslation("businessMenu")
+
+
+  // todo: unnecessary memoization
+  // Getting all categories
   const { data } = useGetAllCategoriesByBusinessQuery();
   const allCategories = useMemo(() => data?.getAllCategoriesByBusiness ?? [], [data?.getAllCategoriesByBusiness])
 
@@ -59,7 +82,7 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
 
   const isEditingMenu = useAppStore(state => state.isEditingMenu)
   const sectionMap = useAppStore(state => state.sectionMap)
-  const menuId = useAppStore(state => state?.menu ?? menusData?.[0]?._id)
+  const menuId = useAppStore(state => state?.menu ?? menusData?.getAllMenusByBusinessID?.[0]?._id)
   const categoryId = useAppStore(state => state.category ?? allCategories?.[0]?._id)
   const setMenu = useAppStore(state => state.setMenu)
   const setCategory = useAppStore(state => state.setCategory)
@@ -69,13 +92,11 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
 
   const numColumns = useNumOfColumns(isEditingMenu)
 
-  const selectedMenu = menusData?.find(menu => menu?._id === menuId)
-  console.log("Selected Menu", selectedMenu)
+  const selectedMenu = menusData?.getAllMenusByBusinessID?.find(menu => menu?._id === menuId)
 
 
   const categoriesIdsOnMenu = useMemo(() => selectedMenu?.sections?.map(section => section.category._id) ?? [],
     [selectedMenu?.sections])
-  console.log("Categories IDS on Menu", categoriesIdsOnMenu)
 
 
   const productsOnMenu = useMemo(() => {
@@ -95,32 +116,19 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
     return allCategories.filter(cat => categoriesIdsOnMenu.includes(cat._id))
   }, [allCategories, categoriesIdsOnMenu])
 
-  console.log("Selected Categories", selectedCategories)
-
 
   const productsFiltereByCategory = useMemo(() => {
     return allProducts.filter(product => categoryId ? product?.category?._id === categoryId : true)
   }, [allProducts, categoryId])
 
-  console.log("Products Filtered by Category", productsFiltereByCategory)
-
   const productsFiltereOnMenu = useMemo(() => {
     return productsFiltereByCategory.filter(product => productsOnMenu.includes(product?._id ?? ""))
   }, [productsFiltereByCategory, productsOnMenu])
-
-  console.log("Products Filtered on Menu", productsFiltereOnMenu)
-
-  console.log("%cSection MAP", "color: green", sectionMap)
-
 
   const setProductCheckbox = useCallback((selected, _id) => {
     const newProductsMap = new Map()
     const newCategoriesMap = new Map()
     const allProducts = sectionMap.get(categoryId)
-
-    console.log("%cSection MAP", "color: pink", sectionMap)
-    console.log("%allProducts", "color: pink", allProducts)
-    console.log("%categoryId", "color: pink", categoryId)
 
     // @ts-ignore
     for (const [categoryKey, productMap] of sectionMap.entries()) {
@@ -149,8 +157,6 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
         ctaTitle={"Edit Item"}
         imageUrl={item.imageUrl ?? ""}
         name={item.name}
-        onPress={() => console.log("HELLO")}
-        singleButton={true}
       />)
   }, [])
 
@@ -166,49 +172,19 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
     }
 
     return (
-      <ProductTile
+      <ProductTileWithCheckbox
         name={item.name}
         ctaTitle={"Edit Item"}
         imageUrl={item.imageUrl ?? ""}
         isChecked={isSelected}
-        onCheckboxClick={(selected) => setProductCheckbox(selected, item._id)}
+        onCheck={(selected) => setProductCheckbox(selected, item._id)}
         description={item.description}
       />)
   }, [categoryId, sectionMap, setProductCheckbox])
 
-
-  const renderListCard = useCallback(() => {
-    return (
-
-      <FlatList
-        key={numColumns}
-        data={productsFiltereOnMenu}
-        numColumns={numColumns}
-        renderItem={renderProductCard}
-        keyExtractor={(item) => `${item?._id}`}
-        ItemSeparatorComponent={() => <Box height={"4"} />}
-        ListEmptyComponent={<Text>To start adding products press "Edit Menu"</Text>}
-      />
-
-    )
-  }, [productsFiltereOnMenu, numColumns, renderProductCard])
-
-  const renderListTile = useCallback(() => {
-    return (
-      <FlatList
-        key={numColumns}
-        data={productsFiltereByCategory}
-        numColumns={numColumns}
-        renderItem={renderProductTile}
-        keyExtractor={(item) => `${item?._id}`}
-        ItemSeparatorComponent={() => <Box height={"4"} />}
-      />
-    )
-  }, [numColumns, productsFiltereByCategory, renderProductTile])
-
   const onEditMEnu = useCallback(() => {
     const sectionMap = new Map()
-    const selectedMenuSections = menusData.find(menu => menu?._id === menuId)?.sections ?? []
+    const selectedMenuSections = menusData?.getAllMenusByBusinessID.find(menu => menu?._id === menuId)?.sections ?? []
 
     selectedMenuSections.forEach(section => {
       const productMap = new Map()
@@ -222,6 +198,14 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
     console.log("Edit Menu")
   }, [menuId, menusData, seIsEditingMenu, setSectionMap])
 
+  const icontype = useMemo(() => {
+    if (!isEditingMenu) {
+      return selectedMenu?.isFavorite ? "StarFill" : "StarOutline"
+    }
+    return selectedMenu?._id && favoriteMenus[selectedMenu?._id] ? "StarFill" : "StarOutline"
+
+  }, [favoriteMenus, isEditingMenu, selectedMenu?._id, selectedMenu?.isFavorite])
+
   return (
     <Box
       p={"4"}
@@ -231,8 +215,17 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
       borderColor={"trueGray.400"}
       backgroundColor={"white"}
     >
-      <HStack flexDirection={"row"} mb={"2"} space={10} pl={8}>
-        <Box width={300}>
+      <HStack flexDirection={"row"} mb={"2"} space={4}>
+        <HStack space={2}>
+          <Pressable
+            disabled={!isEditingMenu}
+            onPress={() => selectedMenu?._id && setFavoriteMenus({
+              ...favoriteMenus,
+              [selectedMenu?._id]: !favoriteMenus[selectedMenu?._id]
+            })}
+          >
+            <Icon type={icontype} />
+          </Pressable>
           {isEditingMenu ?
             <Input
               size={"2xl"}
@@ -247,17 +240,10 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
               {selectedMenu?.name}
             </Heading>
           }
-        </Box>
-        {!isEditingMenu ? <Button
-          colorScheme={"tertiary"}
-          px={4}
-          m={0}
-          minW={"100px"}
-          onPress={onEditMEnu}
-          h={44}
-        >
-          {texts.editMenu}
-        </Button> : null}
+
+        </HStack>
+
+        {/* Categories */}
         <ScrollView flex={1} horizontal>
           {(isEditingMenu ? allCategories : selectedCategories).map((category) => (
             <Button
@@ -281,6 +267,7 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
       <Box flex={1} p={"4"}>
         {isEditingMenu ?
           <>
+            {/* TODO: SELECT ALL */}
             {false ?? <Checkbox
               value="Select All"
               my="1"
@@ -288,37 +275,57 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
               alignSelf={"flex-end"}>
               Select All
             </Checkbox>}
-            {renderListTile()}
+            <FlatList
+              key={numColumns}
+              data={productsFiltereByCategory}
+              numColumns={numColumns}
+              renderItem={renderProductTile}
+              keyExtractor={(item) => `${item?._id}`}
+              ItemSeparatorComponent={() => <Box height={"4"} />}
+            />
             { }
           </>
           :
-          renderListCard()}
+          <FlatList
+            key={numColumns}
+            data={productsFiltereOnMenu}
+            numColumns={numColumns}
+            renderItem={renderProductCard}
+            keyExtractor={(item) => `${item?._id}`}
+            ItemSeparatorComponent={() => <Box height={"4"} />}
+            ListEmptyComponent={<Text>{t("emptyProducts")}</Text>}
+          />}
       </Box>
       {isEditingMenu ?
         <HStack justifyContent="space-between">
           <HStack alignItems="center" space={2} py={4}>
-            <DeleteAlert title={"Delete Menu"} deleteItem={async () => {
-              if (!menuId) throw new Error("Menu not found")
+            <DeleteAlert
+              title={t("deleteMenu")}
+              body={(t("deleteMenuBody"))}
+              cancel={t("cancel")}
+              deleteItem={async () => {
+                if (!menuId) throw new Error("Menu not found")
 
-              await deleteMenu({
-                variables: {
-                  id: menuId
-                }
-              })
-            }} />
+                await deleteMenu({
+                  variables: {
+                    id: menuId
+                  }
+                })
+              }} />
           </HStack>
-          <HStack alignItems="center" space={2} justifyContent="end" py={4}>
+          <HStack alignItems="center" space={2} justifyContent="end">
             <Button w={"100"} variant={"subtle"} onPress={resetEditingAndSectionMap}>
-              {texts.cancel}
+              {t("cancel")}
             </Button>
             <Button
               w={"100"}
               colorScheme="tertiary"
-              isLoading={loadingDelete || loadingUpdate}
+              isLoading={loadingDelete || loadingUpdate || loadingQuery}
               onPress={async () => {
                 console.log(sectionMap)
                 const newSections: { category: string, products: string[] }[] = []
 
+                // TODO: THERE"S a bug here where the menu is favorite but the user doesn't change anything and it gets unmarked as favorite
                 if (!sectionMap.size) {
                   console.warn("Nothing to do here")
                   return;
@@ -328,6 +335,8 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
                 for (const [key, value] of sectionMap.entries()) {
                   // array width all the products that are selected
                   const selectedProducts = Array.from(value.keys()).filter(productKey => value.get(productKey))
+                  if (!key) continue;
+
                   newSections.push({ category: key, products: selectedProducts as string[] })
                 }
 
@@ -341,16 +350,24 @@ function MenuProducts({ menusData }: { menusData: AllMenusbyBusiness }) {
                     input: {
                       _id: menuId,
                       name: inputValue,
-                      sections: newSections
+                      sections: newSections,
+                      isFavorite: favoriteMenus[menuId]
                     }
                   }
                 })
                 resetEditingAndSectionMap()
-              }}>{texts.save}
+              }}>{t("save")}
             </Button>
           </HStack>
         </HStack>
-        : null}
+        : <Button
+          alignSelf={"end"}
+          colorScheme={"tertiary"}
+          w={"100"}
+          onPress={onEditMEnu}
+        >
+          {t("editMenu")}
+        </Button>}
     </Box>
   )
 }

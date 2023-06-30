@@ -1,3 +1,4 @@
+const { i18n } = require('./next-i18next.config');
 const { withExpo } = require('@expo/next-adapter');
 const withFonts = require('next-fonts');
 const withPlugins = require('next-compose-plugins');
@@ -20,6 +21,13 @@ const nextConfig = {
 		NEXT_PUBLIC_API_KEY: process.env.NEXT_PUBLIC_API_KEY,
 		FRONTEND_URL: process.env.FRONTEND_URL,
 		BACKEND_URL: process.env.BACKEND_URL,
+		FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+		FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
+		FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+		FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+		FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
+		FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+		FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
 	},
 	images: {
 		remotePatterns: [
@@ -28,6 +36,11 @@ const nextConfig = {
 				hostname: '*',
 			},
 		],
+	},
+	i18n,
+	webpack(config) {
+		config.experiments = { ...config.experiments, topLevelAwait: true };
+		return config;
 	},
 };
 

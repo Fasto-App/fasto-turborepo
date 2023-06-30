@@ -38,7 +38,7 @@ class MyDocument extends Document {
           <meta name="mobile-web-app-capable" content="yes" />
           <meta
             name="msapplication-config"
-            content="/icons/browserconfig.xml"
+            content="/browserconfig.xml"
           />
           <meta name="msapplication-TileColor" content="#d56f5b" />
           <meta name="msapplication-tap-highlight" content="no" />
@@ -55,38 +55,38 @@ class MyDocument extends Document {
           />
           {/* END */}
           {/*  */}
-          <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" />
+          {/* <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" /> */}
           <link
             rel="apple-touch-icon"
             sizes="152x152"
-            href="/icons/touch-icon-ipad.png"
+            href="/ios/152.png"
           />
           <link
             rel="apple-touch-icon"
             sizes="180x180"
-            href="/icons/touch-icon-iphone-retina.png"
+            href="/ios/180.png"
           />
           <link
             rel="apple-touch-icon"
             sizes="167x167"
-            href="/icons/touch-icon-ipad-retina.png"
+            href="/ios/167.png"
           />
           <link
             rel="icon"
             type="image/png"
             sizes="32x32"
-            href="/icons/favicon-32x32.png"
+            href="/ios/32.png"
           />
           <link
             rel="icon"
             type="image/png"
             sizes="16x16"
-            href="/icons/favicon-16x16.png"
+            href="/ios/16.png"
           />
           <link rel="manifest" href="/manifest.json" />
           <link
             rel="mask-icon"
-            href="/icons/safari-pinned-tab.svg"
+            href="/images/fasto-logo.svg"
             color="#d56f5b"
           />
           <link rel="shortcut icon" href="/favicon.ico" />
@@ -100,7 +100,7 @@ class MyDocument extends Document {
           />
           <meta
             name="twitter:image"
-            content="https://yourdomain.com/icons/android-chrome-192x192.png"
+            content={`${process.env.FRONTEND_URL}/ios/192.png`}
           />
           <meta name="twitter:creator" content="@mendesbr__" />
           <meta property="og:type" content="website" />
@@ -110,7 +110,7 @@ class MyDocument extends Document {
           <meta property="og:url" content={process.env.FRONTEND_URL} />
           <meta
             property="og:image"
-            content="https://yourdomain.com/icons/apple-touch-icon.png"
+            content={`${process.env.FRONTEND_URL}/ios/180.png`}
           />
         </Head>
         <body>

@@ -1,7 +1,8 @@
 import { Connection, Types } from 'mongoose'
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, getModelForClass, Severity, modelOptions } from '@typegoose/typegoose';
 import type { CheckoutStatusKeys, SplitType } from 'app-helpers';
 
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Checkout {
   @prop({ required: true })
   public business!: Types.ObjectId;

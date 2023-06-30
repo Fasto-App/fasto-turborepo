@@ -6,6 +6,7 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { CreateProductInput } from "./types";
 import { uploadFileS3Bucket } from "../../../s3/s3";
 import { Context } from "../types";
+import { MenuModel } from "../../../models";
 
 const createProduct = async (_parent: any, { input }: { input: CreateProductInput }, { db, business }: { db: Connection, business: string }) => {
 
@@ -45,8 +46,13 @@ const createProduct = async (_parent: any, { input }: { input: CreateProductInpu
             business: businessByID?._id,
             category: categoryByID?._id,
             addons: input?.addons,
-            imageUrl: input.file,
         });
+
+        if (input.file) {
+            const file = await uploadFileS3Bucket(input.file)
+
+            product.imageUrl = file.Location;
+        }
 
 
         const savedProduct = await product.save();
@@ -82,11 +88,7 @@ const getCategoryByProduct = async (parent: any, { productID }: { productID: str
 }
 
 const getAllProductsByBusinessID = async (_parent: any, _: any, { db, business }: { db: Connection, business: string }) => {
-
     console.log("Getting all products by business ID")
-    console.log("business", business)
-
-
 
     const Product = ProductModel(db);
     const allProductsByBusiness = await Product.find<Product>({ business });
@@ -101,6 +103,18 @@ const getProductByID = async (_parent: any,
 
 // TODO: Properly type input
 const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, business }: Context) => {
+    // TODO: change to updateOne instead?
+    // await product.updateOne({
+    //     $set: {
+    //         name: input.name,
+    //         description: input.description,
+    //         price: input.price,
+    //         category: input.category,
+    //         addons: input.addons,
+    //         imageUrl: input.imageUrl,
+    //     }
+    // })
+
     const { input } = arg;
 
     // use the _id to find the product, make sure the name is unique, and update the product
@@ -111,7 +125,9 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 
     // if the input has a photo, upload it to the s3 bucket
     if (input.file) {
-        product.imageUrl = input.file;
+        const file = await uploadFileS3Bucket(input.file)
+
+        product.imageUrl = file.Location;
     }
 
     // if theres a name, see if the name is unique
@@ -129,7 +145,7 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
     // if theres a price, see if the price is valid
     if (input.price) {
         if (input.price < 0) {
-            throw ApolloError('BadRequest', "Product name already exists. Please try it again.")
+            throw ApolloError('BadRequest', "Price must be greater than 0. Please try it again")
         }
 
 
@@ -155,33 +171,15 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 
     // if theres a addons, see if the addons are valid
     if (input.addons) {
-        if (input.addons.length > 10) throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
+        if (input.addons.length > 10)
+            throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
     }
 
-    if (input.file) {
-        product.imageUrl = input.file;
-    }
-
-    // TODO: change to updateOne instead?
-    // await product.updateOne({
-    //     $set: {
-    //         name: input.name,
-    //         description: input.description,
-    //         price: input.price,
-    //         category: input.category,
-    //         addons: input.addons,
-    //         imageUrl: input.imageUrl,
-    //     }
-    // })
-
-    await product.save()
-    return product
+    return await product.save()
 }
 
 // delete category
 const deleteProduct = async (_parent: any, args: { id: string }, { db, user, business }: Context) => {
-    // INIATILY DELETING THE PRODUCT
-
     if (!business) throw ApolloError('Unauthorized', "Business not found. Please login again.")
 
     const Product = ProductModel(db);
@@ -189,6 +187,7 @@ const deleteProduct = async (_parent: any, args: { id: string }, { db, user, bus
 
     if (!product) throw ApolloError('BadRequest', "Product not found. Please try it again.")
 
+    await MenuModel(db).updateMany({}, { $pull: { "sections.$[].products": args.id } })
     await product.remove();
     return { ok: true }
 };

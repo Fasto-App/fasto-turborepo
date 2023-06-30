@@ -1,0 +1,57 @@
+extend type Query {
+	getOrderDetailByID(orderDetailID: ID!): OrderDetail
+	getAllOrderDetailsByOrderID(orderID: ID!): [OrderDetail]
+	getOrdersBySession: [OrderDetail!]!
+}
+
+extend type Mutation {
+	createOrdersCheckout(input: [OrderDetailInput!]!): Checkout!
+	createMultipleOrderDetails(input: [CreateOrderInput!]!): [OrderDetail!]!
+	clientCreateMultipleOrderDetails(input: [ClientCreateOrderInput!]!): [OrderDetail!]!
+	updateOrderDetail(input: UpdateOrderDetailInput!): OrderDetail!
+	deleteOrderDetail(input: GetById!): OrderDetail!
+}
+
+input ClientCreateOrderInput {
+	user: ID!
+	cartItem: ID!
+	quantity: Int!
+}
+
+input CreateOrderInput {
+	user: ID
+	tab: ID
+	product: ID!
+	quantity: Int!
+	message: String
+}
+
+input OrderDetailInput {
+	product: ID!
+	quantity: Int
+	message: String
+}
+
+input UpdateOrderDetailInput {
+	_id: ID!
+	status: OrderStatus
+	quantity: Int
+	message: String
+}
+
+type OrderDetail {
+	_id: ID!
+	product: Product!
+	user: ID
+	quantity: Int!
+	subTotal: Int!
+	status: OrderStatus!
+	message: String
+}
+
+enum OrderStatus {
+	Delivered
+	Pendent
+	Open
+	Closed
+}

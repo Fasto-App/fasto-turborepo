@@ -3,11 +3,13 @@ import React, { SyntheticEvent } from 'react'
 import { Control, Controller, UseControllerProps } from 'react-hook-form'
 import { AiOutlineCloudDownload } from 'react-icons/ai';
 import Image from 'next/image'
+import { isInteger } from 'lodash';
+import { useCheckoutStore } from '../../business-templates/Checkout/checkoutStore';
 
 type CustomInputProps = {
   src?: string | null;
   name: string;
-  label: string;
+  label?: string;
   errorMessage?: string;
   helperText?: string;
   inputType?: InputType;
@@ -19,10 +21,10 @@ type CustomInputProps = {
   accessibilityLabel?: string;
 }
 
-type InputType = "Input" | "TextArea" | "Select" | "File" | "Date"
+type InputType = "Input" | "TextArea" | "Select" | "File" | "Date" | "Currency" | "Number"
 
 export type InputProps = IInputProps & CustomInputProps
-export type ControlledFormInput<T extends Record<string, string>> = Omit<UseControllerProps, "control"> & InputProps &
+export type ControlledFormInput<T extends Record<string, string | number>> = Omit<UseControllerProps, "control"> & InputProps &
 { control: Control<T> }
 
 export const ControlledInput = <T extends Record<string, string>>({
@@ -48,7 +50,7 @@ export const ControlledInput = <T extends Record<string, string>>({
       <FormControl isInvalid={!!errorMessage}>
 
         {/* dont show for type Date */}
-        {inputType !== "Date" ? (
+        {inputType !== "Date" && label ? (
           <FormControl.Label isRequired={isRequired}>
             {label}
           </FormControl.Label>) : null}
@@ -64,7 +66,8 @@ export const ControlledInput = <T extends Record<string, string>>({
                 return (
                   <TextArea
                     {...field}
-                    h={16}
+                    h={"24"}
+                    fontSize="lg"
                     autoCompleteType={undefined}
                     placeholder={placeholder} />)
               case "Select":
@@ -72,6 +75,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                   <Select
                     selectedValue={field.value}
                     // minWidth="200"
+                    fontSize="lg"
                     accessibilityLabel={rest.accessibilityLabel}
                     placeholder={placeholder}
                     onValueChange={field.onChange}
@@ -140,28 +144,37 @@ export const ControlledInput = <T extends Record<string, string>>({
                 return (
                   <label tabIndex={0} style={{ cursor: "pointer" }}>
                     <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
-                      <input type="file" style={{ display: "none" }} onChange={handleOnChange} accept="image/*" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={handleOnChange}
+                      />
                       <span>
-                        <AspectRatio maxHeight={300} borderRadius={"lg"} overflow={"hidden"}>
-                          {!src ?
-                            <Box mr={2} alignItems={"center"} justifyContent={"center"}>
-                              <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
-                            </Box>
-                            :
+                        {!src && !field.value ?
+                          <Box mr={2}
+                            alignItems={"center"} justifyContent={"center"} w={"full"} h={"20"}>
+                            <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
+                          </Box>
+                          :
+                          <Box w={"md"} h={"40"}>
+
                             <Image
-                              src={src}
+                              src={src || field.value}
                               alt="alt"
                               layout={'fill'}
                               objectFit={'cover'}
                               style={{ borderRadius: "10", borderWidth: 1 }}
                             />
-                          }
-                        </AspectRatio>
+                          </Box>
+                        }
                       </span>
                     </Box>
                   </label>
                 )
               case "Input":
+              case "Number":
+              case "Currency":
               default:
                 return (
                   <Input
@@ -169,17 +182,35 @@ export const ControlledInput = <T extends Record<string, string>>({
                     {...field}
                     type={type}
                     fontSize={"lg"}
-                    value={formatValue ? formatValue(field.value) : field.value ?? ""}
+                    value={inputType === "Currency" && isNumber(field.value) ?
+                      (Number(field.value) / 100)
+                        .toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                      : field.value || ""}
                     placeholder={placeholder}
                     InputRightElement={rightElement}
                     onChangeText={(value) => {
-                      console.log("value", value)
-                      if (formatOnChange) {
-                        formatOnChange(value, field.onChange)
-                        return
-                      }
+                      switch (inputType) {
+                        case "Currency":
+                          const text = value.replace(/[$,.]/g, '');
+                          const convertedValue = Number(text);
 
-                      field.onChange(value)
+                          if (isNaN(convertedValue)) {
+                            return field.onChange(0);
+                          }
+
+                          return field.onChange(convertedValue)
+
+                        case "Number":
+                          const number = Number(value);
+                          if (isNaN(number)) {
+                            return field.onChange(0);
+                          }
+
+                          return field.onChange(number)
+
+                        default:
+                          return field.onChange(value);
+                      }
                     }}
                   />
                 )
@@ -189,14 +220,18 @@ export const ControlledInput = <T extends Record<string, string>>({
         {errorMessage ?
           <FormControl.ErrorMessage>
             {errorMessage}
-          </FormControl.ErrorMessage> :
-          <FormControl.HelperText
-            _text={{
-              fontSize: 'xs'
-            }}>
-            {helperText}
-          </FormControl.HelperText>}
+          </FormControl.ErrorMessage> : helperText ?
+            <FormControl.HelperText
+              _text={{
+                fontSize: 'xs'
+              }}>
+              {helperText}
+            </FormControl.HelperText> : null}
       </FormControl>
     </>
   )
+}
+
+const isNumber = (value: any) => {
+  return isInteger(Number(value))
 }

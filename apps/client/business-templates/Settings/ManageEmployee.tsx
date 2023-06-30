@@ -4,7 +4,7 @@ import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
 import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
-import { texts } from "./texts"
+// import { texts } from "./texts"
 import { AddMoreButton } from "../../components/atoms/AddMoreButton"
 import { DICE_BEAR_INITIALS_URL, EmployeeInformation } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
@@ -14,10 +14,13 @@ import { EmployeeTile } from "../../components/BorderTile"
 import { DeleteAlert } from "../../components/DeleteAlert"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
+import { useTranslation } from "next-i18next"
 
 export const ManageEmployee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const setNetworkState = useAppStore(state => state.setNetworkState)
+
+  const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetAllEmployeesQuery({
     onError: () => {
@@ -80,18 +83,29 @@ export const ManageEmployee = () => {
 
   const isEditingConfig = useMemo(() => {
 
-    return getValues("_id") ? ({
+    return ({
       ...ManageEmployeeConfig,
       name: {
         ...ManageEmployeeConfig.name,
-        isDisabled: true
+        isDisabled: !!getValues("_id"),
+        label: t("name"),
+        placeholder: t("enterName"),
+      },
+      jobTitle: {
+        ...ManageEmployeeConfig.jobTitle,
+        label: t("jobTitle"),
+        placeholder: t("enterJobTitle"),
+      },
+      privilege: {
+        ...ManageEmployeeConfig.privileges,
+        label: t("privileges"),
       },
       email: {
         ...ManageEmployeeConfig.email,
-        isDisabled: true
+        isDisabled: !!getValues("_id"),
+        label: t("email"),
       }
-    }) : ManageEmployeeConfig
-
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValues("_id")])
 
@@ -123,7 +137,7 @@ export const ManageEmployee = () => {
       <CustomModal
         isOpen={isModalOpen}
         onClose={onCancel}
-        HeaderComponent={<Heading>{texts.addEmployee}</Heading>}
+        HeaderComponent={<Heading>{t("addEmployee")}</Heading>}
         ModalBody={
           <>
             <ControlledForm
@@ -135,7 +149,12 @@ export const ManageEmployee = () => {
             />
             {getValues("_id") ?
               <Box pt={4}>
-                <DeleteAlert deleteItem={deleteEmployeeCB} title={texts.delete} />
+                <DeleteAlert
+                  deleteItem={deleteEmployeeCB}
+                  title={t("delete")}
+                  body={t("deleteEmployeeBody")}
+                  cancel={t("cancel")}
+                />
               </Box>
               : null}
           </>
@@ -149,35 +168,37 @@ export const ManageEmployee = () => {
               onPress={onCancel}
               isLoading={loading}
             >
-              {texts.cancel}
+              {t("cancel")}
             </Button>
             <Button
               flex={1}
               onPress={handleSubmit(onSubmit)}
               isLoading={loading}
             >
-              {texts.save}
+              {t("save")}
             </Button>
           </>
         }
       />
       <HStack alignItems={"center"} space={4}>
         <Heading size={"lg"}>
-          {"Employees"}
+          {t("employees")}
         </Heading>
         <MoreButton onPress={() => setIsModalOpen(true)} />
       </HStack>
       {!combinedData.length
         ?
         <VStack>
-          <Text pt={5}>{texts.startAddingEmployees}</Text>
+          <Text pt={5}>{t("startAddingEmployees")}</Text>
           <AddMoreButton
             onPress={() => setIsModalOpen(true)} empty={true} />
         </VStack>
         :
         <ScrollView pt={6}>
           <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-            {combinedData.map((employee, index) => {
+            {combinedData.map((employee) => {
+              if (employee.jobTitle === "Owner") return null
+
               return (
                 <EmployeeTile
                   key={employee._id}
@@ -186,7 +207,7 @@ export const ManageEmployee = () => {
                   name={employee.name}
                   privilege={employee.privilege}
                   picture={employee.picture || DICE_BEAR_INITIALS_URL(employee.name)}
-                  ctaTitle={"Edit"}
+                  ctaTitle={t("edit")}
                   isPending={employee.isPending}
                   onPress={() => onEditPressed(employee)}
                 />

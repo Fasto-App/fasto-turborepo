@@ -44,7 +44,8 @@ import {
 } from './TableResolver';
 import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolver';
 import { CheckoutResolverMutation, CheckoutResolverQuery, CheckoutResolver } from './CheckoutResolver';
-import { RequestResolver, RequestResolverMutation, RequestResolverQuery } from './RequestResolver';
+import { RequestResolver, RequestResolverMutation, RequestResolverQuery, RequestSubscription } from './RequestResolver';
+import { CartItemResolver, CartItemResolverMutation, CartItemResolverQuery } from './CartItemResolver';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -61,6 +62,7 @@ export const resolvers = {
     ...CheckoutResolverQuery,
     ...RequestResolverQuery,
     ...TableResolverQuery,
+    ...CartItemResolverQuery
   },
   Mutation: {
     ...AddressResolverMutation,
@@ -75,6 +77,10 @@ export const resolvers = {
     ...UserResolverMutation,
     ...CheckoutResolverMutation,
     ...RequestResolverMutation,
+    ...CartItemResolverMutation
+  },
+  Subscription: {
+    ...RequestSubscription,
   },
   Business: {
     address: AddressResolver.getAddressFromBusiness,
@@ -83,6 +89,7 @@ export const resolvers = {
   },
   Checkout: {
     payments: CheckoutResolver.payments,
+    orders: CheckoutResolver.orders,
   },
   Product: {
     category: ProductResolver.getCategoryByProduct,
@@ -93,12 +100,12 @@ export const resolvers = {
   Space: {
     tables: TableResolver.resolveTablesFromSpace,
   },
-  // todo
+  // TODO
   // this is bad, a resolver for a resolver?
   Table: {
-    tab: TableResolver.getOpenTabByTable,
+    tab: TableResolver.getTabByTable,
   },
-  // todo
+  // TODO
   // This can be a problem, if we have a lot of tabs, we will have to make a lot of queries
   Tab: {
     orders: OrderDetailsResolver.getOrdersByTabID,
@@ -121,7 +128,12 @@ export const resolvers = {
     // tab: OrderDetailsResolver.getTabByOrderDetails,
     product: ProductResolver.getProductByOrderDetails,
   },
+  CartItem: {
+    product: CartItemResolver.getProductByCartItem,
+    user: CartItemResolver.getUserByCartItem,
+  },
   Request: {
-    admin: RequestResolver.getUserFromRequest,
+    admin: RequestResolver.getAdminFromRequest,
+    requestor: RequestResolver.getRequestorFromRequest,
   },
 };

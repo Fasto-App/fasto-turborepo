@@ -1,0 +1,15 @@
+{
+	"title": "Órdenes",
+	"yourCartIsEmpty": "Tu carrito está vacío. Regresa al menú",
+	"andStartOrdering": "¡y comienza a ordenar!",
+	"cta1": "Realizar orden",
+	"cta2": "Pagar cuenta",
+	"placedOrders": "Ver órdenes realizadas ({{number}})",
+	"modalCta1": "Regresar",
+	"modalTitle": "Órdenes realizadas",
+	"error": "¡Algo salió mal!\nPor favor, inténtalo de nuevo más tarde",
+	"me": "☝️ Yo",
+	"askToAdmin": "*Pide al administrador de la mesa que envíe las órdenes",
+	"tabClosedSuccess": "Pestaña cerrada correctamente",
+	"errorPlacingOrder": "Error al realizar el pedido"
+}

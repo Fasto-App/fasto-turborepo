@@ -1,0 +1,13 @@
+query GetOrdersBySession {
+	getOrdersBySession {
+		_id
+		quantity
+		status
+		subTotal
+		user
+		product {
+			name
+			imageUrl
+		}
+	}
+}

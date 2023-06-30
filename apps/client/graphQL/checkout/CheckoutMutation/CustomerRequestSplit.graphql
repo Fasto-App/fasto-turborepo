@@ -1,0 +1,16 @@
+mutation CustomerRequestSplit($input: CustomerRequestSplitInput!) {
+	customerRequestSplit(input: $input) {
+		_id
+		business
+		tab
+		status
+		paid
+		subTotal
+		tip
+		discount
+		tax
+		total
+		totalPaid
+		created_date
+	}
+}

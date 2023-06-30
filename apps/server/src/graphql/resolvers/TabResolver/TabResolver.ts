@@ -4,9 +4,10 @@ import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
-import { getPercentageOfValue, TableStatus, TabStatus } from "app-helpers";
-import { BusinessModel, OrderDetailModel } from "../../../models";
+import { getPercentageOfValue, RequestStatus, TableStatus, TableStatusType, TabStatus } from "app-helpers";
+import { BusinessModel, OrderDetailModel, RequestModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
+import { MutationResolvers } from "../../../generated/graphql";
 
 const createTab = async (_parent: any, { input }: createTabInput, { db, business }: Context) => {
     const Tab = TabModel(db);
@@ -32,12 +33,12 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             const tab = await Tab.create({
                 table: table._id,
                 admin: user?._id,
-                // todo: can we add exsisting users this way?
+                // TODO: can we add exsisting users this way?
                 // perhaps we need to add a new field to existing user emails or ids
                 users: allUsers.map(user => user._id),
             });
 
-            await table.updateOne({ status: TableStatus.Occupied });
+            await table.updateOne({ status: TableStatus.Occupied, tab: tab._id });
 
             return tab
 
@@ -55,8 +56,12 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             admin: allUsers[0]._id,
             users: allUsers.map(user => user._id),
         });
-        // change the status table to occupied
-        await table.updateOne({ status: TableStatus.Occupied });
+
+        if (!tab) throw ApolloError("InternalServerError", "Error creating Tab")
+
+        table.status = TableStatus.Occupied;
+        table.tab = tab._id;
+        await table.save();
 
         return tab
 
@@ -126,7 +131,10 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
         // if the Tab is associated with a table, change the status of the table to available
         if (tab?.table) {
             const Table = TableModel(db);
-            await Table.findByIdAndUpdate(tab.table, { status: TableStatus.Available });
+            await Table.findByIdAndUpdate(tab.table, {
+                status: TableStatus.Available,
+                tab: undefined
+            });
         }
 
         return tab;
@@ -151,12 +159,34 @@ const getTableByTabID = async (parent: any, _args: any, { db }: Context) => {
 }
 
 
-const requestCloseTab = async (_parent: any, { input }: { input: { _id: string } }, { db, business }: Context) => {
+//@ts-ignore
+const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, args, { db, business, client }) => {
     const Tab = TabModel(db);
     const OrderDetail = OrderDetailModel(db);
     const Checkout = CheckoutModel(db);
-    const foundBusiness = await BusinessModel(db).findById(business);
-    const foundTab = await Tab.findById(input._id);
+    const Table = TableModel(db);
+    const foundBusiness = await BusinessModel(db).findById(business || client?.business);
+    let tabId;
+
+    if (!foundBusiness) throw ApolloError('NotFound', "Business not found")
+
+    if (client?.request) {
+        const foundRequest = await RequestModel(db).findById(client.request);
+        if (!foundRequest) throw ApolloError('NotFound')
+        tabId = foundRequest.tab;
+    }
+
+    const foundTab = await Tab.findById(tabId || args.input?._id);
+
+    const changeTableStatus = async (toStatus: TableStatusType) => {
+        if (foundTab?.table) {
+            const foundTable = await Table.findById(foundTab.table);
+            if (foundTable) {
+                foundTable.status = toStatus;
+                await foundTable.save();
+            }
+        }
+    }
 
     if (!foundTab) throw ApolloError('NotFound')
 
@@ -169,6 +199,15 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
     // if there are no open orders, we can close the tab
     if (foundOrderDetails.length === 0) {
         foundTab.status = TabStatus.Closed;
+
+        // find all the requests associated with this tab and close them
+        const foundRequests = await RequestModel(db).find({ tab: foundTab._id });
+        if (foundRequests.length > 0) {
+            await RequestModel(db).updateMany({ tab: foundTab._id }, { status: RequestStatus.Completed });
+        }
+        // upadate the table status to available
+        changeTableStatus(TableStatus.Available)
+
         await foundTab.save();
         return foundTab;
     }
@@ -187,12 +226,15 @@ const requestCloseTab = async (_parent: any, { input }: { input: { _id: string }
     foundTab.checkout = checkout._id;
     foundTab.status = TabStatus.Pendent;
 
-    return await foundTab.save();;
+    return await foundTab.save();
 }
 
-
-
-const TabResolverMutation = { createTab, updateTab, deleteTab, requestCloseTab }
+const TabResolverMutation = {
+    createTab,
+    updateTab,
+    deleteTab,
+    requestCloseTab,
+}
 const TabResolverQuery = {
     getTabByID,
     getAllOpenTabsByBusinessID,

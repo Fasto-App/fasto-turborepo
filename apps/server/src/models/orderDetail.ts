@@ -11,6 +11,9 @@ export class OrderDetail {
     @prop()
     public user?: Types.ObjectId;
 
+    @prop()
+    public createdByUser?: Types.ObjectId;
+
     @prop({ required: true, ref: () => Tab })
     public tab!: Ref<Tab>;
 
