@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Link from 'next/link';
 import { Image, HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, Pressable, AspectRatio, FlatList, Heading } from "native-base"
 import { useRouter } from "next/router";
@@ -6,6 +6,8 @@ import { Helmet } from "react-helmet";
 import { useGetAllBusinessQuery } from "../../gen/generated";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { businessRoute, customerRoute } from "../../routes";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../../firebase/init";
 
 const width = {
   base: 220,
@@ -28,24 +30,22 @@ const LoadingTiles = () => {
 
 export const BusinessesScreen = () => {
   const { data, loading, error } = useGetAllBusinessQuery()
+  const router = useRouter()
 
   const columnNum = useBreakpointValue({
     base: 1,
     lg: 2
   });
 
-  // useEffect(() => {
-  //   analytics && logEvent(analytics, "page_view", {
-  //     page_title: "Landing Page",
-  //     page_path: "/"
-  //   })
-  // }, [])
-
-  const router = useRouter()
+  useEffect(() => {
+    analytics && logEvent(analytics, "page_view", {
+      page_title: "Partners",
+      page_path: router.pathname
+    })
+  }, [router.pathname])
 
   return (
-    <>
-
+    <Box flex={1} background={"white"}>
       <Box backgroundColor={"pink"} h={"full"}>
         <HStack position={"revert"} justifyContent={"space-between"} p={8}>
           <Image src="/images/fasto-logo.svg" alt="Fasto Logo" height={36} width={180} />
@@ -91,7 +91,7 @@ export const BusinessesScreen = () => {
 					`}
         </script>
       </Helmet>
-    </>
+    </Box>
   );
 }
 
