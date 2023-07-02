@@ -6,6 +6,7 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { CreateProductInput } from "./types";
 import { uploadFileS3Bucket } from "../../../s3/s3";
 import { Context } from "../types";
+import { MenuModel } from "../../../models";
 
 const createProduct = async (_parent: any, { input }: { input: CreateProductInput }, { db, business }: { db: Connection, business: string }) => {
 
@@ -179,8 +180,6 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
 
 // delete category
 const deleteProduct = async (_parent: any, args: { id: string }, { db, user, business }: Context) => {
-    // INIATILY DELETING THE PRODUCT
-
     if (!business) throw ApolloError('Unauthorized', "Business not found. Please login again.")
 
     const Product = ProductModel(db);
@@ -188,6 +187,7 @@ const deleteProduct = async (_parent: any, args: { id: string }, { db, user, bus
 
     if (!product) throw ApolloError('BadRequest', "Product not found. Please try it again.")
 
+    await MenuModel(db).updateMany({}, { $pull: { "sections.$[].products": args.id } })
     await product.remove();
     return { ok: true }
 };

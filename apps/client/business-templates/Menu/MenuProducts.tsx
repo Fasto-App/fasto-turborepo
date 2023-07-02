@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, FlatList, Heading, HStack, Input, ScrollView, Text } from 'native-base'
-import { ProductCard, ProductTile } from '../../components/Product/Product'
+import { ProductCard, ProductTileWithCheckbox } from '../../components/Product/Product'
 import { useNumOfColumns } from '../../hooks'
 import { useProductMutationHook } from '../../graphQL/ProductQL'
 import { DeleteAlert } from '../../components/DeleteAlert'
@@ -37,6 +37,9 @@ function MenuProducts() {
 
   const { t } = useTranslation("businessMenu")
 
+
+  // todo: unnecessary memoization
+  // Getting all categories
   const { data } = useGetAllCategoriesByBusinessQuery();
   const allCategories = useMemo(() => data?.getAllCategoriesByBusiness ?? [], [data?.getAllCategoriesByBusiness])
 
@@ -154,8 +157,6 @@ function MenuProducts() {
         ctaTitle={"Edit Item"}
         imageUrl={item.imageUrl ?? ""}
         name={item.name}
-        onPress={() => console.log("HELLO")}
-        singleButton={true}
       />)
   }, [])
 
@@ -171,45 +172,15 @@ function MenuProducts() {
     }
 
     return (
-      <ProductTile
+      <ProductTileWithCheckbox
         name={item.name}
         ctaTitle={"Edit Item"}
         imageUrl={item.imageUrl ?? ""}
         isChecked={isSelected}
-        onCheckboxClick={(selected) => setProductCheckbox(selected, item._id)}
+        onCheck={(selected) => setProductCheckbox(selected, item._id)}
         description={item.description}
       />)
   }, [categoryId, sectionMap, setProductCheckbox])
-
-
-  const renderListCard = useCallback(() => {
-    return (
-
-      <FlatList
-        key={numColumns}
-        data={productsFiltereOnMenu}
-        numColumns={numColumns}
-        renderItem={renderProductCard}
-        keyExtractor={(item) => `${item?._id}`}
-        ItemSeparatorComponent={() => <Box height={"4"} />}
-        ListEmptyComponent={<Text>{t("emptyProducts")}</Text>}
-      />
-
-    )
-  }, [numColumns, productsFiltereOnMenu, renderProductCard, t])
-
-  const renderListTile = useCallback(() => {
-    return (
-      <FlatList
-        key={numColumns}
-        data={productsFiltereByCategory}
-        numColumns={numColumns}
-        renderItem={renderProductTile}
-        keyExtractor={(item) => `${item?._id}`}
-        ItemSeparatorComponent={() => <Box height={"4"} />}
-      />
-    )
-  }, [numColumns, productsFiltereByCategory, renderProductTile])
 
   const onEditMEnu = useCallback(() => {
     const sectionMap = new Map()
@@ -271,6 +242,8 @@ function MenuProducts() {
           }
 
         </HStack>
+
+        {/* Categories */}
         <ScrollView flex={1} horizontal>
           {(isEditingMenu ? allCategories : selectedCategories).map((category) => (
             <Button
@@ -294,6 +267,7 @@ function MenuProducts() {
       <Box flex={1} p={"4"}>
         {isEditingMenu ?
           <>
+            {/* TODO: SELECT ALL */}
             {false ?? <Checkbox
               value="Select All"
               my="1"
@@ -301,11 +275,26 @@ function MenuProducts() {
               alignSelf={"flex-end"}>
               Select All
             </Checkbox>}
-            {renderListTile()}
+            <FlatList
+              key={numColumns}
+              data={productsFiltereByCategory}
+              numColumns={numColumns}
+              renderItem={renderProductTile}
+              keyExtractor={(item) => `${item?._id}`}
+              ItemSeparatorComponent={() => <Box height={"4"} />}
+            />
             { }
           </>
           :
-          renderListCard()}
+          <FlatList
+            key={numColumns}
+            data={productsFiltereOnMenu}
+            numColumns={numColumns}
+            renderItem={renderProductCard}
+            keyExtractor={(item) => `${item?._id}`}
+            ItemSeparatorComponent={() => <Box height={"4"} />}
+            ListEmptyComponent={<Text>{t("emptyProducts")}</Text>}
+          />}
       </Box>
       {isEditingMenu ?
         <HStack justifyContent="space-between">
@@ -331,7 +320,7 @@ function MenuProducts() {
             <Button
               w={"100"}
               colorScheme="tertiary"
-              isLoading={loadingDelete || loadingUpdate}
+              isLoading={loadingDelete || loadingUpdate || loadingQuery}
               onPress={async () => {
                 console.log(sectionMap)
                 const newSections: { category: string, products: string[] }[] = []
@@ -346,6 +335,8 @@ function MenuProducts() {
                 for (const [key, value] of sectionMap.entries()) {
                   // array width all the products that are selected
                   const selectedProducts = Array.from(value.keys()).filter(productKey => value.get(productKey))
+                  if (!key) continue;
+
                   newSections.push({ category: key, products: selectedProducts as string[] })
                 }
 

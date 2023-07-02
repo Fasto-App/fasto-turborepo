@@ -790,7 +790,7 @@ export type Query = {
   getCheckoutByID: Checkout;
   getCheckoutsByBusiness: Array<Checkout>;
   getClientInformation: User;
-  getClientMenu: Menu;
+  getClientMenu?: Maybe<Menu>;
   getClientSession: ClientSession;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
@@ -1308,7 +1308,7 @@ export type GetClientMenuQueryVariables = Exact<{
 }>;
 
 
-export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null }> }> | null } };
+export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null }> }> | null } | null };
 
 export type GetMenuByIdQueryVariables = Exact<{
   input?: InputMaybe<GetMenuById>;

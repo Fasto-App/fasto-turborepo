@@ -9,6 +9,7 @@ import { GetAllMenusByBusinessIdDocument, useCreateMenuMutation } from '../../ge
 import { menuSchemaInput } from 'app-helpers';
 import { AllMenusbyBusiness } from './types';
 import { useTranslation } from 'next-i18next';
+import { Icon } from '../../components/atoms/NavigationButton';
 
 export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
   const { t } = useTranslation("businessMenu")
@@ -34,23 +35,27 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
             {t("title")}
           </Heading>
         </Box>
-
         <VStack space={4}>
           <HStack space={2}>
             <SmallAddMoreButton onPress={() => setShowModal(true)} />
-            <ScrollView horizontal={true} pb={2}>
+            <ScrollView horizontal={true} pb={2} >
               <HStack space={2}>
                 {menusData?.map((item) => (
-                  <Tile
-                    key={item?._id}
-                    selected={item?._id === menu}
-                    onPress={() => {
-                      setMenu(item?._id)
-                      resetEditingAndSectionMap()
-                    }}
-                  >
-                    {item?.name}
-                  </Tile>
+                  <Box key={item?._id} >
+                    {item.isFavorite ? <Box position={"absolute"} >
+                      <Icon type={"StarFill"} size={"1em"} />
+                    </Box> : null}
+                    <Tile
+                      key={item?._id}
+                      selected={item?._id === menu}
+                      onPress={() => {
+                        setMenu(item?._id)
+                        resetEditingAndSectionMap()
+                      }}
+                    >
+                      {item?.name}
+                    </Tile>
+                  </Box>
                 ))}
               </HStack>
             </ScrollView>

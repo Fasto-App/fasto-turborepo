@@ -11,6 +11,7 @@ import { useTranslation } from "next-i18next"
 import { FDSSelect } from '../../components/FDSSelect'
 import { Locale, localeObj } from 'app-helpers'
 import NextImage from 'next/image'
+import { Pressable } from 'react-native'
 
 
 export const HomeScreen = () => {
@@ -22,12 +23,7 @@ export const HomeScreen = () => {
   const route = useRouter()
   const { businessId, tabId, adminId, name } = route.query
 
-  const joinTab = useCallback(() => {
-    console.log("Pressed")
-    setIsJoinTabModalOpen(true)
-  }, [])
-
-  const onPress = useCallback(() => {
+  const onViewMenu = useCallback(() => {
     route.push({
       pathname: customerRoute["/customer/[businessId]/menu"],
       query: {
@@ -35,6 +31,12 @@ export const HomeScreen = () => {
       }
     })
   }, [businessId, route])
+
+  const onLogoPress = useCallback(() => {
+    route.push({
+      pathname: "/",
+    })
+  }, [route])
 
   const { data: tabData, loading, error } = useGetClientSession()
   const { data: businessInfo } = useGetBusinessInformation()
@@ -74,9 +76,11 @@ export const HomeScreen = () => {
         alignItems={"flex-start"}
         justifyContent={"space-between"}
       >
-        <Image src="/images/fasto-logo.svg"
-          alt="Fasto Logo"
-          height={36} width={180} />
+        <Pressable onPress={onLogoPress}>
+          <Image src="/images/fasto-logo.svg"
+            alt="Fasto Logo"
+            height={36} width={180} />
+        </Pressable>
         <FDSSelect
           w="70"
           h="8"
@@ -107,7 +111,7 @@ export const HomeScreen = () => {
           onPress={joinTab}
           _text={{ bold: true }}
           colorScheme={"tertiary"}>{t("joinTab")}</Button> */}
-        <Button onPress={onPress}
+        <Button onPress={onViewMenu}
           _text={{ bold: true }}
           colorScheme={"blueGray"}>{t("viewMenu")}</Button>
 

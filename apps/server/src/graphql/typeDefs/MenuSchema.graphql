@@ -2,7 +2,7 @@ extend type Query {
 	getAllMenusByBusinessID: [Menu!]!
 	getMenuByID(input: GetMenuById): Menu!
 	getAllMenus: [Menu!]!
-	getClientMenu(input: GetMenu!): Menu!
+	getClientMenu(input: GetMenu!): Menu
 }
 
 extend type Mutation {
