@@ -453,7 +453,7 @@ export default function Index() {
       <Script
         src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6480b8939d58cca063ed09c9"
         strategy="afterInteractive" />
-      <Script src="html/js/webflow.js" strategy="afterInteractive" />
+      <Script src="html/js/webflow.js" strategy="lazyOnload" defer />
     </>
 
   )
