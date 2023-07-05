@@ -210,7 +210,7 @@ export const ManageEmployee = () => {
                   email={employee.email}
                   jobTitle={employee.jobTitle}
                   name={employee.name}
-                  privilege={employee.privilege}
+                  privilege={t(employee.privilege)}
                   picture={employee.picture || DICE_BEAR_INITIALS_URL(employee.name)}
                   ctaTitle={t("edit")}
                   isPending={employee.isPending}
