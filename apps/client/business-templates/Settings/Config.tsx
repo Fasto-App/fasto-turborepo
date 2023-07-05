@@ -1,5 +1,5 @@
 import { RegularInputConfig, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { businessLocationSchemaInputKeys, Privileges, typedKeys } from "app-helpers"
+import { businessLocationSchemaInputKeys, Privileges, PrivilegesKeysArray, PrivilegesKeysArrayObj, typedKeys } from "app-helpers"
 import { InputProps } from "../../components/ControlledForm/ControlledInput";
 
 export const ManageLocationConfig: RegularInputConfig = {
@@ -95,25 +95,13 @@ export const uploadPicture: InputProps = {
   }
 }
 
-// create a new config for the new form
-// the forms need better validation to garantee that the config types and the schema types are the same
-
-const privilegesArray = typedKeys(Privileges)
-  .filter(privilege => privilege !== "Customer")
-  .map(privilege => ({
-    name: privilege,
-    _id: privilege,
-  }))
-
-export const ManageEmployeeConfig: SideBySideInputConfig = {
+export const ManageEmployeeConfig: RegularInputConfig = {
   name: {
     isRequired: true,
     name: "name",
     label: "Name",
     placeholder: "Enter Name"
   },
-  // rolePrivileges: [
-  //   {
   jobTitle: {
     name: "jobTitle",
     label: "Job Title",
@@ -127,10 +115,8 @@ export const ManageEmployeeConfig: SideBySideInputConfig = {
     isRequired: true,
     placeholder: "Choose a privilege",
     inputType: "Select",
-    array: privilegesArray,
+    array: PrivilegesKeysArrayObj,
   },
-  //   }
-  // ],
   email: {
     isRequired: true,
     name: "email",

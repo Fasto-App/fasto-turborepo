@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useState, } from "react"
 import { Box, Button, Divider, Heading, HStack, ScrollView, Text, VStack } from "native-base"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
-import { ControlledForm } from "../../components/ControlledForm/ControlledForm"
+import { ControlledForm, RegularInputConfig } from "../../components/ControlledForm/ControlledForm"
 import { useManageEmployeeFormHook } from "./hooks"
 import { ManageEmployeeConfig } from "./Config"
 // import { texts } from "./texts"
 import { AddMoreButton } from "../../components/atoms/AddMoreButton"
-import { DICE_BEAR_INITIALS_URL, EmployeeInformation } from "app-helpers"
+import { DICE_BEAR_INITIALS_URL, EmployeeInformation, PrivilegesKeysArrayObj } from "app-helpers"
 import { DevTool } from "@hookform/devtools"
 import { useDeleteBusinessEmployeeMutation, useGetAllEmployeesQuery, useManageBusinessEmployeesMutation, UserPrivileges } from "../../gen/generated"
 import { MoreButton } from "../../components/MoreButton"
@@ -81,7 +81,7 @@ export const ManageEmployee = () => {
     setIsModalOpen(true)
   }, [setValue])
 
-  const isEditingConfig = useMemo(() => {
+  const isEditingConfig: RegularInputConfig = useMemo(() => {
 
     return ({
       ...ManageEmployeeConfig,
@@ -97,8 +97,13 @@ export const ManageEmployee = () => {
         placeholder: t("enterJobTitle"),
       },
       privilege: {
-        ...ManageEmployeeConfig.privileges,
-        label: t("privileges"),
+        ...ManageEmployeeConfig.privilege,
+        label: t("privilege"),
+        placeholder: t("selectPrivilege"),
+        array: PrivilegesKeysArrayObj.map(key => ({
+          name: t(key.name),
+          _id: key._id
+        })),
       },
       email: {
         ...ManageEmployeeConfig.email,
