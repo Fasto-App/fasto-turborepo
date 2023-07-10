@@ -124,9 +124,8 @@ const BusinessCard = ({ name, _id, description, imageUrl }: { name: string, _id:
               ratio={{ base: 1, sm: 1 }}>
               <Image
                 borderRadius={"md"}
-                src={imageUrl ?? "/images/fasto-logo.svg"} alt="Fasto Logo"
-                fallbackSource={{ uri: "/images/fasto-logo.svg" }}
-                resizeMode={"stretch"} />
+                src={imageUrl ?? "/images/fasto-logo.svg"} alt={name}
+                resizeMode={"cover"} />
             </AspectRatio>
           </Box>
           <VStack flex={1} space={2}>

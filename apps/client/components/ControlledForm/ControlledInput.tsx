@@ -142,35 +142,36 @@ export const ControlledInput = <T extends Record<string, string>>({
                 // otherwise we render the upload button
                 // use aspect Ratio component to keep the image ratio
                 return (
-                  <label tabIndex={0} style={{ cursor: "pointer" }}>
-                    <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        onChange={handleOnChange}
-                      />
-                      <span>
-                        {!src && !field.value ?
-                          <Box mr={2}
-                            alignItems={"center"} justifyContent={"center"} w={"full"} h={"20"}>
-                            <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
-                          </Box>
-                          :
-                          <Box w={"md"} h={"40"}>
-
-                            <Image
-                              src={src || field.value}
-                              alt="alt"
-                              layout={'fill'}
-                              objectFit={'cover'}
-                              style={{ borderRadius: "10", borderWidth: 1 }}
-                            />
-                          </Box>
-                        }
-                      </span>
-                    </Box>
-                  </label>
+                  <Box w={"64"}>
+                    <label tabIndex={0} style={{ cursor: "pointer" }}>
+                      <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          onChange={handleOnChange}
+                        />
+                        <span>
+                          {!src && !field.value ?
+                            <Box mr={2}
+                              alignItems={"center"} justifyContent={"center"} w={"full"} h={"20"}>
+                              <AiOutlineCloudDownload color={"gray"} size={"3.5em"} />
+                            </Box>
+                            :
+                            <Box h={"40"}>
+                              <Image
+                                src={src || field.value}
+                                alt="alt"
+                                layout={'fill'}
+                                objectFit={'cover'}
+                                style={{ borderRadius: "10", borderWidth: 1 }}
+                              />
+                            </Box>
+                          }
+                        </span>
+                      </Box>
+                    </label>
+                  </Box>
                 )
               case "Input":
               case "Number":

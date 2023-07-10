@@ -112,54 +112,35 @@ export const ManageBusiness = () => {
   }
 
   return (
-    <HStack flex={1} flexDir={"column"} space={"4"}>
+    <>
       <DevTool control={control} />
-      <Box
-        flexDirection={{
-          base: "column",
-          "2xl": "row"
-        }}>
-        <Box mr={8} flex={1}>
-          <ControlledForm
-            control={control}
-            formState={formState}
-            Config={ManageBusinessConfigNewConfig}
-          />
-        </Box>
-        <Box w={"xs"}>
-          <ControlledInput
-            {...uploadPicture}
-            label={t("uploadPicture")}
-            handleOnChange={handleFileOnChange}
-            src={imageSrc || data?.getBusinessInformation?.picture}
-            control={control}
-          />
-        </Box>
-      </Box>
+      <ControlledInput
+        {...uploadPicture}
+        label={t("uploadPicture")}
+        handleOnChange={handleFileOnChange}
+        src={imageSrc || data?.getBusinessInformation?.picture}
+        control={control}
+      />
+      <ControlledForm
+        control={control}
+        formState={formState}
+        Config={ManageBusinessConfigNewConfig}
+      />
       {/* Data should populate the component, but zustand should override locally */}
       {false ? <WeeklySchedule /> : null}
       {scheduleError ? <Text color={"red.500"}>{scheduleError}</Text> : null}
-      <Box pt={4}>
-        <HStack alignItems="center" space={2} justifyContent="end">
-          <Button
-            w={"100"}
-            variant={"subtle"}
-            onPress={() => console.log("Cancel")}
-            isLoading={loading}
-          >
-            {t("cancel")}
-          </Button>
-          <Button
-            w={"100"}
-            colorScheme="tertiary"
-            onPress={handleSubmit(handleSaveAccountInfo)}
-            isLoading={loading}
-          >
-            {t("save")}
-          </Button>
-        </HStack>
-      </Box>
+      <HStack alignItems="center" space={2} justifyContent="end" p={4}>
+        <Button
+          w={"100"}
+          colorScheme="success"
+          onPress={handleSubmit(handleSaveAccountInfo)}
+          isLoading={loading}
+        >
+          {t("save")}
+        </Button>
+
+      </HStack>
       <Loading isLoading={loadingQuery || loading} />
-    </HStack>
+    </>
   )
 }

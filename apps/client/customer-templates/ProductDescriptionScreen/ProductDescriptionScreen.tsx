@@ -12,6 +12,7 @@ import { LoadingPDP } from "./LoadingPDP";
 import { customerRoute } from "../../routes";
 import { showToast } from "../../components/showToast";
 import { useTranslation } from "next-i18next";
+import NextImage from 'next/image'
 
 const AnimatedBox = animated(Box);
 
@@ -107,14 +108,13 @@ export const ProductDescriptionScreen = () => {
       ) :
         <ScrollView h="100%" px={4}>
           <Box>
-            {/* TODO: add aspect ration */}
-            <Image
-              w={"100%"}
-              h={"200"}
-              alt="logo"
-              resizeMode="cover"
-              source={{ uri: data?.getProductByID?.imageUrl || PRODUCT_PLACEHOLDER_IMAGE }}
-              borderRadius={5}
+            <NextImage
+              src={data?.getProductByID?.imageUrl ?? "https://via.placeholder.com/150"}
+              alt={data?.getProductByID?.name ?? "placeholder"}
+              width={"100%"}
+              height={"200"}
+              objectFit='cover'
+              style={{ borderRadius: 5 }}
             />
             <PriceTag price={parseToCurrency(data?.getProductByID?.price)} />
           </Box>

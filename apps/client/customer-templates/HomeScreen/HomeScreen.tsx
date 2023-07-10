@@ -94,9 +94,11 @@ export const HomeScreen = () => {
       <Heading size={"2xl"}>{businessName}</Heading>
       <NextImage
         src={image ?? "https://via.placeholder.com/150"}
-        alt="Business Name"
+        alt={businessName}
         width={"150"}
         height={"150"}
+        objectFit='cover'
+        style={{ borderRadius: 5 }}
       />
       <VStack space={6} mt={"10"} w={"80%"}>
         <Button
