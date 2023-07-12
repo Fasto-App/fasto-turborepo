@@ -110,7 +110,7 @@ export default function Index() {
                 <a href="#Pricing" className="nav-link w-nav-link">
                   {t("pricing")}
                 </a>
-                <a href="#Pricing" className="nav-link w-nav-link">
+                <a href="partners" className="nav-link w-nav-link">
                   {t("partners")}
                 </a>
               </nav>
@@ -321,7 +321,7 @@ export default function Index() {
                 <h3 className="heading-3">{t("online-menu")}</h3>
                 <h3 className="h3-highlight">{t("free")}</h3>
                 <div className="text-block">{t("free-text")}</div>
-                <a href="http://business/signup" className="button small w-button">
+                <a href="business/signup" className="button small w-button">
                   {t("select")}
                 </a>
               </div>
@@ -331,7 +331,7 @@ export default function Index() {
                 <div className="text-block">
                   {t("pos-order-text")}
                 </div>
-                <a href="http://business/signup" className="button small w-button">
+                <a href="business/signup" className="button small w-button">
                   {t("select")}
                 </a>
               </div>
@@ -341,7 +341,7 @@ export default function Index() {
                 <div className="text-block">
                   {t("full-service-text")}
                 </div>
-                <a href="http://business/signup" className="button small w-button">
+                <a href="business/signup" className="button small w-button">
                   {t("select")}
                 </a>
               </div>
@@ -378,7 +378,7 @@ export default function Index() {
                 <a href="#Pricing" className="links-footer">
                   {(t("pricing"))}
                 </a>
-                <a href="#" className="links-footer">
+                <a href="partners" className="links-footer">
                   {t("partners")}
                 </a>
               </div>
