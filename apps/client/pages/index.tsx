@@ -1,26 +1,35 @@
 import React from "react"
 import Script from "next/script";
 import Link from "next/link";
+import { FDSSelect } from "../components/FDSSelect";
+import { useRouter } from "next/router";
+import { Locale, localeObj } from "app-helpers";
+import { Box, HStack } from "native-base";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { GetStaticProps } from "next";
 
 export default function Index() {
+
+  const router = useRouter();
+  const { t } = useTranslation("landingPage");
 
   return (
     <>
       <meta charSet="utf-8" />
       <title>
-        The Fasto App - The Smartest Way to Place Your Order and Manage Your Food
-        Business
+        {t("title")}
       </title>
       <meta
-        content="The Fasto App is a web app that works as both a POS system for restaurants and an ordering food system for customers. Our technology offers a combination of innovation, usability and performance. Fasto's technology is designed to make restaurant management easy. From order management to interaction with customers, our platform offers a comprehensive suite of tools that restaurant owners can use to manage their business. Our technology also allows restaurant owners to access real-time data, so they can make informed decisions and grow their business."
+        content={t("description")}
         name="description"
       />
       <meta
-        content="The Fasto App - The Smartest Way to Place Your Order and Manage Your Food Business"
+        content={(t("og-title"))}
         property="og:title"
       />
       <meta
-        content="The Fasto App is a web app that works as both a POS system for restaurants and an ordering food system for customers. Our technology offers a combination of innovation, usability and performance. Fasto's technology is designed to make restaurant management easy. From order management to interaction with customers, our platform offers a comprehensive suite of tools that restaurant owners can use to manage their business. Our technology also allows restaurant owners to access real-time data, so they can make informed decisions and grow their business."
+        content={t("og-description")}
         property="og:description"
       />
       <meta
@@ -28,11 +37,11 @@ export default function Index() {
         property="og:image"
       />
       <meta
-        content="The Fasto App - The Smartest Way to Place Your Order and Manage Your Food Business"
+        content={(t("og-title"))}
         property="twitter:title"
       />
       <meta
-        content="The Fasto App is a web app that works as both a POS system for restaurants and an ordering food system for customers. Our technology offers a combination of innovation, usability and performance. Fasto's technology is designed to make restaurant management easy. From order management to interaction with customers, our platform offers a comprehensive suite of tools that restaurant owners can use to manage their business. Our technology also allows restaurant owners to access real-time data, so they can make informed decisions and grow their business."
+        content={t("og-description")}
         property="twitter:description"
       />
       <meta
@@ -43,9 +52,6 @@ export default function Index() {
       <meta content="summary_large_image" name="twitter:card" />
       <meta content="width=device-width, initial-scale=1" name="viewport" />
       <meta content="Webflow" name="generator" />
-      {/* <link href="css/normalize.css" rel="stylesheet" type="text/css" />
-      <link href="css/webflow.css" rel="stylesheet" type="text/css" />
-      <link href="css/fasto.webflow.css" rel="stylesheet" type="text/css" /> */}
       <link href="https://fonts.googleapis.com" rel="preconnect" />
       <link
         href="https://fonts.gstatic.com"
@@ -55,6 +61,20 @@ export default function Index() {
       <link href="html/images/favicon.gif" rel="shortcut icon" type="image/x-icon" />
       <link href="html/images/webclip.png" rel="apple-touch-icon" />
       <div className="page-content" style={{ overflow: "scroll" }}>
+        <HStack
+          w={"100%"}
+          borderColor={"red.500"}
+          justifyContent={"flex-end"} p={2}>
+          <FDSSelect
+            w="100"
+            h="8"
+            array={localeObj}
+            selectedValue={router.locale as Locale}
+            setSelectedValue={(value) => {
+              const path = router.asPath;
+              return router.push(path, path, { locale: value });
+            }} />
+        </HStack>
         <section className="hero wf-section">
           <div
             data-animation="default"
@@ -67,7 +87,7 @@ export default function Index() {
           >
             <div className="w-layout-hflex flex-block-navbar">
               <a
-                href="index.html"
+                href="/"
                 aria-current="page"
                 className="logo w-nav-brand w--current"
               >
@@ -82,16 +102,16 @@ export default function Index() {
               </a>
               <nav role="navigation" className="w-nav-menu">
                 <a href="#How-it-works" className="nav-link w-nav-link">
-                  How it Works
+                  {t("how-it-works")}
                 </a>
                 <a href="#Features-and-benefits" className="nav-link w-nav-link">
-                  Features and Benefits
+                  {(t("features-and-benefits"))}
                 </a>
                 <a href="#Pricing" className="nav-link w-nav-link">
-                  Pricing
+                  {t("pricing")}
                 </a>
                 <a href="#Pricing" className="nav-link w-nav-link">
-                  Partners
+                  {t("partners")}
                 </a>
               </nav>
               <a href="business/login" className="link-block w-inline-block">
@@ -111,17 +131,15 @@ export default function Index() {
               className="w-layout-cell hero-cell1"
             >
               <div className="text-hero-wrapper">
-                <h1 className="heading">THE SMARTEST WAY TO PLACE YOUR ORDER</h1>
+                <h1 className="heading">{t("hero-title")}</h1>
                 <p className="paragraph">
-                  Fasto is a powerful web app that revolutionizes the ordering
-                  experience, enhancing client satisfaction while boosting business
-                  efficiency.
+                  {t("hero-subtitle")}
                 </p>
                 <a
                   href="business/signup"
                   className="button w-button"
                 >
-                  CREATE AN ACCOUNT
+                  {t("hero-cta")}
                 </a>
               </div>
             </div>
@@ -142,7 +160,7 @@ export default function Index() {
         </section>
         <section id="How-it-works" className="section wf-section">
           <div className="content-container">
-            <h2 className="heading-2">the ultimate solution for your business</h2>
+            <h2 className="heading-2">{t("how-it-works-title")}</h2>
             <div className="w-layout-hflex business-features-box">
               <img
                 src="html/images/Fasto-iPad.webp"
@@ -154,8 +172,7 @@ export default function Index() {
               />
               <div className="text-wrapper-column">
                 <p className="paragraph dark">
-                  With our user-friendly interface and powerful features, you'll
-                  have everything you need to manage your business with ease.
+                  {(t("how-it-works-subtitle"))}
                 </p>
               </div>
             </div>
@@ -192,21 +209,17 @@ export default function Index() {
               className="client-features-image"
             />
             <div className="feature-card margin-left">
-              <h3 className="heading-3">Increased Efficiency</h3>
+              <h3 className="heading-3">{t("increased-efficiency")}</h3>
               <p className="paragraph dark">
-                Streamline the purchasing process for users, resulting in faster
-                transactions and increased efficiency for both customers and
-                businesses.
+                {t("increased-efficiency-text")}
               </p>
             </div>
           </div>
           <div className="w-layout-hflex client-feature-box">
             <div className="feature-card margin-right">
-              <h3 className="heading-3">Flexible Bill Splitting</h3>
+              <h3 className="heading-3">{t("flexible-payment")}</h3>
               <p className="paragraph dark">
-                Customers can enjoy greater flexibility and convenience when paying
-                for their purchases, leading to a more positive overall shopping
-                experience and potentially increasing customer loyalty
+                {t("flexible-payment-text")}
               </p>
             </div>
             <img
@@ -230,8 +243,7 @@ export default function Index() {
         <section className="section dark wf-section">
           <div className="content-container">
             <h2 className="heading-2">
-              DESIGNED TO PROVIDE THE BEST EXPERIENCE fOR both Business and
-              customers
+              {t("qa-title")}
             </h2>
             <div className="dropdown-wrapper">
               <div
@@ -242,14 +254,12 @@ export default function Index() {
                 <div className="dropdown-toggle w-dropdown-toggle">
                   <div className="icon w-icon-dropdown-toggle" />
                   <div className="paragraph">
-                    What types of businesses can benefit from your POS system?
+                    {(t("qa-1"))}
                   </div>
                 </div>
                 <nav className="w-dropdown-list">
                   <a href="#" className="dropdown-link w-dropdown-link">
-                    Our POS system is suitable for businesses of all sizes and
-                    types, including restaurants, cafes, bars, food trucks, and
-                    more.
+                    {(t("qa-1-text"))}
                   </a>
                 </nav>
               </div>
@@ -257,14 +267,12 @@ export default function Index() {
                 <div className="dropdown-toggle w-dropdown-toggle">
                   <div className="icon w-icon-dropdown-toggle" />
                   <div className="paragraph">
-                    Can your POS system handle online ordering and delivery?
+                    {(t("qa-2"))}
                   </div>
                 </div>
                 <nav className="w-dropdown-list">
                   <a href="#" className="dropdown-link w-dropdown-link">
-                    Yes, our POS system offers online ordering and delivery
-                    integration, making it easy for businesses to manage their
-                    orders and fulfill deliveries.
+                    {(t("qa-2-text"))}
                   </a>
                 </nav>
               </div>
@@ -276,14 +284,12 @@ export default function Index() {
                 <div className="dropdown-toggle w-dropdown-toggle">
                   <div className="icon w-icon-dropdown-toggle" />
                   <div className="paragraph">
-                    How much does your POS system cost?
+                    {(t("qa-3"))}
                   </div>
                 </div>
                 <nav className="w-dropdown-list">
                   <a href="#" className="dropdown-link w-dropdown-link">
-                    Our POS system is competitively priced and can be customized to
-                    fit your specific business needs. Please contact us for pricing
-                    details and to schedule a demo.
+                    {(t("qa-3-text"))}
                   </a>
                 </nav>
               </div>
@@ -295,15 +301,12 @@ export default function Index() {
                 <div className="dropdown-toggle w-dropdown-toggle">
                   <div className="icon w-icon-dropdown-toggle" />
                   <div className="paragraph">
-                    What kind of support do you offer for your POS system?
+                    {(t("qa-4"))}
                   </div>
                 </div>
                 <nav className="w-dropdown-list">
                   <a href="#" className="dropdown-link w-dropdown-link">
-                    We offer comprehensive support and training for our POS system,
-                    including onboarding, technical assistance, and ongoing customer
-                    support. Our team is committed to delivering exceptional service
-                    and support to our clients.
+                    {(t("qa-4-text"))}
                   </a>
                 </nav>
               </div>
@@ -312,48 +315,34 @@ export default function Index() {
         </section>
         <section id="Pricing" className="section wf-section">
           <div className="content-container">
-            <h2 className="heading-2">pricing</h2>
+            <h2 className="heading-2">{t("pricing")}</h2>
             <div className="w-layout-hflex pricing-box">
               <div className="pricing-cards">
-                <h3 className="heading-3">ONLINE MENU</h3>
-                <h3 className="h3-highlight">FREE</h3>
-                <div className="text-block">Access to 1 online menu.</div>
+                <h3 className="heading-3">{t("online-menu")}</h3>
+                <h3 className="h3-highlight">{t("free")}</h3>
+                <div className="text-block">{t("free-text")}</div>
                 <a href="http://business/signup" className="button small w-button">
-                  Select
+                  {t("select")}
                 </a>
               </div>
               <div className="pricing-cards">
-                <h3 className="heading-3">POS/ORDER</h3>
-                <h3 className="h3-highlight">$59</h3>
+                <h3 className="heading-3">{t("pos-order")}</h3>
+                <h3 className="h3-highlight">{t("pos-order-price")}</h3>
                 <div className="text-block">
-                  Access to 3 Online Menus
-                  <br />
-                  Management System
-                  <br />
-                  Quick Sale
-                  <br />
-                  Payment Breakdown
-                  <br />
-                  Basic Analytics
+                  {t("pos-order-text")}
                 </div>
                 <a href="http://business/signup" className="button small w-button">
-                  Select
+                  {t("select")}
                 </a>
               </div>
               <div className="pricing-cards">
-                <h3 className="heading-3">FULL SERVICE</h3>
-                <h3 className="h3-highlight">$249</h3>
+                <h3 className="heading-3">{t("full-service")}</h3>
+                <h3 className="h3-highlight">{t("full-service-price")}</h3>
                 <div className="text-block">
-                  All previous perks
-                  <br />
-                  Unlimited Online Menus
-                  <br />
-                  Full Analytics
-                  <br />
-                  Ordering System
+                  {t("full-service-text")}
                 </div>
                 <a href="http://business/signup" className="button small w-button">
-                  Select
+                  {t("select")}
                 </a>
               </div>
             </div>
@@ -364,7 +353,7 @@ export default function Index() {
             <div className="column-3 w-row">
               <div className="w-col w-col-4">
                 <a
-                  href="index.html"
+                  href="/"
                   aria-current="page"
                   className="w-inline-block w--current"
                 >
@@ -381,22 +370,22 @@ export default function Index() {
               <div className="w-col w-col-4">
                 <div className="text-highlight">Pages</div>
                 <a href="#How-it-works" className="links-footer">
-                  How it Works
+                  {(t("how-it-works"))}
                 </a>
                 <a href="#Features-and-benefits" className="links-footer">
-                  Features and Benefits
+                  {(t("features-and-benefits"))}
                 </a>
                 <a href="#Pricing" className="links-footer">
-                  Pricing
+                  {(t("pricing"))}
                 </a>
                 <a href="#" className="links-footer">
-                  Become an Investor
+                  {t("partners")}
                 </a>
               </div>
               <div className="w-col w-col-4">
-                <div className="text-highlight">Contact</div>
-                <a href="mailto:info@fastoapp.com" className="links-footer">
-                  info@fastoapp.com
+                <div className="text-highlight">{t("contact-us")}</div>
+                <a href="mailto:fasto.contact@gmail.com" className="links-footer">
+                  fasto.contact@gmail.com
                 </a>
                 <a href="tel:+19173303561" className="links-footer">
                   +19173303561
@@ -441,3 +430,14 @@ export default function Index() {
     </>
   )
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? "en", [
+        'landingPage',
+      ])),
+    },
+  };
+};
+
