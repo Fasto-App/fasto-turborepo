@@ -55,7 +55,21 @@
 	"Pending": "Pending",
 	"Rejected": "Rejected",
 	"error": {
-		"email": "Please provide a valid email address.",
-		"password": "Please provide a password."
+		"email": "Please provide a valid email address",
+		"password": "Please provide a password",
+		"passwordMinimumLength": "Password must be at least 6 characters long",
+		"passwordConfirmation": "Please, provide a password confirmation that matches the password",
+		"newPassword": "Please provide a new password",
+		"oldPassword": "Please provide your current password",
+		"nameRequired": "Name is required",
+		"nameTooLong": "Name is too long",
+		"streetAddress": "Street address is required",
+		"postalCode": "Zip/Postal Code Required",
+		"city": "City is required",
+		"stateOrProvince": "State/Province is required",
+		"country": "Country is required",
+		"jobRole": "Job Role is required",
+		"tabError": "Please, provide a number of guests",
+		"spaceError": "Please, enter a Space Name. Min 2 chars"
 	}
 }

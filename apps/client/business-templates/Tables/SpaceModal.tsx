@@ -10,8 +10,7 @@ import { useTranslation } from "next-i18next";
 
 const spaceSchema = z.object({
   space_name: z.string().
-    min(2, "Please, enter a Space Name. Min 2 chars").
-    max(15, "15 characters max")
+    min(2, "error.spaceError")
 })
 
 type spaceSchemaInput = z.infer<typeof spaceSchema>
@@ -76,6 +75,7 @@ export const SpaceModal = ({ isModalOpen, setIsModalOpen }: SpaceModalProps) => 
               name: "space_name",
               label: t("businessTables:spaceName"),
               placeholder: t("businessTables:spaceExample"),
+              isRequired: true,
             }
           }}
         />

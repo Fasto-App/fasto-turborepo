@@ -142,9 +142,9 @@ export const ControlledInput = <T extends Record<string, string>>({
                 // otherwise we render the upload button
                 // use aspect Ratio component to keep the image ratio
                 return (
-                  <Box w={"64"}>
+                  <Box w={"64"} pb={2}>
                     <label tabIndex={0} style={{ cursor: "pointer" }}>
-                      <Box borderStyle={"dashed"} mt={2} borderWidth={1} padding={'4'} borderRadius={"md"}>
+                      <Box borderStyle={"dashed"} mt={2} borderWidth={1} borderRadius={"md"}>
                         <input
                           type="file"
                           accept="image/*"

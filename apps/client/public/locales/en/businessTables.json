@@ -33,5 +33,6 @@
 	"Delivered": "Delivered",
 	"Open": "Open",
 	"Pendent": "Pendent",
-	"checkout": "Checkout"
+	"checkout": "Checkout",
+	"errorGettingTabData": "Error getting tab data. Please try again."
 }

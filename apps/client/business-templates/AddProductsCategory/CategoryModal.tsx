@@ -28,9 +28,6 @@ const CategoryModal = ({
 }: CategoriesModalProps) => {
   const setCategory = useAppStore((state) => state.setCategory);
   const categoryId = useAppStore((state) => state.category);
-  const nameError = useAppStore((state) =>
-    state.networkState === "error" ? state.networkState : ""
-  );
   const isEditing = !!categoryId;
 
   const { t } = useTranslation("businessCategoriesProducts");
@@ -99,6 +96,7 @@ const CategoryModal = ({
                   label: t("dishesCategories"),
                   placeholder: t("dishesCategories"),
                   helperText: t("categoriesHelperText"),
+                  isRequired: true,
                 },
               }}
             />
