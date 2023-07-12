@@ -6,23 +6,54 @@ export default function Index() {
 
   return (
     <>
-      {/*  This site was created in Webflow. https://www.webflow.com  */}
-      {/*  Last Published: Sun Jul 02 2023 19:13:39 GMT+0000 (Coordinated Universal Time)  */}
       <meta charSet="utf-8" />
-      <title>Fasto</title>
+      <title>
+        The Fasto App - The Smartest Way to Place Your Order and Manage Your Food
+        Business
+      </title>
+      <meta
+        content="The Fasto App is a web app that works as both a POS system for restaurants and an ordering food system for customers. Our technology offers a combination of innovation, usability and performance. Fasto's technology is designed to make restaurant management easy. From order management to interaction with customers, our platform offers a comprehensive suite of tools that restaurant owners can use to manage their business. Our technology also allows restaurant owners to access real-time data, so they can make informed decisions and grow their business."
+        name="description"
+      />
+      <meta
+        content="The Fasto App - The Smartest Way to Place Your Order and Manage Your Food Business"
+        property="og:title"
+      />
+      <meta
+        content="The Fasto App is a web app that works as both a POS system for restaurants and an ordering food system for customers. Our technology offers a combination of innovation, usability and performance. Fasto's technology is designed to make restaurant management easy. From order management to interaction with customers, our platform offers a comprehensive suite of tools that restaurant owners can use to manage their business. Our technology also allows restaurant owners to access real-time data, so they can make informed decisions and grow their business."
+        property="og:description"
+      />
+      <meta
+        content="https://uploads-ssl.webflow.com/6480b8939d58cca063ed09c9/64ad80cc471cc7fb1c560f07_Fasto%20Logo.png"
+        property="og:image"
+      />
+      <meta
+        content="The Fasto App - The Smartest Way to Place Your Order and Manage Your Food Business"
+        property="twitter:title"
+      />
+      <meta
+        content="The Fasto App is a web app that works as both a POS system for restaurants and an ordering food system for customers. Our technology offers a combination of innovation, usability and performance. Fasto's technology is designed to make restaurant management easy. From order management to interaction with customers, our platform offers a comprehensive suite of tools that restaurant owners can use to manage their business. Our technology also allows restaurant owners to access real-time data, so they can make informed decisions and grow their business."
+        property="twitter:description"
+      />
+      <meta
+        content="https://uploads-ssl.webflow.com/6480b8939d58cca063ed09c9/64ad80cc471cc7fb1c560f07_Fasto%20Logo.png"
+        property="twitter:image"
+      />
+      <meta property="og:type" content="website" />
+      <meta content="summary_large_image" name="twitter:card" />
       <meta content="width=device-width, initial-scale=1" name="viewport" />
       <meta content="Webflow" name="generator" />
-      {/* <a href="css/normalize.css" rel="stylesheet" type="text/css" />
-      <a href="css/webflow.css" rel="stylesheet" type="text/css" />
-      <a href="css/fasto.webflow.css" rel="stylesheet" type="text/css" /> */}
+      {/* <link href="css/normalize.css" rel="stylesheet" type="text/css" />
+      <link href="css/webflow.css" rel="stylesheet" type="text/css" />
+      <link href="css/fasto.webflow.css" rel="stylesheet" type="text/css" /> */}
       <link href="https://fonts.googleapis.com" rel="preconnect" />
       <link
         href="https://fonts.gstatic.com"
         rel="preconnect"
         crossOrigin="anonymous"
       />
-      <a href="html/images/favicon.gif" rel="shortcut icon" type="image/x-icon" />
-      <a href="html/images/webclip.png" rel="apple-touch-icon" />
+      <link href="html/images/favicon.gif" rel="shortcut icon" type="image/x-icon" />
+      <link href="html/images/webclip.png" rel="apple-touch-icon" />
       <div className="page-content" style={{ overflow: "scroll" }}>
         <section className="hero wf-section">
           <div
@@ -41,45 +72,29 @@ export default function Index() {
                 className="logo w-nav-brand w--current"
               >
                 <img
-                  src="/html/images/Fasto-Logo-White.webp"
+                  src="html/images/Fasto-Logo-White.webp"
                   loading="lazy"
-                  srcSet="
-                  html/images/Fasto-Logo-White-p-500.png   500w,
-                  html/images/Fasto-Logo-White-p-800.png   800w,
-                  html/images/Fasto-Logo-White-p-1080.png 1080w,
-                  html/images/Fasto-Logo-White.webp       2847w
-                  "
+                  sizes="(max-width: 479px) 29vw, (max-width: 767px) 110px, (max-width: 1919px) 120px, 200px"
+                  srcSet="html/images/Fasto-Logo-White-p-500.png 500w, html/images/Fasto-Logo-White-p-800.png 800w, html/images/Fasto-Logo-White-p-1080.png 1080w, html/images/Fasto-Logo-White.webp 2847w"
                   alt=""
                   className="image"
                 />
               </a>
               <nav role="navigation" className="w-nav-menu">
-                <Link href={"#How-it-works"}>
-                  <div className="nav-link w-nav-link">
-                    How it Works
-                  </div>
-                </Link>
-                <Link href={"#Features-and-benefits"}>
-                  <div className="nav-link w-nav-link">
-                    Features and Benefits
-                  </div>
-                </Link>
-                <Link href={"#Pricing"}>
-                  <div className="nav-link w-nav-link">
-                    Pricing
-                  </div>
-                </Link>
-                <Link href={"partners"}>
-
-                  <div className="nav-link w-nav-link">
-                    Partners
-                  </div>
-                </Link>
+                <a href="#How-it-works" className="nav-link w-nav-link">
+                  How it Works
+                </a>
+                <a href="#Features-and-benefits" className="nav-link w-nav-link">
+                  Features and Benefits
+                </a>
+                <a href="#Pricing" className="nav-link w-nav-link">
+                  Pricing
+                </a>
+                <a href="#Pricing" className="nav-link w-nav-link">
+                  Partners
+                </a>
               </nav>
-              <a
-                href="/business/login"
-                className="link-block w-inline-block"
-              >
+              <a href="business/login" className="link-block w-inline-block">
                 <img src="html/images/Login-grad.webp" loading="lazy" alt="" />
               </a>
               <div className="menu-button w-nav-button">
@@ -133,12 +148,7 @@ export default function Index() {
                 src="html/images/Fasto-iPad.webp"
                 loading="lazy"
                 sizes="(max-width: 479px) 60vw, 35vw"
-                srcSet="
-							html/images/Fasto-iPad-p-500.png   500w,
-							html/images/Fasto-iPad-p-800.png   800w,
-							html/images/Fasto-iPad-p-1080.png 1080w,
-							html/images/Fasto-iPad.webp       1380w
-							"
+                srcSet="html/images/Fasto-iPad-p-500.png 500w, html/images/Fasto-iPad-p-800.png 800w, html/images/Fasto-iPad-p-1080.png 1080w, html/images/Fasto-iPad.webp 1380w"
                 alt="iPad displaying a restaurant menu at Fasto App for businesses"
                 className="business-features-image"
               />
@@ -156,15 +166,8 @@ export default function Index() {
             <img
               src="html/images/Website_Infographic.webp"
               loading="lazy"
-              sizes="(max-width: 479px) 83vw, (max-width: 767px) 90vw, (max-width: 991px) 84vw, (max-width: 1919px) 90vw, 93vw"
-              srcSet="
-						html/images/Website_Infographic-p-500.png   500w,
-						html/images/Website_Infographic-p-800.png   800w,
-						html/images/Website_Infographic-p-1080.png 1080w,
-						html/images/Website_Infographic-p-1600.png 1600w,
-						html/images/Website_Infographic-p-2000.png 2000w,
-						html/images/Website_Infographic.webp       3869w
-						"
+              sizes="(max-width: 479px) 83vw, (max-width: 767px) 90vw, (max-width: 991px) 88vw, (max-width: 1919px) 90vw, 93vw"
+              srcSet="html/images/Website_Infographic-p-500.png 500w, html/images/Website_Infographic-p-800.png 800w, html/images/Website_Infographic-p-1080.png 1080w, html/images/Website_Infographic-p-1600.png 1600w, html/images/Website_Infographic-p-2000.png 2000w, html/images/Website_Infographic.webp 3869w"
               alt="Fasto App features"
               className="fasto-business"
             />
@@ -176,30 +179,20 @@ export default function Index() {
               src="html/images/Fasto-Home.webp"
               loading="lazy"
               sizes="(max-width: 479px) 35vw, 25vw"
-              srcSet="
-						html/images/Fasto-Home-p-500.png   500w,
-						html/images/Fasto-Home-p-800.png   800w,
-						html/images/Fasto-Home-p-1080.png 1080w,
-						html/images/Fasto-Home.webp       1482w
-						"
+              srcSet="html/images/Fasto-Home-p-500.png 500w, html/images/Fasto-Home-p-800.png 800w, html/images/Fasto-Home-p-1080.png 1080w, html/images/Fasto-Home.webp 1482w"
               alt="Fasto App for clients, homepage"
               className="client-features-image"
             />
             <img
-              src="html/images/Fasto-Menu.webp"
+              src="html/images/Menu-Fasto.webp"
               loading="lazy"
               sizes="(max-width: 479px) 35vw, 25vw"
-              srcSet="
-						html/images/Fasto-Menu-p-500.png   500w,
-						html/images/Fasto-Menu-p-800.png   800w,
-						html/images/Fasto-Menu-p-1080.png 1080w,
-						html/images/Fasto-Menu.webp       1484w
-						"
-              alt="Fasto App for clients, menu page"
+              srcSet="html/images/Menu-Fasto-p-500.png 500w, html/images/Menu-Fasto-p-800.png 800w, html/images/Menu-Fasto-p-1080.png 1080w, html/images/Menu-Fasto.webp 1484w"
+              alt="Fasto App for customers - menu"
               className="client-features-image"
             />
             <div className="feature-card margin-left">
-              <h3>Increased Efficiency</h3>
+              <h3 className="heading-3">Increased Efficiency</h3>
               <p className="paragraph dark">
                 Streamline the purchasing process for users, resulting in faster
                 transactions and increased efficiency for both customers and
@@ -209,44 +202,34 @@ export default function Index() {
           </div>
           <div className="w-layout-hflex client-feature-box">
             <div className="feature-card margin-right">
-              <h3>Flexible Bill Splitting</h3>
+              <h3 className="heading-3">Flexible Bill Splitting</h3>
               <p className="paragraph dark">
                 Customers can enjoy greater flexibility and convenience when paying
                 for their purchases, leading to a more positive overall shopping
                 experience and potentially increasing customer loyalty
-              </p>{" "}
+              </p>
             </div>
             <img
-              src="html/images/Fasto-Checkout.webp"
+              src="html/images/Checkout-Split-Fasto.webp"
               loading="lazy"
               sizes="(max-width: 479px) 35vw, 25vw"
-              srcSet="
-						html/images/Fasto-Checkout-p-500.png   500w,
-						html/images/Fasto-Checkout-p-800.png   800w,
-						html/images/Fasto-Checkout-p-1080.png 1080w,
-						html/images/Fasto-Checkout.webp       1484w
-						"
-              alt="Fasto App for clients, splitting bill page"
+              srcSet="html/images/Checkout-Split-Fasto-p-500.png 500w, html/images/Checkout-Split-Fasto-p-800.png 800w, html/images/Checkout-Split-Fasto-p-1080.png 1080w, html/images/Checkout-Split-Fasto.webp 1484w"
+              alt="Fasto App for customers - split bill"
               className="client-features-image"
             />
             <img
-              src="html/images/Fasto-End-Session.webp"
+              src="html/images/End-Session-Fasto.webp"
               loading="lazy"
               sizes="(max-width: 479px) 35vw, 25vw"
-              srcSet="
-						html/images/Fasto-End-Session-p-500.png   500w,
-						html/images/Fasto-End-Session-p-800.png   800w,
-						html/images/Fasto-End-Session-p-1080.png 1080w,
-						html/images/Fasto-End-Session.webp       1484w
-						"
-              alt="Fasto App for clients, ending session page"
+              srcSet="html/images/End-Session-Fasto-p-500.png 500w, html/images/End-Session-Fasto-p-800.png 800w, html/images/End-Session-Fasto-p-1080.png 1080w, html/images/End-Session-Fasto.webp 1484w"
+              alt="Fasto App for customers - end session"
               className="client-features-image"
             />
           </div>
         </section>
         <section className="section dark wf-section">
           <div className="content-container">
-            <h2>
+            <h2 className="heading-2">
               DESIGNED TO PROVIDE THE BEST EXPERIENCE fOR both Business and
               customers
             </h2>
@@ -329,20 +312,18 @@ export default function Index() {
         </section>
         <section id="Pricing" className="section wf-section">
           <div className="content-container">
-            <h2>pricing</h2>
+            <h2 className="heading-2">pricing</h2>
             <div className="w-layout-hflex pricing-box">
               <div className="pricing-cards">
-                <h3>ONLINE MENU</h3>
+                <h3 className="heading-3">ONLINE MENU</h3>
                 <h3 className="h3-highlight">FREE</h3>
                 <div className="text-block">Access to 1 online menu.</div>
-                <a
-                  href="https://www.fastoapp.com/business/signup"
-                  target="_blank"
-                  className="button small w-button" rel="noreferrer"
-                >Select</a>
+                <a href="http://business/signup" className="button small w-button">
+                  Select
+                </a>
               </div>
               <div className="pricing-cards">
-                <h3>POS/ORDER</h3>
+                <h3 className="heading-3">POS/ORDER</h3>
                 <h3 className="h3-highlight">$59</h3>
                 <div className="text-block">
                   Access to 3 Online Menus
@@ -355,14 +336,12 @@ export default function Index() {
                   <br />
                   Basic Analytics
                 </div>
-                <a
-                  href="https://www.fastoapp.com/business/signup"
-                  target="_blank"
-                  className="button small w-button" rel="noreferrer"
-                >Select</a>
+                <a href="http://business/signup" className="button small w-button">
+                  Select
+                </a>
               </div>
               <div className="pricing-cards">
-                <h3>FULL SERVICE</h3>
+                <h3 className="heading-3">FULL SERVICE</h3>
                 <h3 className="h3-highlight">$249</h3>
                 <div className="text-block">
                   All previous perks
@@ -373,11 +352,9 @@ export default function Index() {
                   <br />
                   Ordering System
                 </div>
-                <a
-                  href="https://www.fastoapp.com/business/signup"
-                  target="_blank"
-                  className="button small w-button" rel="noreferrer"
-                >Select</a>
+                <a href="http://business/signup" className="button small w-button">
+                  Select
+                </a>
               </div>
             </div>
           </div>
@@ -394,13 +371,8 @@ export default function Index() {
                   <img
                     src="html/images/Fasto-Logo-White.webp"
                     loading="lazy"
-                    sizes="120px"
-                    srcSet="
-									html/images/Fasto-Logo-White-p-500.png   500w,
-									html/images/Fasto-Logo-White-p-800.png   800w,
-									html/images/Fasto-Logo-White-p-1080.png 1080w,
-									html/images/Fasto-Logo-White.webp       2847w
-									"
+                    sizes="(max-width: 1919px) 120px, 200px"
+                    srcSet="html/images/Fasto-Logo-White-p-500.png 500w, html/images/Fasto-Logo-White-p-800.png 800w, html/images/Fasto-Logo-White-p-1080.png 1080w, html/images/Fasto-Logo-White.webp 2847w"
                     alt=""
                     className="logo"
                   />
@@ -433,14 +405,26 @@ export default function Index() {
                   href="https://www.instagram.com/thefastoapp/"
                   target="_blank"
                   className="social-media-icon w-inline-block" rel="noreferrer"
-                ><img src="html/images/Insta.webp" loading="lazy" alt="" className="instagram"
-                  /></a>
+                >
+                  <img
+                    src="html/images/Insta.webp"
+                    loading="lazy"
+                    alt=""
+                    className="instagram"
+                  />
+                </a>
                 <a
                   href="https://www.linkedin.com/company/thefastoapp/"
                   target="_blank"
                   className="social-media-icon margin w-inline-block" rel="noreferrer"
-                ><img src="html/images/linkedin-white.webp" loading="lazy" alt="" className="linkedin"
-                  /></a>
+                >
+                  <img
+                    src="html/images/linkedin-white.webp"
+                    loading="lazy"
+                    alt=""
+                    className="linkedin"
+                  />
+                </a>
               </div>
             </div>
           </div>
@@ -455,6 +439,5 @@ export default function Index() {
         strategy="afterInteractive" />
       <Script src="html/js/webflow.js" strategy="lazyOnload" defer />
     </>
-
   )
 }
