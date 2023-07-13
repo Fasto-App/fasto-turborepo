@@ -51,7 +51,23 @@
 	"Pending": "Pendiente",
 	"Rejected": "Rechazado",
 	"error": {
-		"email": "Por favor, proporciona una dirección de correo electrónico válida.",
-		"password": "Por favor, proporciona una contraseña."
+		"email": "Por favor, proporciona una dirección de correo electrónico válida",
+		"password": "Por favor, proporciona una contraseña",
+		"passwordMinimumLength": "La contraseña debe tener al menos 6 caracteres",
+		"passwordConfirmation": "Por favor, proporciona una confirmación de contraseña que coincida con la contraseña",
+		"passwordsDontMatch": "Las contraseñas no coinciden",
+		"newPassword": "Por favor, proporciona una nueva contraseña",
+		"oldPassword": "Por favor, proporciona tu contraseña actual",
+		"nameRequired": "El nombre es obligatorio",
+		"nameTooLong": "El nombre es demasiado largo",
+		"streetAddress": "Se requiere la dirección de la calle",
+		"postalCode": "Código Postal requerido",
+		"city": "Se requiere la ciudad",
+		"stateOrProvince": "Se requiere el estado/provincia",
+		"country": "Se requiere el país",
+		"jobRole": "Se requiere el puesto de trabajo",
+		"tabError": "Por favor, proporciona un número de invitados",
+		"spaceError": "Por favor, introduce un Nombre de Espacio. Mínimo de 2 caracteres",
+		"required": "Este campo es obligatorio"
 	}
 }

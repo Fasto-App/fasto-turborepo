@@ -17,19 +17,19 @@ export const DaysOfTheWeekArray = typedKeys(DaysOfWeek);
 export type DaysOfWeekType = typeof DaysOfWeek[keyof typeof DaysOfWeek];
 
 export const businessLocationSchema = z.object({
-  streetAddress: z.string().trim().min(3, { message: 'Name Required' }),
+  streetAddress: z.string().trim().min(3, { message: 'error.streetAddress' }),
   complement: z.string(),
-  postalCode: z.string().trim().min(4, { message: 'Zip/Postal Code Required' }),
-  city: z.string().trim().min(2, { message: 'City Required' }),
-  stateOrProvince: z.string().trim().min(2, { message: 'State Required' }),
-  country: z.string().trim().min(2, { message: 'Country Required' }),
+  postalCode: z.string().trim().min(4, { message: 'error.postalCode' }),
+  city: z.string().trim().min(2, { message: 'error.city' }),
+  stateOrProvince: z.string().trim().min(2, { message: 'error.stateOrProvince' }),
+  country: z.string().trim().min(2, { message: 'error.country' }),
 });
 
 export type businessLocationSchemaInput = z.infer<typeof businessLocationSchema>
 export type businessLocationSchemaInputKeys = keyof businessLocationSchemaInput
 
 export const businessInformationSchema = z.object({
-  name: z.string().trim().min(3, { message: 'Name Required' }),
+  name: z.string().trim().min(3, { message: 'error.nameRequired' }),
   description: z.string().trim().optional(),
   picture: z.string().optional(),
 });
@@ -56,7 +56,7 @@ export type HoursOfOperationType = z.infer<typeof hoursOfOperationSchema>
 
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email({ message: 'Invalid email' }),
+  email: z.string().email({ message: 'error.email' }),
 });
 
 
@@ -73,21 +73,21 @@ export type loginSchemaInput = z.infer<typeof loginSchema>
 export const menuSchema = z.object({
   name: z
     .string()
-    .min(1, { message: "Name Required" })
-    .max(50, { message: "Name too long" }),
+    .min(1, { message: "error.nameRequired" })
+    .max(50, { message: "error.nameTooLong" }),
 });
 
 export type menuSchemaInput = z.infer<typeof menuSchema>
 
 export const resetPasswordSchema = z.object({
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-  passwordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  password: z.string().min(6, { message: 'error.passwordMinimumLengthh' }),
+  passwordConfirmation: z.string().min(6, { message: 'error.passwordMinimumLengthh' }),
   token: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (data.password !== data.passwordConfirmation) {
     ctx.addIssue({
       code: 'custom',
-      message: 'Passwords do not match',
+      message: 'error.passwordConfirmation',
       path: ['passwordConfirmation'],
     });
   }
@@ -97,7 +97,7 @@ export const resetPasswordSchema = z.object({
 export type ResetPasswordSchemaInput = z.infer<typeof resetPasswordSchema>
 
 export const signUpSchema = z.object({
-  email: z.string().email({ message: 'Invalid email' }),
+  email: z.string().email({ message: 'error.email' }),
 });
 
 export type SignUpSchemaInput = z.infer<typeof signUpSchema>
@@ -105,15 +105,15 @@ export type SignUpSchemaInput = z.infer<typeof signUpSchema>
 export type CreateAccountField = z.infer<typeof createAccountSchema>
 
 export const createAccountSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email({ message: 'error.email' }),
   name: z.string().min(3).max(50),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }).max(50),
-  passwordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }).max(50),
+  password: z.string().min(6, { message: 'error.passwordMinimumLength' }).max(50),
+  passwordConfirmation: z.string().min(6, { message: 'error.passwordMinimumLength' }).max(50),
 }).superRefine((data, ctx) => {
   if (data.password !== data.passwordConfirmation) {
     ctx.addIssue({
       code: 'custom',
-      message: 'Passwords do not match',
+      message: 'error.passwordsDontMatch',
       path: ['passwordConfirmation'],
     });
   }
@@ -122,17 +122,17 @@ export const createAccountSchema = z.object({
 
 
 export const accountInformationFormSchema = z.object({
-  name: z.string().trim().min(3, { message: 'Name Required' })
+  name: z.string().trim().min(3, { message: 'error.nameRequired' })
     .max(50, { message: 'Name too long' }),
-  email: z.string().trim().min(4, { message: 'Email Required' }),
+  email: z.string().email({ message: 'error.email' }),
   oldPassword: z.string().optional(),
-  newPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional().or(z.literal('')),
-  newPasswordConfirmation: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional().or(z.literal('')),
+  newPassword: z.string().min(6, { message: 'error.passwordMinimumLength' }).optional().or(z.literal('')),
+  newPasswordConfirmation: z.string().min(6, { message: 'error.passwordMinimumLength' }).optional().or(z.literal('')),
 }).superRefine((data, ctx) => {
   if (data.newPassword !== data.newPasswordConfirmation) {
     ctx.addIssue({
       code: 'custom',
-      message: 'Passwords do not match',
+      message: 'error.passwordConfirmation',
       path: ['newPasswordConfirmation'],
     });
   }
@@ -140,7 +140,7 @@ export const accountInformationFormSchema = z.object({
   if (data.oldPassword && !data.newPassword) {
     ctx.addIssue({
       code: 'custom',
-      message: 'New password required',
+      message: 'error.newPassword',
       path: ['newPassword'],
     });
   }
@@ -148,7 +148,7 @@ export const accountInformationFormSchema = z.object({
   if (data.newPassword && !data.oldPassword) {
     ctx.addIssue({
       code: 'custom',
-      message: 'Old password required',
+      message: 'error.oldPassword',
       path: ['oldPassword'],
     });
   }
@@ -160,11 +160,11 @@ export type AccountInformation = z.infer<typeof accountInformationFormSchema>
 
 export const employeeFormSchema = z.object({
   _id: z.string().optional(),
-  name: z.string().trim().min(3, { message: 'Name Required' })
-    .max(50, { message: 'Name too long' }),
-  jobTitle: z.string().trim().min(3, { message: 'Job Role Required' }),
+  name: z.string().trim().min(3, { message: 'error.nameRequired' })
+    .max(50, { message: 'error.nameTooLong' }),
+  jobTitle: z.string().trim().min(3, { message: 'error.JobRole' }),
   privilege: z.enum(PrivilegesKeysArray),
-  email: z.string().email().min(4, { message: 'Email Required' }),
+  email: z.string().email().min(4, { message: 'error.email' }),
   isPending: z.boolean().optional(),
 })
 
