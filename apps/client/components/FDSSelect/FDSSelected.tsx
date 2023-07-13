@@ -21,6 +21,7 @@ export const NotMemoizedFDSSelect = <T extends SelectData>({
 
   return (
     <Select
+      backgroundColor={"white"}
       w={w}
       h={h}
       overflow={"hidden"}

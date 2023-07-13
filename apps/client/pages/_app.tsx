@@ -1,3 +1,6 @@
+import '../css/normalize.css'
+import '../css/webflow.css'
+import '../css/fasto.webflow.css'
 import '../style.css'
 import type { AppProps } from 'next/app';
 import React, { Fragment, useMemo } from 'react';

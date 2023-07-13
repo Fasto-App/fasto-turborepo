@@ -19,6 +19,7 @@ import customerProductDescription from "../public/locales/en/customerProductDesc
 import customerSettings from "../public/locales/en/customerSettings.json";
 import customerCart from "../public/locales/en/customerCart.json";
 import common from "../public/locales/en/common.json";
+import landingPage from "../public/locales/en/landingPage.json"
 
 declare module "i18next" {
   // Extend CustomTypeOptions
@@ -45,6 +46,7 @@ declare module "i18next" {
       businessAddToOrder: typeof businessAddToOrder;
       businessCheckout: typeof businessCheckout;
       businessOrders: typeof businessOrders;
+      landingPage: typeof landingPage;
     };
   }
 }
