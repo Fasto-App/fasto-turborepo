@@ -113,7 +113,7 @@ export const createAccountSchema = z.object({
   if (data.password !== data.passwordConfirmation) {
     ctx.addIssue({
       code: 'custom',
-      message: 'Passwords do not match',
+      message: 'error.passwordsDontMatch',
       path: ['passwordConfirmation'],
     });
   }

@@ -46,13 +46,23 @@
 	"yourOrders": "Seus Pedidos",
 	"allOrders": "Todos os Pedidos",
 	"error": {
-		"email": "Por favor, forneça um endereço de e-mail válido.",
-		"password": "Por favor, forneça uma senha.",
-		"Accepted": "Aceito",
-		"Canceled": "Cancelado",
-		"Completed": "Concluído",
-		"Expired": "Expirado",
-		"Pending": "Pendente",
-		"Rejected": "Rejeitado"
+		"email": "Por favor, forneça um endereço de e-mail válido",
+		"password": "Por favor, forneça uma senha",
+		"passwordMinimumLength": "A senha deve ter pelo menos 6 caracteres",
+		"passwordConfirmation": "Por favor, forneça uma confirmação de senha que corresponda à senha",
+		"passwordsDontMatch": "As senhas não correspondem",
+		"newPassword": "Por favor, forneça uma nova senha",
+		"oldPassword": "Por favor, forneça sua senha atual",
+		"nameRequired": "O nome é obrigatório",
+		"nameTooLong": "O nome é muito longo",
+		"streetAddress": "O endereço é obrigatório",
+		"postalCode": "CEP é obrigatório",
+		"city": "A cidade é obrigatória",
+		"stateOrProvince": "O estado/província é obrigatório",
+		"country": "O país é obrigatório",
+		"jobRole": "A função no trabalho é obrigatória",
+		"tabError": "Por favor, forneça um número de convidados",
+		"spaceError": "Por favor, digite um Nome do Espaço. Mínimo de 2 caracteres",
+		"required": "Este campo é obrigatório"
 	}
 }
