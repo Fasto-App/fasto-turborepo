@@ -86,20 +86,21 @@ export default function Index() {
             className="navbar w-nav"
           >
             <div className="w-layout-hflex flex-block-navbar">
-              <a
-                href="/"
-                aria-current="page"
-                className="logo w-nav-brand w--current"
-              >
-                <img
-                  src="html/images/Fasto-Logo-White.webp"
-                  loading="lazy"
-                  sizes="(max-width: 479px) 29vw, (max-width: 767px) 110px, (max-width: 1919px) 120px, 200px"
-                  srcSet="html/images/Fasto-Logo-White-p-500.png 500w, html/images/Fasto-Logo-White-p-800.png 800w, html/images/Fasto-Logo-White-p-1080.png 1080w, html/images/Fasto-Logo-White.webp 2847w"
-                  alt=""
-                  className="image"
-                />
-              </a>
+              <Link href={"/"}>
+                <a
+                  aria-current="page"
+                  className="logo w-nav-brand w--current"
+                >
+                  <img
+                    src="html/images/Fasto-Logo-White.webp"
+                    loading="lazy"
+                    sizes="(max-width: 479px) 29vw, (max-width: 767px) 110px, (max-width: 1919px) 120px, 200px"
+                    srcSet="html/images/Fasto-Logo-White-p-500.png 500w, html/images/Fasto-Logo-White-p-800.png 800w, html/images/Fasto-Logo-White-p-1080.png 1080w, html/images/Fasto-Logo-White.webp 2847w"
+                    alt=""
+                    className="image"
+                  />
+                </a>
+              </Link>
               <nav role="navigation" className="w-nav-menu">
                 <a href="#How-it-works" className="nav-link w-nav-link">
                   {t("how-it-works")}
@@ -114,9 +115,11 @@ export default function Index() {
                   {t("partners")}
                 </a>
               </nav>
-              <a href="business/login" className="link-block w-inline-block">
-                <img src="html/images/Login-grad.webp" loading="lazy" alt="" />
-              </a>
+              <Link href="business/login">
+                <a className="link-block w-inline-block">
+                  <img src="html/images/Login-grad.webp" loading="lazy" alt="" />
+                </a>
+              </Link>
               <div className="menu-button w-nav-button">
                 <div className="icon-3 w-icon-nav-menu" />
               </div>
@@ -135,12 +138,13 @@ export default function Index() {
                 <p className="paragraph">
                   {t("hero-subtitle")}
                 </p>
-                <a
-                  href="business/signup"
-                  className="button w-button"
-                >
-                  {t("hero-cta")}
-                </a>
+                <Link href="business/signup">
+                  <a
+                    className="button w-button"
+                  >
+                    {t("hero-cta")}
+                  </a>
+                </Link>
               </div>
             </div>
             <div
@@ -321,9 +325,11 @@ export default function Index() {
                 <h3 className="heading-3">{t("online-menu")}</h3>
                 <h3 className="h3-highlight">{t("free")}</h3>
                 <div className="text-block">{t("free-text")}</div>
-                <a href="business/signup" className="button small w-button">
-                  {t("select")}
-                </a>
+                <Link href="business/signup" >
+                  <a href="business/signup" className="button small w-button">
+                    {t("select")}
+                  </a>
+                </Link>
               </div>
               <div className="pricing-cards">
                 <h3 className="heading-3">{t("pos-order")}</h3>
@@ -331,9 +337,11 @@ export default function Index() {
                 <div className="text-block">
                   {t("pos-order-text")}
                 </div>
-                <a href="business/signup" className="button small w-button">
-                  {t("select")}
-                </a>
+                <Link href="business/signup" >
+                  <a className="button small w-button">
+                    {t("select")}
+                  </a>
+                </Link>
               </div>
               <div className="pricing-cards">
                 <h3 className="heading-3">{t("full-service")}</h3>
@@ -341,9 +349,11 @@ export default function Index() {
                 <div className="text-block">
                   {t("full-service-text")}
                 </div>
-                <a href="business/signup" className="button small w-button">
-                  {t("select")}
-                </a>
+                <Link href="business/signup">
+                  <a className="button small w-button">
+                    {t("select")}
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -352,20 +362,21 @@ export default function Index() {
           <div className="content-container">
             <div className="column-3 w-row">
               <div className="w-col w-col-4">
-                <a
-                  href="/"
-                  aria-current="page"
-                  className="w-inline-block w--current"
-                >
-                  <img
-                    src="html/images/Fasto-Logo-White.webp"
-                    loading="lazy"
-                    sizes="(max-width: 1919px) 120px, 200px"
-                    srcSet="html/images/Fasto-Logo-White-p-500.png 500w, html/images/Fasto-Logo-White-p-800.png 800w, html/images/Fasto-Logo-White-p-1080.png 1080w, html/images/Fasto-Logo-White.webp 2847w"
-                    alt=""
-                    className="logo"
-                  />
-                </a>
+                <Link href={"/"}>
+                  <a
+                    aria-current="page"
+                    className="w-inline-block w--current"
+                  >
+                    <img
+                      src="html/images/Fasto-Logo-White.webp"
+                      loading="lazy"
+                      sizes="(max-width: 1919px) 120px, 200px"
+                      srcSet="html/images/Fasto-Logo-White-p-500.png 500w, html/images/Fasto-Logo-White-p-800.png 800w, html/images/Fasto-Logo-White-p-1080.png 1080w, html/images/Fasto-Logo-White.webp 2847w"
+                      alt=""
+                      className="logo"
+                    />
+                  </a>
+                </Link>
               </div>
               <div className="w-col w-col-4">
                 <div className="text-highlight">Pages</div>
