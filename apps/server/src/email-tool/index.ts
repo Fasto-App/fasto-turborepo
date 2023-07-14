@@ -1,16 +1,36 @@
 import { WelcomeEmail, ResetPasswordEmail, ExistingUserEmployeeEmail, CreateEmployeeEmail } from "emails";
 import { render } from '@react-email/render';
 import nodemailer from 'nodemailer';
+import { Locale } from "app-helpers";
 
 type TemplateArguments = {
   email: string;
   token: string,
   name: string;
   businessName: string;
+  locale: Locale;
 }
 
-type RequestAccount = Pick<TemplateArguments, 'email' | 'token'>
-type ResetPassword = Pick<TemplateArguments, 'email' | 'token' | 'name'>
+const texts = {
+  en: {
+    welcome: 'Welcome to Fasto',
+    passwordRequest: "Password Reset Request",
+    manageBusiness: 'Managing Multiple Businesses with Fasto'
+  },
+  pt: {
+    welcome: 'Bem-vindo ao Fasto',
+    passwordRequest: "Solicitação de Redefinição de Senha",
+    manageBusiness: 'Gerenciando Múltiplos Negócios com o Fasto'
+  },
+  es: {
+    welcome: 'Bienvenido/a a Fasto',
+    passwordRequest: "Solicitud de Restablecimiento de Contraseña",
+    manageBusiness: 'Gestión de Múltiples Negocios con Fasto'
+  }
+}
+
+type RequestAccount = Pick<TemplateArguments, 'email' | 'token' | 'locale'>
+type ResetPassword = Pick<TemplateArguments, 'email' | 'token' | 'name' | 'locale'>
 type RequestEmployeeAccount = Omit<TemplateArguments, 'name'>
 type ExistingUserEmployee = Omit<TemplateArguments, 'token'>
 
@@ -32,15 +52,16 @@ const requestEmployeeAccountCreation = ({ token, email, businessName }: RequestE
 export async function sendWelcomeEmail({
   email,
   token,
+  locale,
 }: RequestAccount) {
-  const url = requestAccountCreation({ token, email })
+  const url = requestAccountCreation({ token, email, locale })
 
   try {
-    const emailHtml = render(WelcomeEmail({ url }))
+    const emailHtml = render(WelcomeEmail({ url, locale }))
 
     const options = {
-      from: 'fasto.contact@gmail.com',
-      subject: 'Welcome to Fasto',
+      from: process.env.EMAIL_ACCOUNT,
+      subject: texts[locale].welcome,
       to: email,
       html: emailHtml,
     };
@@ -58,16 +79,17 @@ export async function sendResetPasswordEmail({
   email,
   token,
   name,
+  locale
 }: ResetPassword) {
-  const url = passwordReset({ token, email, name })
+  const url = passwordReset({ token, email, name, locale })
 
   try {
     // create component with the url and name
-    const emailHtml = render(ResetPasswordEmail({ url, name }))
+    const emailHtml = render(ResetPasswordEmail({ url, name, locale }))
     const options = {
-      from: '',
+      from: process.env.EMAIL_ACCOUNT,
       to: email,
-      subject: "Password Reset Request",
+      subject: texts[locale].passwordRequest,
       html: emailHtml,
     };
 
@@ -79,15 +101,16 @@ export async function sendResetPasswordEmail({
   }
 }
 
-export async function sendEployeeAccountCreation({ token, email, businessName, name }: TemplateArguments) {
-  const url = requestEmployeeAccountCreation({ token, email, businessName })
+export async function sendEployeeAccountCreation({ token, email, businessName, name, locale }: TemplateArguments) {
+  const url = requestEmployeeAccountCreation({ token, email, businessName, locale })
 
   // TODO: import the right component and change the subject
-  const emailHtml = render(CreateEmployeeEmail({ url, businessName, name }))
+  // 
+  const emailHtml = render(CreateEmployeeEmail({ url, businessName, name, locale }))
   const options = {
-    from: '',
+    from: process.env.EMAIL_ACCOUNT,
     to: email,
-    subject: 'Managing Multiple Businesses with Fasto',
+    subject: texts[locale].manageBusiness,
     html: emailHtml,
   };
 
@@ -95,15 +118,15 @@ export async function sendEployeeAccountCreation({ token, email, businessName, n
   return { ok: !!response, url }
 };
 
-export async function sendExistingUserEployeeEmail({ email, businessName, name }: ExistingUserEmployee) {
+export async function sendExistingUserEployeeEmail({ email, businessName, name, locale }: ExistingUserEmployee) {
   const url = `${process.env.FRONTEND_URL}`
 
   // TODO: import the right component and change the subject
-  const emailHtml = render(ExistingUserEmployeeEmail({ url, businessName, name }))
+  const emailHtml = render(ExistingUserEmployeeEmail({ url, businessName, name, locale }))
   const options = {
-    from: '',
+    from: process.env.EMAIL_ACCOUNT,
     to: email,
-    subject: 'Managing Multiple Businesses with Fasto',
+    subject: texts[locale].manageBusiness,
     html: emailHtml,
   };
 

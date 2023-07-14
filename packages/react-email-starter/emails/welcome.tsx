@@ -8,22 +8,14 @@ import { Preview } from '@react-email/preview';
 import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
+import { texts } from './welcomeText';
+import { Locale } from 'app-helpers';
 
-const texts = {
-  preview: "You're one step away from helping innovate the food business industry!",
-  welcome: "Welcome to Fasto!",
-  weAreThilled: "We are thrilled to welcome you to our company! We are looking forward to the valuable contribution you will bring to our team.",
-  getStarted: "To get started, we need you to set up your new account by clicking on the button below.",
-  onceYouHave: "Once you have successfully set up your account, you will be able to access all the resources and tools you need to start working with us.",
-  thankYou: "Thank you again for joining our team and we are looking forward to a productive and successful collaboration!",
-  cta: "Setup Account Password",
-}
-
-export function WelcomeEmail({ url }: { url: string }) {
+export function WelcomeEmail({ url, locale }: { url: string, locale: Locale }) {
   return (
     <Html>
       <Head />
-      <Preview>{texts.preview}</Preview>
+      <Preview>{texts[locale].preview}</Preview>
       <Section style={main}>
         <Container style={container}>
           <Section style={box}>
@@ -34,12 +26,12 @@ export function WelcomeEmail({ url }: { url: string }) {
               alt="Fasto"
             />
             <Hr style={hr} />
-            <Text style={h1}>{texts.welcome}</Text>
+            <Text style={h1}>{texts[locale].welcome}</Text>
             <Text style={paragraph}>
-              {texts.weAreThilled}
+              {texts[locale].weAreThrilled}
             </Text>
             <Text style={paragraph}>
-              {texts.getStarted}
+              {texts[locale].getStarted}
             </Text>
             <Button
               pX={10}
@@ -47,14 +39,14 @@ export function WelcomeEmail({ url }: { url: string }) {
               style={button}
               href={url}
             >
-              {texts.cta}
+              {texts[locale].cta}
             </Button>
             <Hr style={hr} />
             <Text style={paragraph}>
-              {texts.onceYouHave}
+              {texts[locale].onceYouHave}
             </Text>
             <Text style={paragraph}>
-              {texts.thankYou}
+              {texts[locale].thankYou}
             </Text>
             <Text style={paragraph}>Cheers</Text>
             <Text style={paragraph}>— The Fasto team</Text>

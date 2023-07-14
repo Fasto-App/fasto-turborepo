@@ -1,4 +1,3 @@
-
 import bcrypt from "bcryptjs";
 import { User, UserModel } from "../../../models/user";
 import { SessionModel } from "../../../models/session";
@@ -26,7 +25,7 @@ const hashPassword = (password: string) => {
 
 export const requestUserAccountCreation: MutationResolvers["requestUserAccountCreation"] = async (_parent,
   { input },
-  { db }) => {
+  { db, locale }) => {
 
   const { email } = signUpSchema.parse(input)
 
@@ -62,6 +61,7 @@ export const requestUserAccountCreation: MutationResolvers["requestUserAccountCr
     return await sendWelcomeEmail({
       email,
       token,
+      locale
     })
   } catch (err) {
     throw new Error(`Could not send email ${err}`);
@@ -229,7 +229,8 @@ export const updateUserInformation = async (_parent: any,
 }
 
 // recover password
-export const recoverPassword = async (_parent: any, { input }: { input: string }, { db }: Context) => {
+
+export const recoverPassword: MutationResolvers["recoverPassword"] = async (_parent, { input }, { db, locale }) => {
 
   if (!validateEmail(input)) {
     throw ApolloError('BadRequest')
@@ -252,6 +253,7 @@ export const recoverPassword = async (_parent: any, { input }: { input: string }
       email: user.email,
       name: user.name,
       token,
+      locale
     })
 
     return courierResponse

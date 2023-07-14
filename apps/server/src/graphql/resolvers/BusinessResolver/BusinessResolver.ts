@@ -293,7 +293,7 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
 }
 
 // @ts-ignore
-const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = async (parent, args, { business, db }) => {
+const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = async (parent, args, { business, db, locale }) => {
   if (!business) throw ApolloError("Unauthorized")
   const { email, privilege, _id, name, jobTitle, isPending } = args.input
 
@@ -376,6 +376,7 @@ const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = as
       email: foundAsUser.email || "",
       name: foundAsUser.name || "",
       businessName: foundBusiness.name,
+      locale
     })
 
     return ({
@@ -414,11 +415,14 @@ const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = as
     await foundBusiness.save()
   }
 
+  // needs to send the locale. how to get this from Node.JS graphql?
+  // Headers: { "Accept-Language": "en-US" }
   sendEployeeAccountCreation({
     email,
     name,
     businessName: foundBusiness.name,
-    token
+    token,
+    locale
   })
 
   return ({

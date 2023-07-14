@@ -29,7 +29,8 @@ export const AppApolloProvider: React.FC = ({ children }) => {
       [clientToken ? 'clientauthorization' : 'Authorization']: clientToken ?
         clientauthorization : Authorization,
       "Apollo-Require-Preflight": "true",
-      "x-api-key": process.env.NEXT_PUBLIC_API_KEY
+      "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+      "Accept-Language": router.locale || "en",
     })
   }
 

@@ -8,28 +8,19 @@ import { Preview } from '@react-email/preview';
 import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
-
-const texts = {
-  preview: "Welcome to Fasto! We are delighted to have you onboard.",
-  dearEmployee: (name: string) => `Dear ${name},`,
-  welcome: (businessName: string) => `Welcome to the team at ${businessName}! We are delighted to have you onboard.`,
-  toGetStarted: "To get started, we would like you to create an employee account on our restaurant platform, where you can access important information such as menus, tabs, and other relevant details.",
-  toCreateYourAccount: "To create your account, please click on the button below, enter your personal information and create a secure password.",
-  cta: "Setup Account",
-  onceYourAccount: "Once your account has been created, you can access the platform using your email address and password. You will be able to view customers, and communicate with your colleagues.",
-  ifYouHaveQuestions: "If you have any questions or need help with the platform, please do not hesitate to reach out to our management team at [Management Email Address] or speak to a member of our staff.",
-  thankYou: "Thank you for joining us at Fasto. We look forward to working with you.",
-}
+import { texts } from "./createEmployeeText"
+import { Locale } from "app-helpers"
 
 export function CreateEmployeeEmail({
-  url = "https://fasto.app",
+  url = "https://fastoapp.com",
   name = "John Doe",
   businessName = "Fasto",
-}: { url: string, name: string, businessName: string }) {
+  locale = "en"
+}: { url: string, name: string, businessName: string, locale: Locale }) {
   return (
     <Html>
       <Head />
-      <Preview>{texts.preview}</Preview>
+      <Preview>{texts[locale].preview}</Preview>
       <Section style={main}>
         <Container style={container}>
           <Section style={box}>
@@ -40,13 +31,13 @@ export function CreateEmployeeEmail({
               alt="Fasto"
             />
             <Hr style={hr} />
-            <Text style={h1}>{texts.dearEmployee(name)}</Text>
-            <Text style={paragraph}>{texts.welcome(businessName)}</Text>
+            <Text style={h1}>{texts[locale].dearEmployee(name)}</Text>
+            <Text style={paragraph}>{texts[locale].welcome(businessName)}</Text>
             <Text style={paragraph}>
-              {texts.toGetStarted}
+              {texts[locale].toGetStarted}
             </Text>
             <Text style={paragraph}>
-              {texts.toCreateYourAccount}
+              {texts[locale].toCreateYourAccount}
             </Text>
             <Button
               pX={10}
@@ -54,14 +45,14 @@ export function CreateEmployeeEmail({
               style={button}
               href={url}
             >
-              {texts.cta}
+              {texts[locale].cta}
             </Button>
             <Hr style={hr} />
             <Text style={paragraph}>
-              {texts.onceYourAccount}
+              {texts[locale].onceYourAccount}
             </Text>
             <Text style={paragraph}>
-              {texts.thankYou}
+              {texts[locale].thankYou}
             </Text>
             <Text style={paragraph}>Cheers</Text>
             <Text style={paragraph}>— The Fasto team</Text>

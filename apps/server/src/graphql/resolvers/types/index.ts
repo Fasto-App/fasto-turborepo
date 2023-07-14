@@ -1,3 +1,4 @@
+import { Locale } from "app-helpers";
 import { Connection } from "mongoose"
 
 export interface UserContext {
@@ -16,6 +17,7 @@ export interface Context {
   db: Connection;
   user?: UserContext;
   client?: ClientContext;
-  business?: string
+  business?: string;
+  locale: Locale;
 }
 
