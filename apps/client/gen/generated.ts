@@ -1083,7 +1083,6 @@ export type UserInput = {
 
 export enum UserPrivileges {
   Admin = 'Admin',
-  Customer = 'Customer',
   Manager = 'Manager',
   Staff = 'Staff',
   View = 'View'

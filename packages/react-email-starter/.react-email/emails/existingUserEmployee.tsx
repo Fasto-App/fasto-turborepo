@@ -8,26 +8,19 @@ import { Preview } from '@react-email/preview';
 import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
-
-const texts = {
-  preview: "Welcome to Fasto! We are delighted to have you onboard.",
-  dearEmployee: (name: string) => `Dear ${name},`,
-  weAreExcited: `We are excited to inform you that one of our partner companies is interested in inviting you to manage one of their businesses within our platform.`,
-  companyName: (companyName: string) => `${companyName} is a growing company within our platform and they believe that your experience and skills make you an excellent candidate to manage one of their businesses. This is a great opportunity for you to expand your skill set and contribute to the success of a growing business within our platform.`,
-  toSwitch: 'To switch between businesses, simply log in to your Fasto account and navigate to the "Businesses" section. From there, you can view all the businesses that you manage, and switch between them with just a few clicks.',
-  thankYou: "Thank you for your continued support of Fasto. We look forward to seeing your continued success within our platform.",
-  cta: "Navigate to Fasto",
-}
+import { texts } from './existingUserEmployeeText';
+import { Locale } from 'app-helpers';
 
 export function ExistingUserEmployeeEmail({
   url = "https://fastoapp.com",
   name = "John Doe",
   businessName = "Fasto",
-}: { url: string, name: string, businessName: string }) {
+  locale = "en",
+}: { url: string, name: string, businessName: string, locale: Locale }) {
   return (
     <Html>
       <Head />
-      <Preview>{texts.preview}</Preview>
+      <Preview>{texts[locale].preview}</Preview>
       <Section style={main}>
         <Container style={container}>
           <Section style={box}>
@@ -38,16 +31,16 @@ export function ExistingUserEmployeeEmail({
               alt="Fasto"
             />
             <Hr style={hr} />
-            <Text style={h1}>{texts.dearEmployee(name)}</Text>
-            <Text style={paragraph}>{texts.weAreExcited}</Text>
+            <Text style={h1}>{texts[locale].dearEmployee(name)}</Text>
+            <Text style={paragraph}>{texts[locale].weAreExcited}</Text>
             <Text style={paragraph}>
-              {texts.companyName(businessName)}
+              {texts[locale].companyName(businessName)}
             </Text>
             <Text style={paragraph}>
-              {texts.toSwitch}
+              {texts[locale].toSwitch}
             </Text>
             <Text style={paragraph}>
-              {texts.thankYou}
+              {texts[locale].thankYou}
             </Text>
             <Button
               pX={10}
@@ -55,7 +48,7 @@ export function ExistingUserEmployeeEmail({
               style={button}
               href={url}
             >
-              {texts.cta}
+              {texts[locale].cta}
             </Button>
             <Hr style={hr} />
             <Text style={paragraph}>Cheers</Text>

@@ -790,7 +790,7 @@ export type Query = {
   getCheckoutByID: Checkout;
   getCheckoutsByBusiness: Array<Checkout>;
   getClientInformation: User;
-  getClientMenu: Menu;
+  getClientMenu?: Maybe<Menu>;
   getClientSession: ClientSession;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
@@ -799,7 +799,7 @@ export type Query = {
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
-  getTabByID?: Maybe<Tab>;
+  getTabByID: Tab;
   getTabRequest: Request;
   getTabRequests: Array<Request>;
   getTableById: Table;
@@ -1083,7 +1083,6 @@ export type UserInput = {
 
 export enum UserPrivileges {
   Admin = 'Admin',
-  Customer = 'Customer',
   Manager = 'Manager',
   Staff = 'Staff',
   View = 'View'
@@ -1643,7 +1642,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getCheckoutByID?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetCheckoutByIdArgs, 'input'>>;
   getCheckoutsByBusiness?: Resolver<Array<ResolversTypes['Checkout']>, ParentType, ContextType>;
   getClientInformation?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  getClientMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<QueryGetClientMenuArgs, 'input'>>;
+  getClientMenu?: Resolver<Maybe<ResolversTypes['Menu']>, ParentType, ContextType, RequireFields<QueryGetClientMenuArgs, 'input'>>;
   getClientSession?: Resolver<ResolversTypes['ClientSession'], ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
@@ -1652,7 +1651,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
   getSpacesFromBusiness?: Resolver<Maybe<Array<ResolversTypes['Space']>>, ParentType, ContextType>;
-  getTabByID?: Resolver<Maybe<ResolversTypes['Tab']>, ParentType, ContextType, RequireFields<QueryGetTabByIdArgs, 'input'>>;
+  getTabByID?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<QueryGetTabByIdArgs, 'input'>>;
   getTabRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType>;
   getTabRequests?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, Partial<QueryGetTabRequestsArgs>>;
   getTableById?: Resolver<ResolversTypes['Table'], ParentType, ContextType, RequireFields<QueryGetTableByIdArgs, 'input'>>;

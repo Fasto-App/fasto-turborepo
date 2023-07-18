@@ -5,8 +5,7 @@ import { z } from "zod"
 const categorySchema = z.object({
   _id: z.string().optional(),
   categoryName: z.string()
-    .min(2, "Name must be more than 2 characters")
-    .max(50, "Name must be less than 50 characters"),
+    .min(2, "error.nameRequired")
 })
 
 export type CategoryFields = z.infer<typeof categorySchema>

@@ -34,5 +34,12 @@
 	"configureStandardHours": "Configurar Horario Estándar",
 	"open": "Abierto",
 	"close": "Cerrado",
-	"to": "a"
+	"to": "a",
+	"privilege": "Privilegio",
+	"selectPrivilege": "Seleccionar Privilegio",
+	"Admin": "Administrador",
+	"Customer": "Cliente",
+	"Manager": "Gerente",
+	"View": "Ver",
+	"Staff": "Personal"
 }

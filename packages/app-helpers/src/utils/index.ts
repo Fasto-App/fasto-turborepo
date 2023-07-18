@@ -42,9 +42,9 @@ export const PRODUCT_PLACEHOLDER_IMAGE = "https://canape.cdnflexcatering.com/the
 
 export const locales = ['en', 'pt', 'es'] as const
 export const localeFlags = {
-  en: '🇺🇸',
-  pt: '🇧🇷',
-  es: '🇪🇸',
+  en: '🇺🇸  EN',
+  pt: '🇧🇷  PT',
+  es: '🇪🇸  ES',
 } as const
 
 export type Locale = typeof locales[number]

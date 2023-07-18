@@ -35,5 +35,12 @@
 	"configureStandardHours": "Configure Standard Hours",
 	"open": "Open",
 	"close": "Close",
-	"to": "to"
+	"to": "to",
+	"privilege": "Privilege",
+	"selectPrivilege": "Select Privilege",
+	"Admin": "Admin",
+	"Customer": "Customer",
+	"Manager": "Manager",
+	"View": "View",
+	"Staff": "Staff"
 }

@@ -1,7 +1,7 @@
 //@ts-nocheck
 import React from 'react';
 import { StoryProvider } from '../StoryProvider';
-import Home from "../../pages/index"
+import Home from "../../pages"
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {

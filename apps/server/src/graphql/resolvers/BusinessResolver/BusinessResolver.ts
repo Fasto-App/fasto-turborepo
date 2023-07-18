@@ -19,6 +19,7 @@ import { uploadFileS3Bucket } from '../../../s3/s3';
 import { ApolloError } from '../../ApolloErrorExtended/ApolloErrorExtended';
 import { SessionModel } from '../../../models/session';
 import { sendEployeeAccountCreation, sendExistingUserEployeeEmail } from '../../../email-tool';
+import { MutationResolvers } from '../../../generated/graphql';
 
 
 //FIX: this should be a validation of the token, not the business id
@@ -291,7 +292,8 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
   }
 }
 
-const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInformation }, { business, db }: Context) => {
+// @ts-ignore
+const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = async (parent, args, { business, db, locale }) => {
   if (!business) throw ApolloError("Unauthorized")
   const { email, privilege, _id, name, jobTitle, isPending } = args.input
 
@@ -307,6 +309,7 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
     if (isPending) {
       const foundSession = await Session.findById(_id)
       if (!foundSession) throw ApolloError("BadRequest")
+      if (!foundSession.name || !foundSession.email) throw ApolloError("BadRequest")
 
       foundSession.business = {
         privilege,
@@ -373,6 +376,7 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
       email: foundAsUser.email || "",
       name: foundAsUser.name || "",
       businessName: foundBusiness.name,
+      locale
     })
 
     return ({
@@ -411,11 +415,14 @@ const manageBusinessEmployees = async (parent: any, args: { input: EmployeeInfor
     await foundBusiness.save()
   }
 
+  // needs to send the locale. how to get this from Node.JS graphql?
+  // Headers: { "Accept-Language": "en-US" }
   sendEployeeAccountCreation({
     email,
     name,
     businessName: foundBusiness.name,
-    token
+    token,
+    locale
   })
 
   return ({

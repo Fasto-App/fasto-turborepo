@@ -212,11 +212,6 @@ const ProductModal = ({
 					<Modal.CloseButton />
 					<Modal.Header>{isEditing ? t("editTitle") : t("addTitle")}</Modal.Header>
 					<Modal.Body>
-						<ControlledForm
-							control={productControl}
-							formState={productFormState}
-							Config={ProductFormConfig}
-						/>
 						<ControlledInput
 							{...uploadPicture}
 							name='file'
@@ -224,6 +219,11 @@ const ProductModal = ({
 							src={imageSrc}
 							control={productControl}
 							label={t("uploadPicture")}
+						/>
+						<ControlledForm
+							control={productControl}
+							formState={productFormState}
+							Config={ProductFormConfig}
 						/>
 						{isEditing ?
 							<DeleteAlert

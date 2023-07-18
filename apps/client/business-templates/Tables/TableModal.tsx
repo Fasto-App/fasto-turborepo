@@ -13,14 +13,15 @@ import { CustomModal } from "../../components/CustomModal/CustomModal";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 
-const tableSchema = z.object({
+const newTabSchema = z.object({
   admin: z.string().optional(),
   totalUsers: z.number({
-    required_error: "Please, enter the number of guests",
+    required_error: "error.tabError",
+    invalid_type_error: "error.tabError"
   }),
 })
 
-type TableSchema = z.infer<typeof tableSchema>
+type newTabSchema = z.infer<typeof newTabSchema>
 
 export const NewTabModal = ({ tableId, setIsModalOpen }:
   {
@@ -43,6 +44,7 @@ export const NewTabModal = ({ tableId, setIsModalOpen }:
   const SideBySideTabConfig: RegularInputConfig = {
     totalUsers: {
       name: "totalUsers",
+      isRequired: true,
       label: t("numberOfGuests"),
       placeholder: t("selectedNumberOfGuests"),
       inputType: "Number",
@@ -52,15 +54,13 @@ export const NewTabModal = ({ tableId, setIsModalOpen }:
   const {
     control,
     formState,
-    clearErrors,
-    reset,
     handleSubmit
   } = useForm({
     defaultValues: {
       admin: "",
       totalUsers: ""
     },
-    resolver: zodResolver(tableSchema)
+    resolver: zodResolver(newTabSchema)
   })
 
   const [createTab] = useCreateTabMutation({
@@ -71,7 +71,7 @@ export const NewTabModal = ({ tableId, setIsModalOpen }:
         query: { tabId: data.createTab._id }
       })
     },
-    onError: (error) => {
+    onError: () => {
       showToast({
         status: "error",
         message: t("errorCreatingTab"),
@@ -79,7 +79,7 @@ export const NewTabModal = ({ tableId, setIsModalOpen }:
     }
   })
 
-  const onSubmit = useCallback(async (data: TableSchema) => {
+  const onSubmit = useCallback(async (data: newTabSchema) => {
     if (!tableData?.getTableById._id) throw ("Table id is undefined")
 
     createTab({
@@ -153,7 +153,7 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
     onError: (error) => {
       showToast({
         status: "error",
-        message: "ERROR FETCHING TAB"//t("errorGettingTabData"),
+        message: t("errorGettingTabData"),
       })
     }
   })

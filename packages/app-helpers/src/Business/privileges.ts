@@ -9,4 +9,10 @@ export const Privileges = {
 
 export type PrivilegesKeys = keyof typeof Privileges;
 export type PrivilegesDescription = typeof Privileges[keyof typeof Privileges];
-export const PrivilegesKeysArray = ["Admin", "View", "Manager", "Customer", "Staff"] as const
+
+export const PrivilegesKeysArray = ["Admin", "View", "Manager", "Staff"] as const;
+export const PrivilegesKeysArrayObj = PrivilegesKeysArray
+  .map(privilege => ({
+    name: privilege,
+    _id: privilege,
+  }))

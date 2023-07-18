@@ -75,7 +75,6 @@ enum UserPrivileges {
 	Admin
 	View
 	Manager
-	Customer
 	Staff
 }
 

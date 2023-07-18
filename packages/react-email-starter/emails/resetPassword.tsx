@@ -7,22 +7,16 @@ import { Img } from '@react-email/img';
 import { Preview } from '@react-email/preview';
 import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
+import { Locale } from 'app-helpers';
 import * as React from 'react';
+import { texts } from './resetPasswordText';
 
-const texts = {
-  preview: "Don't worry, we will be reseting your password soon",
-  weHaveReceived: "We have received a request to reset the password for your account. If you did not request a password reset, please contact us immediately.",
-  toReset: "To reset your password, please click on the following link:",
-  thisLnk: "This link is valid for 24 hours. After that, you will need to request another password reset.",
-  cta: "Reset Password Now",
-}
-
-export function ResetPasswordEmail({ url, name }:
-  { url: string, name: string }) {
+export function ResetPasswordEmail({ url, name, locale }:
+  { url: string, name: string, locale: Locale }) {
   return (
     <Html>
       <Head />
-      <Preview>{texts.preview}</Preview>
+      <Preview>{texts[locale].preview}</Preview>
       <Section style={main}>
         <Container style={container}>
           <Section style={box}>
@@ -34,10 +28,10 @@ export function ResetPasswordEmail({ url, name }:
             />
             <Hr style={hr} />
             <Text style={paragraph}>
-              {texts.weHaveReceived}
+              {texts[locale].weHaveReceived}
             </Text>
             <Text style={paragraph}>
-              {texts.toReset}
+              {texts[locale].toReset}
             </Text>
             <Button
               pX={10}
@@ -45,10 +39,10 @@ export function ResetPasswordEmail({ url, name }:
               style={button}
               href={url}
             >
-              {texts.cta}
+              {texts[locale].cta}
             </Button>
             <Text style={paragraph}>
-              {texts.thisLnk}
+              {texts[locale].thisLnk}
             </Text>
             <Hr style={hr} />
             <Text style={paragraph}>Cheers</Text>
