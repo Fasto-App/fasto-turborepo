@@ -2,6 +2,7 @@
 import Stripe from 'stripe';
 import { ApolloError } from '../graphql/ApolloErrorExtended/ApolloErrorExtended';
 import { appRoute, businessRoute } from "fasto-route"
+import { Locale } from 'app-helpers';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing Stripe secret key env var');
@@ -22,6 +23,7 @@ type AccountParams = {
   country: "US" | "BR";
   business_type: "company" | "individual";
   businessName: string;
+  locale: Locale;
 }
 
 const TEST_URL = "https://fastoapp.dev"
@@ -79,15 +81,15 @@ export const stripeAuthorize = async (accountsParams: AccountParams) => {
   }
 }
 
-export const stripeOnboard = async (accountId: string) => {
+export const stripeOnboard = async (accountId: string, locale: Locale) => {
 
   console.log("stripeOnboard", accountId)
 
   try {
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: process.env.FRONTEND_URL + businessRoute.payments,
-      return_url: process.env.FRONTEND_URL + businessRoute.payments,
+      refresh_url: process.env.FRONTEND_URL + `/${locale}` + businessRoute.payments,
+      return_url: process.env.FRONTEND_URL + `/${locale}` + businessRoute.payments,
       type: 'account_onboarding'
     });
 

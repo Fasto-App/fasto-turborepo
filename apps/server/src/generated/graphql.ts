@@ -52,6 +52,8 @@ export type Balance = {
   balanceAvailable: Scalars['Float'];
   balanceCurrency: Scalars['String'];
   balancePending: Scalars['Float'];
+  name?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type Business = {
@@ -810,7 +812,6 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
-  getBalance: Balance;
   getBusinessById: Business;
   getBusinessInformation: Business;
   getBusinessLocation?: Maybe<Address>;
@@ -821,6 +822,7 @@ export type Query = {
   getClientInformation: User;
   getClientMenu?: Maybe<Menu>;
   getClientSession: ClientSession;
+  getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
@@ -1432,6 +1434,8 @@ export type BalanceResolvers<ContextType = Context, ParentType extends Resolvers
   balanceAvailable?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   balanceCurrency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   balancePending?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1677,7 +1681,6 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getAllProductsByBusinessID?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType>;
   getAllTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
-  getBalance?: Resolver<ResolversTypes['Balance'], ParentType, ContextType>;
   getBusinessById?: Resolver<ResolversTypes['Business'], ParentType, ContextType, Partial<QueryGetBusinessByIdArgs>>;
   getBusinessInformation?: Resolver<ResolversTypes['Business'], ParentType, ContextType>;
   getBusinessLocation?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
@@ -1688,6 +1691,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getClientInformation?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   getClientMenu?: Resolver<Maybe<ResolversTypes['Menu']>, ParentType, ContextType, RequireFields<QueryGetClientMenuArgs, 'input'>>;
   getClientSession?: Resolver<ResolversTypes['ClientSession'], ParentType, ContextType>;
+  getIsConnected?: Resolver<Maybe<ResolversTypes['Balance']>, ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
   getOrdersByCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;

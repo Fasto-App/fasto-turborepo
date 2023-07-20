@@ -4,7 +4,8 @@ import { stripeAuthorize, stripeOnboard } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 
 
-const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async (parent, { input }, { db, user }) => {
+const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async (parent, { input },
+  { db, user, locale }) => {
   const Business = BusinessModel(db);
   const User = UserModel(db);
 
@@ -23,14 +24,15 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
       businessName: foundBusiness.name,
       country: input.country,
       business_type: input.business_type,
-      businessId: foundBusiness._id
+      businessId: foundBusiness._id,
+      locale
     })
 
     foundBusiness.stripeAccountId = accountId;
     await foundBusiness.save();
   }
 
-  const accountLink = await stripeOnboard(accountId);
+  const accountLink = await stripeOnboard(accountId, locale);
 
   return accountLink.url
 }

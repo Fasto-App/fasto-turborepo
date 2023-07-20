@@ -1,13 +1,14 @@
 import React from "react"
 import { Avatar, Box, Button, Center, HStack, Heading, Link, Text, VStack } from "native-base"
-import { BusinessType, IsoCountry, useConnectExpressPaymentMutation } from "../../gen/generated"
+import { BusinessType, GetIsConnectdQuery, IsoCountry, useConnectExpressPaymentMutation, useGetIsConnectdQuery } from "../../gen/generated"
 import { showToast } from "../../components/showToast"
 import { ControlledForm, RegularInputConfig } from "../../components/ControlledForm"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { OrangeBox } from "../../components/OrangeBox"
 import { z } from "zod"
-import { typedKeys } from "app-helpers"
+import { parseToCurrency, typedKeys } from "app-helpers"
+import { LoadingPDP } from "../../customer-templates/ProductDescriptionScreen/LoadingPDP"
 
 const usePaymentFormHook = () => {
   return useForm({
@@ -98,19 +99,38 @@ const ConnectPaymentForm = () => {
 export const PaymentsScreen = () => {
   const isConnected = false;
 
+  const { data, loading, error } = useGetIsConnectdQuery()
+
   return (
     <Box flex={1}>
       <OrangeBox />
       <Center flex={1} py={6} px={8} justifyContent={"space-between"} >
-        {isConnected ? <Payouts /> :
-          <ConnectPaymentForm />
+        {error ? <Text>Error</Text> :
+          typeof data === "undefined" || loading ? <LoadingPDP /> :
+            data.getIsConnected ?
+              <Payouts
+                balanceAvailable={data.getIsConnected.balanceAvailable}
+                balanceCurrency={data.getIsConnected.balanceCurrency}
+                balancePending={data.getIsConnected.balancePending}
+                name={data.getIsConnected.name}
+                url={data.getIsConnected.url}
+              /> :
+              <ConnectPaymentForm />
         }
       </Center>
     </Box>
   )
 }
 
-const Payouts = () => {
+const Payouts = (
+  { balanceAvailable, balanceCurrency, balancePending, name, url }:
+    NonNullable<GetIsConnectdQuery["getIsConnected"]>) => {
+
+  const onPress = () => {
+    console.log("pressed")
+    window.location.assign("https://google.com")
+  }
+
   return (
     <HStack
       backgroundColor={"white"}
@@ -119,21 +139,22 @@ const Payouts = () => {
       borderWidth={1}
       justifyContent={"space-between"}
       paddingX={"10"}
-      paddingY={"4"} borderRadius={"md"}>
+      paddingY={"4"} borderRadius={"md"}
+      minW={"864"}
+    >
       <HStack space={4}>
         <Avatar size={"xl"}>
           <Avatar.Badge bg="green.500" />
         </Avatar>
 
         <Box justifyContent={"space-evenly"}>
-          <Text fontSize={"lg"}>Business since Jul 2023</Text>
-          <Heading >Business Name</Heading>
+          <Heading >{name}</Heading>
           <Link
-            href="https://nativebase.io" isExternal _text={{
+            onPress={onPress} _text={{
               color: "blue.500",
               fontSize: "lg"
             }}>
-            View Payouts on Stripe
+            View Stripe Account
           </Link>
         </Box>
       </HStack>
@@ -141,21 +162,21 @@ const Payouts = () => {
       <VStack justifyContent={"space-between"}>
         <Text fontSize={"lg"}>This Week</Text>
         <Text fontSize="xl">
-          $500.00
+          $0.00
         </Text>
         <Text color={"gray.500"} fontSize={"lg"}>
-          4 orders
+          0 orders
         </Text>
       </VStack>
 
       <VStack justifyContent={"space-between"}>
         <Text fontSize={"lg"}>Your Balance</Text>
         <Text fontSize="xl">
-          $500.00
+          {parseToCurrency(balancePending)}
         </Text>
 
         <Text color={"gray.500"} fontSize={"lg"}>
-          $93.16 available
+          {`${parseToCurrency(balanceAvailable)} available`}
         </Text>
 
       </VStack>
@@ -166,7 +187,7 @@ const Payouts = () => {
         </Button>
 
         <Link
-          href="https://nativebase.io" isExternal _text={{
+          onPress={onPress} isExternal _text={{
             color: "blue.500",
             fontSize: "lg"
           }}>
@@ -175,4 +196,8 @@ const Payouts = () => {
       </VStack>
     </HStack>
   )
+}
+
+const Loading = () => {
+
 }

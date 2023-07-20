@@ -1,5 +1,5 @@
 extend type Query {
-	getBalance: Balance!
+	getIsConnected: Balance
 }
 
 extend type Mutation {
@@ -16,15 +16,17 @@ type Payment {
 	paid: Boolean!
 }
 
+input ConnectExpressInput {
+	country: ISOCountry!
+	business_type: BusinessType!
+}
+
 type Balance {
 	balanceAvailable: Float!
 	balancePending: Float!
 	balanceCurrency: String!
-}
-
-input ConnectExpressInput {
-	country: ISOCountry!
-	business_type: BusinessType!
+	name: String
+	url: String
 }
 
 enum BusinessType {

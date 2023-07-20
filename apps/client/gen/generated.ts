@@ -52,6 +52,8 @@ export type Balance = {
   balanceAvailable: Scalars['Float'];
   balanceCurrency: Scalars['String'];
   balancePending: Scalars['Float'];
+  name?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type Business = {
@@ -810,7 +812,6 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
-  getBalance: Balance;
   getBusinessById: Business;
   getBusinessInformation: Business;
   getBusinessLocation?: Maybe<Address>;
@@ -821,6 +822,7 @@ export type Query = {
   getClientInformation: User;
   getClientMenu?: Maybe<Menu>;
   getClientSession: ClientSession;
+  getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
@@ -1377,6 +1379,11 @@ export type ConnectExpressPaymentMutationVariables = Exact<{
 
 
 export type ConnectExpressPaymentMutation = { __typename?: 'Mutation', connectExpressPayment: string };
+
+export type GetIsConnectdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetIsConnectdQuery = { __typename?: 'Query', getIsConnected?: { __typename?: 'Balance', balanceAvailable: number, balancePending: number, balanceCurrency: string, url?: string | null, name?: string | null } | null };
 
 export type GetProductByIdQueryVariables = Exact<{
   productId: Scalars['ID'];
@@ -3168,6 +3175,44 @@ export function useConnectExpressPaymentMutation(baseOptions?: Apollo.MutationHo
 export type ConnectExpressPaymentMutationHookResult = ReturnType<typeof useConnectExpressPaymentMutation>;
 export type ConnectExpressPaymentMutationResult = Apollo.MutationResult<ConnectExpressPaymentMutation>;
 export type ConnectExpressPaymentMutationOptions = Apollo.BaseMutationOptions<ConnectExpressPaymentMutation, ConnectExpressPaymentMutationVariables>;
+export const GetIsConnectdDocument = gql`
+    query GetIsConnectd {
+  getIsConnected {
+    balanceAvailable
+    balancePending
+    balanceCurrency
+    url
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetIsConnectdQuery__
+ *
+ * To run a query within a React component, call `useGetIsConnectdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIsConnectdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIsConnectdQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetIsConnectdQuery(baseOptions?: Apollo.QueryHookOptions<GetIsConnectdQuery, GetIsConnectdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetIsConnectdQuery, GetIsConnectdQueryVariables>(GetIsConnectdDocument, options);
+      }
+export function useGetIsConnectdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIsConnectdQuery, GetIsConnectdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetIsConnectdQuery, GetIsConnectdQueryVariables>(GetIsConnectdDocument, options);
+        }
+export type GetIsConnectdQueryHookResult = ReturnType<typeof useGetIsConnectdQuery>;
+export type GetIsConnectdLazyQueryHookResult = ReturnType<typeof useGetIsConnectdLazyQuery>;
+export type GetIsConnectdQueryResult = Apollo.QueryResult<GetIsConnectdQuery, GetIsConnectdQueryVariables>;
 export const GetProductByIdDocument = gql`
     query GetProductByID($productId: ID!) {
   getProductByID(productID: $productId) {
