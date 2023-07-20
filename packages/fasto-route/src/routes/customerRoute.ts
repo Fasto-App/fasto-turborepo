@@ -1,6 +1,6 @@
-import { CUSTOMER } from "./appRoute";
-
+export const CUSTOMER = "/customer" as const
 const businessId = "[businessId]" as const;
+
 
 const home = `${CUSTOMER}/${businessId}` as const;
 const cart = `${CUSTOMER}/${businessId}/cart` as const;

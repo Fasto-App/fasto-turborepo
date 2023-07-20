@@ -6,7 +6,7 @@ import { ControlledForm, RegularInputConfig } from '../../components/ControlledF
 import { LoginConfig, useLoginFormHook } from './hooks';
 import { usePostUserLoginMutation } from '../../gen/generated';
 import { setBusinessCookies } from '../../cookies';
-import { businessRoute } from '../../routes';
+import { businessRoute } from 'fasto-route';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 import { Link } from '../../components/atoms/Link';
 import { FDSSelect } from '../../components/FDSSelect';

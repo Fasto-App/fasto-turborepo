@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { HourGlassAnimation } from "../../components/SuccessAnimation";
 import { useGetClientSession } from "../../hooks";
 import { getClientCookies } from "../../cookies";
-import { PathNameKeys, customerPathName, customerRoute } from "../../routes";
+import { PathNameKeys, customerPathName, customerRoute } from "fasto-route";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../firebase/init";
 

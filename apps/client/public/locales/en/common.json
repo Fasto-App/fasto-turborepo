@@ -54,6 +54,7 @@
 	"Expired": "Expired",
 	"Pending": "Pending",
 	"Rejected": "Rejected",
+	"payments": "Payments",
 	"error": {
 		"email": "Please provide a valid email address",
 		"password": "Please provide a password",

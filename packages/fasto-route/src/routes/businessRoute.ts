@@ -1,4 +1,6 @@
-import { BUSINESS_ADMIN, BUSINESS } from "./appRoute";
+const ADMIN = "/admin" as const
+export const BUSINESS = "/business" as const
+export const BUSINESS_ADMIN = `${BUSINESS}${ADMIN}` as const
 
 const addProductsCategories = "add-products-categories";
 const addToOrder = "add-to-order";
@@ -14,6 +16,7 @@ const orders = "orders";
 const signup = "signup";
 const tables = "tables";
 const resetPassword = "reset-password";
+const payments = "payments";
 
 export const businessRoute = {
   [addProductsCategories]: `${BUSINESS_ADMIN}/${addProductsCategories}`,
@@ -30,9 +33,11 @@ export const businessRoute = {
   [signup]: `${BUSINESS}/${signup}`,
   [tables]: `${BUSINESS_ADMIN}/${tables}`,
   [resetPassword]: `${BUSINESS}/${resetPassword}`,
+  [payments]: `${BUSINESS_ADMIN}/${payments}`,
 } as const;
 
 export const businessPathName = {
+  [`${BUSINESS}/${payments}`]: 'payments',
   [`${BUSINESS}/${login}`]: 'login',
   [`${BUSINESS}/${createAccount}`]: 'createAccount',
   [`${BUSINESS}/${forgotPassword}`]: 'forgotPassword',

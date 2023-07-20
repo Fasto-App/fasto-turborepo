@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { clearClientCookies, getClientCookies } from "../cookies";
 import { RequestStatus, TabStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from "../gen/generated";
-import { customerRoute } from "../routes";
+import { customerRoute } from "fasto-route";
 import { showToast } from "../components/showToast";
 import { texts } from "./texts";
 import { getCause } from "../apollo-client/ErrorLink";

@@ -47,6 +47,13 @@ export type AddressInput = {
   streetAddress: Scalars['String'];
 };
 
+export type Balance = {
+  __typename?: 'Balance';
+  balanceAvailable: Scalars['Float'];
+  balanceCurrency: Scalars['String'];
+  balancePending: Scalars['Float'];
+};
+
 export type Business = {
   __typename?: 'Business';
   _id: Scalars['ID'];
@@ -78,6 +85,11 @@ export type BusinessPrivileges = {
   business: Scalars['String'];
   privilege: UserPrivileges;
 };
+
+export enum BusinessType {
+  Company = 'company',
+  Individual = 'individual'
+}
 
 export type CartItem = {
   __typename?: 'CartItem';
@@ -145,6 +157,11 @@ export type ClientSession = {
   request: Request;
   tab?: Maybe<Tab>;
   user: User;
+};
+
+export type ConnectExpressInput = {
+  business_type: BusinessType;
+  country: IsoCountry;
 };
 
 export type CreateBusinessPayload = {
@@ -321,6 +338,11 @@ export type HoursOfOperationInput = {
   Wednesday?: InputMaybe<WorkingHoursInput>;
 };
 
+export enum IsoCountry {
+  Br = 'BR',
+  Us = 'US'
+}
+
 export type JoinTabForm = {
   admin: Scalars['ID'];
   business: Scalars['ID'];
@@ -378,6 +400,7 @@ export type Mutation = {
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
+  connectExpressPayment: Scalars['String'];
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
@@ -451,6 +474,11 @@ export type MutationAddItemToCartArgs = {
 
 export type MutationClientCreateMultipleOrderDetailsArgs = {
   input: Array<ClientCreateOrderInput>;
+};
+
+
+export type MutationConnectExpressPaymentArgs = {
+  input: ConnectExpressInput;
 };
 
 
@@ -782,6 +810,7 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
+  getBalance: Balance;
   getBusinessById: Business;
   getBusinessInformation: Business;
   getBusinessLocation?: Maybe<Address>;
@@ -1190,10 +1219,12 @@ export type ResolversTypes = {
   AccountCreationResponse: ResolverTypeWrapper<AccountCreationResponse>;
   Address: ResolverTypeWrapper<Address>;
   AddressInput: AddressInput;
+  Balance: ResolverTypeWrapper<Balance>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Business: ResolverTypeWrapper<Business>;
   BusinessInput: BusinessInput;
   BusinessPrivileges: ResolverTypeWrapper<BusinessPrivileges>;
+  BusinessType: BusinessType;
   CartItem: ResolverTypeWrapper<CartItem>;
   Category: ResolverTypeWrapper<Category>;
   CategoryInput: CategoryInput;
@@ -1201,6 +1232,7 @@ export type ResolversTypes = {
   CheckoutStatusKeys: CheckoutStatusKeys;
   ClientCreateOrderInput: ClientCreateOrderInput;
   ClientSession: ResolverTypeWrapper<ClientSession>;
+  ConnectExpressInput: ConnectExpressInput;
   CreateBusinessPayload: ResolverTypeWrapper<CreateBusinessPayload>;
   CreateEmployeeAccountInput: CreateEmployeeAccountInput;
   CreateMenuInput: CreateMenuInput;
@@ -1231,6 +1263,7 @@ export type ResolversTypes = {
   HoursOfOperation: ResolverTypeWrapper<HoursOfOperation>;
   HoursOfOperationInput: HoursOfOperationInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  ISOCountry: IsoCountry;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JoinTabForm: JoinTabForm;
   LinkCategoryToProductInput: LinkCategoryToProductInput;
@@ -1290,6 +1323,7 @@ export type ResolversParentTypes = {
   AccountCreationResponse: AccountCreationResponse;
   Address: Address;
   AddressInput: AddressInput;
+  Balance: Balance;
   Boolean: Scalars['Boolean'];
   Business: Business;
   BusinessInput: BusinessInput;
@@ -1300,6 +1334,7 @@ export type ResolversParentTypes = {
   Checkout: Checkout;
   ClientCreateOrderInput: ClientCreateOrderInput;
   ClientSession: ClientSession;
+  ConnectExpressInput: ConnectExpressInput;
   CreateBusinessPayload: CreateBusinessPayload;
   CreateEmployeeAccountInput: CreateEmployeeAccountInput;
   CreateMenuInput: CreateMenuInput;
@@ -1390,6 +1425,13 @@ export type AddressResolvers<ContextType = Context, ParentType extends Resolvers
   postalCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   stateOrProvince?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   streetAddress?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type BalanceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Balance'] = ResolversParentTypes['Balance']> = {
+  balanceAvailable?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  balanceCurrency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  balancePending?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1532,6 +1574,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   acceptTabRequest?: Resolver<Maybe<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<MutationAcceptTabRequestArgs, 'input'>>;
   addItemToCart?: Resolver<ResolversTypes['CartItem'], ParentType, ContextType, RequireFields<MutationAddItemToCartArgs, 'input'>>;
   clientCreateMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationClientCreateMultipleOrderDetailsArgs, 'input'>>;
+  connectExpressPayment?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationConnectExpressPaymentArgs, 'input'>>;
   createAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, RequireFields<MutationCreateAddressArgs, 'input'>>;
   createBusiness?: Resolver<Maybe<ResolversTypes['CreateBusinessPayload']>, ParentType, ContextType, RequireFields<MutationCreateBusinessArgs, 'input'>>;
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationCreateCategoryArgs>>;
@@ -1634,6 +1677,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getAllProductsByBusinessID?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType>;
   getAllTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  getBalance?: Resolver<ResolversTypes['Balance'], ParentType, ContextType>;
   getBusinessById?: Resolver<ResolversTypes['Business'], ParentType, ContextType, Partial<QueryGetBusinessByIdArgs>>;
   getBusinessInformation?: Resolver<ResolversTypes['Business'], ParentType, ContextType>;
   getBusinessLocation?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
@@ -1743,6 +1787,7 @@ export type WorkingHoursResolvers<ContextType = Context, ParentType extends Reso
 export type Resolvers<ContextType = Context> = {
   AccountCreationResponse?: AccountCreationResponseResolvers<ContextType>;
   Address?: AddressResolvers<ContextType>;
+  Balance?: BalanceResolvers<ContextType>;
   Business?: BusinessResolvers<ContextType>;
   BusinessPrivileges?: BusinessPrivilegesResolvers<ContextType>;
   CartItem?: CartItemResolvers<ContextType>;

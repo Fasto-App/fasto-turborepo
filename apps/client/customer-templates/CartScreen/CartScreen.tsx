@@ -4,7 +4,7 @@ import { Box, Button, HStack, SectionList, Skeleton, Text, useTheme } from "nati
 import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
-import { customerRoute } from "../../routes";
+import { customerRoute } from "fasto-route";
 import { GetCartItemsPerTabDocument, GetClientSessionDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { clearClientCookies, getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";

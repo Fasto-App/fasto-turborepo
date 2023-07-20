@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { Helmet } from "react-helmet";
 import { useGetAllBusinessQuery } from "../../gen/generated";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { businessRoute, customerRoute } from "../../routes";
+import { businessRoute, customerRoute } from "fasto-route";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../firebase/init";
 

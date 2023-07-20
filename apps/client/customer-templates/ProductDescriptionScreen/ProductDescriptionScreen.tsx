@@ -9,7 +9,7 @@ import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from "app-helpers";
 import { getClientCookies } from "../../cookies";
 import { useAddItemToCartMutation, useGetProductByIdQuery } from "../../gen/generated";
 import { LoadingPDP } from "./LoadingPDP";
-import { customerRoute } from "../../routes";
+import { customerRoute } from "fasto-route";
 import { showToast } from "../../components/showToast";
 import { useTranslation } from "next-i18next";
 import NextImage from 'next/image'

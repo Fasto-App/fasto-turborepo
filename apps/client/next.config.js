@@ -9,6 +9,7 @@ const withTM = require('next-transpile-modules')([
 	'react-native-svg',
 	'react-native',
 	'app-helpers',
+	'fasto-route',
 ]);
 
 /**

@@ -47,6 +47,13 @@ export type AddressInput = {
   streetAddress: Scalars['String'];
 };
 
+export type Balance = {
+  __typename?: 'Balance';
+  balanceAvailable: Scalars['Float'];
+  balanceCurrency: Scalars['String'];
+  balancePending: Scalars['Float'];
+};
+
 export type Business = {
   __typename?: 'Business';
   _id: Scalars['ID'];
@@ -78,6 +85,11 @@ export type BusinessPrivileges = {
   business: Scalars['String'];
   privilege: UserPrivileges;
 };
+
+export enum BusinessType {
+  Company = 'company',
+  Individual = 'individual'
+}
 
 export type CartItem = {
   __typename?: 'CartItem';
@@ -145,6 +157,11 @@ export type ClientSession = {
   request: Request;
   tab?: Maybe<Tab>;
   user: User;
+};
+
+export type ConnectExpressInput = {
+  business_type: BusinessType;
+  country: IsoCountry;
 };
 
 export type CreateBusinessPayload = {
@@ -321,6 +338,11 @@ export type HoursOfOperationInput = {
   Wednesday?: InputMaybe<WorkingHoursInput>;
 };
 
+export enum IsoCountry {
+  Br = 'BR',
+  Us = 'US'
+}
+
 export type JoinTabForm = {
   admin: Scalars['ID'];
   business: Scalars['ID'];
@@ -378,6 +400,7 @@ export type Mutation = {
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
+  connectExpressPayment: Scalars['String'];
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
@@ -451,6 +474,11 @@ export type MutationAddItemToCartArgs = {
 
 export type MutationClientCreateMultipleOrderDetailsArgs = {
   input: Array<ClientCreateOrderInput>;
+};
+
+
+export type MutationConnectExpressPaymentArgs = {
+  input: ConnectExpressInput;
 };
 
 
@@ -782,6 +810,7 @@ export type Query = {
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
+  getBalance: Balance;
   getBusinessById: Business;
   getBusinessInformation: Business;
   getBusinessLocation?: Maybe<Address>;
@@ -1341,6 +1370,13 @@ export type GetOrdersBySessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetOrdersBySessionQuery = { __typename?: 'Query', getOrdersBySession: Array<{ __typename?: 'OrderDetail', _id: string, quantity: number, status: OrderStatus, subTotal: number, user?: string | null, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> };
+
+export type ConnectExpressPaymentMutationVariables = Exact<{
+  input: ConnectExpressInput;
+}>;
+
+
+export type ConnectExpressPaymentMutation = { __typename?: 'Mutation', connectExpressPayment: string };
 
 export type GetProductByIdQueryVariables = Exact<{
   productId: Scalars['ID'];
@@ -3101,6 +3137,37 @@ export function useGetOrdersBySessionLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetOrdersBySessionQueryHookResult = ReturnType<typeof useGetOrdersBySessionQuery>;
 export type GetOrdersBySessionLazyQueryHookResult = ReturnType<typeof useGetOrdersBySessionLazyQuery>;
 export type GetOrdersBySessionQueryResult = Apollo.QueryResult<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>;
+export const ConnectExpressPaymentDocument = gql`
+    mutation ConnectExpressPayment($input: ConnectExpressInput!) {
+  connectExpressPayment(input: $input)
+}
+    `;
+export type ConnectExpressPaymentMutationFn = Apollo.MutationFunction<ConnectExpressPaymentMutation, ConnectExpressPaymentMutationVariables>;
+
+/**
+ * __useConnectExpressPaymentMutation__
+ *
+ * To run a mutation, you first call `useConnectExpressPaymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConnectExpressPaymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [connectExpressPaymentMutation, { data, loading, error }] = useConnectExpressPaymentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useConnectExpressPaymentMutation(baseOptions?: Apollo.MutationHookOptions<ConnectExpressPaymentMutation, ConnectExpressPaymentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ConnectExpressPaymentMutation, ConnectExpressPaymentMutationVariables>(ConnectExpressPaymentDocument, options);
+      }
+export type ConnectExpressPaymentMutationHookResult = ReturnType<typeof useConnectExpressPaymentMutation>;
+export type ConnectExpressPaymentMutationResult = Apollo.MutationResult<ConnectExpressPaymentMutation>;
+export type ConnectExpressPaymentMutationOptions = Apollo.BaseMutationOptions<ConnectExpressPaymentMutation, ConnectExpressPaymentMutationVariables>;
 export const GetProductByIdDocument = gql`
     query GetProductByID($productId: ID!) {
   getProductByID(productID: $productId) {

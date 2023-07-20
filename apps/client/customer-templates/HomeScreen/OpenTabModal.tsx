@@ -9,7 +9,7 @@ import { GetTabRequestDocument, GetTabRequestsDocument, useOpenTabRequestMutatio
 import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies'
-import { customerRoute } from '../../routes'
+import { customerRoute } from 'fasto-route'
 import { useTranslation } from 'next-i18next'
 import { getCustomerName, getCustomerPhone, setCustomerName, setCustomerPhone } from '../../localStorage/customerStorage'
 

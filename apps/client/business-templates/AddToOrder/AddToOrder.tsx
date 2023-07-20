@@ -19,7 +19,7 @@ import { Tile } from "../../components/Tile";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
 import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useCreateOrdersCheckoutMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
-import { businessRoute } from "../../routes";
+import { businessRoute } from "fasto-route";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 import { OrangeBox } from "../../components/OrangeBox";

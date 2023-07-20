@@ -2,7 +2,7 @@ import React from "react"
 import { useRouter } from "next/router";
 import { Avatar, Badge, Box, HStack, Text, useTheme, VStack } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
-import { customerPathName, customerRoute, PathNameKeys } from "../../routes";
+import { customerPathName, customerRoute, PathNameKeys } from "fasto-route";
 import { getClientCookies } from "../../cookies";
 import { useGetBusinessInformation } from "../../hooks";
 import { OrangeBox } from "../../components/OrangeBox";

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { BusinessLayout } from '../business-templates/Layout/BusinessLayout';
 import { CustomerLayout } from '../customer-templates/Layout';
 import { AppProvider } from '../appProvider';
-import { BUSINESS, CUSTOMER } from '../routes';
+import { BUSINESS, CUSTOMER } from 'fasto-route';
 import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
