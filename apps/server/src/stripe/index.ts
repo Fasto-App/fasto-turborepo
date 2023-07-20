@@ -24,15 +24,17 @@ type AccountParams = {
   businessName: string;
 }
 
+const TEST_URL = "https://fastoapp.dev"
+const is_dev = process.env.ENVIRONMENT === "development"
+
 export const stripeAuthorize = async (accountsParams: AccountParams) => {
 
-  console.log("stripeAuthorize", accountsParams)
-  const URL = "https://fastoapp.dev" +
+  const URL = is_dev ? TEST_URL : process.env.FRONTEND_URL +
     appRoute.customerRoute["/customer/[businessId]"].
       replace("[businessId]", accountsParams.businessId) || undefined
 
+  console.log("stripeAuthorize", accountsParams)
   console.log({ URL })
-
 
   try {
     let accountId: null | string = null;
