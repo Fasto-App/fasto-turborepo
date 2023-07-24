@@ -431,6 +431,7 @@ export type Mutation = {
   deleteTab?: Maybe<Tab>;
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
+  generatePaymentIntent: PaymentIntent;
   linkCategoryToProducts?: Maybe<Category>;
   makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
@@ -784,6 +785,14 @@ export type Payment = {
   patron: Scalars['ID'];
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
+};
+
+export type PaymentIntent = {
+  __typename?: 'PaymentIntent';
+  amount: Scalars['Float'];
+  clientSecret?: Maybe<Scalars['ID']>;
+  currency: Scalars['String'];
+  paymentIntent: Scalars['ID'];
 };
 
 export type Product = {
@@ -1379,6 +1388,11 @@ export type ConnectExpressPaymentMutationVariables = Exact<{
 
 
 export type ConnectExpressPaymentMutation = { __typename?: 'Mutation', connectExpressPayment: string };
+
+export type GeneratePaymentIntentMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GeneratePaymentIntentMutation = { __typename?: 'Mutation', generatePaymentIntent: { __typename?: 'PaymentIntent', paymentIntent: string, clientSecret?: string | null, amount: number, currency: string } };
 
 export type GetIsConnectdQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3175,6 +3189,41 @@ export function useConnectExpressPaymentMutation(baseOptions?: Apollo.MutationHo
 export type ConnectExpressPaymentMutationHookResult = ReturnType<typeof useConnectExpressPaymentMutation>;
 export type ConnectExpressPaymentMutationResult = Apollo.MutationResult<ConnectExpressPaymentMutation>;
 export type ConnectExpressPaymentMutationOptions = Apollo.BaseMutationOptions<ConnectExpressPaymentMutation, ConnectExpressPaymentMutationVariables>;
+export const GeneratePaymentIntentDocument = gql`
+    mutation GeneratePaymentIntent {
+  generatePaymentIntent {
+    paymentIntent
+    clientSecret
+    amount
+    currency
+  }
+}
+    `;
+export type GeneratePaymentIntentMutationFn = Apollo.MutationFunction<GeneratePaymentIntentMutation, GeneratePaymentIntentMutationVariables>;
+
+/**
+ * __useGeneratePaymentIntentMutation__
+ *
+ * To run a mutation, you first call `useGeneratePaymentIntentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGeneratePaymentIntentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generatePaymentIntentMutation, { data, loading, error }] = useGeneratePaymentIntentMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGeneratePaymentIntentMutation(baseOptions?: Apollo.MutationHookOptions<GeneratePaymentIntentMutation, GeneratePaymentIntentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GeneratePaymentIntentMutation, GeneratePaymentIntentMutationVariables>(GeneratePaymentIntentDocument, options);
+      }
+export type GeneratePaymentIntentMutationHookResult = ReturnType<typeof useGeneratePaymentIntentMutation>;
+export type GeneratePaymentIntentMutationResult = Apollo.MutationResult<GeneratePaymentIntentMutation>;
+export type GeneratePaymentIntentMutationOptions = Apollo.BaseMutationOptions<GeneratePaymentIntentMutation, GeneratePaymentIntentMutationVariables>;
 export const GetIsConnectdDocument = gql`
     query GetIsConnectd {
   getIsConnected {

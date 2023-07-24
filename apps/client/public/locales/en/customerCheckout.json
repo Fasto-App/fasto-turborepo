@@ -23,5 +23,6 @@
 	"errorFetchingCheckoutInfo": "Error fetching checkout information",
 	"toAllocateAdditionalFunds": "*To allocate additional funds, please enter a higher tip value",
 	"errorRequestingfullCheckout": "Error requesting full checkout",
-	"successRequestingfullCheckout": "Success requesting full checkout"
+	"successRequestingfullCheckout": "Success requesting full checkout",
+	"payNow": "Pay Now"
 }

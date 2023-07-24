@@ -4,6 +4,7 @@ extend type Query {
 
 extend type Mutation {
 	connectExpressPayment(input: ConnectExpressInput!): String!
+	generatePaymentIntent: PaymentIntent!
 }
 
 type Payment {
@@ -27,6 +28,13 @@ type Balance {
 	balanceCurrency: String!
 	name: String
 	url: String
+}
+
+type PaymentIntent {
+	paymentIntent: ID!
+	clientSecret: ID
+	amount: Float!
+	currency: String!
 }
 
 enum BusinessType {

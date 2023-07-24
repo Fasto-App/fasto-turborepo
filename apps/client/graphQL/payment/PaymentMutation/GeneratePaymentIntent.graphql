@@ -1,0 +1,8 @@
+mutation GeneratePaymentIntent {
+	generatePaymentIntent {
+		paymentIntent
+		clientSecret
+		amount
+		currency
+	}
+}

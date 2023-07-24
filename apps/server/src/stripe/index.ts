@@ -102,25 +102,45 @@ export const stripeOnboard = async (accountId: string, locale: Locale) => {
   // Create an account link for the user's Stripe account
 }
 
-const stripeOnboarded = async (accountId: string) => {
+type CreatePaymentIntentProps = {
+  amount: number;
+  currency: string;
+  stripeAccount: string;
+  locale: Locale;
+  businessId: string;
+  checkoutId: string;
+}
+
+export const createPaymentIntent = async (props: CreatePaymentIntentProps) => {
+
   try {
-    // Retrieve the user's Stripe account and check if they have finished onboarding
-    const account = await stripe.accounts.retrieve(accountId);
-    if (account.details_submitted) {
-      // req.user.onboardingComplete = true;
-      // await req.user.save();
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: props.amount,
+      currency: "USD",
+      description: 'Fasto Checkout',
+      automatic_payment_methods: { enabled: true },
+      // payment_method_types: ['card'],
+      // confirm: true,
+      // automatic_payment_methods: {
+      //   enabled: true,
+      //   allow_redirects: "always",
+      // },
+      // application_fee_amount: props.amount * 0.5,
+      // on_behalf_of: props.stripeAccount,
+      // return_url: process.env.FRONTEND_URL + `/${props.locale}` +
+      //   customerRoute['/customer/[businessId]/checkout/[checkoutId]'].
+      //     replace("[businessId]", props.businessId).
+      //     replace("[checkoutId]", props.checkoutId)
+    });
 
-      // Redirect to the Rocket Rides dashboard
-      // req.flash('showBanner', 'true');
-      // res.redirect('/pilots/dashboard');
-    } else {
-      // console.log('The onboarding process was not completed.');
-      // res.redirect('/pilots/signup');
-    }
+    console.log("PAYMENT INTENT", paymentIntent)
+
+    return paymentIntent;
+
   } catch (err) {
-    // console.log('Failed to retrieve Stripe account information.');
-    // console.log(err);
-    // next(err);
-  }
 
+    console.log("FAILED PAYMENT INTENT", err)
+
+    throw ApolloError('BadRequest', `Error creating paymentIntent: ${err}`, "client");
+  }
 }

@@ -9,6 +9,8 @@ const checkout = `${CUSTOMER}/${businessId}/checkout/[checkoutId]` as const;
 const split = `${CUSTOMER}/${businessId}/split/[checkoutId]` as const;
 const productDescription = `${CUSTOMER}/${businessId}/product-description/[productId]` as const;
 const settings = `${CUSTOMER}/${businessId}/settings` as const;
+const payment = `${CUSTOMER}/${businessId}/payment` as const;
+const success = `${CUSTOMER}/${businessId}/success` as const;
 
 export const customerRoute = {
   [home]: home,
@@ -18,6 +20,8 @@ export const customerRoute = {
   [split]: split,
   [productDescription]: productDescription,
   [settings]: settings,
+  [payment]: payment,
+  [success]: success,
 } as const;
 
 export type customerRouteKeys = keyof typeof customerRoute;
@@ -30,6 +34,8 @@ export const customerPathName = {
   [split]: 'split',
   [productDescription]: 'productDescription',
   [settings]: 'customerSettings',
+  [payment]: 'payment',
+  [success]: 'success',
 } as const
 
 export const customerRouteParams = {
@@ -39,6 +45,8 @@ export const customerRouteParams = {
   productId: 'productId',
   adminId: 'adminId',
   name: 'name',
+  clientSecret: 'clientSecret',
+  paymentIntent: 'paymentIntent',
 }
 
 export type PathNameKeys = keyof typeof customerPathName;

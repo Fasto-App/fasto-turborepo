@@ -431,6 +431,7 @@ export type Mutation = {
   deleteTab?: Maybe<Tab>;
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
+  generatePaymentIntent: PaymentIntent;
   linkCategoryToProducts?: Maybe<Category>;
   makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
@@ -784,6 +785,14 @@ export type Payment = {
   patron: Scalars['ID'];
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
+};
+
+export type PaymentIntent = {
+  __typename?: 'PaymentIntent';
+  amount: Scalars['Float'];
+  clientSecret?: Maybe<Scalars['ID']>;
+  currency: Scalars['String'];
+  paymentIntent: Scalars['ID'];
 };
 
 export type Product = {
@@ -1280,6 +1289,7 @@ export type ResolversTypes = {
   OrderDetailInput: OrderDetailInput;
   OrderStatus: OrderStatus;
   Payment: ResolverTypeWrapper<Payment>;
+  PaymentIntent: ResolverTypeWrapper<PaymentIntent>;
   Product: ResolverTypeWrapper<Product>;
   Query: ResolverTypeWrapper<{}>;
   Request: ResolverTypeWrapper<Request>;
@@ -1379,6 +1389,7 @@ export type ResolversParentTypes = {
   OrderDetail: OrderDetail;
   OrderDetailInput: OrderDetailInput;
   Payment: Payment;
+  PaymentIntent: PaymentIntent;
   Product: Product;
   Query: {};
   Request: Request;
@@ -1607,6 +1618,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteTab?: Resolver<Maybe<ResolversTypes['Tab']>, ParentType, ContextType, RequireFields<MutationDeleteTabArgs, 'input'>>;
   deleteTable?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType, Partial<MutationDeleteTableArgs>>;
   deleteUser?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType>;
+  generatePaymentIntent?: Resolver<ResolversTypes['PaymentIntent'], ParentType, ContextType>;
   linkCategoryToProducts?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationLinkCategoryToProductsArgs, 'input'>>;
   makeCheckoutFullPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutFullPaymentArgs, 'input'>>;
   makeCheckoutPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutPaymentArgs, 'input'>>;
@@ -1653,6 +1665,14 @@ export type PaymentResolvers<ContextType = Context, ParentType extends Resolvers
   patron?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   splitType?: Resolver<Maybe<ResolversTypes['SplitType']>, ParentType, ContextType>;
   tip?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PaymentIntentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaymentIntent'] = ResolversParentTypes['PaymentIntent']> = {
+  amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  clientSecret?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paymentIntent?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1809,6 +1829,7 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>;
   OrderDetail?: OrderDetailResolvers<ContextType>;
   Payment?: PaymentResolvers<ContextType>;
+  PaymentIntent?: PaymentIntentResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Request?: RequestResolvers<ContextType>;

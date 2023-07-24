@@ -23,6 +23,8 @@
 	"home": "Home",
 	"cart": "Cart",
 	"menu": "Menu",
+	"payment": "Payment",
+	"success": "Success",
 	"checkout": "Checkout",
 	"productDescription": "Product Description",
 	"settings": "Settings",
