@@ -98,11 +98,17 @@ export const CheckoutScreen = () => {
   }, [businessId, checkoutId, router])
 
   const endSession = useCallback(() => {
-    if (!businessId) throw new Error("Missing businessId")
+    if (!businessId || !payment?._id) throw new Error("Missing businessId")
 
-    paymentIntent()
+    paymentIntent({
+      variables: {
+        input: {
+          payment: payment?._id,
+        }
+      }
+    })
 
-  }, [businessId, paymentIntent])
+  }, [businessId, paymentIntent, payment])
 
   return (
     <>

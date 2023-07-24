@@ -620,6 +620,11 @@ export type MutationDeleteTableArgs = {
 };
 
 
+export type MutationGeneratePaymentIntentArgs = {
+  input: GeneratePaymentIntentInput;
+};
+
+
 export type MutationLinkCategoryToProductsArgs = {
   input: LinkCategoryToProductInput;
 };
@@ -1150,6 +1155,10 @@ export type DeleteItemFromCartInput = {
   cartItem: Scalars['ID'];
 };
 
+export type GeneratePaymentIntentInput = {
+  payment: Scalars['ID'];
+};
+
 export type UpdateItemFromCartInput = {
   cartItem: Scalars['ID'];
   quantity: Scalars['Int'];
@@ -1326,6 +1335,7 @@ export type ResolversTypes = {
   WorkingHoursInput: WorkingHoursInput;
   addItemToCartInput: AddItemToCartInput;
   deleteItemFromCartInput: DeleteItemFromCartInput;
+  generatePaymentIntentInput: GeneratePaymentIntentInput;
   updateItemFromCartInput: UpdateItemFromCartInput;
 };
 
@@ -1421,6 +1431,7 @@ export type ResolversParentTypes = {
   WorkingHoursInput: WorkingHoursInput;
   addItemToCartInput: AddItemToCartInput;
   deleteItemFromCartInput: DeleteItemFromCartInput;
+  generatePaymentIntentInput: GeneratePaymentIntentInput;
   updateItemFromCartInput: UpdateItemFromCartInput;
 };
 
@@ -1618,7 +1629,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteTab?: Resolver<Maybe<ResolversTypes['Tab']>, ParentType, ContextType, RequireFields<MutationDeleteTabArgs, 'input'>>;
   deleteTable?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType, Partial<MutationDeleteTableArgs>>;
   deleteUser?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType>;
-  generatePaymentIntent?: Resolver<ResolversTypes['PaymentIntent'], ParentType, ContextType>;
+  generatePaymentIntent?: Resolver<ResolversTypes['PaymentIntent'], ParentType, ContextType, RequireFields<MutationGeneratePaymentIntentArgs, 'input'>>;
   linkCategoryToProducts?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationLinkCategoryToProductsArgs, 'input'>>;
   makeCheckoutFullPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutFullPaymentArgs, 'input'>>;
   makeCheckoutPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutPaymentArgs, 'input'>>;

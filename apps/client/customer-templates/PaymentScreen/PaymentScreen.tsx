@@ -57,27 +57,40 @@ const CheckoutForm = () => {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: process.env.FRONTEND_URL + customerRoute["/customer/[businessId]/success"].
-          replace("[businessId]", businessId as string),
+        return_url: `${process.env.FRONTEND_URL}${customerRoute["/customer/[businessId]/success"].
+          replace("[businessId]", businessId as string)}`,
       },
+
     });
 
-    if (error.type === "card_error" || error.type === "validation_error") {
+    console.log('error', error)
+    console.log('paymentIntent', paymentIntent)
+    if (error) {
       setMessage(error?.message);
-    } else {
-      setMessage("An unexpected error occured.");
     }
 
     setIsProcessing(false);
+    // trigger some action on the server to conclude the payment
+    // and redirect to success page
+    // check if tab is fully paid
   }
 
   return (
     <form id="payment-form" onSubmit={handlePayment}>
       <PaymentElement id="payment-element" />
       <button disabled={isProcessing || !stripe || !elements} id="submit">
+        {/* <Button
+          w={"75%"}
+          maxW={"250"}
+          onPress={handlePayment}
+          isDisabled={!stripe || !elements || isProcessing}
+          mt={4}
+        > */}
         <span id="button-text">
           {isProcessing ? "Processing ... " : "Pay now"}
         </span>
+        {/* </Button> */}
+
       </button>
       {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}

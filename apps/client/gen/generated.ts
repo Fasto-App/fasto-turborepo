@@ -620,6 +620,11 @@ export type MutationDeleteTableArgs = {
 };
 
 
+export type MutationGeneratePaymentIntentArgs = {
+  input: GeneratePaymentIntentInput;
+};
+
+
 export type MutationLinkCategoryToProductsArgs = {
   input: LinkCategoryToProductInput;
 };
@@ -1150,6 +1155,10 @@ export type DeleteItemFromCartInput = {
   cartItem: Scalars['ID'];
 };
 
+export type GeneratePaymentIntentInput = {
+  payment: Scalars['ID'];
+};
+
 export type UpdateItemFromCartInput = {
   cartItem: Scalars['ID'];
   quantity: Scalars['Int'];
@@ -1389,7 +1398,9 @@ export type ConnectExpressPaymentMutationVariables = Exact<{
 
 export type ConnectExpressPaymentMutation = { __typename?: 'Mutation', connectExpressPayment: string };
 
-export type GeneratePaymentIntentMutationVariables = Exact<{ [key: string]: never; }>;
+export type GeneratePaymentIntentMutationVariables = Exact<{
+  input: GeneratePaymentIntentInput;
+}>;
 
 
 export type GeneratePaymentIntentMutation = { __typename?: 'Mutation', generatePaymentIntent: { __typename?: 'PaymentIntent', paymentIntent: string, clientSecret?: string | null, amount: number, currency: string } };
@@ -3190,8 +3201,8 @@ export type ConnectExpressPaymentMutationHookResult = ReturnType<typeof useConne
 export type ConnectExpressPaymentMutationResult = Apollo.MutationResult<ConnectExpressPaymentMutation>;
 export type ConnectExpressPaymentMutationOptions = Apollo.BaseMutationOptions<ConnectExpressPaymentMutation, ConnectExpressPaymentMutationVariables>;
 export const GeneratePaymentIntentDocument = gql`
-    mutation GeneratePaymentIntent {
-  generatePaymentIntent {
+    mutation GeneratePaymentIntent($input: generatePaymentIntentInput!) {
+  generatePaymentIntent(input: $input) {
     paymentIntent
     clientSecret
     amount
@@ -3214,6 +3225,7 @@ export type GeneratePaymentIntentMutationFn = Apollo.MutationFunction<GeneratePa
  * @example
  * const [generatePaymentIntentMutation, { data, loading, error }] = useGeneratePaymentIntentMutation({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */

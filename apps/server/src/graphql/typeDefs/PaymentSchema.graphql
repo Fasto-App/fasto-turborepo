@@ -4,7 +4,7 @@ extend type Query {
 
 extend type Mutation {
 	connectExpressPayment(input: ConnectExpressInput!): String!
-	generatePaymentIntent: PaymentIntent!
+	generatePaymentIntent(input: generatePaymentIntentInput!): PaymentIntent!
 }
 
 type Payment {
@@ -15,6 +15,10 @@ type Payment {
 	splitType: SplitType
 	discount: Float
 	paid: Boolean!
+}
+
+input generatePaymentIntentInput {
+	payment: ID!
 }
 
 input ConnectExpressInput {

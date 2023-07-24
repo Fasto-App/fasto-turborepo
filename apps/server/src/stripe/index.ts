@@ -111,26 +111,29 @@ type CreatePaymentIntentProps = {
   checkoutId: string;
 }
 
-export const createPaymentIntent = async (props: CreatePaymentIntentProps) => {
+export const createPaymentIntent = async ({
+  amount,
+  currency,
+  stripeAccount,
+  locale,
+  businessId,
+  checkoutId
+}: CreatePaymentIntentProps) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: props.amount,
+      amount: amount,
       currency: "USD",
-      description: 'Fasto Checkout',
+      description: `Fasto Checkout ID: ${checkoutId} Business: ${businessId}`,
       automatic_payment_methods: { enabled: true },
-      // payment_method_types: ['card'],
-      // confirm: true,
-      // automatic_payment_methods: {
-      //   enabled: true,
-      //   allow_redirects: "always",
-      // },
-      // application_fee_amount: props.amount * 0.5,
-      // on_behalf_of: props.stripeAccount,
-      // return_url: process.env.FRONTEND_URL + `/${props.locale}` +
-      //   customerRoute['/customer/[businessId]/checkout/[checkoutId]'].
-      //     replace("[businessId]", props.businessId).
-      //     replace("[checkoutId]", props.checkoutId)
+      application_fee_amount: (amount * 0.05) + 30,
+      transfer_data: {
+        destination: stripeAccount,
+      },
+      transfer_group: checkoutId,
+      // confirm: true, // todo mode info is needed for this
+      // https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm
+      on_behalf_of: stripeAccount,
     });
 
     console.log("PAYMENT INTENT", paymentIntent)

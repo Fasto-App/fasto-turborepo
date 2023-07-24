@@ -44,6 +44,14 @@ const nextConfig = {
 		config.experiments = { ...config.experiments, topLevelAwait: true };
 		return config;
 	},
+	headers() {
+		return [
+			{
+				source: '/.well-known/apple-app-site-association',
+				headers: [{ key: 'content-type', value: 'application/json' }],
+			},
+		];
+	},
 };
 
 module.exports = withPlugins(

@@ -1,27 +1,39 @@
 import { MutationResolvers } from "../../../generated/graphql";
 import { BusinessModel, UserModel } from "../../../models";
+import { CheckoutModel } from "../../../models/checkout";
+import { PaymentModel } from "../../../models/payment";
 import { createPaymentIntent, stripeAuthorize, stripeOnboard } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 
-const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async (parent, args,
+const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async (parent, { input },
   { db, user, locale, client }) => {
+
+  if (!client) throw ApolloError('Unauthorized', "Not Authorized. Please login again.")
+
   const foundBusiness = await BusinessModel(db).findOne({ _id: client?.business });
 
   if (!foundBusiness || !foundBusiness.stripeAccountId) {
     throw ApolloError('BadRequest', "Business is not Configured to accept payments.")
   }
 
+  const foundPayment = await PaymentModel(db).findOne({ _id: input.payment })
+  if (!foundPayment) {
+    throw ApolloError('BadRequest', "Payment not found.")
+  }
+
+  const foundCheckout = await CheckoutModel(db).findOne({ _id: foundPayment.checkout })
+  if (!foundCheckout) {
+    throw ApolloError('BadRequest', "Checkout not found.")
+  }
   // TODO: GET FROM INPUT payment id and checkout id
-  // information about the Payment
-  // information abpout the Checkout
 
   try {
     const intentObject = {
-      amount: 1000,
+      amount: foundPayment.amount,
       currency: "USD",
       locale: locale,
       businessId: foundBusiness._id,
-      checkoutId: "input.checkoutId",
+      checkoutId: foundCheckout._id,
       stripeAccount: foundBusiness.stripeAccountId,
     }
 

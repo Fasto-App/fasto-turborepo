@@ -1,5 +1,5 @@
-mutation GeneratePaymentIntent {
-	generatePaymentIntent {
+mutation GeneratePaymentIntent($input: generatePaymentIntentInput!) {
+	generatePaymentIntent(input: $input) {
 		paymentIntent
 		clientSecret
 		amount
