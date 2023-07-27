@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router'
-import { Center, Text } from 'native-base'
-import React, { useState } from 'react'
+import { Center, Text, Box, Button } from 'native-base'
+import React, { useEffect, useState } from 'react'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { Box, Button } from 'native-base';
 import { customerRoute } from 'fasto-route';
 
 // this file needs some refactoring
@@ -11,19 +10,10 @@ import { customerRoute } from 'fasto-route';
 // unnecessary prop drilling
 
 export const PaymentScreen = () => {
-  const router = useRouter()
-  const { clientSecret, paymentIntent } = router.query
-
-  console.log('clientSecret', clientSecret)
-
-  if (!clientSecret) {
-    return null
-  }
-
   return (
-    <StripeWrapper clientSecret={typeof clientSecret === "string" ? clientSecret : clientSecret[0]}>
+    <StripeWrapper>
       <Center height={"100%"}>
-        <StripePaymentElement />
+        <CheckoutForm />
       </Center>
     </StripeWrapper>
   )
@@ -40,28 +30,26 @@ const CheckoutForm = () => {
   const [message, setMessage] = useState<string>();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePayment = async () => {
-
+  const handlePayment = async (e: any) => {
     console.log('handlePayment')
+    setIsProcessing(true);
 
-    console.log({
-      stripe,
-      elements
-    })
+    const RETURN_URL = `${process.env.FRONTEND_URL}${customerRoute["/customer/[businessId]/success"].
+      replace("[businessId]", businessId as string)}`
 
     if (!stripe || !elements) {
       return;
     }
 
-    const { error } = await stripe?.confirmPayment({
+    const { error, paymentIntent } = await stripe?.confirmPayment({
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: `${process.env.FRONTEND_URL}${customerRoute["/customer/[businessId]/success"].
-          replace("[businessId]", businessId as string)}`,
+        return_url: RETURN_URL,
       },
-
+      redirect: "if_required",
     });
+    paymentIntent?.status === "succeeded" && router.push(RETURN_URL)
 
     console.log('error', error)
     console.log('paymentIntent', paymentIntent)
@@ -76,62 +64,47 @@ const CheckoutForm = () => {
   }
 
   return (
-    <form id="payment-form" onSubmit={handlePayment}>
+    <Box>
       <PaymentElement id="payment-element" />
-      <button disabled={isProcessing || !stripe || !elements} id="submit">
-        {/* <Button
-          w={"75%"}
-          maxW={"250"}
-          onPress={handlePayment}
-          isDisabled={!stripe || !elements || isProcessing}
-          mt={4}
-        > */}
-        <span id="button-text">
-          {isProcessing ? "Processing ... " : "Pay now"}
-        </span>
-        {/* </Button> */}
-
-      </button>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
-    </form>
-  )
-}
-
-export const StripePaymentElement = () => {
-
-
-  const router = useRouter()
-  const { clientSecret, paymentIntent, businessId } = router.query
-
-  return (
-    <StripeWrapper clientSecret={clientSecret as string}>
-      <CheckoutForm />
-      <Box h={4} />
-      {/* TODO: can we user this button? Should we */}
-      {/* <Button 
-      w={"75%"} 
-      maxW={"250"} 
-      onPress={handlePayment}
-       isDisabled={!stripe || !elements || isProcessing}
-       >
-        Pay
-      </Button> */}
-    </StripeWrapper>
+      <Button
+        w={"100%"}
+        onPress={handlePayment}
+        isDisabled={!stripe || !elements || isProcessing}
+        mt={4}
+        mb={2}
+      >
+        {isProcessing ? "Processing ... " : "Pay now"}
+      </Button>
+      {message && <Text color={"error.500"} fontSize={"lg"}>
+        {message}
+      </Text>}
+    </Box>
   )
 }
 
 const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY || "");
 
-export const StripeWrapper: React.FC<{ clientSecret: string }> = ({ children, clientSecret }) => {
-  // get client secret key from server if nothing is returned
-  // return null
-  console.log('clientSecret', clientSecret)
+export const StripeWrapper: React.FC = ({ children }) => {
+  const router = useRouter()
+  const { clientSecret, paymentIntent, businessId, checkoutId } = router.query
+
+  useEffect(() => {
+    if (!clientSecret) {
+      router.back()
+    }
+  }, [businessId, checkoutId, clientSecret, router])
+
+  if (!clientSecret) {
+    return null
+  }
 
   return (
-    <Elements stripe={stripePromise} options={{
-      clientSecret,
-    }}>
+    <Elements
+      stripe={stripePromise}
+      options={{
+        clientSecret: typeof clientSecret === "string" ?
+          clientSecret : clientSecret[0]
+      }}>
       {children}
     </Elements>
   )

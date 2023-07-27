@@ -126,7 +126,7 @@ export const createPaymentIntent = async ({
       currency: "USD",
       description: `Fasto Checkout ID: ${checkoutId} Business: ${businessId}`,
       automatic_payment_methods: { enabled: true },
-      application_fee_amount: (amount * 0.05) + 30,
+      application_fee_amount: Math.trunc(amount * 0.05) + 30,
       transfer_data: {
         destination: stripeAccount,
       },
