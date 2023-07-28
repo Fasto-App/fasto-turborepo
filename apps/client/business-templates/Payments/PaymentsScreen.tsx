@@ -9,6 +9,7 @@ import { OrangeBox } from "../../components/OrangeBox"
 import { z } from "zod"
 import { parseToCurrency, typedKeys } from "app-helpers"
 import { LoadingPDP } from "../../customer-templates/ProductDescriptionScreen/LoadingPDP"
+import { useTranslation } from "next-i18next"
 
 const usePaymentFormHook = () => {
   return useForm({
@@ -46,6 +47,7 @@ type ConnectPaymentSchema = z.infer<typeof connectPaymentSchema>
 
 const ConnectPaymentForm = () => {
   const { control, formState, handleSubmit } = usePaymentFormHook()
+  const { t } = useTranslation("businessPayments")
 
   const [connectExpressPayment, { loading }] = useConnectExpressPaymentMutation({
     onCompleted: (data) => {
@@ -56,7 +58,7 @@ const ConnectPaymentForm = () => {
 
       showToast({
         status: "error",
-        message: "Error connecting to Stripe. Please try again later."
+        message: t("errorConnectingToStripe")
       })
     }
   })
@@ -78,11 +80,11 @@ const ConnectPaymentForm = () => {
     borderRadius={"md"}
   >
 
-    <Heading textAlign={"center"}>Set up your Payments</Heading>
+    <Heading textAlign={"center"}>{t("setupYourPayments")}</Heading>
     <ControlledForm Config={PaymentConfig} control={control} formState={formState} />
     <Box borderRadius={"lg"}>
       <Text fontSize={"lg"} textAlign={"justify"} pb={2}>
-        We use Stripe to make sure you get paid on time and to keep your personal bank and details secure. Click Save and continue to set up your payments on Stripe.
+        {t("useUseStripeConnect")}
       </Text>
     </Box>
 
@@ -90,7 +92,7 @@ const ConnectPaymentForm = () => {
       onPress={handleSubmit(onSubmit)}
       isLoading={loading}
     >
-      Save and Continue
+      {t("saveAndContinue")}
     </Button>
   </VStack>
   )

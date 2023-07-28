@@ -1,3 +1,9 @@
 {
-	"payments": "Payments"
+	"payments": "Payments",
+	"setupYourPayments": "Setup your payments",
+	"useUseStripeConnect": "We use Stripe to make sure you get paid on time and to keep your personal bank and details secure. Click Save and continue to set up your payments on Stripe.",
+	"saveAndContinue": "Save and continue",
+	"errorConnectingToStripe": "Error connecting to Stripe. Please try again later.",
+	"viewPayoutsOnStripe": "View payouts on Stripe",
+	"payNow": "Pay now"
 }
