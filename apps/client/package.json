@@ -9,7 +9,8 @@
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
 		"chromatic": "chromatic --exit-zero-on-changes",
-		"generate": "doppler run -- graphql-codegen -- config codegen.ts"
+		"generate": "doppler run -- graphql-codegen -- config codegen.ts",
+		"cypress:open": "cypress open"
 	},
 	"dependencies": {
 		"@apollo/client": "^3.6.2",
@@ -80,6 +81,7 @@
 		"babel-loader": "^8.2.5",
 		"babel-plugin-react-native-web": "^0.18.1",
 		"chromatic": "^6.5.4",
+		"cypress": "^12.17.2",
 		"eslint": "8.15.0",
 		"eslint-plugin-storybook": "^0.5.12",
 		"next-compose-plugins": "^2.2.1",
