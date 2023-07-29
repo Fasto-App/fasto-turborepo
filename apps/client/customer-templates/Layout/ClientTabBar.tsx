@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
-import { customerPathName, customerRoute, customerRouteKeys, } from "../../routes";
+import { customerRoute, customerRouteKeys, } from "fasto-route";
 import { HStack, useBreakpointValue } from "native-base";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { useGetClientSession } from "../../hooks";

@@ -2,7 +2,8 @@ import { useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { Button, Center, VStack, Image } from "native-base";
 import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
-import { AppNavigation, appRoute, businessRoute } from "../../routes";
+import { businessRoute } from "fasto-route";
+import type { AppNavigation } from "fasto-route";
 import { LeftSideBar } from "../../components";
 import { AccountMenu } from "../../components/MenuHamburguer";
 import { useTranslation } from "next-i18next";
@@ -11,6 +12,8 @@ const BusinessNavigationTab = () => {
   const router = useRouter();
   const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
     pathname === router.pathname, [router.pathname])
+
+  console.log(router.pathname)
 
   const { t } = useTranslation("common")
 
@@ -61,6 +64,14 @@ const BusinessNavigationTab = () => {
           selected={useIsPageSelected(businessRoute.orders)}
           onPress={() => {
             router.push(businessRoute.orders);
+          }}
+        />
+        <BusinessNavigationButton
+          text={t("payments")}
+          type={"Payment"}
+          selected={useIsPageSelected(businessRoute.payments)}
+          onPress={() => {
+            router.push(businessRoute.payments);
           }}
         />
         <BusinessNavigationButton

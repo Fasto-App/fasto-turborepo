@@ -4,7 +4,7 @@ import { useBreakpointValue } from 'native-base';
 import { BusinessScreenContainer } from '../../components/atoms/BusinessScreenContainer';
 import { BusinessNavigationTab } from './BusinessNavigationTab';
 import { useRouter } from 'next/router';
-import { BUSINESS_ADMIN, BusinessRouteKeys, businessPathName } from '../../routes';
+import { BUSINESS_ADMIN, BusinessRouteKeys, businessPathName } from 'fasto-route';
 import { analytics } from '../../firebase/init';
 import { logEvent } from 'firebase/analytics';
 

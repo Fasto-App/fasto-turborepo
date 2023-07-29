@@ -3,7 +3,7 @@ import { Box, SectionList, HStack, ScrollView, Skeleton, Spacer, VStack, Text, D
 import { MenuItem } from "../../components/molecules/MenuItem";
 import { Tab } from "./Tab";
 import { useRouter } from "next/router";
-import { customerRoute } from "../../routes";
+import { customerRoute } from "fasto-route";
 import { useGetClientMenuQuery } from "../../gen/generated";
 import { useTranslation } from "next-i18next";
 

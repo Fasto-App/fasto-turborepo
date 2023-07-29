@@ -1,0 +1,3 @@
+mutation ConnectExpressPayment($input: ConnectExpressInput!) {
+	connectExpressPayment(input: $input)
+}

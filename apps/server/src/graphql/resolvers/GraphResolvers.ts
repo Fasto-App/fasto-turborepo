@@ -46,6 +46,8 @@ import { TabResolver, TabResolverMutation, TabResolverQuery } from './TabResolve
 import { CheckoutResolverMutation, CheckoutResolverQuery, CheckoutResolver } from './CheckoutResolver';
 import { RequestResolver, RequestResolverMutation, RequestResolverQuery, RequestSubscription } from './RequestResolver';
 import { CartItemResolver, CartItemResolverMutation, CartItemResolverQuery } from './CartItemResolver';
+import { PaymentMutation } from './Payments';
+import { PaymentQuery } from './Payments/PaymentQuery';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -62,7 +64,8 @@ export const resolvers = {
     ...CheckoutResolverQuery,
     ...RequestResolverQuery,
     ...TableResolverQuery,
-    ...CartItemResolverQuery
+    ...CartItemResolverQuery,
+    ...PaymentQuery,
   },
   Mutation: {
     ...AddressResolverMutation,
@@ -77,7 +80,8 @@ export const resolvers = {
     ...UserResolverMutation,
     ...CheckoutResolverMutation,
     ...RequestResolverMutation,
-    ...CartItemResolverMutation
+    ...CartItemResolverMutation,
+    ...PaymentMutation,
   },
   Subscription: {
     ...RequestSubscription,

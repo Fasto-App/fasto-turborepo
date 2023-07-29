@@ -1,6 +1,6 @@
 
 import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
-import { OrderDetailModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
+import { BusinessModel, OrderDetailModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
@@ -164,14 +164,17 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
 };
 
 // @ts-ignore
-const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = async (parent, { input }, { db }) => {
+const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = async (parent, { input }, { db, client, locale }) => {
   const Checkout = CheckoutModel(db);
   const Payment = PaymentModel(db);
   const User = UserModel(db);
+  const Business = BusinessModel(db);
 
   const foundCheckout = await Checkout.findById(input.checkout)
   const foundUser = await User.findById(input.patron)
+  const foundBusiness = await Business.findById(client?.business)
 
+  if (!foundCheckout || !foundUser || !foundBusiness?.stripeAccountId) throw ApolloError('BadRequest')
   if (!foundCheckout || !foundUser) throw ApolloError('BadRequest')
   if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
 
@@ -194,15 +197,18 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
 }
 
 // @ts-ignore
-const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db }) => {
+const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db, client, locale }) => {
   const Checkout = CheckoutModel(db);
   const Order = OrderDetailModel(db);
   const Payment = PaymentModel(db);
   const User = UserModel(db);
+  const Business = BusinessModel(db);
 
   const foundCheckout = await Checkout.findById(input.checkout)
   const foundUsers = await User.find({ _id: { $in: input.selectedUsers } })
+  const foundBusiness = await Business.findById(client?.business)
 
+  if (!foundBusiness?.stripeAccountId) throw ApolloError('Unauthorized', 'Business not configured to accept payments')
   if (!foundCheckout) throw ApolloError('BadRequest')
   if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
   if (foundUsers.length < 1) throw ApolloError('BadRequest', 'No users selected')

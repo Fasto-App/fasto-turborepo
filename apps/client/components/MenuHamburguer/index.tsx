@@ -1,7 +1,7 @@
 import React from "react";
 import { Divider, Menu, Text, Pressable, HStack, Avatar, VStack, Skeleton } from "native-base";
 import { BusinessNavigationButton } from "../atoms/NavigationButton";
-import { businessRoute } from "../../routes";
+import { businessRoute } from "fasto-route";
 import { useRouter } from "next/router";
 import { clearBusinessCookies } from "../../cookies";
 import { useGetBusinessInformationQuery, useGetUserInformationQuery } from "../../gen/generated";

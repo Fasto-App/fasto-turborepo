@@ -1,6 +1,11 @@
-# extend type Query {
-#   getCheckoutByID(input: GetById!): Checkout!
-# }
+extend type Query {
+	getIsConnected: Balance
+}
+
+extend type Mutation {
+	connectExpressPayment(input: ConnectExpressInput!): String!
+	generatePaymentIntent(input: generatePaymentIntentInput!): PaymentIntent!
+}
 
 type Payment {
 	_id: ID!
@@ -10,4 +15,38 @@ type Payment {
 	splitType: SplitType
 	discount: Float
 	paid: Boolean!
+}
+
+input generatePaymentIntentInput {
+	payment: ID!
+}
+
+input ConnectExpressInput {
+	country: ISOCountry!
+	business_type: BusinessType!
+}
+
+type Balance {
+	balanceAvailable: Float!
+	balancePending: Float!
+	balanceCurrency: String!
+	name: String
+	url: String
+}
+
+type PaymentIntent {
+	paymentIntent: ID!
+	clientSecret: ID
+	amount: Float!
+	currency: String!
+}
+
+enum BusinessType {
+	individual
+	company
+}
+
+enum ISOCountry {
+	US
+	BR
 }

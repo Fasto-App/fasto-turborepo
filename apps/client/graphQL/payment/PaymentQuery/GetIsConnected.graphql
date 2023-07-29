@@ -1,0 +1,9 @@
+query GetIsConnectd {
+	getIsConnected {
+		balanceAvailable
+		balancePending
+		balanceCurrency
+		url
+		name
+	}
+}

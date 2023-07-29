@@ -177,7 +177,6 @@ const ProductModal = ({
 			name: 'price',
 			label: t("price"),
 			placeholder: t("pricePlaceholder"),
-
 			inputType: "Currency",
 		},
 		category: {

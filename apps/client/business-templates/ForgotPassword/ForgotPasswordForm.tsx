@@ -1,6 +1,6 @@
 import React from "react"
 import { Center, Box, Heading, VStack, HStack, Button, AlertDialog, Image } from "native-base";
-import { businessRoute } from "../../routes";
+import { businessRoute } from "fasto-route";
 import { ControlledForm } from "../../components/ControlledForm";
 import { ForgotPasswordConfig, useForgotPasswordHook } from "./hooks";
 import { forgotPasswordSchemaInput } from "app-helpers";

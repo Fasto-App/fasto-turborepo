@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import { Center, Box, Heading, VStack, HStack, Button, Pressable, Text, Image } from "native-base";
-import { businessRoute } from '../../routes';
+import { businessRoute } from 'fasto-route';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 import { setBusinessCookies } from '../../cookies';
 import { useRouter } from 'next/router';

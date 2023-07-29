@@ -2,7 +2,7 @@ import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack, Image, Ce
 import { useTranslation } from "next-i18next"
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useCustomerRequestPayFullMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
+import { useCustomerRequestPayFullMutation, useGeneratePaymentIntentMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
 import { showToast } from '../../components/showToast'
 import { PastOrdersList, PastOrdersModal } from '../CartScreen/PastOrdersModal'
 import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from '../../business-templates/Checkout/checkoutStore'
@@ -10,7 +10,7 @@ import { parseToCurrency } from 'app-helpers'
 import { FDSSelect } from '../../components/FDSSelect'
 import { shallow } from 'zustand/shallow'
 import { Icon } from '../../components/atoms/NavigationButton'
-import { customerRoute } from '../../routes'
+import { customerRoute } from 'fasto-route'
 import { useGetClientSession } from '../../hooks'
 import { SuccessAnimation } from '../../components/SuccessAnimation'
 import { clearClientCookies } from '../../cookies'
@@ -18,7 +18,28 @@ import { clearClientCookies } from '../../cookies'
 export const CheckoutScreen = () => {
   const router = useRouter()
   const { checkoutId, businessId } = router.query
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  // const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [paymentIntent, { loading: isPaymentIntLoading }] = useGeneratePaymentIntentMutation({
+    onCompleted: ({ generatePaymentIntent: { clientSecret, paymentIntent } }) => {
+      router.push({
+        pathname: customerRoute['/customer/[businessId]/payment'],
+        query: {
+          businessId,
+          clientSecret,
+          paymentIntent,
+          checkoutId: checkoutId as string,
+        }
+      })
+
+    },
+    onError: (error) => {
+      showToast({
+        message: `Error generating payment intent: ${error.cause}`,
+        status: "error"
+      })
+    }
+  })
 
   const { t } = useTranslation('customerCheckout')
 
@@ -77,18 +98,17 @@ export const CheckoutScreen = () => {
   }, [businessId, checkoutId, router])
 
   const endSession = useCallback(() => {
-    if (!businessId) throw new Error("Missing businessId")
+    if (!businessId || !payment?._id) throw new Error("Missing businessId")
 
-    clearClientCookies(typeof businessId === "string" ? businessId : businessId[0])
-
-    router.push({
-      pathname: customerRoute['/customer/[businessId]'],
-      query: {
-        businessId
+    paymentIntent({
+      variables: {
+        input: {
+          payment: payment?._id,
+        }
       }
     })
 
-  }, [businessId, router])
+  }, [businessId, paymentIntent, payment])
 
   return (
     <>
@@ -110,8 +130,7 @@ export const CheckoutScreen = () => {
                 onPress={pay}>
                 {t("finalize")}
               </Button>
-              {!!clientData?.getClientSession.tab?.users?.length &&
-                clientData?.getClientSession.tab?.users?.length > 1 ? (
+              {(clientData?.getClientSession.tab?.users?.length || 0) > 1 ? (
                 <Button
                   _text={{ bold: true }}
                   flex={1}
@@ -122,9 +141,9 @@ export const CheckoutScreen = () => {
           </Box>
         </Box> :
         <>
-          <PastOrdersModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
+          {/* <PastOrdersModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
           <Box flex={1}>
-            <Box flex={1}>
+            {/* <Box flex={1}>
               <Center p={"4"}>
                 <Box pt={8} pb={12}>
                   <Image src="/images/fasto-logo.svg"
@@ -136,6 +155,9 @@ export const CheckoutScreen = () => {
                 </Box>
                 <Text textAlign={"center"} fontSize={"lg"} mt={8}>{t("successMessage")}</Text>
               </Center>
+            </Box> */}
+            <Box flex="1">
+              <PastOrdersList />
             </Box>
             <VStack p={4} space={2}>
               <HStack justifyContent={"space-between"}>
@@ -145,7 +167,7 @@ export const CheckoutScreen = () => {
               <Divider />
               <HStack justifyContent={"space-between"}>
                 <Text fontSize="lg" fontWeight="bold">{t("totalAmount")}</Text>
-                <Text fontSize="lg" fontWeight="bold">{parseToCurrency(data.getCheckoutByID.total)}</Text>
+                <Text fontSize="lg" fontWeight="bold">{parseToCurrency(data?.getCheckoutByID.total)}</Text>
               </HStack>
               <Divider />
               <HStack justifyContent={"space-between"}>
@@ -158,14 +180,9 @@ export const CheckoutScreen = () => {
               <Button
                 flex={1}
                 onPress={endSession}
+                isLoading={isPaymentIntLoading}
               >
-                {t("endSession")}
-              </Button>
-              <Button
-                flex={1}
-                colorScheme={"tertiary"}
-                onPress={() => setIsModalOpen(true)}>
-                {t("seeOrder")}
+                {t("payNow")}
               </Button>
             </HStack>
           </Box>

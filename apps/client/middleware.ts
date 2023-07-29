@@ -1,6 +1,6 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { businessCookies } from "./cookies/businessCookies";
-import { businessRoute, BUSINESS_ADMIN } from "./routes";
+import { businessRoute, BUSINESS_ADMIN } from "fasto-route";
 
 export const deleteCookie = (
   request: NextRequest,

@@ -11,7 +11,7 @@ import { UpperSection } from '../../components/UpperSection'
 import { GetCheckoutByIdDocument, useGetCheckoutByIdQuery, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
 import { PayInFull } from './PayInFull'
 import { Split } from './Split'
-import { businessRoute } from '../../routes';
+import { businessRoute } from 'fasto-route';
 import { useCheckoutStore } from './checkoutStore';
 import { useTranslation } from 'next-i18next';
 import { formatAsPercentage, parseToCurrency, parseToFixedPoint } from 'app-helpers';

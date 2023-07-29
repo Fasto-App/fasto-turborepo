@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { JoinTabModal } from './JoinTabModal'
 import { OpenTabModal } from './OpenTabModal'
 import { useGetBusinessInformation, useGetClientSession } from '../../hooks'
-import { customerRoute } from '../../routes'
+import { customerRoute } from 'fasto-route'
 import { TakeoutDeliveryModal } from './TakeoutDeliveryModal'
 import { getClientCookies } from '../../cookies'
 import { useTranslation } from "next-i18next"

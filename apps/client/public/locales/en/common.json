@@ -23,6 +23,8 @@
 	"home": "Home",
 	"cart": "Cart",
 	"menu": "Menu",
+	"payment": "Payment",
+	"success": "Success",
 	"checkout": "Checkout",
 	"productDescription": "Product Description",
 	"settings": "Settings",
@@ -54,6 +56,7 @@
 	"Expired": "Expired",
 	"Pending": "Pending",
 	"Rejected": "Rejected",
+	"payments": "Payments",
 	"error": {
 		"email": "Please provide a valid email address",
 		"password": "Please provide a password",

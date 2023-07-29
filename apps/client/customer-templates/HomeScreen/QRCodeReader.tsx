@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback } from 'react'
 import { QrReader } from 'react-qr-reader';
 import { CustomModal } from '../../components/CustomModal/CustomModal';
-import { customerRouteParams } from '../../routes';
+import { customerRouteParams } from 'fasto-route';
 import { useTranslation } from 'react-i18next';
 
 // TODO - do some exploration  on using html5 code reader
