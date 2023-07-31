@@ -10,7 +10,8 @@
 		"build-storybook": "build-storybook",
 		"chromatic": "chromatic --exit-zero-on-changes",
 		"generate": "doppler run -- graphql-codegen -- config codegen.ts",
-		"cypress:open": "cypress open"
+		"cypress:open": "cypress open",
+		"cypress:run": "cypress run --spec 'cypress/e2e/fasto-e2e/*.cy.ts'"
 	},
 	"dependencies": {
 		"@apollo/client": "^3.6.2",

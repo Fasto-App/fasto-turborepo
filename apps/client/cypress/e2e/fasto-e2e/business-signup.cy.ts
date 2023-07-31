@@ -1,26 +1,14 @@
 /// <reference types="cypress" />
-
-// Welcome to Cypress!
-//
-// This spec file contains a variety of sample tests
-// for a todo list app that are designed to demonstrate
-// the power of writing tests in Cypress.
-//
-// To learn more about how Cypress works and
-// what makes it such an awesome testing tool,
-// please read our getting started guide:
 // https://on.cypress.io/introduction-to-cypress
 
-describe('signup screen', () => {
+import { appRoute } from "fasto-route";
+
+describe('Business Sign Up Screen', () => {
 	beforeEach(() => {
-		// Cypress starts out with a blank slate for each test
-		// so we must tell it to visit our website with the `cy.visit()` command.
-		// Since we want to visit the same URL at the start of all our tests,
-		// we include it in our beforeEach function so that it runs before each test
-		cy.visit('http://localhost:3000/business/signup');
+		cy.visit(appRoute.businessRoute.signup);
 	});
 
-	it('Find H1', () => {
+	it('Find H1 text', () => {
 		cy.contains('Welcome to Fasto', { matchCase: false });
 	});
 });
