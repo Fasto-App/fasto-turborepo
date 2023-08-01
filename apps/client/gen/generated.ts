@@ -432,6 +432,7 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   generatePaymentIntent: PaymentIntent;
+  generateStripePayout?: Maybe<Scalars['Boolean']>;
   linkCategoryToProducts?: Maybe<Category>;
   makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
@@ -814,6 +815,7 @@ export type Product = {
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  createStripeAccessLink?: Maybe<Scalars['String']>;
   getAddress: Address;
   getAllBusiness: Array<Maybe<Business>>;
   getAllBusinessByUser: Array<Maybe<Business>>;
@@ -1404,6 +1406,16 @@ export type GeneratePaymentIntentMutationVariables = Exact<{
 
 
 export type GeneratePaymentIntentMutation = { __typename?: 'Mutation', generatePaymentIntent: { __typename?: 'PaymentIntent', paymentIntent: string, clientSecret?: string | null, amount: number, currency: string } };
+
+export type GenerateStripePayoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GenerateStripePayoutMutation = { __typename?: 'Mutation', generateStripePayout?: boolean | null };
+
+export type CreateStripeAccessLinkQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CreateStripeAccessLinkQuery = { __typename?: 'Query', createStripeAccessLink?: string | null };
 
 export type GetIsConnectdQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3236,6 +3248,68 @@ export function useGeneratePaymentIntentMutation(baseOptions?: Apollo.MutationHo
 export type GeneratePaymentIntentMutationHookResult = ReturnType<typeof useGeneratePaymentIntentMutation>;
 export type GeneratePaymentIntentMutationResult = Apollo.MutationResult<GeneratePaymentIntentMutation>;
 export type GeneratePaymentIntentMutationOptions = Apollo.BaseMutationOptions<GeneratePaymentIntentMutation, GeneratePaymentIntentMutationVariables>;
+export const GenerateStripePayoutDocument = gql`
+    mutation GenerateStripePayout {
+  generateStripePayout
+}
+    `;
+export type GenerateStripePayoutMutationFn = Apollo.MutationFunction<GenerateStripePayoutMutation, GenerateStripePayoutMutationVariables>;
+
+/**
+ * __useGenerateStripePayoutMutation__
+ *
+ * To run a mutation, you first call `useGenerateStripePayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateStripePayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateStripePayoutMutation, { data, loading, error }] = useGenerateStripePayoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGenerateStripePayoutMutation(baseOptions?: Apollo.MutationHookOptions<GenerateStripePayoutMutation, GenerateStripePayoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateStripePayoutMutation, GenerateStripePayoutMutationVariables>(GenerateStripePayoutDocument, options);
+      }
+export type GenerateStripePayoutMutationHookResult = ReturnType<typeof useGenerateStripePayoutMutation>;
+export type GenerateStripePayoutMutationResult = Apollo.MutationResult<GenerateStripePayoutMutation>;
+export type GenerateStripePayoutMutationOptions = Apollo.BaseMutationOptions<GenerateStripePayoutMutation, GenerateStripePayoutMutationVariables>;
+export const CreateStripeAccessLinkDocument = gql`
+    query CreateStripeAccessLink {
+  createStripeAccessLink
+}
+    `;
+
+/**
+ * __useCreateStripeAccessLinkQuery__
+ *
+ * To run a query within a React component, call `useCreateStripeAccessLinkQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateStripeAccessLinkQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateStripeAccessLinkQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCreateStripeAccessLinkQuery(baseOptions?: Apollo.QueryHookOptions<CreateStripeAccessLinkQuery, CreateStripeAccessLinkQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CreateStripeAccessLinkQuery, CreateStripeAccessLinkQueryVariables>(CreateStripeAccessLinkDocument, options);
+      }
+export function useCreateStripeAccessLinkLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CreateStripeAccessLinkQuery, CreateStripeAccessLinkQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CreateStripeAccessLinkQuery, CreateStripeAccessLinkQueryVariables>(CreateStripeAccessLinkDocument, options);
+        }
+export type CreateStripeAccessLinkQueryHookResult = ReturnType<typeof useCreateStripeAccessLinkQuery>;
+export type CreateStripeAccessLinkLazyQueryHookResult = ReturnType<typeof useCreateStripeAccessLinkLazyQuery>;
+export type CreateStripeAccessLinkQueryResult = Apollo.QueryResult<CreateStripeAccessLinkQuery, CreateStripeAccessLinkQueryVariables>;
 export const GetIsConnectdDocument = gql`
     query GetIsConnectd {
   getIsConnected {

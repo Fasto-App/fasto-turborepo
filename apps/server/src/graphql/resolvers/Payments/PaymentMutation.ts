@@ -2,7 +2,7 @@ import { MutationResolvers } from "../../../generated/graphql";
 import { BusinessModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
-import { createPaymentIntent, stripeAuthorize, stripeOnboard } from "../../../stripe";
+import { createPaymentIntent, stripe, stripeAuthorize, stripeOnboard } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 
 const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async (parent, { input },
@@ -25,7 +25,6 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
   if (!foundCheckout) {
     throw ApolloError('BadRequest', "Checkout not found.")
   }
-  // TODO: GET FROM INPUT payment id and checkout id
 
   try {
     const intentObject = {
@@ -89,7 +88,36 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
   return accountLink.url
 }
 
+const generateStripePayout: MutationResolvers["generateStripePayout"] = async (parent, _,
+  { db, user }) => {
+
+  const foundBusiness = await BusinessModel(db).findOne({ _id: user?.business });
+
+  if (!foundBusiness?.stripeAccountId) return null
+
+  // Fetch the account balance to determine the available funds
+  const balance = await stripe.balance.retrieve({
+    stripeAccount: foundBusiness?.stripeAccountId,
+  });
+
+  // (Note: there is one balance for each currency used in your application)
+  const { amount, currency } = balance.available[0];
+
+  if (amount <= 0) {
+    throw ApolloError('BadRequest', "Not enough funds to payout.")
+  }
+
+  const payout = await stripe.payouts.create({
+    amount: amount,
+    currency: currency,
+    statement_descriptor: "Fasto App",
+  }, { stripeAccount: foundBusiness?.stripeAccountId, });
+
+  return true
+}
+
 export const PaymentMutation = {
   connectExpressPayment,
-  generatePaymentIntent
+  generatePaymentIntent,
+  generateStripePayout
 }

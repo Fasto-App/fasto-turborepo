@@ -13,8 +13,6 @@ const BusinessNavigationTab = () => {
   const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
     pathname === router.pathname, [router.pathname])
 
-  console.log(router.pathname)
-
   const { t } = useTranslation("common")
 
   return (

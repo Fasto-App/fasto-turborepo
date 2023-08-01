@@ -5,5 +5,9 @@
 	"saveAndContinue": "Save and continue",
 	"errorConnectingToStripe": "Error connecting to Stripe. Please try again later.",
 	"viewPayoutsOnStripe": "View payouts on Stripe",
-	"payNow": "Pay now"
+	"payNow": "Pay now",
+	"viewStripeAccount": "View Stripe account",
+	"thisWeek": "This week",
+	"yourBalance": "Your balance",
+	"payoutNow": "Payout now"
 }

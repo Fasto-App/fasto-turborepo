@@ -432,6 +432,7 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   generatePaymentIntent: PaymentIntent;
+  generateStripePayout?: Maybe<Scalars['Boolean']>;
   linkCategoryToProducts?: Maybe<Category>;
   makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
@@ -814,6 +815,7 @@ export type Product = {
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  createStripeAccessLink?: Maybe<Scalars['String']>;
   getAddress: Address;
   getAllBusiness: Array<Maybe<Business>>;
   getAllBusinessByUser: Array<Maybe<Business>>;
@@ -1630,6 +1632,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteTable?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType, Partial<MutationDeleteTableArgs>>;
   deleteUser?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType>;
   generatePaymentIntent?: Resolver<ResolversTypes['PaymentIntent'], ParentType, ContextType, RequireFields<MutationGeneratePaymentIntentArgs, 'input'>>;
+  generateStripePayout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   linkCategoryToProducts?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationLinkCategoryToProductsArgs, 'input'>>;
   makeCheckoutFullPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutFullPaymentArgs, 'input'>>;
   makeCheckoutPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutPaymentArgs, 'input'>>;
@@ -1700,6 +1703,7 @@ export type ProductResolvers<ContextType = Context, ParentType extends Resolvers
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createStripeAccessLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   getAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<QueryGetAddressArgs, 'id'>>;
   getAllBusiness?: Resolver<Array<Maybe<ResolversTypes['Business']>>, ParentType, ContextType>;
   getAllBusinessByUser?: Resolver<Array<Maybe<ResolversTypes['Business']>>, ParentType, ContextType>;

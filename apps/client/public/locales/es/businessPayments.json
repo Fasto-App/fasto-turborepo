@@ -1,0 +1,13 @@
+{
+	"payments": "Pagos",
+	"setupYourPayments": "Configurar tus pagos",
+	"useUseStripeConnect": "Utilizamos Stripe para asegurarnos de que recibas tus pagos a tiempo y mantener seguros tus datos bancarios personales. Haz clic en Guardar y continuar para configurar tus pagos en Stripe.",
+	"saveAndContinue": "Guardar y continuar",
+	"errorConnectingToStripe": "Error al conectar con Stripe. Por favor, inténtalo de nuevo más tarde.",
+	"viewPayoutsOnStripe": "Ver pagos en Stripe",
+	"payNow": "Pagar ahora",
+	"viewStripeAccount": "Ver cuenta de Stripe",
+	"thisWeek": "Esta semana",
+	"yourBalance": "Tu saldo",
+	"payoutNow": "Pagar ahora"
+}

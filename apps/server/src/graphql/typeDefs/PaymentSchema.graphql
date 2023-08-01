@@ -1,10 +1,12 @@
 extend type Query {
 	getIsConnected: Balance
+	createStripeAccessLink: String
 }
 
 extend type Mutation {
 	connectExpressPayment(input: ConnectExpressInput!): String!
 	generatePaymentIntent(input: generatePaymentIntentInput!): PaymentIntent!
+	generateStripePayout: Boolean
 }
 
 type Payment {
