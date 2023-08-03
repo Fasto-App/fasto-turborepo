@@ -1,5 +1,5 @@
 import { MutationResolvers } from "../../../generated/graphql";
-import { BusinessModel, UserModel } from "../../../models";
+import { BusinessModel, RequestModel, TabModel, TableModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { createPaymentIntent, stripe, stripeAuthorize, stripeOnboard } from "../../../stripe";
@@ -27,19 +27,15 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
   }
 
   try {
-    const intentObject = {
+    const paymentIntent = await createPaymentIntent({
+      currency: "USD", // TODO: Handle multiple currencies, for now we just use Dollars
       amount: foundPayment.amount,
-      currency: "USD",
       locale: locale,
       businessId: foundBusiness._id,
       checkoutId: foundCheckout._id,
+      paymentId: foundPayment._id,
       stripeAccount: foundBusiness.stripeAccountId,
-    }
-
-    console.log("generatePaymentIntent", intentObject)
-    const paymentIntent = await createPaymentIntent(intentObject)
-
-    console.log("generatePaymentIntent reponse", paymentIntent)
+    })
 
     return ({
       clientSecret: paymentIntent.client_secret,
@@ -51,8 +47,6 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
     console.log("generatePaymentIntent error", err)
     throw ApolloError('BadRequest', `Error creating paymentIntent: ${err}`);
   }
-
-
 }
 
 const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async (parent, { input },
@@ -101,6 +95,7 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
   });
 
   // (Note: there is one balance for each currency used in your application)
+  // TODO: Handle multiple currencies, for now we just use the first one
   const { amount, currency } = balance.available[0];
 
   if (amount <= 0) {
@@ -116,8 +111,64 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
   return true
 }
 
+const confirmPayment: MutationResolvers['confirmPayment'] = async (
+  _parent, { input }, { db }) => {
+  const foundPayment = await PaymentModel(db).findById(input.payment)
+  if (!foundPayment) throw ApolloError('BadRequest', "Payment not found.")
+
+  const foundCheckout = await CheckoutModel(db).findById(foundPayment?.checkout)
+  if (!foundCheckout) throw ApolloError('BadRequest', "Payment not found.")
+
+  const foundTab = await TabModel(db).findById(foundCheckout.tab)
+  if (!foundTab) throw ApolloError('BadRequest', 'Tab not found')
+
+  foundPayment.paid = true;
+  await foundPayment.save()
+
+  foundCheckout.totalPaid += foundPayment.amount
+  console.log("foundCheckout.totalPaid", foundCheckout.totalPaid)
+  console.log("foundCheckout.total", foundCheckout.total)
+
+  if (foundCheckout.totalPaid >= foundCheckout.total) {
+
+    if (foundTab?.table) {
+      const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table)
+      if (!foundTable) throw ApolloError('BadRequest', 'Table not found')
+
+      foundTable.status = "Available"
+      foundTable.tab = undefined
+      await foundTable.save()
+    }
+
+    foundTab.status = "Closed"
+    await foundTab.save()
+
+    foundCheckout.status = "Paid"
+    foundCheckout.paid = true
+
+    console.log("foundCheckout", foundCheckout)
+
+    // update all the requests associated with this tab
+    const foundRequests = await RequestModel(db).find({ tab: foundTab?._id })
+    if (foundRequests.length > 0) {
+      const savePromises = foundRequests.map((request) => {
+        request.status = "Completed"
+        return request.save()
+      });
+
+      await Promise.all(savePromises);
+
+      console.log("savePromises", savePromises)
+    }
+  }
+
+  await foundCheckout.save()
+  return true
+}
+
 export const PaymentMutation = {
   connectExpressPayment,
   generatePaymentIntent,
-  generateStripePayout
+  generateStripePayout,
+  confirmPayment
 }

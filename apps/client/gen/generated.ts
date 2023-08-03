@@ -161,6 +161,10 @@ export type ClientSession = {
   user: User;
 };
 
+export type ConfirmPaymentInput = {
+  payment: Scalars['ID'];
+};
+
 export type ConnectExpressInput = {
   business_type: BusinessType;
   country: IsoCountry;
@@ -402,6 +406,7 @@ export type Mutation = {
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
+  confirmPayment: Scalars['Boolean'];
   connectExpressPayment: Scalars['String'];
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
@@ -432,7 +437,7 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   generatePaymentIntent: PaymentIntent;
-  generateStripePayout?: Maybe<Scalars['Boolean']>;
+  generateStripePayout: Scalars['Boolean'];
   linkCategoryToProducts?: Maybe<Category>;
   makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
@@ -478,6 +483,11 @@ export type MutationAddItemToCartArgs = {
 
 export type MutationClientCreateMultipleOrderDetailsArgs = {
   input: Array<ClientCreateOrderInput>;
+};
+
+
+export type MutationConfirmPaymentArgs = {
+  input: ConfirmPaymentInput;
 };
 
 
@@ -1393,6 +1403,13 @@ export type GetOrdersBySessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetOrdersBySessionQuery = { __typename?: 'Query', getOrdersBySession: Array<{ __typename?: 'OrderDetail', _id: string, quantity: number, status: OrderStatus, subTotal: number, user?: string | null, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> };
 
+export type ConfirmPaymentMutationVariables = Exact<{
+  input: ConfirmPaymentInput;
+}>;
+
+
+export type ConfirmPaymentMutation = { __typename?: 'Mutation', confirmPayment: boolean };
+
 export type ConnectExpressPaymentMutationVariables = Exact<{
   input: ConnectExpressInput;
 }>;
@@ -1410,7 +1427,7 @@ export type GeneratePaymentIntentMutation = { __typename?: 'Mutation', generateP
 export type GenerateStripePayoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GenerateStripePayoutMutation = { __typename?: 'Mutation', generateStripePayout?: boolean | null };
+export type GenerateStripePayoutMutation = { __typename?: 'Mutation', generateStripePayout: boolean };
 
 export type CreateStripeAccessLinkQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3181,6 +3198,37 @@ export function useGetOrdersBySessionLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetOrdersBySessionQueryHookResult = ReturnType<typeof useGetOrdersBySessionQuery>;
 export type GetOrdersBySessionLazyQueryHookResult = ReturnType<typeof useGetOrdersBySessionLazyQuery>;
 export type GetOrdersBySessionQueryResult = Apollo.QueryResult<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>;
+export const ConfirmPaymentDocument = gql`
+    mutation ConfirmPayment($input: ConfirmPaymentInput!) {
+  confirmPayment(input: $input)
+}
+    `;
+export type ConfirmPaymentMutationFn = Apollo.MutationFunction<ConfirmPaymentMutation, ConfirmPaymentMutationVariables>;
+
+/**
+ * __useConfirmPaymentMutation__
+ *
+ * To run a mutation, you first call `useConfirmPaymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfirmPaymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [confirmPaymentMutation, { data, loading, error }] = useConfirmPaymentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useConfirmPaymentMutation(baseOptions?: Apollo.MutationHookOptions<ConfirmPaymentMutation, ConfirmPaymentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ConfirmPaymentMutation, ConfirmPaymentMutationVariables>(ConfirmPaymentDocument, options);
+      }
+export type ConfirmPaymentMutationHookResult = ReturnType<typeof useConfirmPaymentMutation>;
+export type ConfirmPaymentMutationResult = Apollo.MutationResult<ConfirmPaymentMutation>;
+export type ConfirmPaymentMutationOptions = Apollo.BaseMutationOptions<ConfirmPaymentMutation, ConfirmPaymentMutationVariables>;
 export const ConnectExpressPaymentDocument = gql`
     mutation ConnectExpressPayment($input: ConnectExpressInput!) {
   connectExpressPayment(input: $input)

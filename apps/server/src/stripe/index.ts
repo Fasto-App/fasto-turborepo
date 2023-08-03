@@ -109,6 +109,7 @@ type CreatePaymentIntentProps = {
   locale: Locale;
   businessId: string;
   checkoutId: string;
+  paymentId: string;
 }
 
 export const createPaymentIntent = async ({
@@ -117,7 +118,8 @@ export const createPaymentIntent = async ({
   stripeAccount,
   locale,
   businessId,
-  checkoutId
+  checkoutId,
+  paymentId
 }: CreatePaymentIntentProps) => {
 
   try {
@@ -134,15 +136,15 @@ export const createPaymentIntent = async ({
       // confirm: true, // todo mode info is needed for this
       // https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm
       on_behalf_of: stripeAccount,
+      metadata: {
+        businessId,
+        checkoutId,
+        paymentId
+      }
     });
 
-    console.log("PAYMENT INTENT", paymentIntent)
-
     return paymentIntent;
-
   } catch (err) {
-
-    console.log("FAILED PAYMENT INTENT", err)
 
     throw ApolloError('BadRequest', `Error creating paymentIntent: ${err}`, "client");
   }

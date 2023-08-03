@@ -6,7 +6,12 @@ extend type Query {
 extend type Mutation {
 	connectExpressPayment(input: ConnectExpressInput!): String!
 	generatePaymentIntent(input: generatePaymentIntentInput!): PaymentIntent!
-	generateStripePayout: Boolean
+	generateStripePayout: Boolean!
+	confirmPayment(input: ConfirmPaymentInput!): Boolean!
+}
+
+input ConfirmPaymentInput {
+	payment: ID!
 }
 
 type Payment {

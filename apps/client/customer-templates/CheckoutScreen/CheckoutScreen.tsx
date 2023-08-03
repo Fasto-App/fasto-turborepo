@@ -1,10 +1,10 @@
-import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack, Image, Center } from 'native-base'
+import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack } from 'native-base'
 import { useTranslation } from "next-i18next"
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useCustomerRequestPayFullMutation, useGeneratePaymentIntentMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
 import { showToast } from '../../components/showToast'
-import { PastOrdersList, PastOrdersModal } from '../CartScreen/PastOrdersModal'
+import { PastOrdersList } from '../CartScreen/PastOrdersModal'
 import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from '../../business-templates/Checkout/checkoutStore'
 import { parseToCurrency } from 'app-helpers'
 import { FDSSelect } from '../../components/FDSSelect'
@@ -12,16 +12,15 @@ import { shallow } from 'zustand/shallow'
 import { Icon } from '../../components/atoms/NavigationButton'
 import { customerRoute } from 'fasto-route'
 import { useGetClientSession } from '../../hooks'
-import { SuccessAnimation } from '../../components/SuccessAnimation'
-import { clearClientCookies } from '../../cookies'
 
 export const CheckoutScreen = () => {
   const router = useRouter()
   const { checkoutId, businessId } = router.query
-  // const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const [paymentIntent, { loading: isPaymentIntLoading }] = useGeneratePaymentIntentMutation({
-    onCompleted: ({ generatePaymentIntent: { clientSecret, paymentIntent } }) => {
+  const [generatePaymentIntent, { loading: isPaymentIntLoading }] = useGeneratePaymentIntentMutation({
+    onCompleted: ({ generatePaymentIntent: { clientSecret, paymentIntent, amount, } }, clientOptions) => {
+      if (!clientOptions?.variables?.input.payment) throw new Error("Missing paymentId")
+
       router.push({
         pathname: customerRoute['/customer/[businessId]/payment'],
         query: {
@@ -29,6 +28,8 @@ export const CheckoutScreen = () => {
           clientSecret,
           paymentIntent,
           checkoutId: checkoutId as string,
+          paymentId: clientOptions?.variables?.input.payment,
+          amount
         }
       })
 
@@ -100,7 +101,7 @@ export const CheckoutScreen = () => {
   const endSession = useCallback(() => {
     if (!businessId || !payment?._id) throw new Error("Missing businessId")
 
-    paymentIntent({
+    generatePaymentIntent({
       variables: {
         input: {
           payment: payment?._id,
@@ -108,7 +109,7 @@ export const CheckoutScreen = () => {
       }
     })
 
-  }, [businessId, paymentIntent, payment])
+  }, [businessId, generatePaymentIntent, payment])
 
   return (
     <>

@@ -161,6 +161,10 @@ export type ClientSession = {
   user: User;
 };
 
+export type ConfirmPaymentInput = {
+  payment: Scalars['ID'];
+};
+
 export type ConnectExpressInput = {
   business_type: BusinessType;
   country: IsoCountry;
@@ -402,6 +406,7 @@ export type Mutation = {
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
+  confirmPayment?: Maybe<Scalars['Boolean']>;
   connectExpressPayment: Scalars['String'];
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
@@ -478,6 +483,11 @@ export type MutationAddItemToCartArgs = {
 
 export type MutationClientCreateMultipleOrderDetailsArgs = {
   input: Array<ClientCreateOrderInput>;
+};
+
+
+export type MutationConfirmPaymentArgs = {
+  input: ConfirmPaymentInput;
 };
 
 
@@ -1254,6 +1264,7 @@ export type ResolversTypes = {
   CheckoutStatusKeys: CheckoutStatusKeys;
   ClientCreateOrderInput: ClientCreateOrderInput;
   ClientSession: ResolverTypeWrapper<ClientSession>;
+  ConfirmPaymentInput: ConfirmPaymentInput;
   ConnectExpressInput: ConnectExpressInput;
   CreateBusinessPayload: ResolverTypeWrapper<CreateBusinessPayload>;
   CreateEmployeeAccountInput: CreateEmployeeAccountInput;
@@ -1358,6 +1369,7 @@ export type ResolversParentTypes = {
   Checkout: Checkout;
   ClientCreateOrderInput: ClientCreateOrderInput;
   ClientSession: ClientSession;
+  ConfirmPaymentInput: ConfirmPaymentInput;
   ConnectExpressInput: ConnectExpressInput;
   CreateBusinessPayload: CreateBusinessPayload;
   CreateEmployeeAccountInput: CreateEmployeeAccountInput;
@@ -1602,6 +1614,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   acceptTabRequest?: Resolver<Maybe<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<MutationAcceptTabRequestArgs, 'input'>>;
   addItemToCart?: Resolver<ResolversTypes['CartItem'], ParentType, ContextType, RequireFields<MutationAddItemToCartArgs, 'input'>>;
   clientCreateMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationClientCreateMultipleOrderDetailsArgs, 'input'>>;
+  confirmPayment?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationConfirmPaymentArgs, 'input'>>;
   connectExpressPayment?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationConnectExpressPaymentArgs, 'input'>>;
   createAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, RequireFields<MutationCreateAddressArgs, 'input'>>;
   createBusiness?: Resolver<Maybe<ResolversTypes['CreateBusinessPayload']>, ParentType, ContextType, RequireFields<MutationCreateBusinessArgs, 'input'>>;

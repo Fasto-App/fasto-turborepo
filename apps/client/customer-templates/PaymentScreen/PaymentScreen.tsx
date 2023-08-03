@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { customerRoute } from 'fasto-route';
+import { parseToCurrency } from 'app-helpers';
+import { useConfirmPaymentMutation } from '../../gen/generated';
 
 // this file needs some refactoring
 // too many components, 
@@ -21,8 +23,10 @@ export const PaymentScreen = () => {
 
 const CheckoutForm = () => {
 
+  const [confirmPayment, { loading }] = useConfirmPaymentMutation()
+
   const router = useRouter()
-  const { clientSecret, paymentIntent, businessId } = router.query
+  const { businessId, amount, paymentId } = router.query
 
   const stripe = useStripe();
   const elements = useElements();
@@ -30,26 +34,24 @@ const CheckoutForm = () => {
   const [message, setMessage] = useState<string>();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePayment = async (e: any) => {
+  const handlePayment = async () => {
     console.log('handlePayment')
-    setIsProcessing(true);
-
     const RETURN_URL = `${process.env.FRONTEND_URL}${customerRoute["/customer/[businessId]/success"].
       replace("[businessId]", businessId as string)}`
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !paymentId) {
       return;
     }
+
+    setIsProcessing(true);
 
     const { error, paymentIntent } = await stripe?.confirmPayment({
       elements,
       confirmParams: {
-        // Make sure to change this to your payment completion page
         return_url: RETURN_URL,
       },
       redirect: "if_required",
     });
-    paymentIntent?.status === "succeeded" && router.push(RETURN_URL)
 
     console.log('error', error)
     console.log('paymentIntent', paymentIntent)
@@ -58,9 +60,19 @@ const CheckoutForm = () => {
     }
 
     setIsProcessing(false);
-    // trigger some action on the server to conclude the payment
-    // and redirect to success page
-    // check if tab is fully paid
+
+    if (paymentIntent?.status === "succeeded") {
+
+      confirmPayment({
+        variables: {
+          input: {
+            payment: typeof paymentId === "string" ? paymentId : paymentId[0]
+          }
+        }
+      })
+
+      router.push(RETURN_URL)
+    }
   }
 
   return (
@@ -69,11 +81,14 @@ const CheckoutForm = () => {
       <Button
         w={"100%"}
         onPress={handlePayment}
-        isDisabled={!stripe || !elements || isProcessing}
+        isDisabled={!stripe || !elements || !paymentId || isProcessing || loading}
         mt={4}
         mb={2}
+        _text={{ bold: true }}
       >
-        {isProcessing ? "Processing ... " : "Pay now"}
+        {isProcessing || loading ? "Processing ... " :
+          `Pay now ${isNaN(Number(amount)) ?
+            "" : parseToCurrency(Number(amount))}`}
       </Button>
       {message && <Text color={"error.500"} fontSize={"lg"}>
         {message}
@@ -86,7 +101,7 @@ const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY || "");
 
 export const StripeWrapper: React.FC = ({ children }) => {
   const router = useRouter()
-  const { clientSecret, paymentIntent, businessId, checkoutId } = router.query
+  const { clientSecret, businessId, checkoutId } = router.query
 
   useEffect(() => {
     if (!clientSecret) {

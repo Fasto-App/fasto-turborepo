@@ -57,8 +57,9 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
     }
   }
 
-  foundPayment.save()
-  return await foundCheckout.save()
+  await Promise.all([foundPayment.save(), foundCheckout.save()])
+
+  return foundCheckout
 }
 
 // TODO I will probably going to have to re-do this
