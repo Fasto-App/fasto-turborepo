@@ -9,5 +9,6 @@
 	"viewStripeAccount": "Ver cuenta de Stripe",
 	"thisWeek": "Esta semana",
 	"yourBalance": "Tu saldo",
-	"payoutNow": "Pagar ahora"
+	"payoutNow": "Pagar ahora",
+	"available": "Disponible"
 }

@@ -170,24 +170,13 @@ const Payouts = (
           </Link>
         </Box>
       </HStack>
-
-      {/* <VStack justifyContent={"space-between"}>
-        <Text fontSize={"lg"}>{t("thisWeek")}</Text>
-        <Text fontSize="xl">
-          $0.00
-        </Text>
-        <Text color={"gray.500"} fontSize={"lg"}>
-          0 orders
-        </Text>
-      </VStack> */}
-
       <VStack justifyContent={"space-between"}>
         <Text fontSize={"lg"}>{t("yourBalance")}</Text>
         <Text fontSize="xl">
           {parseToCurrency(balancePending)}
         </Text>
         <Text color={"gray.500"} fontSize={"lg"}>
-          {`${parseToCurrency(balanceAvailable)} available`}
+          {`${parseToCurrency(balanceAvailable)} ${t("available")}`}
         </Text>
       </VStack>
       <VStack justifyContent={"center"} alignItems={"center"}>
@@ -225,8 +214,6 @@ export const LoadingPDP = () => {
           <Skeleton h="4" rounded="md" />
         </VStack>
       </HStack>
-
-
       <VStack space={4} flex={1}>
         <Skeleton h="4" rounded="md" />
         <Skeleton h="8" rounded="md" />
@@ -237,7 +224,6 @@ export const LoadingPDP = () => {
         <Skeleton h="8" rounded="md" />
         <Skeleton h="4" rounded="md" />
       </VStack>
-
       <VStack flex={1}>
         <Skeleton mb="3" w="100%" h="16" rounded="sm" />
         <Skeleton h="4" rounded="md" />

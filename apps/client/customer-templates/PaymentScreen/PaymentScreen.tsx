@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router'
-import { Center, Text, Box, Button } from 'native-base'
+import { Center, Text, Box, Button, ScrollView } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { AddressElement, Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { customerRoute } from 'fasto-route';
 import { parseToCurrency } from 'app-helpers';
 import { useConfirmPaymentMutation } from '../../gen/generated';
+import { useTranslation } from 'next-i18next';
 
 // this file needs some refactoring
 // too many components, 
@@ -14,16 +15,16 @@ import { useConfirmPaymentMutation } from '../../gen/generated';
 export const PaymentScreen = () => {
   return (
     <StripeWrapper>
-      <Center height={"100%"}>
-        <CheckoutForm />
-      </Center>
+      {/* <Center height={"100%"}> */}
+      <CheckoutForm />
+      {/* </Center> */}
     </StripeWrapper>
   )
 }
 
 const CheckoutForm = () => {
-
   const [confirmPayment, { loading }] = useConfirmPaymentMutation()
+  const { t } = useTranslation("customerPayment")
 
   const router = useRouter()
   const { businessId, amount, paymentId } = router.query
@@ -76,24 +77,28 @@ const CheckoutForm = () => {
   }
 
   return (
-    <Box>
-      <PaymentElement id="payment-element" />
-      <Button
-        w={"100%"}
-        onPress={handlePayment}
-        isDisabled={!stripe || !elements || !paymentId || isProcessing || loading}
-        mt={4}
-        mb={2}
-        _text={{ bold: true }}
-      >
-        {isProcessing || loading ? "Processing ... " :
-          `Pay now ${isNaN(Number(amount)) ?
-            "" : parseToCurrency(Number(amount))}`}
-      </Button>
-      {message && <Text color={"error.500"} fontSize={"lg"}>
-        {message}
-      </Text>}
-    </Box>
+    <>
+      <ScrollView padding={4}>
+        {/* <AddressElement options={{ mode: 'shipping' }} /> */}
+        <PaymentElement />
+        {message && <Text color={"error.500"} fontSize={"lg"}>
+          {message}
+        </Text>}
+      </ScrollView>
+      <Center p={"4"}>
+        <Button
+          w={"300"}
+          onPress={handlePayment}
+          isDisabled={!stripe || !elements || !paymentId}
+          isLoading={isProcessing || loading}
+          _text={{ bold: true }}
+        >
+          {
+            `${t("payNow")} ${isNaN(Number(amount)) ?
+              "" : parseToCurrency(Number(amount))}`}
+        </Button>
+      </Center>
+    </>
   )
 }
 
