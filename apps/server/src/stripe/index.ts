@@ -3,6 +3,10 @@ import Stripe from 'stripe';
 import { ApolloError } from '../graphql/ApolloErrorExtended/ApolloErrorExtended';
 import { appRoute, businessRoute } from "fasto-route"
 import { Locale } from 'app-helpers';
+import { Request, Response } from 'express';
+import { PaymentModel } from '../models/payment';
+import { CheckoutModel } from '../models/checkout';
+import { RequestModel, TabModel, TableModel } from '../models';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing Stripe secret key env var');
@@ -110,6 +114,7 @@ type CreatePaymentIntentProps = {
   businessId: string;
   checkoutId: string;
   paymentId: string;
+  description: string;
 }
 
 export const createPaymentIntent = async ({
@@ -119,14 +124,15 @@ export const createPaymentIntent = async ({
   locale,
   businessId,
   checkoutId,
-  paymentId
+  paymentId,
+  description
 }: CreatePaymentIntentProps) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: "USD",
-      description: `Fasto Checkout ID: ${checkoutId} Business: ${businessId}`,
+      description,
       automatic_payment_methods: { enabled: true },
       application_fee_amount: Math.trunc(amount * 0.05) + 30,
       transfer_data: {
@@ -137,9 +143,10 @@ export const createPaymentIntent = async ({
       // https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm
       on_behalf_of: stripeAccount,
       metadata: {
-        businessId,
-        checkoutId,
-        paymentId
+        "test": `${businessId} ${checkoutId} ${paymentId}`,
+        "business_id": `${businessId}`,
+        "checkout_id": `${checkoutId}`,
+        "payment_id": `${paymentId}`,
       }
     });
 
@@ -148,4 +155,62 @@ export const createPaymentIntent = async ({
 
     throw ApolloError('BadRequest', `Error creating paymentIntent: ${err}`, "client");
   }
+}
+
+type Metada = {
+  test: string;
+  business_id: string;
+  checkout_id: string;
+  payment_id: string;
+}
+
+export const confirmPaymentWebHook = async (metadata: Metada, db: any) => {
+  const { business_id, test, checkout_id, payment_id } = metadata
+
+  const foundPayment = await PaymentModel(db).findById(payment_id)
+  if (!foundPayment) throw Error("Payment not found.")
+
+  const foundCheckout = await CheckoutModel(db).findById(foundPayment?.checkout)
+  if (!foundCheckout) throw Error("Payment not found.")
+
+  const foundTab = await TabModel(db).findById(foundCheckout.tab)
+  if (!foundTab) throw Error('Tab not found')
+
+  foundPayment.paid = true;
+  await foundPayment.save()
+
+  foundCheckout.totalPaid += foundPayment.amount
+
+  if (foundCheckout.totalPaid >= foundCheckout.total) {
+
+    if (foundTab?.table) {
+      const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table)
+      if (!foundTable) throw Error('Table not found')
+
+      foundTable.status = "Available"
+      foundTable.tab = undefined
+      await foundTable.save()
+    }
+
+    foundTab.status = "Closed"
+    await foundTab.save()
+
+    foundCheckout.status = "Paid"
+    foundCheckout.paid = true
+
+    // update all the requests associated with this tab
+    const foundRequests = await RequestModel(db).find({ tab: foundTab?._id })
+    if (foundRequests.length > 0) {
+      const savePromises = foundRequests.map((request) => {
+        request.status = "Completed"
+        return request.save()
+      });
+      const awaitedRequests = await Promise.all(savePromises);
+      console.log("awaitedRequests", awaitedRequests)
+    }
+
+    // Tab closed. Perhaps send an email?
+  }
+
+  await foundCheckout.save()
 }

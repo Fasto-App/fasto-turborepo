@@ -5,7 +5,6 @@ import { AddressElement, Elements, PaymentElement, useElements, useStripe } from
 import { loadStripe } from '@stripe/stripe-js';
 import { customerRoute } from 'fasto-route';
 import { parseToCurrency } from 'app-helpers';
-import { useConfirmPaymentMutation } from '../../gen/generated';
 import { useTranslation } from 'next-i18next';
 
 // this file needs some refactoring
@@ -15,15 +14,12 @@ import { useTranslation } from 'next-i18next';
 export const PaymentScreen = () => {
   return (
     <StripeWrapper>
-      {/* <Center height={"100%"}> */}
       <CheckoutForm />
-      {/* </Center> */}
     </StripeWrapper>
   )
 }
 
 const CheckoutForm = () => {
-  const [confirmPayment, { loading }] = useConfirmPaymentMutation()
   const { t } = useTranslation("customerPayment")
 
   const router = useRouter()
@@ -54,8 +50,6 @@ const CheckoutForm = () => {
       redirect: "if_required",
     });
 
-    console.log('error', error)
-    console.log('paymentIntent', paymentIntent)
     if (error) {
       setMessage(error?.message);
     }
@@ -63,15 +57,6 @@ const CheckoutForm = () => {
     setIsProcessing(false);
 
     if (paymentIntent?.status === "succeeded") {
-
-      confirmPayment({
-        variables: {
-          input: {
-            payment: typeof paymentId === "string" ? paymentId : paymentId[0]
-          }
-        }
-      })
-
       router.push(RETURN_URL)
     }
   }
@@ -90,8 +75,9 @@ const CheckoutForm = () => {
           w={"300"}
           onPress={handlePayment}
           isDisabled={!stripe || !elements || !paymentId}
-          isLoading={isProcessing || loading}
+          isLoading={isProcessing}
           _text={{ bold: true }}
+          fontSize={"lg"}
         >
           {
             `${t("payNow")} ${isNaN(Number(amount)) ?

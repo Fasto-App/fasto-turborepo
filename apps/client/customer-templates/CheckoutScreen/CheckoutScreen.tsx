@@ -182,6 +182,7 @@ export const CheckoutScreen = () => {
                 flex={1}
                 onPress={endSession}
                 isLoading={isPaymentIntLoading}
+                _text={{ bold: true }}
               >
                 {t("payNow")}
               </Button>

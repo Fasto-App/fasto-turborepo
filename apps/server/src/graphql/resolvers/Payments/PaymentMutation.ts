@@ -26,6 +26,9 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
     throw ApolloError('BadRequest', "Checkout not found.")
   }
 
+  // create a description for the payment intent
+  const description = `Payment for ${foundBusiness.name} - Checkout ID: ${foundCheckout._id}; Payment ID: ${foundPayment._id}`;
+
   try {
     const paymentIntent = await createPaymentIntent({
       currency: "USD", // TODO: Handle multiple currencies, for now we just use Dollars
@@ -35,6 +38,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
       checkoutId: foundCheckout._id,
       paymentId: foundPayment._id,
       stripeAccount: foundBusiness.stripeAccountId,
+      description
     })
 
     return ({

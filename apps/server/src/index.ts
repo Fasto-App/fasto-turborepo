@@ -15,12 +15,16 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { getClientFromToken, getUserFromToken } from "./graphql/resolvers/utils";
 import { ApolloError } from "./graphql/ApolloErrorExtended/ApolloErrorExtended";
 import { dbConnection } from "./dbConnection";
-import { pubsub } from "./graphql/resolvers/pubSub";
 import { Context } from "./graphql/resolvers/types";
 import { Locale, locales } from "app-helpers";
+import { confirmPaymentWebHook, stripe } from "./stripe";
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
+
+
+// This is your Stripe CLI webhook secret for testing your endpoint locally.
+const endpointSecret = "whsec_48d69e24900f2fda8ca45f39bad0954cb298c79d9fe1df31a1d28c163f396738";
 
 const app = express();
 const httpServer = createServer(app);
@@ -126,6 +130,41 @@ async function main() {
     }));
   }
 
+
+  app.post('/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
+    const sig = request.headers['stripe-signature'];
+
+    if (!sig) throw "Error something"
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    } catch (err) {
+      // @ts-ignore
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.created':
+        const paymentCreated = event.data.object
+        break
+      case 'payment_intent.succeeded':
+        const paymentIntentSucceeded = event.data.object;
+        // @ts-ignore
+        confirmPaymentWebHook(paymentIntentSucceeded.metadata, db)
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  });
+
   httpServer.listen(PORT, () => {
     console.log(`[🚀 GraphQL SERVER] ready at http://localhost:${PORT}/graphql`);
     console.log(`[📬 Subscription ENDPOINT] ready at ws://localhost:${PORT}/graphql`);
@@ -155,12 +194,12 @@ async function proccessContext({ businessToken, clientToken, headersAPIKey, loca
   };
 }
 
-let currentNumber = 0;
-function incrementNumber() {
-  currentNumber++;
-  pubsub.publish('NUMBER_INCREMENTED', { numberIncremented: currentNumber });
-  setTimeout(incrementNumber, 1000);
-}
+// let currentNumber = 0;
+// function incrementNumber() {
+//   currentNumber++;
+//   pubsub.publish('NUMBER_INCREMENTED', { numberIncremented: currentNumber });
+//   setTimeout(incrementNumber, 1000);
+// }
 
 // Start incrementing
-incrementNumber();
+// incrementNumber();
