@@ -22,10 +22,6 @@ import { confirmPaymentWebHook, stripe } from "./stripe";
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
 
-
-// This is your Stripe CLI webhook secret for testing your endpoint locally.
-const endpointSecret = "whsec_48d69e24900f2fda8ca45f39bad0954cb298c79d9fe1df31a1d28c163f396738";
-
 const app = express();
 const httpServer = createServer(app);
 const db = dbConnection();
@@ -139,7 +135,7 @@ async function main() {
     let event;
 
     try {
-      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+      event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
       // @ts-ignore
       response.status(400).send(`Webhook Error: ${err.message}`);
