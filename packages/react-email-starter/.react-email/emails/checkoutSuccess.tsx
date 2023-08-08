@@ -48,7 +48,7 @@ export const texts = {
 
 
 
-export function CreateEmployeeEmail({
+export function CheckoutSuccess({
   url = "https://fastoapp.com",
   name = "John Doe",
   businessName = "Fasto",
@@ -104,7 +104,7 @@ export function CreateEmployeeEmail({
   );
 }
 
-export default CreateEmployeeEmail;
+export default CheckoutSuccess;
 
 const main = {
   backgroundColor: '#f6f9fc',
