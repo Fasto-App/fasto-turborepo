@@ -43,7 +43,7 @@ export const texts = {
 
 
 
-export function WelcomeEmail({ url, locale }: { url: string, locale: Locale }) {
+export function WelcomeEmail({ url = "https://fastoapp.com", locale = "en" }: { url: string, locale: Locale }) {
   return (
     <Html>
       <Head />
@@ -52,8 +52,7 @@ export function WelcomeEmail({ url, locale }: { url: string, locale: Locale }) {
         <Container style={container}>
           <Section style={box}>
             <Img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHLwTzHGQL-xP0zsBPekihSODufm8LrdrkOLh3N9i0SNKZNU7Q9dRvvFbuTu0Y75lt_w&usqp=CAU"
-              width="100"
+              src="https://fastoapp.com/images/fasto-logo.svg"
               height="21"
               alt="Fasto"
             />
