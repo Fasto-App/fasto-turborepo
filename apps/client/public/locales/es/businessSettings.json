@@ -44,7 +44,7 @@
 	"Manager": "Gerente",
 	"View": "Ver",
 	"Staff": "Personal",
-	"QRCode": "Código QR",
+	"QRCode": "QR Code",
 	"shareLink": "Compartir Enlace",
 	"share": "Compartir",
 	"link": "Enlace",
@@ -52,5 +52,6 @@
 	"copy": "Copiar",
 	"copied": "Copiado",
 	"shareTitle": "Ordenar con Fasto",
-	"shareText": "Accede a Menús, reserva"
+	"shareText": "Accede a Menús, reserva",
+	"scanToViewMenu": "Escanea para ver el Menú"
 }

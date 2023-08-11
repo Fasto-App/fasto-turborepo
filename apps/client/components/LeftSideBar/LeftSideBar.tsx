@@ -8,6 +8,7 @@ export const LeftSideBar = ({ children }: PropsWithChildren<{}>) => (
     shadow={"8"}
     paddingY={4}
     paddingX={2}
+    backgroundColor={"white"}
   >
     {children}
   </VStack>

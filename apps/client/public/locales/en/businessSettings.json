@@ -52,5 +52,6 @@
 	"copy": "Copy",
 	"copied": "Copied",
 	"shareTitle": "Order With Fasto",
-	"shareText": "Access Menus, reservation"
+	"shareText": "Access Menus, reservation",
+	"scanToViewMenu": "Scan to view menu"
 }

@@ -76,7 +76,7 @@ export const SettingsScreen = () => {
         <Center flex={1} h={"100%"}>
           <VStack alignItems={"center"} space={8}>
             <Heading>
-              SCAN TO VIEW MENU
+              {t("scanToViewMenu")}
             </Heading>
             <QRCode
               value={customerPath || ""}
@@ -96,7 +96,7 @@ export const SettingsScreen = () => {
           </VStack>
         </Center>
       </div>
-      <Box flex={1}>
+      <Box flex={1} shadow={"8"} backgroundColor={"white"} >
         <OrangeBox />
         <VStack m={"4"} space={"4"} flex={1}>
           <UpperSection>
