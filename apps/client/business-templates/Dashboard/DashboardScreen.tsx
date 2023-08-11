@@ -1,6 +1,5 @@
-import { Box, HStack, VStack } from "native-base"
 import React from "react"
-import { useIsSsr } from "../../hooks"
+import { Box, HStack, VStack } from "native-base"
 import { AreaChart } from "./Ghaphs/AreaChart"
 import { PieChart } from "./Ghaphs/PieChart"
 import { VerticalBar } from "./Ghaphs/VerticalBar"

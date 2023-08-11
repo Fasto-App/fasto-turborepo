@@ -1,0 +1,21 @@
+#section-to-print {
+	visibility: hidden;
+	position: absolute;
+	width: 100%;
+	height: 100vh;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	z-index: -99000;
+	background-color: #fff;
+}
+
+@media print {
+	body {
+		visibility: hidden;
+	}
+	#section-to-print {
+		visibility: visible;
+		position: absolute;
+	}
+}
