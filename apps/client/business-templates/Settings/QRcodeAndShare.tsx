@@ -7,16 +7,14 @@ import { Pressable } from 'react-native'
 import { useRouter } from 'next/router'
 import { showToast } from '../../components/showToast'
 import { useTranslation } from 'next-i18next'
-// import { useGetBusinessInformation } from '../../hooks'
 
 export const QRcodeAndShare = () => {
 
-  const { t } = useTranslation("common")
-  // get the business is
+  const { t } = useTranslation("businessSettings")
+
   const router = useRouter()
   const locale = router.locale
 
-  console.log("locale", locale)
   const { data, loading, error } = useGetBusinessInformationQuery()
   const [openModal, setOpenModal] = useState(false)
 
@@ -28,8 +26,8 @@ export const QRcodeAndShare = () => {
   const shareLink = async () => {
     try {
       await navigator.share({
-        title: "t('shareTitle')",
-        text: "t('shareText')",
+        title: t('shareTitle'),
+        text: t('shareText'),
         url: customerPath,
       });
 
@@ -48,7 +46,7 @@ export const QRcodeAndShare = () => {
     navigator.clipboard.writeText(customerPath)
 
     showToast({
-      message: "COPIED!"
+      message: t("copied")
     })
   }
 
@@ -62,9 +60,37 @@ export const QRcodeAndShare = () => {
     document.title = tempTitle
   }
 
+  // todo: finish function
   const onQRCodeShare = async () => {
     try {
-      navigator.vibrate(400)
+      const QRCODE = document.getElementById("section-to-print");
+      // console.log("canvas", canvas)
+      // const ctx = canvas.getContext("myCanvas");
+      // const img = document.getElementById("section-to-print");
+      // // ctx.drawImage(img, 10, 10);
+
+      // const fullQuality = canvas?.toDataURL("image/webp", 1.0);
+      // console.log(fullQuality);
+
+      const { body } = document
+
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      canvas.width = canvas.height = 100
+
+      const tempImg = document.createElement('img')
+      tempImg.addEventListener('load', onTempImageLoad)
+      tempImg.src = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml">${QRCODE?.innerHTML}</div></foreignObject></svg>`)
+      console.log(tempImg.src)
+
+      const targetImg = document.createElement('img')
+      body.appendChild(targetImg)
+
+      function onTempImageLoad(e: any) {
+        ctx?.drawImage(e.target, 0, 0)
+        targetImg.src = canvas.toDataURL()
+      }
+      // navigator.vibrate(400)
       // await navigator.share({
       //   title: "t('shareTitle')",
       //   text: "t('shareText')",
@@ -83,63 +109,56 @@ export const QRcodeAndShare = () => {
   }
 
   return (
-
-    <>
-      <HStack flex={1} h={"100%"} justifyContent={"space-around"} space={12}>
-        <VStack space={12} justifyContent={"space-between"} alignItems={"center"} flex={1}>
-          <Heading>
-            QR Code
-          </Heading>
-
-          <div id="QR-CODE">
-            <Center flex={1}>
-              <VStack alignItems={"center"} space={8}>
-                <QRCode
-                  value={customerPath}
-                  size={200}
-                />
-              </VStack>
-            </Center>
-          </div>
-
-          <Button.Group w={"100%"}>
-            <Button flex={1} colorScheme={"tertiary"} onPress={onQRCodeShare}>
-              Share
-            </Button>
-            <Button flex={1} onPress={onPrint}>
-              Print
-            </Button>
-          </Button.Group>
-        </VStack>
-
-        <VStack space={12} justifyContent={"space-between"} alignItems={"center"} flex={1}>
-          <Heading >
-            Share Link
-          </Heading>
-          <Pressable onPress={() => window.open(customerPath)} >
-            <Input
-              w={400}
-              colorScheme={"blue"}
-              color={"blue.500"}
-              fontSize={"lg"}
-              variant="filled"
-              placeholder="Filled"
+    <HStack flex={1} h={"100%"} justifyContent={"space-around"} space={12}>
+      <VStack space={12} justifyContent={"space-between"} alignItems={"center"} flex={1}>
+        <Heading>
+          {t("QRCode")}
+        </Heading>
+        <Center flex={1}>
+          <VStack alignItems={"center"} space={8}>
+            <QRCode
               value={customerPath}
-            // style={{cursor: ""}}
+              size={200}
             />
-          </Pressable>
-          <Button.Group w={"100%"}>
-            <Button
-              isDisabled={!navigator.share}
-              flex={1} colorScheme={"tertiary"} onPress={shareLink}>
-              Share
-            </Button >
-            <Button flex={1} onPress={onClipBoardWrite}>
-              Copy
-            </Button>
-          </Button.Group>
-        </VStack>
-      </HStack>
-    </>
+          </VStack>
+        </Center>
+
+        <Button.Group w={"100%"}>
+          <Button flex={1} colorScheme={"tertiary"} onPress={onQRCodeShare}>
+            {t("share")}
+          </Button>
+          <Button flex={1} onPress={onPrint}>
+            {t("print")}
+          </Button>
+        </Button.Group>
+      </VStack>
+
+      <VStack space={12} justifyContent={"space-between"} alignItems={"center"} flex={1}>
+        <Heading >
+          {t('shareLink')}
+        </Heading>
+        <Pressable onPress={() => window.open(customerPath)} >
+          <Input
+            w={400}
+            colorScheme={"blue"}
+            color={"blue.500"}
+            fontSize={"lg"}
+            variant="filled"
+            placeholder="Filled"
+            value={customerPath}
+          />
+        </Pressable>
+        <Button.Group w={"100%"}>
+          <Button
+            isDisabled={!navigator.share}
+            flex={1} colorScheme={"tertiary"} onPress={shareLink}>
+            {t("share")}
+          </Button >
+          <Button flex={1} onPress={onClipBoardWrite}>
+            {t("copy")}
+          </Button>
+        </Button.Group>
+      </VStack>
+    </HStack>
   )
 }

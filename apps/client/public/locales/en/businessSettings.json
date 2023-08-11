@@ -11,6 +11,7 @@
 	"manageLocation": "Manage Location",
 	"manageAccount": "Manage Account",
 	"businessName": "Business Name",
+	"QRcodeAndShare": "QR Code And Share",
 	"businessDescription": "Business Description",
 	"uploadPicture": "Upload Picture",
 	"streetAddress": "Street Address",
@@ -42,5 +43,14 @@
 	"Customer": "Customer",
 	"Manager": "Manager",
 	"View": "View",
-	"Staff": "Staff"
+	"Staff": "Staff",
+	"QRCode": "QR Code",
+	"shareLink": "Share Link",
+	"share": "Share",
+	"link": "Link",
+	"print": "Print",
+	"copy": "Copy",
+	"copied": "Copied",
+	"shareTitle": "Order With Fasto",
+	"shareText": "Access Menus, reservation"
 }
