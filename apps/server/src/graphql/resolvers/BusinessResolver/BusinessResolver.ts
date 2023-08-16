@@ -18,8 +18,9 @@ import {
 import { uploadFileS3Bucket } from '../../../s3/s3';
 import { ApolloError } from '../../ApolloErrorExtended/ApolloErrorExtended';
 import { SessionModel } from '../../../models/session';
-import { sendEployeeAccountCreation, sendExistingUserEployeeEmail } from '../../../email-tool';
+import { sendEployeeAccountCreation, sendExistingUserEployeeEmail, sendQRCodeAttachment } from '../../../email-tool';
 import { MutationResolvers } from '../../../generated/graphql';
+import { Stream } from "stream"
 
 
 //FIX: this should be a validation of the token, not the business id
@@ -473,6 +474,27 @@ const deleteBusinessEmployee = async (parent: any, args: { input: any }, { busin
   throw ApolloError("BadRequest", "Employee not found or there was an error deleting the them.")
 }
 
+const shareQRCode: MutationResolvers["shareQRCode"] = async (_parent, { input: { email, file } },
+  { business, db, locale }) => {
+  if (!business) throw ApolloError("Unauthorized")
+
+  const { createReadStream } = await file;
+  const stream: Stream = createReadStream();
+
+  let bufs: Buffer[] = [];
+  stream.on('data', (d) => bufs.push(d));
+  stream.on('end', async () => {
+    const buf = Buffer.concat(bufs);
+
+    await sendQRCodeAttachment({
+      buffer: buf,
+      emailTo: email,
+      locale
+    })
+  })
+
+  return true
+}
 
 const BusinessResolverMutation = {
   createBusiness,
@@ -481,7 +503,8 @@ const BusinessResolverMutation = {
   updateBusinessInformation,
   updateBusinessLocation,
   manageBusinessEmployees,
-  deleteBusinessEmployee
+  deleteBusinessEmployee,
+  shareQRCode
 }
 const BusinessResolverQuery = {
   getBusinessById,

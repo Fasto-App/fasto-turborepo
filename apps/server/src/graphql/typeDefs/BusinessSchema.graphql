@@ -15,6 +15,7 @@ extend type Mutation {
 	updateBusinessLocation(input: AddressInput!): Business
 	manageBusinessEmployees(input: ManageBusinessEmployeesInput!): Employee!
 	deleteBusinessEmployee(input: DeleteEmployee!): ID!
+	shareQRCode(input: ShareQRCodeInput!): Boolean!
 }
 
 type Employees {
@@ -30,6 +31,11 @@ type Employee {
 	picture: String
 	isPending: Boolean!
 	jobTitle: String!
+}
+
+input ShareQRCodeInput {
+	file: Upload!
+	email: String!
 }
 
 input ManageBusinessEmployeesInput {

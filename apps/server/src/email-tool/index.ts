@@ -1,4 +1,4 @@
-import { WelcomeEmail, ResetPasswordEmail, ExistingUserEmployeeEmail, CreateEmployeeEmail } from "emails";
+import { WelcomeEmail, ResetPasswordEmail, ExistingUserEmployeeEmail, CreateEmployeeEmail, QRCode } from "emails";
 import { render } from '@react-email/render';
 import nodemailer from 'nodemailer';
 import { Locale } from "app-helpers";
@@ -133,3 +133,31 @@ export async function sendExistingUserEployeeEmail({ email, businessName, name, 
   const response = await transporter.sendMail(options);
   return { ok: !!response, url }
 };
+
+type QRCodeParams = {
+  emailTo: string,
+  locale: Locale,
+  buffer: Buffer
+}
+
+export const sendQRCodeAttachment = async ({ locale, emailTo, buffer }: QRCodeParams) => {
+  const emailHtml = render(QRCode({ locale }))
+
+  const options = {
+    from: process.env.EMAIL_ACCOUNT,
+    to: emailTo,
+    subject: texts[locale].manageBusiness,
+    html: emailHtml,
+    attachments: [
+      {
+        content: buffer,
+        filename: "qr-code.jpeg",
+        contentType: "image/jpeg"
+      }
+    ]
+  }
+
+  const response = await transporter.sendMail(options);
+
+  return { ok: !!response }
+}

@@ -91,7 +91,7 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
 
   const foundBusiness = await BusinessModel(db).findOne({ _id: user?.business });
 
-  if (!foundBusiness?.stripeAccountId) return null
+  if (!foundBusiness?.stripeAccountId) throw ApolloError('BadRequest', "Stripe Account not found")
 
   // Fetch the account balance to determine the available funds
   const balance = await stripe.balance.retrieve({

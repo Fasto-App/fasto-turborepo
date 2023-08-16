@@ -11,11 +11,10 @@
 }
 
 @media print {
-	body {
-		visibility: hidden;
-	}
 	#section-to-print {
 		visibility: visible;
-		position: absolute;
+	}
+	body {
+		visibility: hidden;
 	}
 }

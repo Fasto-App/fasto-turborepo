@@ -12,38 +12,35 @@ import { Locale } from 'app-helpers';
 
 export const texts = {
   en: {
-    preview: "You're one step away from helping innovate the food business industry!",
-    welcome: "Welcome to Fasto!",
-    weAreThrilled: "We are thrilled to welcome you to our company! We are looking forward to the valuable contribution you will bring to our team.",
-    getStarted: "To get started, we need you to set up your new account by clicking on the button below.",
-    onceYouHave: "Once you have successfully set up your account, you will be able to access all the resources and tools you need to start working with us.",
-    thankYou: "Thank you again for joining our team and we are looking forward to a productive and successful collaboration!",
-    cta: "Setup Account Password",
+    preview: "Get a sneak peek of your Fasto Business QR Code",
+    h1: "Your Fasto Business QR Code",
+    p1: "We're thrilled to provide you with your unique Fasto Business QR Code! This QR Code will serve as a direct link to your business's homepage, making it easier for your customers to explore your offerings.",
+    p2: "You can use this QR Code for various purposes, such as getting it printed on promotional materials, adding it to your website, or sharing it with your customers through digital channels.",
+    p3: "Please find the attached QR Code image file. Feel free to save it, print it, or incorporate it into your marketing strategies to enhance your customer's experience.",
+    p4: "If you have any questions or need further assistance, don't hesitate to reach out to our support team."
   },
   pt: {
-    "preview": "Você está a um passo de ajudar a inovar na indústria de negócios de alimentos!",
-    "welcome": "Bem-vindo/a ao Fasto!",
-    "weAreThrilled": "Estamos empolgados em recebê-lo/a em nossa empresa! Estamos ansiosos pela valiosa contribuição que você trará para nossa equipe.",
-    "getStarted": "Para começar, precisamos que você configure sua nova conta clicando no botão abaixo.",
-    "onceYouHave": "Após configurar sua conta com sucesso, você poderá acessar todos os recursos e ferramentas necessários para começar a trabalhar conosco.",
-    "thankYou": "Obrigado/a novamente por se juntar à nossa equipe e estamos ansiosos por uma colaboração produtiva e bem-sucedida!",
-    "cta": "Configurar Senha da Conta",
+    "preview": "Veja uma prévia do seu Código QR de Negócios Fasto!",
+    h1: "O seu Fasto Business QR Code",
+    p1: "Estamos entusiasmados em fornecer o seu exclusivo Código QR Fasto Business! Este Código QR servirá como um link direto para a página inicial da sua empresa, facilitando para os seus clientes explorarem as suas ofertas.",
+    p2: "Você pode usar este Código QR para várias finalidades, como imprimi-lo em materiais promocionais, adicioná-lo ao seu site ou compartilhá-lo com os seus clientes através de canais digitais.",
+    p3: "Por favor, encontre o arquivo de imagem do Código QR anexado. Sinta-se à vontade para salvá-lo, imprimi-lo ou incorporá-lo nas suas estratégias de marketing para aprimorar a experiência dos seus clientes.",
+    p4: "Se tiver alguma dúvida ou precisar de assistência adicional, não hesite em entrar em contato com a nossa equipe de suporte."
   },
   es: {
-    "preview": "¡Estás a un paso de ayudar a innovar en la industria de negocios de alimentos!",
-    "welcome": "¡Bienvenido/a a Fasto!",
-    "weAreThrilled": "¡Estamos emocionados de darte la bienvenida a nuestra empresa! Esperamos con ansias la valiosa contribución que aportarás a nuestro equipo.",
-    "getStarted": "Para comenzar, necesitamos que configures tu nueva cuenta haciendo clic en el botón a continuación.",
-    "onceYouHave": "Una vez que hayas configurado tu cuenta correctamente, podrás acceder a todos los recursos y herramientas que necesitas para comenzar a trabajar con nosotros.",
-    "thankYou": "¡Gracias nuevamente por unirte a nuestro equipo y esperamos tener una colaboración productiva y exitosa!",
-    "cta": "Configurar Contraseña de la Cuenta",
+    preview: "Obtén un vistazo de tu Código QR de Negocio Fasto",
+    h1: "",
+    p1: "¡Estamos emocionados de proporcionarte tu exclusivo Código QR de Negocio Fasto! Este Código QR servirá como un enlace directo a la página de inicio de tu negocio, facilitando que tus clientes exploren tus ofertas.",
+    p2: "Puedes utilizar este Código QR para diversos fines, como imprimirlo en materiales promocionales, agregarlo a tu sitio web o compartirlo con tus clientes a través de canales digitales.",
+    p3: "Por favor, encuentra el archivo de imagen del Código QR adjunto. Siéntete libre de guardarlo, imprimirlo o incorporarlo a tus estrategias de marketing para mejorar la experiencia de tus clientes.",
+    p4: "Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en ponerte en contacto con nuestro equipo de soporte."
   }
 }
 
 
 
 
-export function QRCode({ url = "https://fastoapp.com", locale = "en" }: { url: string, locale: Locale }) {
+export function QRCode({ locale = "en" }: { locale: Locale }) {
   return (
     <Html>
       <Head />
@@ -58,28 +55,12 @@ export function QRCode({ url = "https://fastoapp.com", locale = "en" }: { url: s
               alt="Fasto"
             />
             <Hr style={hr} />
-            <Text style={h1}>{texts[locale].welcome}</Text>
-            <Text style={paragraph}>
-              {texts[locale].weAreThrilled}
-            </Text>
-            <Text style={paragraph}>
-              {texts[locale].getStarted}
-            </Text>
-            <Button
-              pX={10}
-              pY={10}
-              style={button}
-              href={url}
-            >
-              {texts[locale].cta}
-            </Button>
-            <Hr style={hr} />
-            <Text style={paragraph}>
-              {texts[locale].onceYouHave}
-            </Text>
-            <Text style={paragraph}>
-              {texts[locale].thankYou}
-            </Text>
+            <Text style={h1}>{texts[locale].h1}</Text>
+            <Text style={paragraph}>{texts[locale].p1}</Text>
+            <Text style={paragraph}>{texts[locale].p2}</Text>
+            <Text style={paragraph}>{texts[locale].p3}</Text>
+            <Text style={paragraph}>{texts[locale].p4}</Text>
+
             <Text style={paragraph}>Cheers</Text>
             <Text style={paragraph}>— The Fasto team</Text>
             <Hr style={hr} />
@@ -132,24 +113,6 @@ const paragraph = {
   fontSize: '16px',
   lineHeight: '24px',
   textAlign: 'justify' as const,
-};
-
-const anchor = {
-  color: '#556cd6',
-};
-
-const button = {
-  backgroundColor: '#f65135',
-  borderRadius: '5px',
-  color: '#fff',
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'block',
-  width: '100%',
 };
 
 const footer = {

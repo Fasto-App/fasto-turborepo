@@ -449,6 +449,7 @@ export type Mutation = {
   requestCloseTab: Tab;
   requestJoinTab?: Maybe<Scalars['String']>;
   requestUserAccountCreation: AccountCreationResponse;
+  shareQRCode: Scalars['Boolean'];
   updateAddress?: Maybe<Address>;
   updateBusinessInformation: Business;
   updateBusinessLocation?: Maybe<Business>;
@@ -688,6 +689,11 @@ export type MutationRequestJoinTabArgs = {
 
 export type MutationRequestUserAccountCreationArgs = {
   input: RequestUserAccountInput;
+};
+
+
+export type MutationShareQrCodeArgs = {
+  input: ShareQrCodeInput;
 };
 
 
@@ -982,6 +988,11 @@ export type SectionInput = {
   products: Array<Scalars['String']>;
 };
 
+export type ShareQrCodeInput = {
+  email: Scalars['String'];
+  file: Scalars['Upload'];
+};
+
 export type Space = {
   __typename?: 'Space';
   _id: Scalars['ID'];
@@ -1190,6 +1201,13 @@ export type ManageBusinessEmployeesMutationVariables = Exact<{
 
 export type ManageBusinessEmployeesMutation = { __typename?: 'Mutation', manageBusinessEmployees: { __typename?: 'Employee', email: string, name: string, picture?: string | null, privilege: UserPrivileges } };
 
+export type ShareQrCodeMutationVariables = Exact<{
+  input: ShareQrCodeInput;
+}>;
+
+
+export type ShareQrCodeMutation = { __typename?: 'Mutation', shareQRCode: boolean };
+
 export type UpdateBusinessInformationMutationVariables = Exact<{
   input: UpdateBusinessInfoInput;
 }>;
@@ -1224,7 +1242,7 @@ export type GetBusinessByIdQuery = { __typename?: 'Query', getBusinessById: { __
 export type GetBusinessInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null, hoursOfOperation?: { __typename?: 'HoursOfOperation', Friday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Monday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Saturday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Sunday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Thursday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Tuesday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null }, Wednesday: { __typename?: 'WorkingHours', isOpen: boolean, hours?: { __typename?: 'Hours', close: string, open: string } | null } } | null } };
+export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null } };
 
 export type GetBusinessLocationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1753,6 +1771,37 @@ export function useManageBusinessEmployeesMutation(baseOptions?: Apollo.Mutation
 export type ManageBusinessEmployeesMutationHookResult = ReturnType<typeof useManageBusinessEmployeesMutation>;
 export type ManageBusinessEmployeesMutationResult = Apollo.MutationResult<ManageBusinessEmployeesMutation>;
 export type ManageBusinessEmployeesMutationOptions = Apollo.BaseMutationOptions<ManageBusinessEmployeesMutation, ManageBusinessEmployeesMutationVariables>;
+export const ShareQrCodeDocument = gql`
+    mutation ShareQRCode($input: ShareQRCodeInput!) {
+  shareQRCode(input: $input)
+}
+    `;
+export type ShareQrCodeMutationFn = Apollo.MutationFunction<ShareQrCodeMutation, ShareQrCodeMutationVariables>;
+
+/**
+ * __useShareQrCodeMutation__
+ *
+ * To run a mutation, you first call `useShareQrCodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useShareQrCodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [shareQrCodeMutation, { data, loading, error }] = useShareQrCodeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useShareQrCodeMutation(baseOptions?: Apollo.MutationHookOptions<ShareQrCodeMutation, ShareQrCodeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ShareQrCodeMutation, ShareQrCodeMutationVariables>(ShareQrCodeDocument, options);
+      }
+export type ShareQrCodeMutationHookResult = ReturnType<typeof useShareQrCodeMutation>;
+export type ShareQrCodeMutationResult = Apollo.MutationResult<ShareQrCodeMutation>;
+export type ShareQrCodeMutationOptions = Apollo.BaseMutationOptions<ShareQrCodeMutation, ShareQrCodeMutationVariables>;
 export const UpdateBusinessInformationDocument = gql`
     mutation UpdateBusinessInformation($input: UpdateBusinessInfoInput!) {
   updateBusinessInformation(input: $input) {
@@ -1962,57 +2011,6 @@ export const GetBusinessInformationDocument = gql`
     name
     description
     picture
-    hoursOfOperation {
-      Friday {
-        isOpen
-        hours {
-          close
-          open
-        }
-      }
-      Monday {
-        isOpen
-        hours {
-          close
-          open
-        }
-      }
-      Saturday {
-        isOpen
-        hours {
-          close
-          open
-        }
-      }
-      Sunday {
-        isOpen
-        hours {
-          close
-          open
-        }
-      }
-      Thursday {
-        isOpen
-        hours {
-          close
-          open
-        }
-      }
-      Tuesday {
-        isOpen
-        hours {
-          close
-          open
-        }
-      }
-      Wednesday {
-        isOpen
-        hours {
-          close
-          open
-        }
-      }
-    }
   }
 }
     `;

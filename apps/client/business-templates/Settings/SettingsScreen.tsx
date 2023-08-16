@@ -72,7 +72,7 @@ export const SettingsScreen = () => {
 
   return (
     <>
-      <div id={"section-to-print"}>
+      <Box nativeID={"section-to-print"}>
         <Center flex={1} h={"100%"}>
           <VStack alignItems={"center"} space={8}>
             <Heading>
@@ -88,14 +88,14 @@ export const SettingsScreen = () => {
             <NextImage
               src={data?.getBusinessInformation.picture ?? "https://via.placeholder.com/150"}
               alt={data?.getBusinessInformation.name}
-              width={"150"}
-              height={"150"}
+              width={"100"}
+              height={"100"}
               objectFit='cover'
               style={{ borderRadius: 5 }}
             />
           </VStack>
         </Center>
-      </div>
+      </Box>
       <Box flex={1} shadow={"8"} backgroundColor={"white"} >
         <OrangeBox />
         <VStack m={"4"} space={"4"} flex={1}>

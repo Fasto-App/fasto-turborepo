@@ -406,7 +406,7 @@ export type Mutation = {
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
-  confirmPayment?: Maybe<Scalars['Boolean']>;
+  confirmPayment: Scalars['Boolean'];
   connectExpressPayment: Scalars['String'];
   createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
@@ -437,7 +437,7 @@ export type Mutation = {
   deleteTable: RequestResponseOk;
   deleteUser: RequestResponseOk;
   generatePaymentIntent: PaymentIntent;
-  generateStripePayout?: Maybe<Scalars['Boolean']>;
+  generateStripePayout: Scalars['Boolean'];
   linkCategoryToProducts?: Maybe<Category>;
   makeCheckoutFullPayment: Checkout;
   makeCheckoutPayment: Checkout;
@@ -449,6 +449,7 @@ export type Mutation = {
   requestCloseTab: Tab;
   requestJoinTab?: Maybe<Scalars['String']>;
   requestUserAccountCreation: AccountCreationResponse;
+  shareQRCode: Scalars['Boolean'];
   updateAddress?: Maybe<Address>;
   updateBusinessInformation: Business;
   updateBusinessLocation?: Maybe<Business>;
@@ -688,6 +689,11 @@ export type MutationRequestJoinTabArgs = {
 
 export type MutationRequestUserAccountCreationArgs = {
   input: RequestUserAccountInput;
+};
+
+
+export type MutationShareQrCodeArgs = {
+  input: ShareQrCodeInput;
 };
 
 
@@ -980,6 +986,11 @@ export type Section = {
 export type SectionInput = {
   name: Scalars['String'];
   products: Array<Scalars['String']>;
+};
+
+export type ShareQrCodeInput = {
+  email: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 export type Space = {
@@ -1321,6 +1332,7 @@ export type ResolversTypes = {
   ResetPasswordInput: ResetPasswordInput;
   Section: ResolverTypeWrapper<Section>;
   SectionInput: SectionInput;
+  ShareQRCodeInput: ShareQrCodeInput;
   Space: ResolverTypeWrapper<Space>;
   SplitType: SplitType;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -1422,6 +1434,7 @@ export type ResolversParentTypes = {
   ResetPasswordInput: ResetPasswordInput;
   Section: Section;
   SectionInput: SectionInput;
+  ShareQRCodeInput: ShareQrCodeInput;
   Space: Space;
   String: Scalars['String'];
   Subscription: {};
@@ -1614,7 +1627,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   acceptTabRequest?: Resolver<Maybe<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<MutationAcceptTabRequestArgs, 'input'>>;
   addItemToCart?: Resolver<ResolversTypes['CartItem'], ParentType, ContextType, RequireFields<MutationAddItemToCartArgs, 'input'>>;
   clientCreateMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationClientCreateMultipleOrderDetailsArgs, 'input'>>;
-  confirmPayment?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationConfirmPaymentArgs, 'input'>>;
+  confirmPayment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConfirmPaymentArgs, 'input'>>;
   connectExpressPayment?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationConnectExpressPaymentArgs, 'input'>>;
   createAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, RequireFields<MutationCreateAddressArgs, 'input'>>;
   createBusiness?: Resolver<Maybe<ResolversTypes['CreateBusinessPayload']>, ParentType, ContextType, RequireFields<MutationCreateBusinessArgs, 'input'>>;
@@ -1645,7 +1658,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteTable?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType, Partial<MutationDeleteTableArgs>>;
   deleteUser?: Resolver<ResolversTypes['RequestResponseOK'], ParentType, ContextType>;
   generatePaymentIntent?: Resolver<ResolversTypes['PaymentIntent'], ParentType, ContextType, RequireFields<MutationGeneratePaymentIntentArgs, 'input'>>;
-  generateStripePayout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  generateStripePayout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   linkCategoryToProducts?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationLinkCategoryToProductsArgs, 'input'>>;
   makeCheckoutFullPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutFullPaymentArgs, 'input'>>;
   makeCheckoutPayment?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationMakeCheckoutPaymentArgs, 'input'>>;
@@ -1657,6 +1670,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, Partial<MutationRequestCloseTabArgs>>;
   requestJoinTab?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRequestJoinTabArgs, 'input'>>;
   requestUserAccountCreation?: Resolver<ResolversTypes['AccountCreationResponse'], ParentType, ContextType, RequireFields<MutationRequestUserAccountCreationArgs, 'input'>>;
+  shareQRCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationShareQrCodeArgs, 'input'>>;
   updateAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, Partial<MutationUpdateAddressArgs>>;
   updateBusinessInformation?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationUpdateBusinessInformationArgs, 'input'>>;
   updateBusinessLocation?: Resolver<Maybe<ResolversTypes['Business']>, ParentType, ContextType, RequireFields<MutationUpdateBusinessLocationArgs, 'input'>>;
