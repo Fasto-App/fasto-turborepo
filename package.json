@@ -30,7 +30,7 @@
 	},
 	"engines": {
 		"yarn": "1.22.19",
-		"node": "20.x.x"
+		"node": "18.x.x"
 	},
 	"dependencies": {
 		"graphql": "^16.6.0",
