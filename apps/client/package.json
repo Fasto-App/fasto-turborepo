@@ -2,8 +2,8 @@
 	"name": "client",
 	"version": "1.0.0",
 	"scripts": {
-		"build": "next build",
-		"dev": "doppler run -- next dev",
+		"build": "export NODE_OPTIONS=--openssl-legacy-provider;  next build",
+		"dev": "export NODE_OPTIONS=--openssl-legacy-provider; doppler run -- next dev",
 		"start": "doppler run -- next start",
 		"lint": "next lint",
 		"storybook": "start-storybook -p 6006",
