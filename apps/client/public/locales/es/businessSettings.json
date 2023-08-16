@@ -53,5 +53,10 @@
 	"copied": "Copiado",
 	"shareTitle": "Ordenar con Fasto",
 	"shareText": "Accede a Menús, reserva",
-	"scanToViewMenu": "Escanea para ver el Menú"
+	"scanToViewMenu": "Escanea para ver el Menú",
+	"send": "Enviar",
+	"shareQRCodeByEmail": "Compartir  QR Code por Correo Electrónico",
+	"somethingWentWrongQRCode": "Algo salió mal al compartir el QR Code",
+	"somethingWentWrongSharingLink": "Algo salió mal al compartir el enlace",
+	"qrCodeSent": "QR Code Enviado"
 }

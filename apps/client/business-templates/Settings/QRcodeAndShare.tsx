@@ -2,13 +2,37 @@ import { customerRoute } from 'fasto-route'
 import { Button, Center, HStack, Heading, Input, VStack } from 'native-base'
 import React, { useState } from 'react'
 import QRCode from 'react-qr-code'
-import { useGetBusinessInformationQuery } from '../../gen/generated'
+import { useGetBusinessInformationQuery, useShareQrCodeMutation } from '../../gen/generated'
 import { Pressable } from 'react-native'
 import { useRouter } from 'next/router'
 import { showToast } from '../../components/showToast'
 import { useTranslation } from 'next-i18next'
+import html2canvas from "html2canvas"
+import { CustomModal } from '../../components/CustomModal/CustomModal'
+import { ControlledForm } from '../../components/ControlledForm'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+
+const shareQRCodeSchema = z.object({
+  email: z.string().email(),
+})
+
+type ShareQRCode = z.infer<typeof shareQRCodeSchema>
+
+const useShareQRCode = () => {
+  return useForm<ShareQRCode>({
+    resolver: zodResolver(shareQRCodeSchema),
+    defaultValues: {
+      email: "",
+    },
+  })
+}
 
 export const QRcodeAndShare = () => {
+  const [sharingQRCode, setsharingQRCode] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [dataBlob, setDataBlob] = useState<Blob>()
 
   const { t } = useTranslation("businessSettings")
 
@@ -16,7 +40,20 @@ export const QRcodeAndShare = () => {
   const locale = router.locale
 
   const { data, loading, error } = useGetBusinessInformationQuery()
-  const [openModal, setOpenModal] = useState(false)
+  const [shareQRCode, { loading: shareLoading }] = useShareQrCodeMutation({
+    onCompleted: () => {
+      showToast({ message: t("qrCodeSent") })
+    },
+    onError: () => {
+      showToast({
+        message: t("somethingWentWrongQRCode"),
+        status: "error"
+      })
+    },
+  })
+
+
+  const { control, handleSubmit, formState } = useShareQRCode()
 
   const customerPath = data?.getBusinessInformation._id ? `${process.env.FRONTEND_URL}/${locale ?? "en"}${customerRoute['/customer/[businessId]'].replace("[businessId]", data?.getBusinessInformation._id)}`
     : null
@@ -32,11 +69,11 @@ export const QRcodeAndShare = () => {
       });
 
     } catch (error) {
+      // @ts-ignore
+      if (error.name === "AbortError") return
 
-      console.log({ error })
-
-      showToast({//@ts-ignore
-        message: error.message as string,
+      showToast({
+        message: t("somethingWentWrongSharingLink"),
         status: "error"
       })
     }
@@ -45,9 +82,7 @@ export const QRcodeAndShare = () => {
   const onClipBoardWrite = () => {
     navigator.clipboard.writeText(customerPath)
 
-    showToast({
-      message: t("copied")
-    })
+    showToast({ message: t("copied") })
   }
 
   const onPrint = () => {
@@ -60,56 +95,94 @@ export const QRcodeAndShare = () => {
     document.title = tempTitle
   }
 
-  // todo: finish function
   const onQRCodeShare = async () => {
+
+    if (dataBlob) {
+      setOpenModal(true)
+      return
+    }
+
     try {
-      const QRCODE = document.getElementById("section-to-print");
-      // console.log("canvas", canvas)
-      // const ctx = canvas.getContext("myCanvas");
-      // const img = document.getElementById("section-to-print");
-      // // ctx.drawImage(img, 10, 10);
+      let screenShot: HTMLElement | null
 
-      // const fullQuality = canvas?.toDataURL("image/webp", 1.0);
-      // console.log(fullQuality);
+      setsharingQRCode(true)
 
-      const { body } = document
+      screenShot = document.querySelector("#section-to-print")
+      if (!screenShot) throw new Error("QR Code not Found")
 
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-      canvas.width = canvas.height = 100
+      screenShot.style.visibility = "visible"
 
-      const tempImg = document.createElement('img')
-      tempImg.addEventListener('load', onTempImageLoad)
-      tempImg.src = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml">${QRCODE?.innerHTML}</div></foreignObject></svg>`)
-      console.log(tempImg.src)
+      html2canvas(screenShot).then(canvas => {
+        canvas.toBlob((blob) => {
+          if (!blob) throw new Error("Blob not found")
 
-      const targetImg = document.createElement('img')
-      body.appendChild(targetImg)
+          setDataBlob(blob)
+          setOpenModal(true)
+        }, "image/jpeg")
 
-      function onTempImageLoad(e: any) {
-        ctx?.drawImage(e.target, 0, 0)
-        targetImg.src = canvas.toDataURL()
-      }
-      // navigator.vibrate(400)
-      // await navigator.share({
-      //   title: "t('shareTitle')",
-      //   text: "t('shareText')",
-      //   url: customerPath,
-      // });
+        if (!screenShot) throw new Error("QR Code not Found")
+        screenShot.style.visibility = "hidden"
+      })
 
     } catch (error) {
-
-      console.log({ error })
-
-      showToast({//@ts-ignore
-        message: error.message as string,
+      showToast({
+        message: t("somethingWentWrongQRCode"),
         status: "error"
       })
+    } finally {
+      setsharingQRCode(false)
     }
+  }
+
+  const sendQRCode = (data: ShareQRCode) => {
+    if (!dataBlob) throw new Error("dataBlob does not exist")
+
+    shareQRCode({
+      variables: {
+        input: {
+          email: data.email,
+          file: dataBlob
+        }
+      }
+    })
   }
 
   return (
     <HStack flex={1} h={"100%"} justifyContent={"space-around"} space={12}>
+      <CustomModal
+        isOpen={openModal}
+        HeaderComponent={<Heading size={"md"}>{t("shareQRCodeByEmail")}</Heading>}
+        ModalBody={
+          <ControlledForm
+            control={control}
+            formState={formState}
+            Config={{
+              email: {
+                name: "email",
+                label: t("email"),
+                placeholder: "email@email.com"
+              }
+            }}
+          />
+        }
+        ModalFooter={
+          <Button.Group w={"100%"}>
+            <Button
+              flex={1}
+              disabled={!dataBlob || shareLoading}
+              isLoading={shareLoading}
+              onPress={handleSubmit(sendQRCode)}
+            >
+              {t("send")}
+            </Button>
+            <Button
+              isLoading={shareLoading}
+              flex={1} colorScheme={"tertiary"} onPress={() => setOpenModal(false)}>
+              {t("cancel")}
+            </Button>
+          </Button.Group>
+        }
+      />
       <VStack space={12} justifyContent={"space-between"} alignItems={"center"} flex={1}>
         <Heading>
           {t("QRCode")}
@@ -124,10 +197,10 @@ export const QRcodeAndShare = () => {
         </Center>
 
         <Button.Group w={"100%"}>
-          <Button flex={1} colorScheme={"tertiary"} onPress={onQRCodeShare}>
+          <Button flex={1} colorScheme={"tertiary"} onPress={onQRCodeShare} isLoading={sharingQRCode}>
             {t("share")}
           </Button>
-          <Button flex={1} onPress={onPrint}>
+          <Button flex={1} onPress={onPrint} isLoading={sharingQRCode} >
             {t("print")}
           </Button>
         </Button.Group>

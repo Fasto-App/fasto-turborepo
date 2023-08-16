@@ -53,5 +53,10 @@
 	"copied": "Copied",
 	"shareTitle": "Order With Fasto",
 	"shareText": "Access Menus, reservation",
-	"scanToViewMenu": "Scan to view menu"
+	"scanToViewMenu": "Scan to view menu",
+	"send": "Send",
+	"shareQRCodeByEmail": "Share QR Code by Email",
+	"somethingWentWrongQRCode": "Something went wrong while sharing the QR code",
+	"somethingWentWrongSharingLink": "Something went wrong while sharing the link",
+	"qrCodeSent": "QR Code Sent"
 }

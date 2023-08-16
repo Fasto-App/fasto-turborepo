@@ -127,6 +127,9 @@ const SettingsScreen = () => {
           });
 
         } catch (error) {
+          // @ts-ignore
+          if (error.name === "AbortError") return
+
           showToast({
             message: t("shareError"),
             status: "error"
