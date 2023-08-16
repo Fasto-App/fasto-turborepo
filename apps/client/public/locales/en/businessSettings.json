@@ -58,5 +58,6 @@
 	"shareQRCodeByEmail": "Share QR Code by Email",
 	"somethingWentWrongQRCode": "Something went wrong while sharing the QR code",
 	"somethingWentWrongSharingLink": "Something went wrong while sharing the link",
-	"qrCodeSent": "QR Code Sent"
+	"qrCodeSent": "QR Code Sent",
+	"notSupported": "Not supported on your browser"
 }

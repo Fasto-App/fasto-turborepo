@@ -1,5 +1,5 @@
 import { customerRoute } from 'fasto-route'
-import { Button, Center, HStack, Heading, Input, VStack } from 'native-base'
+import { Button, Center, HStack, Heading, Input, Tooltip, VStack } from 'native-base'
 import React, { useState } from 'react'
 import QRCode from 'react-qr-code'
 import { useGetBusinessInformationQuery, useShareQrCodeMutation } from '../../gen/generated'
@@ -222,11 +222,13 @@ export const QRcodeAndShare = () => {
           />
         </Pressable>
         <Button.Group w={"100%"}>
-          <Button
-            isDisabled={!navigator.share}
-            flex={1} colorScheme={"tertiary"} onPress={shareLink}>
-            {t("share")}
-          </Button >
+          <Tooltip placement={"top"} label={t("notSupported")} isDisabled={!!navigator.share} hasArrow >
+            <Button
+              isDisabled={!navigator.share}
+              flex={1} colorScheme={"tertiary"} onPress={shareLink}>
+              {t("share")}
+            </Button >
+          </Tooltip>
           <Button flex={1} onPress={onClipBoardWrite}>
             {t("copy")}
           </Button>

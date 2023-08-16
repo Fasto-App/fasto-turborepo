@@ -32,9 +32,7 @@ export const CustomModal = ({
         {ModalBody}
       </Modal.Body>
       {ModalFooter ? <Modal.Footer borderColor={"gray.50"}>
-        <Button.Group flex={1} justifyContent={"center"} space={4}>
-          {ModalFooter}
-        </Button.Group>
+        {ModalFooter}
       </Modal.Footer> : null}
     </Modal.Content>
   </Modal>

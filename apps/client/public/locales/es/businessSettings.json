@@ -58,5 +58,6 @@
 	"shareQRCodeByEmail": "Compartir  QR Code por Correo Electrónico",
 	"somethingWentWrongQRCode": "Algo salió mal al compartir el QR Code",
 	"somethingWentWrongSharingLink": "Algo salió mal al compartir el enlace",
-	"qrCodeSent": "QR Code Enviado"
+	"qrCodeSent": "QR Code Enviado",
+	"notSupported": "No es compatible con su navegador"
 }
