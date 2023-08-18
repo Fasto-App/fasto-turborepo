@@ -42,7 +42,7 @@ const getAllBusinessByUser = async (_parent: any, _args: any, { db, user }: Cont
 }
 
 const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection }) => {
-  return await BusinessModel(db).find({ picture: { $ne: null } })
+  return await BusinessModel(db).find({ picture: { $ne: null }, address: { $ne: null } }).sort({ description: -1 })
 }
 
 // @ts-ignore
