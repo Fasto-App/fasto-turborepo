@@ -127,28 +127,52 @@ async function main() {
     }));
   }
 
+  app.post('/webhook/br', express.raw({ type: 'application/json' }), async (request, response) => {
+    const sig = request.headers['stripe-signature'];
+    let event;
+
+    try {
+      if (!sig || !process.env.STRIPE_WEBHOOK_SECRET_BRAZIL) {
+        throw "No Stripe signature"
+      }
+
+      event = stripe("BR").webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET_BRAZIL)
+    } catch (err) {
+      // @ts-ignore
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.created':
+        const paymentCreated = event.data.object
+        break
+      case 'payment_intent.succeeded':
+        const paymentIntentSucceeded = event.data.object;
+        // @ts-ignore
+        confirmPaymentWebHook(paymentIntentSucceeded.metadata, db)
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  })
+
 
   app.post('/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
     const sig = request.headers['stripe-signature'];
     let event;
 
     try {
-      if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) throw "No Stripe signature"
-
-
-      // what country is the business coming from?
-      const metadata = request.body.data.object.metadata as Metada;
-      const foundBusiness = await BusinessModel(db).findById(metadata.business_id)
-      if (!foundBusiness || !foundBusiness.address) {
-        throw new Error("Business not found")
+      if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
+        throw "No Stripe signature"
       }
 
-      const foundAddress = await AddressModel(db).findById(foundBusiness.address)
-      if (!foundAddress || !foundAddress.country) {
-        throw new Error("Address not found")
-      }
-
-      event = stripe(foundAddress.country).webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+      event = stripe("US").webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
     } catch (err) {
       // @ts-ignore
       response.status(400).send(`Webhook Error: ${err.message}`);
