@@ -167,7 +167,6 @@ export type ConfirmPaymentInput = {
 
 export type ConnectExpressInput = {
   business_type: BusinessType;
-  country: IsoCountry;
 };
 
 export type CreateBusinessPayload = {
@@ -883,7 +882,7 @@ export type QueryGetAllOrderDetailsByOrderIdArgs = {
 
 
 export type QueryGetBusinessByIdArgs = {
-  input?: InputMaybe<GetById>;
+  input: GetById;
 };
 
 
@@ -1743,7 +1742,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getAllProductsByBusinessID?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType>;
   getAllTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
-  getBusinessById?: Resolver<ResolversTypes['Business'], ParentType, ContextType, Partial<QueryGetBusinessByIdArgs>>;
+  getBusinessById?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<QueryGetBusinessByIdArgs, 'input'>>;
   getBusinessInformation?: Resolver<ResolversTypes['Business'], ParentType, ContextType>;
   getBusinessLocation?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
   getCartItemsPerTab?: Resolver<Array<ResolversTypes['CartItem']>, ParentType, ContextType>;

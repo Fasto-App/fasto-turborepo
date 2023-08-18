@@ -882,7 +882,7 @@ export type QueryGetAllOrderDetailsByOrderIdArgs = {
 
 
 export type QueryGetBusinessByIdArgs = {
-  input?: InputMaybe<GetById>;
+  input: GetById;
 };
 
 
@@ -1232,11 +1232,11 @@ export type GetAllEmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetAllEmployeesQuery = { __typename?: 'Query', getAllEmployees: { __typename?: 'Employees', employees: Array<{ __typename?: 'Employee', jobTitle: string, isPending: boolean, name: string, email: string, picture?: string | null, privilege: UserPrivileges, _id: string }>, employeesPending: Array<{ __typename?: 'Employee', jobTitle: string, isPending: boolean, email: string, name: string, picture?: string | null, privilege: UserPrivileges, _id: string }> } };
 
 export type GetBusinessByIdQueryVariables = Exact<{
-  input?: InputMaybe<GetById>;
+  input: GetById;
 }>;
 
 
-export type GetBusinessByIdQuery = { __typename?: 'Query', getBusinessById: { __typename?: 'Business', name: string, picture?: string | null } };
+export type GetBusinessByIdQuery = { __typename?: 'Query', getBusinessById: { __typename?: 'Business', name: string, picture?: string | null, address?: { __typename?: 'Address', _id: string, country: string } | null } };
 
 export type GetBusinessInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1968,10 +1968,14 @@ export type GetAllEmployeesQueryHookResult = ReturnType<typeof useGetAllEmployee
 export type GetAllEmployeesLazyQueryHookResult = ReturnType<typeof useGetAllEmployeesLazyQuery>;
 export type GetAllEmployeesQueryResult = Apollo.QueryResult<GetAllEmployeesQuery, GetAllEmployeesQueryVariables>;
 export const GetBusinessByIdDocument = gql`
-    query GetBusinessById($input: GetById) {
+    query GetBusinessById($input: GetById!) {
   getBusinessById(input: $input) {
     name
     picture
+    address {
+      _id
+      country
+    }
   }
 }
     `;
@@ -1992,7 +1996,7 @@ export const GetBusinessByIdDocument = gql`
  *   },
  * });
  */
-export function useGetBusinessByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>) {
+export function useGetBusinessByIdQuery(baseOptions: Apollo.QueryHookOptions<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetBusinessByIdQuery, GetBusinessByIdQueryVariables>(GetBusinessByIdDocument, options);
       }

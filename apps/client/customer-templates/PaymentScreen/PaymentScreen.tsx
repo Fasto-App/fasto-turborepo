@@ -88,11 +88,13 @@ const CheckoutForm = () => {
   )
 }
 
-const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY || "");
+const stripePromiseBR = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY_BRAZIL || "");
+const stripePromiseUS = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY || "");
+const stripePromise = (country: string) => country === "US" ? stripePromiseUS : stripePromiseBR;
 
 export const StripeWrapper: React.FC = ({ children }) => {
   const router = useRouter()
-  const { clientSecret, businessId, checkoutId } = router.query
+  const { clientSecret, businessId, checkoutId, country } = router.query
 
   useEffect(() => {
     if (!clientSecret) {
@@ -100,19 +102,17 @@ export const StripeWrapper: React.FC = ({ children }) => {
     }
   }, [businessId, checkoutId, clientSecret, router])
 
-  if (!clientSecret) {
-    return null
+  if (!clientSecret || !country) {
+    return <Text textAlign={"center"} fontSize={"lg"}>
+      No Client Secret, nor Country
+    </Text>
   }
 
   return (
     <Elements
-      stripe={stripePromise}
-      options={{
-        clientSecret: typeof clientSecret === "string" ?
-          clientSecret : clientSecret[0]
-      }}>
+      stripe={stripePromise(typeof country === "string" ? country : country[0])}
+      options={{ clientSecret: typeof clientSecret === "string" ? clientSecret : clientSecret[0] }}>
       {children}
     </Elements>
   )
 }
-

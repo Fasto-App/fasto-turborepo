@@ -19,7 +19,7 @@ import { uploadFileS3Bucket } from '../../../s3/s3';
 import { ApolloError } from '../../ApolloErrorExtended/ApolloErrorExtended';
 import { SessionModel } from '../../../models/session';
 import { sendEployeeAccountCreation, sendExistingUserEployeeEmail, sendQRCodeAttachment } from '../../../email-tool';
-import { MutationResolvers } from '../../../generated/graphql';
+import { MutationResolvers, QueryResolvers } from '../../../generated/graphql';
 import { Stream } from "stream"
 
 
@@ -45,9 +45,15 @@ const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection
   return await BusinessModel(db).find({ picture: { $ne: null } })
 }
 
-const getBusinessById = async (_parent: any, { input }: { input: { _id: string } }, { db }: { db: Connection }) => {
-  const Business = BusinessModel(db)
-  return await Business.findById(input._id)
+// @ts-ignore
+const getBusinessById: QueryResolvers["getBusinessById"] = async (_parent, { input }, { db }) => {
+  const foundBusiness = BusinessModel(db).findById(input._id)
+  if (!foundBusiness) throw ApolloError("NotFound", 'Business not found')
+
+  const foundAddress = await AddressModel(db).findById(foundBusiness.address)
+  if (foundAddress) foundBusiness.address = foundAddress
+
+  return foundBusiness
 }
 
 const getBusinessInformation = async (

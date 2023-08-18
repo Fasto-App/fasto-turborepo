@@ -1,6 +1,10 @@
-query GetBusinessById($input: GetById) {
+query GetBusinessById($input: GetById!) {
 	getBusinessById(input: $input) {
 		name
 		picture
+		address {
+			_id
+			country
+		}
 	}
 }

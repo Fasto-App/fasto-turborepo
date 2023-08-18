@@ -11,9 +11,11 @@ import { FDSSelect } from '../../components/FDSSelect'
 import { shallow } from 'zustand/shallow'
 import { Icon } from '../../components/atoms/NavigationButton'
 import { customerRoute } from 'fasto-route'
-import { useGetClientSession } from '../../hooks'
+import { useGetBusinessInformation, useGetClientSession } from '../../hooks'
 
 export const CheckoutScreen = () => {
+  const { data: businessData, loading: businessLoading } = useGetBusinessInformation()
+
   const router = useRouter()
   const { checkoutId, businessId } = router.query
 
@@ -29,7 +31,8 @@ export const CheckoutScreen = () => {
           paymentIntent,
           checkoutId: checkoutId as string,
           paymentId: clientOptions?.variables?.input.payment,
-          amount
+          amount,
+          country: businessData?.getBusinessById.address?.country
         }
       })
 

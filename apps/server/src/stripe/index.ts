@@ -132,7 +132,7 @@ export const createPaymentIntent = async ({
       currency: country === "US" ? "USD" : "BRL",
       description,
       automatic_payment_methods: { enabled: true },
-      application_fee_amount: Math.trunc(amount * 0.05) + 30,
+      application_fee_amount: Math.trunc(amount * 0.05) + country === "US" ? 30 : (5 * 30),
       transfer_data: {
         destination: stripeAccount,
       },

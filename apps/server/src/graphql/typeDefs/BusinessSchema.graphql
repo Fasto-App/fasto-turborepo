@@ -4,7 +4,7 @@ extend type Query {
 	getAllBusiness: [Business]!
 	getBusinessLocation: Address
 	getAllEmployees: Employees!
-	getBusinessById(input: GetById): Business!
+	getBusinessById(input: GetById!): Business!
 }
 
 extend type Mutation {
