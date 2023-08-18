@@ -28,18 +28,10 @@ const PaymentConfig: RegularInputConfig = {
     array: typedKeys(BusinessType).map((key) => ({ name: key, _id: BusinessType[key] })),
     defaultValue: "individual",
   },
-  country: {
-    name: "country",
-    label: "Country",
-    inputType: "Select",
-    array: typedKeys(IsoCountry).map((key) => ({ name: IsoCountry[key], _id: IsoCountry[key] })),
-    defaultValue: "US",
-  },
 }
 
 export const connectPaymentSchema = z.object({
-  accounttype: z.nativeEnum(BusinessType),
-  country: z.nativeEnum(IsoCountry),
+  accounttype: z.nativeEnum(BusinessType)
 })
 
 type ConnectPaymentSchema = z.infer<typeof connectPaymentSchema>
@@ -65,7 +57,6 @@ const ConnectPaymentForm = () => {
       variables: {
         input: {
           business_type: data.accounttype,
-          country: data.country,
         }
       }
     })

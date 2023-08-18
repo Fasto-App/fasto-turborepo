@@ -112,17 +112,16 @@ export const QRcodeAndShare = () => {
 
       screenShot.style.visibility = "visible"
 
-      html2canvas(screenShot).then(canvas => {
-        canvas.toBlob((blob) => {
-          if (!blob) throw new Error("Blob not found")
+      const canvas = await html2canvas(screenShot)
+      canvas.toBlob((blob) => {
+        if (!blob) throw new Error("Blob not found")
 
-          setDataBlob(blob)
-          setOpenModal(true)
-        }, "image/jpeg")
+        setDataBlob(blob)
+        setOpenModal(true)
+      }, "image/jpeg")
 
-        if (!screenShot) throw new Error("QR Code not Found")
-        screenShot.style.visibility = "hidden"
-      })
+      if (!screenShot) throw new Error("QR Code not Found")
+      screenShot.style.visibility = "hidden"
 
     } catch (error) {
       showToast({

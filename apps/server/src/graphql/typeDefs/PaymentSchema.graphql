@@ -29,7 +29,6 @@ input generatePaymentIntentInput {
 }
 
 input ConnectExpressInput {
-	country: ISOCountry!
 	business_type: BusinessType!
 }
 

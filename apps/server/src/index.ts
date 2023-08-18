@@ -17,7 +17,8 @@ import { ApolloError } from "./graphql/ApolloErrorExtended/ApolloErrorExtended";
 import { dbConnection } from "./dbConnection";
 import { Context } from "./graphql/resolvers/types";
 import { Locale, locales } from "app-helpers";
-import { confirmPaymentWebHook, stripe } from "./stripe";
+import { Metada, confirmPaymentWebHook, stripe } from "./stripe";
+import { AddressModel, BusinessModel } from "./models";
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
@@ -129,13 +130,25 @@ async function main() {
 
   app.post('/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
     const sig = request.headers['stripe-signature'];
-
-    if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) throw "No Stripe signature"
-
     let event;
 
     try {
-      event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+      if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) throw "No Stripe signature"
+
+
+      // what country is the business coming from?
+      const metadata = request.body.data.object.metadata as Metada;
+      const foundBusiness = await BusinessModel(db).findById(metadata.business_id)
+      if (!foundBusiness || !foundBusiness.address) {
+        throw new Error("Business not found")
+      }
+
+      const foundAddress = await AddressModel(db).findById(foundBusiness.address)
+      if (!foundAddress || !foundAddress.country) {
+        throw new Error("Address not found")
+      }
+
+      event = stripe(foundAddress.country).webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
       // @ts-ignore
       response.status(400).send(`Webhook Error: ${err.message}`);

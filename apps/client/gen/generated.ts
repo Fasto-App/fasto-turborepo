@@ -167,7 +167,6 @@ export type ConfirmPaymentInput = {
 
 export type ConnectExpressInput = {
   business_type: BusinessType;
-  country: IsoCountry;
 };
 
 export type CreateBusinessPayload = {

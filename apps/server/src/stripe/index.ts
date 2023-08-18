@@ -8,17 +8,23 @@ import { PaymentModel } from '../models/payment';
 import { CheckoutModel } from '../models/checkout';
 import { RequestModel, TabModel, TableModel } from '../models';
 
-if (!process.env.STRIPE_SECRET_KEY) {
+if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
   throw new Error('Missing Stripe secret key env var');
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2022-11-15',
+const apiVersion = '2022-11-15'
+
+export const stripeUSA = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion
 });
 
-// the function may come from here
-// accept the arguments and trigger the stripe api
-// Path: apps/server/src/stripe/create-checkout-session.ts
+const stripeBrazil = new Stripe(process.env.STRIPE_SECRET_KEY_BRAZIL, {
+  apiVersion
+})
+
+export const stripe = (country: "US" | "BR") => {
+  return country === "US" ? stripeUSA : stripeBrazil;
+};
 
 type AccountParams = {
   businessId: string;
@@ -39,16 +45,13 @@ export const stripeAuthorize = async (accountsParams: AccountParams) => {
     appRoute.customerRoute["/customer/[businessId]"].
       replace("[businessId]", accountsParams.businessId) || undefined
 
-  console.log("stripeAuthorize", accountsParams)
-  console.log({ URL })
-
   try {
     let accountId: null | string = null;
     // Define the parameters to create a new Stripe account with
     let accountParams: Stripe.AccountCreateParams = {
       type: 'express',
-      country: accountsParams.country || undefined,
-      email: accountsParams.email || undefined,
+      country: accountsParams.country,
+      email: accountsParams.email,
       business_type: accountsParams.business_type,
       capabilities: {
         card_payments: { requested: true },
@@ -75,22 +78,19 @@ export const stripeAuthorize = async (accountsParams: AccountParams) => {
       });
     }
 
-    const account = await stripe.accounts.create(accountParams);
+    const account = await stripe(accountsParams.country).accounts.create(accountParams);
     accountId = account.id;
 
     return accountId;
   } catch (err) {
-    console.log("stripeAuthorize", err)
     throw ApolloError('BadRequest', `Error creating Express Account: ${err}`);
   }
 }
 
-export const stripeOnboard = async (accountId: string, locale: Locale) => {
-
-  console.log("stripeOnboard", accountId)
+export const stripeOnboard = async (accountId: string, locale: Locale, country: "US" | "BR") => {
 
   try {
-    const accountLink = await stripe.accountLinks.create({
+    const accountLink = await stripe(country).accountLinks.create({
       account: accountId,
       refresh_url: process.env.FRONTEND_URL + `/${locale}` + businessRoute.payments,
       return_url: process.env.FRONTEND_URL + `/${locale}` + businessRoute.payments,
@@ -108,30 +108,28 @@ export const stripeOnboard = async (accountId: string, locale: Locale) => {
 
 type CreatePaymentIntentProps = {
   amount: number;
-  currency: string;
   stripeAccount: string;
-  locale: Locale;
   businessId: string;
   checkoutId: string;
   paymentId: string;
   description: string;
+  country: "US" | "BR";
 }
 
 export const createPaymentIntent = async ({
   amount,
-  currency,
   stripeAccount,
-  locale,
   businessId,
   checkoutId,
   paymentId,
-  description
+  description,
+  country,
 }: CreatePaymentIntentProps) => {
 
   try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,
-      currency: "USD",
+    const paymentIntent = await stripe(country).paymentIntents.create({
+      amount,
+      currency: country === "US" ? "USD" : "BRL",
       description,
       automatic_payment_methods: { enabled: true },
       application_fee_amount: Math.trunc(amount * 0.05) + 30,
@@ -147,7 +145,7 @@ export const createPaymentIntent = async ({
         "business_id": `${businessId}`,
         "checkout_id": `${checkoutId}`,
         "payment_id": `${paymentId}`,
-      }
+      } as Metada
     });
 
     return paymentIntent;
@@ -157,7 +155,7 @@ export const createPaymentIntent = async ({
   }
 }
 
-type Metada = {
+export type Metada = {
   test: string;
   business_id: string;
   checkout_id: string;
@@ -165,7 +163,7 @@ type Metada = {
 }
 
 export const confirmPaymentWebHook = async (metadata: Metada, db: any) => {
-  const { business_id, test, checkout_id, payment_id } = metadata
+  const { payment_id } = metadata
 
   const foundPayment = await PaymentModel(db).findById(payment_id)
   if (!foundPayment) throw Error("Payment not found.")

@@ -1,5 +1,5 @@
 import { MutationResolvers } from "../../../generated/graphql";
-import { BusinessModel, RequestModel, TabModel, TableModel, UserModel } from "../../../models";
+import { AddressModel, BusinessModel, RequestModel, TabModel, TableModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { createPaymentIntent, stripe, stripeAuthorize, stripeOnboard } from "../../../stripe";
@@ -14,6 +14,15 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
 
   if (!foundBusiness || !foundBusiness.stripeAccountId) {
     throw ApolloError('BadRequest', "Business is not Configured to accept payments.")
+  }
+
+  // from the business, get the address
+  const foundAddress = await AddressModel(db).findOne({ _id: foundBusiness.address })
+
+  // if no country, throw an error asking to set the address first
+  // TODO: Delete all the addresses and make country standard
+  if (!foundAddress?.country) {
+    throw ApolloError('BadRequest', "Please set the address first.")
   }
 
   const foundPayment = await PaymentModel(db).findOne({ _id: input.payment })
@@ -31,14 +40,13 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
 
   try {
     const paymentIntent = await createPaymentIntent({
-      currency: "USD", // TODO: Handle multiple currencies, for now we just use Dollars
       amount: foundPayment.amount,
-      locale: locale,
       businessId: foundBusiness._id,
       checkoutId: foundCheckout._id,
       paymentId: foundPayment._id,
       stripeAccount: foundBusiness.stripeAccountId,
-      description
+      description,
+      country: foundAddress?.country,
     })
 
     return ({
@@ -57,11 +65,23 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
   { db, user, locale }) => {
   const Business = BusinessModel(db);
   const User = UserModel(db);
+  const Address = AddressModel(db);
 
-  const foundBusiness = await Business.findOne({ _id: user?.business });
+  const foundBusiness = await Business.findOne({ _id: user?.business }).populate("address");
   const foundUser = await User.findOne({ _id: user?._id })
 
-  if (!foundBusiness || !foundUser) throw ApolloError('Unauthorized', "Not Authorized. Please login again.")
+  if (!foundBusiness || !foundUser) {
+    throw ApolloError('Unauthorized', "Not Authorized. Please login again.")
+  }
+
+  // from the business, get the address
+  const foundAddress = await Address.findOne({ _id: foundBusiness.address })
+
+  // if no country, throw an error asking to set the address first
+  // TODO: Delete all the addresses and make country standard
+  if (!foundAddress?.country) {
+    throw ApolloError('BadRequest', "Please set the address first.")
+  }
 
   let accountId = foundBusiness.stripeAccountId;
 
@@ -71,7 +91,7 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
       firstName: foundUser.name as string,
       email: foundBusiness.email,
       businessName: foundBusiness.name,
-      country: input.country,
+      country: foundAddress?.country,
       business_type: input.business_type,
       businessId: foundBusiness._id,
       locale
@@ -81,20 +101,26 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
     await foundBusiness.save();
   }
 
-  const accountLink = await stripeOnboard(accountId, locale);
+  const accountLink = await stripeOnboard(accountId, locale, foundAddress?.country);
 
   return accountLink.url
 }
 
 const generateStripePayout: MutationResolvers["generateStripePayout"] = async (parent, _,
   { db, user }) => {
+  const Address = AddressModel(db);
 
   const foundBusiness = await BusinessModel(db).findOne({ _id: user?.business });
 
   if (!foundBusiness?.stripeAccountId) throw ApolloError('BadRequest', "Stripe Account not found")
 
+  const foundAddress = await Address.findOne({ _id: foundBusiness.address })
+
+  if (!foundAddress?.country) {
+    throw ApolloError('BadRequest', "Please set the address first.")
+  }
   // Fetch the account balance to determine the available funds
-  const balance = await stripe.balance.retrieve({
+  const balance = await stripe(foundAddress?.country).balance.retrieve({
     stripeAccount: foundBusiness?.stripeAccountId,
   });
 
@@ -106,7 +132,7 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
     throw ApolloError('BadRequest', "Not enough funds to payout.")
   }
 
-  const payout = await stripe.payouts.create({
+  await stripe(foundAddress?.country).payouts.create({
     amount: amount,
     currency: currency,
     statement_descriptor: "Fasto App",
