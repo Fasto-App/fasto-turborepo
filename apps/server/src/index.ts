@@ -186,10 +186,14 @@ async function main() {
         break
       case 'payment_intent.succeeded':
         const paymentIntentSucceeded = event.data.object;
-        // @ts-ignore
-        confirmPaymentWebHook(paymentIntentSucceeded.metadata, db)
+        try {
+          // @ts-ignore
+          confirmPaymentWebHook(paymentIntentSucceeded.metadata, db)
+        } catch {
+          // @ts-ignore
+          response.status(400).send(`Webhook Error: ${err.message}`);
+        }
         break;
-      // ... handle other event types
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
