@@ -9,8 +9,10 @@ import {
   Tooltip,
   Filler,
   Legend,
+  ChartData,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { Box, Heading, Stack, Button } from 'native-base';
 
 ChartJS.register(
   CategoryScale,
@@ -30,27 +32,63 @@ export const options = {
       position: 'top' as const,
     },
     title: {
-      display: true,
-      text: 'Chart.js Line Chart',
+      display: false,
+      text: 'CashFlow',
     },
   },
+  elements: {
+    line: {
+      tension: 0.4,
+      animations: true
+    }
+  }
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'March', 'April', 'May', 'June', 'July', 'March', 'April', 'May', 'June', 'July'];
 
-export const data = {
+export const data: ChartData<'line'> = {
   labels,
   datasets: [
     {
-      fill: true,
-      label: 'Dataset 2',
+      // fill: true,
+      // label: 'Rendimento Bruto',
       data: labels.map(() => Math.round(Math.random() * 100)),
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      borderColor: 'rgb(31, 178, 80)',
+      backgroundColor: 'rgba(53, 235, 117, 0.5)',
+      pointRadius: 5,
     },
   ],
 };
 
 export function AreaChart() {
-  return <Line options={options} data={data} />;
+
+  return (
+    <Box flex={1}
+      borderWidth={1}
+      borderColor={"gray.200"}
+      shadow={"2"}
+      borderRadius={"md"}
+      bgColor={"white"}
+      justifyContent={"center"}>
+
+      <Stack p={4} pt={8} mb="2.5" mt="1.5" direction={{
+        base: "column",
+        md: "row"
+      }} space={2} mx={{
+        base: "auto",
+        md: "0"
+      }}>
+        <Button size="sm" variant="ghost">
+          PRIMARY
+        </Button>
+        <Button size="sm" variant="ghost">
+          SECONDARY
+        </Button>
+        <Button size="sm" variant="ghost" isDisabled>
+          DISABLED
+        </Button>
+      </Stack>
+      <Line options={options} data={data} />
+    </Box>
+  )
 }
