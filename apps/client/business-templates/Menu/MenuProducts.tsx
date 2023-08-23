@@ -266,25 +266,14 @@ function MenuProducts() {
 
       <Box flex={1} p={"4"}>
         {isEditingMenu ?
-          <>
-            {/* TODO: SELECT ALL */}
-            {false ?? <Checkbox
-              value="Select All"
-              my="1"
-              isChecked={false}
-              alignSelf={"flex-end"}>
-              Select All
-            </Checkbox>}
-            <FlatList
-              key={numColumns}
-              data={productsFiltereByCategory}
-              numColumns={numColumns}
-              renderItem={renderProductTile}
-              keyExtractor={(item) => `${item?._id}`}
-              ItemSeparatorComponent={() => <Box height={"4"} />}
-            />
-            { }
-          </>
+          <FlatList
+            key={numColumns}
+            data={productsFiltereByCategory}
+            numColumns={numColumns}
+            renderItem={renderProductTile}
+            keyExtractor={(item) => `${item?._id}`}
+            ItemSeparatorComponent={() => <Box height={"4"} />}
+          />
           :
           <FlatList
             key={numColumns}

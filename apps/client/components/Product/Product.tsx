@@ -51,9 +51,11 @@ const ProductCard = ({ name, price, imageUrl, description, onPress }: ProductCar
 	return (
 		<Box
 			w={"72"}
+			maxH={"80"}
 			rounded="lg"
 			overflow="hidden"
-			borderColor="coolGray.200"
+			borderWidth={0.5}
+			borderColor="coolGray.300"
 			backgroundColor="white"
 			shadow="4"
 			mr={"4"}

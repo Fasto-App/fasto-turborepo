@@ -81,8 +81,6 @@ export const Checkout = () => {
         setTotal(subTotal)
       }
 
-      console.log("status", status)
-      console.log("paid", paid)
       if (status === "Paid" && paid) {
         console.log("success")
         setSelectedOption("success")
@@ -158,13 +156,11 @@ export const Checkout = () => {
           <VStack flex={1} p={2} space={4}>
             <UpperSection>
               <Heading>
-                {t("table", { number: checkoutId as string })}
+                {t("checkout")}
               </Heading>
               <HStack space={"4"}>
                 {checkoutOptions.filter((option) => option !== "success").map((option) => (
-
                   <TileButton
-
                     isDisabled={!!data?.getCheckoutByID?.splitType ||
                       option === "splitBill" && !!tabData?.getTabByID?.users?.length &&
                       tabData?.getTabByID?.users?.length < 2}
@@ -218,10 +214,10 @@ export const Checkout = () => {
                     <Text fontSize={"2xl"} textAlign={"center"} pb={4} bold>
                       {t("splitBill")}
                     </Text>
-                    {payments?.map((payment) => (
+                    {payments?.map((payment, i) => (
                       <PaymentTile
                         key={payment?._id}
-                        customer={payment?._id ?? "Customer"}
+                        customer={`${t("customer")} ${++i}`}
                         subtotal={parseToCurrency(payment?.amount)}
                         tip={parseToCurrency(payment?.tip)}
                         loading={loading}

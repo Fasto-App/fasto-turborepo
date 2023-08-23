@@ -39,8 +39,7 @@ export function PieChart() {
     borderRadius={"md"}
     bgColor={"white"}
   >
-    <Pie data={data} />;
-
+    <Pie data={data} />
     <Center
       w={"full"}
       borderWidth={0.5}

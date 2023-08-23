@@ -3,7 +3,7 @@ import {
 	Box, Heading, Link, Text, FlatList, HStack
 } from 'native-base';
 import { ProductCard, ProductTile } from '../../components/Product/Product';
-import { AddMoreButton } from '../../components/atoms/AddMoreButton';
+import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { ProductModal } from './ProductModal';
 import { useNumOfColumns } from '../../hooks';
 import { useAppStore } from '../UseAppStore';
@@ -11,9 +11,10 @@ import { useCategoryMutationHook } from '../../graphQL/CategoryQL';
 import { useProductFormHook } from './useProductFormHook';
 import { GetAllProductsByBusinessIdQuery } from '../../gen/generated';
 import { useTranslation } from 'next-i18next';
+import { MoreButton } from '../../components/MoreButton';
+import { PlusButton } from '../Tables/SquareTable';
 
 type Products = GetAllProductsByBusinessIdQuery["getAllProductsByBusinessID"];
-
 
 const ProductList = (
 	{ products,
@@ -65,23 +66,7 @@ const ProductList = (
 		setShowProductModal(true)
 	}, [category, setProductValue])
 
-	const renderProductCard = useCallback((item: Products[number], index: number) => {
-		if (index === 0) return <AddMoreButton key={"AddMoreButton"} onPress={addProduct} />
-		if (!item) return null
-
-		return <ProductCard
-			name={item.name}
-			description={item.description ?? ""}
-			price={item.price}
-			imageUrl={item.imageUrl ?? ""}
-			onPress={() => setProductValues(item)}
-			key={item._id}
-			ctaTitle={t("editItem")}
-		/>
-	}, [addProduct, setProductValues, t])
-
 	const renderProductTile = useCallback(({ item, index }: { item: Products[number], index: number }) => {
-		if (index === 0) return <AddMoreButton horizontal onPress={addProduct} />
 		if (!item) return null
 
 		return <ProductTile
@@ -91,48 +76,7 @@ const ProductList = (
 			description={item.description}
 			ctaTitle={t("editItem")}
 		/>
-	}, [addProduct, setProductValues, t])
-
-	const EmptyState = useMemo(() => {
-		return (
-			<Box>
-				<Text fontSize={"xl"}>{t("emptyListText")}</Text>
-				<AddMoreButton
-					empty
-					onPress={() => setShowProductModal(true)}
-				/>
-			</Box>
-		)
-	}, [])
-
-
-	const productsWithButton = useMemo(() => [{ name: "Button" } as Products[number], ...products], [products])
-
-	const renderListTile = useCallback(() => {
-		return (
-			<>
-				{showTilesList ?
-					<FlatList
-						key={numColumns}
-						data={productsWithButton}
-						numColumns={numColumns}
-						renderItem={renderProductTile}
-						keyExtractor={(item) => `${item?._id}_product`}
-						ListEmptyComponent={EmptyState}
-						ItemSeparatorComponent={() => <Box height={"4"} />}
-					/>
-					:
-					null}
-			</>
-		)
-	}, [EmptyState, numColumns, productsWithButton, renderProductTile, showTilesList])
-
-	const renderListCard = useCallback(() => {
-		if (showTilesList) return null
-
-		return productsWithButton.map(renderProductCard)
-	}, [productsWithButton, renderProductCard, showTilesList])
-
+	}, [setProductValues, t])
 
 	return (<>
 		<ProductModal
@@ -155,33 +99,59 @@ const ProductList = (
 			borderColor={"trueGray.400"}
 			backgroundColor={"white"}
 			flexDirection={"column"}
-			overflow={"scroll"}
 		>
+			<HStack justifyContent={"space-between"}>
+				<HStack space={2}>
+					<Heading flex={1}>
+						{selectedCategory?.name ?? t("all")}
+					</Heading>
+					{products?.length ? <MoreButton onPress={addProduct} /> : null}
+				</HStack>
 
-			<Box flexDirection={"column"}>
-				<Heading flex={1}>
-					{selectedCategory?.name ?? t("all")}
-				</Heading>
 				{products?.length ?
 					<Link isUnderlined={false} alignSelf={"self-end"} p={4}
-						_text={{
-							color: "blue.400"
-						}} onPress={() => setShowTileList(!showTilesList)}>
+						onPress={() => setShowTileList(!showTilesList)}
+						_text={{ color: "blue.400" }}
+					>
 						{showTilesList ? t("showCards") : t("showList")}
 					</Link> :
 					null}
-			</Box>
-
-
+			</HStack>
 			<HStack
-				flexDir={"row"}
-				flexWrap={"wrap"}
-				overflow={"scroll"}
+				flex={1}
 				space={4}
-				minHeight={"0"}
+				flexWrap={"wrap"}
+				overflowY={"scroll"}
 			>
-				{renderListTile()}
-				{renderListCard()}
+				{!products.length ?
+					<Box pt={4}>
+						<PlusButton
+							onPress={() => setShowProductModal(true)}
+						/>
+					</Box> : null}
+				{showTilesList ?
+					<FlatList
+						key={numColumns}
+						data={products}
+						numColumns={numColumns}
+						renderItem={renderProductTile}
+						keyExtractor={(item) => `${item?._id}_product`}
+						ItemSeparatorComponent={() => <Box height={"4"} />}
+						overflowX={"hidden"}
+					/>
+					:
+					products.map(item => (
+						!item ? null :
+							<ProductCard
+								name={item.name}
+								description={item.description ?? ""}
+								price={item.price}
+								imageUrl={item.imageUrl ?? ""}
+								onPress={() => setProductValues(item)}
+								key={item._id}
+								ctaTitle={t("editItem")}
+							/>
+					))}
 			</HStack>
 		</Box>
 	</>

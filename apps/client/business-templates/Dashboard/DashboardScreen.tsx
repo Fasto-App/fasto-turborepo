@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, HStack, Heading, ScrollView, VStack } from "native-base"
+import { Box, HStack, Heading, ScrollView, Text, VStack } from "native-base"
 import { AreaChart } from "./Ghaphs/AreaChart"
 import { PieChart } from "./Ghaphs/PieChart"
 import { VerticalBar } from "./Ghaphs/VerticalBar"
@@ -7,13 +7,13 @@ import { OrangeBox } from "../../components/OrangeBox"
 
 export const DashboardScreen = () => {
   return (
-    <Box flex={1}>
-      <OrangeBox height={150} />
-      <VStack space={4} p={8} flex={1}>
+    <Box flex={1} shadow={"2"} backgroundColor={"tertiary.100"}>
+      <OrangeBox />
+      <VStack space={4} p={4} flex={1}>
         <Panel />
         <HStack space={3} flex={1}>
           <ScrollView pr={2} pb={2} borderRadius={"md"}>
-            <VStack space={3} flex={1}>
+            <VStack space={8} flex={1}>
               <AreaChart />
               <VerticalBar />
             </VStack>
@@ -34,5 +34,6 @@ const Panel = () => (
   >
     <Heading size="md">Ola, Customer Fasto</Heading>
     <Heading size="xs">(Seja Bem vindo)</Heading>
+    <Text>Test II</Text>
   </VStack>
 )
