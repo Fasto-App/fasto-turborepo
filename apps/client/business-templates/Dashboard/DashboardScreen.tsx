@@ -1,8 +1,8 @@
 import React from "react"
 import { Box, HStack, Heading, ScrollView, Text, VStack } from "native-base"
-import { AreaChart } from "./Ghaphs/AreaChart"
-import { PieChart } from "./Ghaphs/PieChart"
-import { VerticalBar } from "./Ghaphs/VerticalBar"
+import { AreaChart } from "./Graphs/AreaChart"
+import { PieChart } from "./Graphs/PieChart"
+import { VerticalBar } from "./Graphs/VerticalBar"
 import { OrangeBox } from "../../components/OrangeBox"
 
 export const DashboardScreen = () => {
@@ -34,6 +34,6 @@ const Panel = () => (
   >
     <Heading size="md">Ola, Customer Fasto</Heading>
     <Heading size="xs">(Seja Bem vindo)</Heading>
-    <Text>Test II</Text>
+    <Text>Work in Progress</Text>
   </VStack>
 )
