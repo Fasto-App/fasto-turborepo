@@ -125,10 +125,11 @@ export const OrdersScreen = () => {
                 ListHeaderComponent={<Header />}
                 data={data?.getCheckoutsByBusiness}
                 stickyHeaderIndices={[0]}
+                keyExtractor={(checkout) => `${checkout._id}`}
                 renderItem={({ item: checkout }) => (
                   <OrderDetails
                     key={checkout._id}
-                    _id={`#${checkout._id.slice(0, 8)}`}
+                    _id={`#${checkout._id.slice(-6)}`}
                     date={format(Number(checkout.created_date), "PPpp", getLocale(router.locale))}
                     total={parseToCurrency(checkout.total)}
                     status={t(CheckoutStatusKeys[checkout.status])}

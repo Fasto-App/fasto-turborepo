@@ -13,6 +13,7 @@ import { customerRoute } from "fasto-route";
 import { showToast } from "../../components/showToast";
 import { useTranslation } from "next-i18next";
 import NextImage from 'next/image'
+import { useGetClientSession } from "../../hooks";
 
 const AnimatedBox = animated(Box);
 
@@ -29,7 +30,7 @@ export const ProductDescriptionScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const [text, setText] = useState("");
 
-  const tab = getClientCookies(businessId as string)
+  const { data: clientData } = useGetClientSession()
   const { t } = useTranslation("customerProductDescription");
 
   // function to query product by id
@@ -79,7 +80,7 @@ export const ProductDescriptionScreen = () => {
   const onAddToCartPress = useCallback(() => {
     console.log("Pressed");
 
-    if (typeof productId !== "string" || typeof tab !== "string") {
+    if (typeof productId !== "string" || !clientData?.getClientSession.tab) {
       throw new Error("Product id is not defined")
     };
 
@@ -94,7 +95,7 @@ export const ProductDescriptionScreen = () => {
     })
 
 
-  }, [addItemToCart, productId, quantity, tab, text]);
+  }, [addItemToCart, productId, quantity, clientData?.getClientSession.tab, text]);
 
 
   return (
@@ -127,7 +128,7 @@ export const ProductDescriptionScreen = () => {
               quantity={quantity}
               onPlusPress={increaseQuantity}
               onMinusPress={decreaseQuantity}
-              disabled={!tab || addToCartLoading}
+              disabled={!clientData?.getClientSession.tab || addToCartLoading}
             />
           </Box>
           <Divider my={"5"} backgroundColor={"gray.300"} />
@@ -136,7 +137,7 @@ export const ProductDescriptionScreen = () => {
             <Text fontWeight={"semibold"} fontSize={"25"}>{t("extras")}</Text>
             {addons.map((addon, index) => (
               <Addon
-                isDisabled={!tab}
+                isDisabled={!clientData?.getClientSession.tab}
                 key={index}
                 name={addon.name}
                 price={parseToCurrency(addon.price)}
@@ -147,7 +148,7 @@ export const ProductDescriptionScreen = () => {
           </VStack>}
           <TextArea
             h={"32"}
-            isDisabled={!tab}
+            isDisabled={!clientData?.getClientSession.tab}
             borderWidth={1}
             onChangeText={(text) => setText(text)}
             value={text}
@@ -159,16 +160,24 @@ export const ProductDescriptionScreen = () => {
         </ScrollView>
       }
       <Box padding={4}>
-        <Button
-          isDisabled={!tab}
-          isLoading={addToCartLoading}
-          onPress={onAddToCartPress}
-          size={"lg"}
-          colorScheme="primary"
-          _text={{ fontSize: "18", bold: true }}
-        >
-          {t("addToCart")}
-        </Button>
+        {!clientData ?
+          <Button _text={{ fontSize: "18", bold: true }}
+            onPress={() => route.push({
+              pathname: customerRoute["/customer/[businessId]"],
+              query: { businessId: businessId }
+            })}
+          >
+            {t("startOrdering")}
+          </Button>
+          : <Button
+            isDisabled={!clientData?.getClientSession.tab}
+            isLoading={addToCartLoading}
+            onPress={onAddToCartPress}
+            colorScheme="primary"
+            _text={{ fontSize: "18", bold: true }}
+          >
+            {t("addToCart")}
+          </Button>}
       </Box>
     </AnimatedBox>
   );
