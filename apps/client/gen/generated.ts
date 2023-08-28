@@ -191,6 +191,7 @@ export type CreateNewTakeoutOrDeliveryInput = {
   business: Scalars['ID'];
   name: Scalars['String'];
   phoneNumber: Scalars['String'];
+  type: TakeoutDelivery;
 };
 
 export type CreateOrderInput = {
@@ -1047,6 +1048,11 @@ export enum TableStatus {
   Closed = 'Closed',
   Occupied = 'Occupied',
   Reserved = 'Reserved'
+}
+
+export enum TakeoutDelivery {
+  Delivery = 'Delivery',
+  Takeout = 'Takeout'
 }
 
 export type UpdateAddressInput = {

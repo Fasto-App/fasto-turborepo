@@ -191,6 +191,7 @@ export type CreateNewTakeoutOrDeliveryInput = {
   business: Scalars['ID'];
   name: Scalars['String'];
   phoneNumber: Scalars['String'];
+  type: TakeoutDelivery;
 };
 
 export type CreateOrderInput = {
@@ -1049,6 +1050,11 @@ export enum TableStatus {
   Reserved = 'Reserved'
 }
 
+export enum TakeoutDelivery {
+  Delivery = 'Delivery',
+  Takeout = 'Takeout'
+}
+
 export type UpdateAddressInput = {
   _id: Scalars['ID'];
   city: Scalars['String'];
@@ -1340,6 +1346,7 @@ export type ResolversTypes = {
   TabStatus: TabStatus;
   Table: ResolverTypeWrapper<Table>;
   TableStatus: TableStatus;
+  TakeoutDelivery: TakeoutDelivery;
   UpdateAddressInput: UpdateAddressInput;
   UpdateBusinessInfoInput: UpdateBusinessInfoInput;
   UpdateCategoryInput: UpdateCategoryInput;

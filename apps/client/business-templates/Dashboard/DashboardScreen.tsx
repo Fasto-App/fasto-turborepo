@@ -7,7 +7,7 @@ import { OrangeBox } from "../../components/OrangeBox"
 
 export const DashboardScreen = () => {
   return (
-    <Box flex={1} shadow={"2"} backgroundColor={"tertiary.100"}>
+    <Box flex={1} shadow={"2"} backgroundColor={"gray.100"}>
       <OrangeBox />
       <VStack space={4} p={4} flex={1}>
         <Panel />

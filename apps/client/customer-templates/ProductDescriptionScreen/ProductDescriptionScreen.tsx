@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { Addon } from "../../components/atoms/AddonCheckbox";
-import { Box, Button, Image, TextArea, Text, ScrollView, Divider, VStack } from "native-base";
+import { Box, Button, Image, TextArea, Text, ScrollView, Divider, VStack, Heading, Input, FormControl } from "native-base";
 import { useSpring, animated } from "react-spring";
 import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
@@ -14,6 +14,9 @@ import { showToast } from "../../components/showToast";
 import { useTranslation } from "next-i18next";
 import NextImage from 'next/image'
 import { useGetClientSession } from "../../hooks";
+import { CustomModal } from "../../components/CustomModal/CustomModal";
+import { ControlledForm } from "../../components/ControlledForm";
+import { useForm } from "react-hook-form";
 
 const AnimatedBox = animated(Box);
 
@@ -179,7 +182,62 @@ export const ProductDescriptionScreen = () => {
             {t("addToCart")}
           </Button>}
       </Box>
+      <ModalAddress />
     </AnimatedBox>
   );
 };
 
+const ModalAddress = () => {
+  const { t } = useTranslation("customerProductDescription")
+
+  const {
+    control,
+    formState,
+    handleSubmit,
+    reset,
+    setValue
+  } = useForm({
+    // resolver: zodResolver(businessLocationSchema),
+    defaultValues: {
+      streetAddress: "",
+    },
+  })
+
+  return (
+    <CustomModal
+      HeaderComponent={<Heading size={"sm"}>Does this business delivers to your address?</Heading>}
+      isOpen={true}
+      onClose={() => console.log(false)}
+      ModalBody={
+        <>
+          <FormControl>
+            <FormControl.Label>Address</FormControl.Label>
+            <Input placeholder="e.g 555 Main St, New York NY 10021"
+              onChangeText={(text) => console.log(text)} />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Apt, suite, floor (optional)</FormControl.Label>
+            <Input placeholder="e.g. 4S" />
+          </FormControl>
+        </>
+      }
+      ModalFooter={
+        <>
+          <Button flex={1}>
+            save
+          </Button>
+          <Button flex={1} colorScheme={"tertiary"}>
+            cancel
+          </Button>
+        </>
+      }
+    />
+  )
+}
+
+
+// modal here asking for the user address if the are ordering Delivery and do not have the address saved
+{/* <CustomModal
+isOpen={true}
+onClose={() => setIsModalOpen(false)}
+/> */}
