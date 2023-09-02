@@ -1,5 +1,5 @@
 import { RequestStatus, RequestStatusType } from "app-helpers"
-import { RequestModel, TabModel, UserModel } from "../../../models"
+import { AddressModel, RequestModel, TabModel, UserModel } from "../../../models"
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended"
 import { Context } from "../types"
 
@@ -20,11 +20,20 @@ const getClientSession = async (
   // if the request is accepted, but the tab is null
   // we need to send a new token with the tab
   const foundRequest = await Request.findOne({ _id: client.request })
+  const foundUser = await User.findOne({ _id: client._id })
+  const foundTab = await Tab.findOne({ _id: foundRequest?.tab })
+
+  if (foundUser?.address) {
+    const foundAddress = await AddressModel(db).findById(foundUser.address)
+
+    if (!foundAddress) throw ApolloError("NotFound", "Address not found, but not empty");
+    foundUser.address = foundAddress
+  }
 
   return ({
     request: foundRequest,
-    user: await User.findOne({ _id: client._id }),
-    tab: await Tab.findOne({ _id: foundRequest?.tab })
+    user: foundUser,
+    tab: foundTab,
   })
 }
 

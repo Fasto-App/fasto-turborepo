@@ -39,12 +39,18 @@ export type Address = {
 };
 
 export type AddressInput = {
-  city: Scalars['String'];
   complement?: InputMaybe<Scalars['String']>;
-  country: Scalars['String'];
-  postalCode: Scalars['String'];
-  stateOrProvince: Scalars['String'];
   streetAddress: Scalars['String'];
+};
+
+export type AutoCompleteInput = {
+  text: Scalars['String'];
+};
+
+export type AutoCompleteRes = {
+  __typename?: 'AutoCompleteRes';
+  description: Scalars['String'];
+  place_id: Scalars['String'];
 };
 
 export type Balance = {
@@ -408,9 +414,9 @@ export type Mutation = {
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
   confirmPayment: Scalars['Boolean'];
   connectExpressPayment: Scalars['String'];
-  createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
+  createCustomerAddress: Address;
   createEmployeeAccount: User;
   createMenu: Menu;
   createMultipleOrderDetails: Array<OrderDetail>;
@@ -450,7 +456,7 @@ export type Mutation = {
   requestJoinTab?: Maybe<Scalars['String']>;
   requestUserAccountCreation: AccountCreationResponse;
   shareQRCode: Scalars['Boolean'];
-  updateAddress?: Maybe<Address>;
+  updateAddress: Address;
   updateBusinessInformation: Business;
   updateBusinessLocation?: Maybe<Business>;
   updateBusinessToken?: Maybe<Scalars['String']>;
@@ -497,11 +503,6 @@ export type MutationConnectExpressPaymentArgs = {
 };
 
 
-export type MutationCreateAddressArgs = {
-  input: AddressInput;
-};
-
-
 export type MutationCreateBusinessArgs = {
   input: BusinessInput;
 };
@@ -509,6 +510,11 @@ export type MutationCreateBusinessArgs = {
 
 export type MutationCreateCategoryArgs = {
   input?: InputMaybe<CategoryInput>;
+};
+
+
+export type MutationCreateCustomerAddressArgs = {
+  input: AddressInput;
 };
 
 
@@ -854,6 +860,7 @@ export type Query = {
   getClientInformation: User;
   getClientMenu?: Maybe<Menu>;
   getClientSession: ClientSession;
+  getGoogleAutoComplete: Array<AutoCompleteRes>;
   getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
@@ -899,6 +906,11 @@ export type QueryGetCheckoutByIdArgs = {
 
 export type QueryGetClientMenuArgs = {
   input: GetMenu;
+};
+
+
+export type QueryGetGoogleAutoCompleteArgs = {
+  input: AutoCompleteInput;
 };
 
 
@@ -1025,6 +1037,7 @@ export type Tab = {
   orders: Array<OrderDetail>;
   status: TabStatus;
   table?: Maybe<Table>;
+  type?: Maybe<TakeoutDelivery>;
   users?: Maybe<Array<User>>;
 };
 
@@ -1138,6 +1151,7 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
+  address?: Maybe<Address>;
   businesses: Array<BusinessPrivileges>;
   email?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -1191,6 +1205,20 @@ export type UpdateItemFromCartInput = {
   cartItem: Scalars['ID'];
   quantity: Scalars['Int'];
 };
+
+export type CreateCustomerAddressMutationVariables = Exact<{
+  input: AddressInput;
+}>;
+
+
+export type CreateCustomerAddressMutation = { __typename?: 'Mutation', createCustomerAddress: { __typename?: 'Address', _id: string } };
+
+export type GetGoogleAutocompleteQueryVariables = Exact<{
+  input: AutoCompleteInput;
+}>;
+
+
+export type GetGoogleAutocompleteQuery = { __typename?: 'Query', getGoogleAutoComplete: Array<{ __typename?: 'AutoCompleteRes', description: string, place_id: string }> };
 
 export type DeleteBusinessEmployeeMutationVariables = Exact<{
   input: DeleteEmployee;
@@ -1554,7 +1582,7 @@ export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?:
 export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { __typename?: 'ClientSession', user: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null }, request: { __typename?: 'Request', _id: string, status: RequestStatus }, tab?: { __typename?: 'Tab', _id: string, status: TabStatus, admin: string, checkout?: string | null, cartItems: Array<string>, table?: { __typename?: 'Table', tableNumber: string } | null, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, orders: Array<{ __typename?: 'OrderDetail', _id: string }> } | null } };
+export type GetClientSessionQuery = { __typename?: 'Query', getClientSession: { __typename?: 'ClientSession', user: { __typename?: 'User', _id: string, name?: string | null, phoneNumber?: string | null, address?: { __typename?: 'Address', _id: string, streetAddress: string, complement?: string | null, postalCode: string, city: string, stateOrProvince: string, country: string } | null }, request: { __typename?: 'Request', _id: string, status: RequestStatus }, tab?: { __typename?: 'Tab', _id: string, type?: TakeoutDelivery | null, status: TabStatus, admin: string, checkout?: string | null, cartItems: Array<string>, table?: { __typename?: 'Table', tableNumber: string } | null, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, orders: Array<{ __typename?: 'OrderDetail', _id: string }> } | null } };
 
 export type GetPendingInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1709,6 +1737,75 @@ export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } | null };
 
 
+export const CreateCustomerAddressDocument = gql`
+    mutation CreateCustomerAddress($input: AddressInput!) {
+  createCustomerAddress(input: $input) {
+    _id
+  }
+}
+    `;
+export type CreateCustomerAddressMutationFn = Apollo.MutationFunction<CreateCustomerAddressMutation, CreateCustomerAddressMutationVariables>;
+
+/**
+ * __useCreateCustomerAddressMutation__
+ *
+ * To run a mutation, you first call `useCreateCustomerAddressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCustomerAddressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCustomerAddressMutation, { data, loading, error }] = useCreateCustomerAddressMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateCustomerAddressMutation(baseOptions?: Apollo.MutationHookOptions<CreateCustomerAddressMutation, CreateCustomerAddressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCustomerAddressMutation, CreateCustomerAddressMutationVariables>(CreateCustomerAddressDocument, options);
+      }
+export type CreateCustomerAddressMutationHookResult = ReturnType<typeof useCreateCustomerAddressMutation>;
+export type CreateCustomerAddressMutationResult = Apollo.MutationResult<CreateCustomerAddressMutation>;
+export type CreateCustomerAddressMutationOptions = Apollo.BaseMutationOptions<CreateCustomerAddressMutation, CreateCustomerAddressMutationVariables>;
+export const GetGoogleAutocompleteDocument = gql`
+    query GetGoogleAutocomplete($input: AutoCompleteInput!) {
+  getGoogleAutoComplete(input: $input) {
+    description
+    place_id
+  }
+}
+    `;
+
+/**
+ * __useGetGoogleAutocompleteQuery__
+ *
+ * To run a query within a React component, call `useGetGoogleAutocompleteQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGoogleAutocompleteQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGoogleAutocompleteQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetGoogleAutocompleteQuery(baseOptions: Apollo.QueryHookOptions<GetGoogleAutocompleteQuery, GetGoogleAutocompleteQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGoogleAutocompleteQuery, GetGoogleAutocompleteQueryVariables>(GetGoogleAutocompleteDocument, options);
+      }
+export function useGetGoogleAutocompleteLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGoogleAutocompleteQuery, GetGoogleAutocompleteQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGoogleAutocompleteQuery, GetGoogleAutocompleteQueryVariables>(GetGoogleAutocompleteDocument, options);
+        }
+export type GetGoogleAutocompleteQueryHookResult = ReturnType<typeof useGetGoogleAutocompleteQuery>;
+export type GetGoogleAutocompleteLazyQueryHookResult = ReturnType<typeof useGetGoogleAutocompleteLazyQuery>;
+export type GetGoogleAutocompleteQueryResult = Apollo.QueryResult<GetGoogleAutocompleteQuery, GetGoogleAutocompleteQueryVariables>;
 export const DeleteBusinessEmployeeDocument = gql`
     mutation DeleteBusinessEmployee($input: DeleteEmployee!) {
   deleteBusinessEmployee(input: $input)
@@ -3866,6 +3963,15 @@ export const GetClientSessionDocument = gql`
       _id
       name
       phoneNumber
+      address {
+        _id
+        streetAddress
+        complement
+        postalCode
+        city
+        stateOrProvince
+        country
+      }
     }
     request {
       _id
@@ -3873,6 +3979,7 @@ export const GetClientSessionDocument = gql`
     }
     tab {
       _id
+      type
       status
       admin
       checkout

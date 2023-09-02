@@ -1,10 +1,20 @@
 extend type Query {
 	getAddress(id: ID!): Address!
+	getGoogleAutoComplete(input: AutoCompleteInput!): [AutoCompleteRes!]!
+}
+
+input AutoCompleteInput {
+	text: String!
+}
+
+type AutoCompleteRes {
+	place_id: String!
+	description: String!
 }
 
 extend type Mutation {
-	createAddress(input: AddressInput!): Address
-	updateAddress(input: UpdateAddressInput): Address
+	createCustomerAddress(input: AddressInput!): Address!
+	updateAddress(input: UpdateAddressInput): Address!
 }
 
 input UpdateAddressInput {
@@ -30,10 +40,6 @@ type Address {
 input AddressInput {
 	streetAddress: String!
 	complement: String
-	postalCode: String!
-	city: String!
-	stateOrProvince: String!
-	country: String!
 }
 
 type Geo {

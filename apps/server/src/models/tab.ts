@@ -22,8 +22,8 @@ export class Tab {
     @prop()
     public table?: Ref<Table>;
 
-    @prop()
-    public type?: TabTypeType;
+    @prop({ required: true })
+    public type!: TabTypeType;
 
     @prop({ required: true, default: [] })
     public cartItems!: Ref<CartItem>[];

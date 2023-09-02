@@ -58,6 +58,7 @@ type User {
 	picture: String
 	businesses: [BusinessPrivileges!]!
 	phoneNumber: String
+	address: Address
 }
 
 input LoginInput {

@@ -20,6 +20,7 @@ type Tab {
 	status: TabStatus!
 	users: [User!]
 	cartItems: [ID!]!
+	type: TakeoutDelivery
 }
 
 input CreateTabInput {

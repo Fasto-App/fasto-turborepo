@@ -20,9 +20,6 @@ import { CheckoutModel } from '../../../models/checkout';
 const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (parent, { input },
     { db, user: businessUser }) => {
 
-    console.log("createOrdersCheckout")
-    console.log({ input })
-
     const Checkout = CheckoutModel(db);
     const OrderDetail = OrderDetailModel(db);
     const Business = BusinessModel(db);

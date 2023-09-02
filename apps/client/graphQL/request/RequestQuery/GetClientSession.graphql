@@ -4,6 +4,15 @@ query GetClientSession {
 			_id
 			name
 			phoneNumber
+			address {
+				_id
+				streetAddress
+				complement
+				postalCode
+				city
+				stateOrProvince
+				country
+			}
 		}
 		request {
 			_id
@@ -11,6 +20,7 @@ query GetClientSession {
 		}
 		tab {
 			_id
+			type
 			status
 			admin
 			checkout

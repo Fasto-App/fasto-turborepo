@@ -39,12 +39,18 @@ export type Address = {
 };
 
 export type AddressInput = {
-  city: Scalars['String'];
   complement?: InputMaybe<Scalars['String']>;
-  country: Scalars['String'];
-  postalCode: Scalars['String'];
-  stateOrProvince: Scalars['String'];
   streetAddress: Scalars['String'];
+};
+
+export type AutoCompleteInput = {
+  text: Scalars['String'];
+};
+
+export type AutoCompleteRes = {
+  __typename?: 'AutoCompleteRes';
+  description: Scalars['String'];
+  place_id: Scalars['String'];
 };
 
 export type Balance = {
@@ -408,9 +414,9 @@ export type Mutation = {
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
   confirmPayment: Scalars['Boolean'];
   connectExpressPayment: Scalars['String'];
-  createAddress?: Maybe<Address>;
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
+  createCustomerAddress?: Maybe<Address>;
   createEmployeeAccount: User;
   createMenu: Menu;
   createMultipleOrderDetails: Array<OrderDetail>;
@@ -497,11 +503,6 @@ export type MutationConnectExpressPaymentArgs = {
 };
 
 
-export type MutationCreateAddressArgs = {
-  input: AddressInput;
-};
-
-
 export type MutationCreateBusinessArgs = {
   input: BusinessInput;
 };
@@ -509,6 +510,11 @@ export type MutationCreateBusinessArgs = {
 
 export type MutationCreateCategoryArgs = {
   input?: InputMaybe<CategoryInput>;
+};
+
+
+export type MutationCreateCustomerAddressArgs = {
+  input: AddressInput;
 };
 
 
@@ -854,6 +860,7 @@ export type Query = {
   getClientInformation: User;
   getClientMenu?: Maybe<Menu>;
   getClientSession: ClientSession;
+  getGoogleAutoComplete: Array<AutoCompleteRes>;
   getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
   getOrderDetailByID?: Maybe<OrderDetail>;
@@ -899,6 +906,11 @@ export type QueryGetCheckoutByIdArgs = {
 
 export type QueryGetClientMenuArgs = {
   input: GetMenu;
+};
+
+
+export type QueryGetGoogleAutoCompleteArgs = {
+  input: AutoCompleteInput;
 };
 
 
@@ -1025,6 +1037,7 @@ export type Tab = {
   orders: Array<OrderDetail>;
   status: TabStatus;
   table?: Maybe<Table>;
+  type?: Maybe<TakeoutDelivery>;
   users?: Maybe<Array<User>>;
 };
 
@@ -1267,6 +1280,8 @@ export type ResolversTypes = {
   AccountCreationResponse: ResolverTypeWrapper<AccountCreationResponse>;
   Address: ResolverTypeWrapper<Address>;
   AddressInput: AddressInput;
+  AutoCompleteInput: AutoCompleteInput;
+  AutoCompleteRes: ResolverTypeWrapper<AutoCompleteRes>;
   Balance: ResolverTypeWrapper<Balance>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Business: ResolverTypeWrapper<Business>;
@@ -1376,6 +1391,8 @@ export type ResolversParentTypes = {
   AccountCreationResponse: AccountCreationResponse;
   Address: Address;
   AddressInput: AddressInput;
+  AutoCompleteInput: AutoCompleteInput;
+  AutoCompleteRes: AutoCompleteRes;
   Balance: Balance;
   Boolean: Scalars['Boolean'];
   Business: Business;
@@ -1482,6 +1499,12 @@ export type AddressResolvers<ContextType = Context, ParentType extends Resolvers
   postalCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   stateOrProvince?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   streetAddress?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AutoCompleteResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AutoCompleteRes'] = ResolversParentTypes['AutoCompleteRes']> = {
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  place_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1635,9 +1658,9 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   clientCreateMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationClientCreateMultipleOrderDetailsArgs, 'input'>>;
   confirmPayment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConfirmPaymentArgs, 'input'>>;
   connectExpressPayment?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationConnectExpressPaymentArgs, 'input'>>;
-  createAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, RequireFields<MutationCreateAddressArgs, 'input'>>;
   createBusiness?: Resolver<Maybe<ResolversTypes['CreateBusinessPayload']>, ParentType, ContextType, RequireFields<MutationCreateBusinessArgs, 'input'>>;
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationCreateCategoryArgs>>;
+  createCustomerAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, RequireFields<MutationCreateCustomerAddressArgs, 'input'>>;
   createEmployeeAccount?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateEmployeeAccountArgs, 'input'>>;
   createMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<MutationCreateMenuArgs, 'input'>>;
   createMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationCreateMultipleOrderDetailsArgs, 'input'>>;
@@ -1759,6 +1782,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getClientInformation?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   getClientMenu?: Resolver<Maybe<ResolversTypes['Menu']>, ParentType, ContextType, RequireFields<QueryGetClientMenuArgs, 'input'>>;
   getClientSession?: Resolver<ResolversTypes['ClientSession'], ParentType, ContextType>;
+  getGoogleAutoComplete?: Resolver<Array<ResolversTypes['AutoCompleteRes']>, ParentType, ContextType, RequireFields<QueryGetGoogleAutoCompleteArgs, 'input'>>;
   getIsConnected?: Resolver<Maybe<ResolversTypes['Balance']>, ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
@@ -1822,6 +1846,7 @@ export type TabResolvers<ContextType = Context, ParentType extends ResolversPare
   orders?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['TabStatus'], ParentType, ContextType>;
   table?: Resolver<Maybe<ResolversTypes['Table']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['TakeoutDelivery']>, ParentType, ContextType>;
   users?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1859,6 +1884,7 @@ export type WorkingHoursResolvers<ContextType = Context, ParentType extends Reso
 export type Resolvers<ContextType = Context> = {
   AccountCreationResponse?: AccountCreationResponseResolvers<ContextType>;
   Address?: AddressResolvers<ContextType>;
+  AutoCompleteRes?: AutoCompleteResResolvers<ContextType>;
   Balance?: BalanceResolvers<ContextType>;
   Business?: BusinessResolvers<ContextType>;
   BusinessPrivileges?: BusinessPrivilegesResolvers<ContextType>;

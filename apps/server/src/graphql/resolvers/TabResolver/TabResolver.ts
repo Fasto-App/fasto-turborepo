@@ -4,7 +4,7 @@ import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
-import { getPercentageOfValue, RequestStatus, TableStatus, TableStatusType, TabStatus } from "app-helpers";
+import { getPercentageOfValue, RequestStatus, TableStatus, TableStatusType, TabStatus, TabType } from "app-helpers";
 import { BusinessModel, OrderDetailModel, RequestModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { MutationResolvers } from "../../../generated/graphql";
@@ -36,6 +36,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
                 // TODO: can we add exsisting users this way?
                 // perhaps we need to add a new field to existing user emails or ids
                 users: allUsers.map(user => user._id),
+                type: TabType.DineIn
             });
 
             await table.updateOne({ status: TableStatus.Occupied, tab: tab._id });
@@ -55,6 +56,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             table: input.table,
             admin: allUsers[0]._id,
             users: allUsers.map(user => user._id),
+            type: TabType.DineIn
         });
 
         if (!tab) throw ApolloError("InternalServerError", "Error creating Tab")

@@ -349,6 +349,7 @@ const createNewTakeoutOrDelivery: MutationResolvers['createNewTakeoutOrDelivery'
       admin: newUser._id,
       users: [newUser._id],
       status: 'Open',
+      type: input.type,
     })
 
     const newRequest = await Request.create({
