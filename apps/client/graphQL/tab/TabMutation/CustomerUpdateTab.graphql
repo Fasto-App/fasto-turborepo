@@ -1,0 +1,5 @@
+mutation UpdateCustomerUpdateTabType($input: UpdateCustomerUpdateTabTypeInput!) {
+	updateCustomerUpdateTabType(input: $input) {
+		_id
+	}
+}

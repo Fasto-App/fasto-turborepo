@@ -416,7 +416,7 @@ export type Mutation = {
   connectExpressPayment: Scalars['String'];
   createBusiness?: Maybe<CreateBusinessPayload>;
   createCategory?: Maybe<Category>;
-  createCustomerAddress?: Maybe<Address>;
+  createCustomerAddress: Address;
   createEmployeeAccount: User;
   createMenu: Menu;
   createMultipleOrderDetails: Array<OrderDetail>;
@@ -456,11 +456,12 @@ export type Mutation = {
   requestJoinTab?: Maybe<Scalars['String']>;
   requestUserAccountCreation: AccountCreationResponse;
   shareQRCode: Scalars['Boolean'];
-  updateAddress?: Maybe<Address>;
+  updateAddress: Address;
   updateBusinessInformation: Business;
   updateBusinessLocation?: Maybe<Business>;
   updateBusinessToken?: Maybe<Scalars['String']>;
   updateCategory?: Maybe<Category>;
+  updateCustomerUpdateTabType?: Maybe<Tab>;
   updateItemFromCart: CartItem;
   updateMenu?: Maybe<Menu>;
   updateMenuInfo: Menu;
@@ -684,7 +685,7 @@ export type MutationRecoverPasswordArgs = {
 
 
 export type MutationRequestCloseTabArgs = {
-  input?: InputMaybe<GetById>;
+  input: GetById;
 };
 
 
@@ -725,6 +726,11 @@ export type MutationUpdateBusinessTokenArgs = {
 
 export type MutationUpdateCategoryArgs = {
   input?: InputMaybe<UpdateCategoryInput>;
+};
+
+
+export type MutationUpdateCustomerUpdateTabTypeArgs = {
+  input: UpdateCustomerUpdateTabTypeInput;
 };
 
 
@@ -1093,6 +1099,11 @@ export type UpdateCategoryInput = {
   subCategories?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
+export type UpdateCustomerUpdateTabTypeInput = {
+  tab: Scalars['ID'];
+  type: TakeoutDelivery;
+};
+
 export type UpdateMenuInfoInput = {
   _id: Scalars['ID'];
   name: Scalars['String'];
@@ -1151,6 +1162,7 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
+  address?: Maybe<Address>;
   businesses: Array<BusinessPrivileges>;
   email?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -1365,6 +1377,7 @@ export type ResolversTypes = {
   UpdateAddressInput: UpdateAddressInput;
   UpdateBusinessInfoInput: UpdateBusinessInfoInput;
   UpdateCategoryInput: UpdateCategoryInput;
+  UpdateCustomerUpdateTabTypeInput: UpdateCustomerUpdateTabTypeInput;
   UpdateMenuInfoInput: UpdateMenuInfoInput;
   UpdateMenuInput: UpdateMenuInput;
   UpdateOrderDetailInput: UpdateOrderDetailInput;
@@ -1466,6 +1479,7 @@ export type ResolversParentTypes = {
   UpdateAddressInput: UpdateAddressInput;
   UpdateBusinessInfoInput: UpdateBusinessInfoInput;
   UpdateCategoryInput: UpdateCategoryInput;
+  UpdateCustomerUpdateTabTypeInput: UpdateCustomerUpdateTabTypeInput;
   UpdateMenuInfoInput: UpdateMenuInfoInput;
   UpdateMenuInput: UpdateMenuInput;
   UpdateOrderDetailInput: UpdateOrderDetailInput;
@@ -1660,7 +1674,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   connectExpressPayment?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationConnectExpressPaymentArgs, 'input'>>;
   createBusiness?: Resolver<Maybe<ResolversTypes['CreateBusinessPayload']>, ParentType, ContextType, RequireFields<MutationCreateBusinessArgs, 'input'>>;
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationCreateCategoryArgs>>;
-  createCustomerAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, RequireFields<MutationCreateCustomerAddressArgs, 'input'>>;
+  createCustomerAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationCreateCustomerAddressArgs, 'input'>>;
   createEmployeeAccount?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateEmployeeAccountArgs, 'input'>>;
   createMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<MutationCreateMenuArgs, 'input'>>;
   createMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationCreateMultipleOrderDetailsArgs, 'input'>>;
@@ -1696,15 +1710,16 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   passwordReset?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationPasswordResetArgs, 'input'>>;
   postUserLogin?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationPostUserLoginArgs, 'input'>>;
   recoverPassword?: Resolver<Maybe<ResolversTypes['RequestResponseOK']>, ParentType, ContextType, RequireFields<MutationRecoverPasswordArgs, 'input'>>;
-  requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, Partial<MutationRequestCloseTabArgs>>;
+  requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationRequestCloseTabArgs, 'input'>>;
   requestJoinTab?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRequestJoinTabArgs, 'input'>>;
   requestUserAccountCreation?: Resolver<ResolversTypes['AccountCreationResponse'], ParentType, ContextType, RequireFields<MutationRequestUserAccountCreationArgs, 'input'>>;
   shareQRCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationShareQrCodeArgs, 'input'>>;
-  updateAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType, Partial<MutationUpdateAddressArgs>>;
+  updateAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, Partial<MutationUpdateAddressArgs>>;
   updateBusinessInformation?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationUpdateBusinessInformationArgs, 'input'>>;
   updateBusinessLocation?: Resolver<Maybe<ResolversTypes['Business']>, ParentType, ContextType, RequireFields<MutationUpdateBusinessLocationArgs, 'input'>>;
   updateBusinessToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, Partial<MutationUpdateBusinessTokenArgs>>;
   updateCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationUpdateCategoryArgs>>;
+  updateCustomerUpdateTabType?: Resolver<Maybe<ResolversTypes['Tab']>, ParentType, ContextType, RequireFields<MutationUpdateCustomerUpdateTabTypeArgs, 'input'>>;
   updateItemFromCart?: Resolver<ResolversTypes['CartItem'], ParentType, ContextType, RequireFields<MutationUpdateItemFromCartArgs, 'input'>>;
   updateMenu?: Resolver<Maybe<ResolversTypes['Menu']>, ParentType, ContextType, Partial<MutationUpdateMenuArgs>>;
   updateMenuInfo?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<MutationUpdateMenuInfoArgs>>;
@@ -1866,6 +1881,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  address?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
   businesses?: Resolver<Array<ResolversTypes['BusinessPrivileges']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

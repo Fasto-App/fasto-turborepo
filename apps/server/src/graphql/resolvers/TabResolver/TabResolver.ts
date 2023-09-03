@@ -72,6 +72,15 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
     }
 }
 
+// @ts-ignore
+const updateCustomerUpdateTabType: MutationResolvers["updateCustomerUpdateTabType"] = async (_parent, { input: { type, tab } }, { db, client }) => {
+    if (!client) throw ApolloError("Unauthorized")
+
+    return await TabModel(db).findByIdAndUpdate(tab, {
+        type
+    }, { new: true })
+}
+
 const getAllOpenTabsByBusinessID = async (_parent: any, _args: any, { db, business }: Context) => {
     const Tab = TabModel(db);
     const allOpenTabsByBusiness = await Tab.find({ business: business, status: 'OPEN' });
@@ -236,6 +245,7 @@ const TabResolverMutation = {
     updateTab,
     deleteTab,
     requestCloseTab,
+    updateCustomerUpdateTabType
 }
 const TabResolverQuery = {
     getTabByID,

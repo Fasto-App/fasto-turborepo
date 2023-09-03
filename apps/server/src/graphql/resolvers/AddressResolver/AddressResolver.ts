@@ -1,5 +1,12 @@
-import { Address, AddressModel } from "../../../models/address"
+import { AddressModel } from "../../../models/address"
 import { Connection } from "mongoose"
+import axios from 'axios';
+import { MutationResolvers, QueryResolvers } from "../../../generated/graphql";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { UserModel } from "../../../models";
+
+const validateGoogle = `https://addressvalidation.googleapis.com/v1:validateAddress?key=${process.env.GOOGLE_MAPS_API}`
+const autocompleteGoogleUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
 
 const getAddressFromBusiness = async (
     parent: any,
@@ -22,27 +29,79 @@ const updateAddress = async (parent: any, { input }: { input: any }, { db }: { d
     )
 }
 
+type GLocation = {
+    place_id: string;
+    description: string;
+}
 
+const getGoogleAutoComplete: QueryResolvers["getGoogleAutoComplete"] = async (parent, { input: { text } }, { client, locale }) => {
+    if (!client) throw ApolloError("Unauthorized")
 
-const createAddress = (parent: any, { input }: { input: Address }, { db }: { db: Connection }) => {
-    const Address = AddressModel(db)
-    const address = new Address({
-        streetAddress: input.streetAddress,
-        complement: input.complement,
-        postalCode: input.postalCode,
-        city: input.city,
-        country: input.country,
+    if (text.length < 4) throw ApolloError("BadRequest", "Provide 5 chars or more")
+
+    try {
+        const { data } = await axios.get(
+            autocompleteGoogleUrl, {
+            params: {
+                input: text,
+                radius: "500",
+                fields: ["address_components", "geometry", "name"],
+                key: process.env.GOOGLE_MAPS_API,
+                language: locale,
+                types: ["address", "postal_code"]
+            },
+            paramsSerializer: { indexes: null },
+        });
+
+        return data.predictions.map((local: GLocation) => {
+            return {
+                place_id: local.place_id,
+                description: local.description
+            }
+        })
+    } catch {
+        throw ApolloError("InternalServerError")
+    }
+}
+
+const createCustomerAddress: MutationResolvers["createCustomerAddress"] = async (parent,
+    { input: { streetAddress, complement } }, { db, client }) => {
+
+    if (!client) throw ApolloError("Unauthorized", "No customer")
+
+    const { data } = await axios.post(validateGoogle, {
+        address: {
+            addressLines: [streetAddress]
+        }
+    }, {
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+
+    const address = await AddressModel(db).create({
+        streetAddress: data?.result.address?.postalAddress.addressLines[0] || data?.result.address?.formattedAddress,
+        complement: complement,
+        postalCode: data?.result.address?.postalAddress.postalCode,
+        stateOrProvince: data?.result.address?.postalAddress.administrativeArea,
+        city: data?.result.address?.postalAddress.locality,
+        country: data?.result.address?.postalAddress.regionCode,
+    })
+
+    await UserModel(db).findByIdAndUpdate(client._id, {
+        address: address._id
     })
 
     return address.save()
 }
 
 const AddressResolverMutation = {
-    createAddress,
+    createCustomerAddress,
     updateAddress,
 }
 const AddressResolverQuery = {
-    getAddress
+    getAddress,
+    getGoogleAutoComplete
 }
 
 const AddressResolver = {

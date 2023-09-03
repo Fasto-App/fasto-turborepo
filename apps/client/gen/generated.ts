@@ -461,6 +461,7 @@ export type Mutation = {
   updateBusinessLocation?: Maybe<Business>;
   updateBusinessToken?: Maybe<Scalars['String']>;
   updateCategory?: Maybe<Category>;
+  updateCustomerUpdateTabType?: Maybe<Tab>;
   updateItemFromCart: CartItem;
   updateMenu?: Maybe<Menu>;
   updateMenuInfo: Menu;
@@ -725,6 +726,11 @@ export type MutationUpdateBusinessTokenArgs = {
 
 export type MutationUpdateCategoryArgs = {
   input?: InputMaybe<UpdateCategoryInput>;
+};
+
+
+export type MutationUpdateCustomerUpdateTabTypeArgs = {
+  input: UpdateCustomerUpdateTabTypeInput;
 };
 
 
@@ -1091,6 +1097,11 @@ export type UpdateCategoryInput = {
   name?: InputMaybe<Scalars['String']>;
   parentCategory?: InputMaybe<Scalars['ID']>;
   subCategories?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+export type UpdateCustomerUpdateTabTypeInput = {
+  tab: Scalars['ID'];
+  type: TakeoutDelivery;
 };
 
 export type UpdateMenuInfoInput = {
@@ -1635,12 +1646,27 @@ export type CreateTabMutationVariables = Exact<{
 
 export type CreateTabMutation = { __typename?: 'Mutation', createTab: { __typename?: 'Tab', _id: string, status: TabStatus, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null } };
 
+export type UpdateCustomerUpdateTabTypeMutationVariables = Exact<{
+  input: UpdateCustomerUpdateTabTypeInput;
+}>;
+
+
+export type UpdateCustomerUpdateTabTypeMutation = { __typename?: 'Mutation', updateCustomerUpdateTabType?: { __typename?: 'Tab', _id: string } | null };
+
 export type RequestCloseTabMutationVariables = Exact<{
   input?: InputMaybe<GetById>;
 }>;
 
 
 export type RequestCloseTabMutation = { __typename?: 'Mutation', requestCloseTab: { __typename?: 'Tab', _id: string, checkout?: string | null, status: TabStatus, users?: Array<{ __typename?: 'User', _id: string }> | null } };
+
+export type UpdateTypeAndAddressMutationVariables = Exact<{
+  input: UpdateCustomerUpdateTabTypeInput;
+  createCustomerAddressInput2: AddressInput;
+}>;
+
+
+export type UpdateTypeAndAddressMutation = { __typename?: 'Mutation', updateCustomerUpdateTabType?: { __typename?: 'Tab', _id: string } | null, createCustomerAddress: { __typename?: 'Address', _id: string } };
 
 export type GetTabByIdQueryVariables = Exact<{
   input: GetById;
@@ -4377,6 +4403,39 @@ export function useCreateTabMutation(baseOptions?: Apollo.MutationHookOptions<Cr
 export type CreateTabMutationHookResult = ReturnType<typeof useCreateTabMutation>;
 export type CreateTabMutationResult = Apollo.MutationResult<CreateTabMutation>;
 export type CreateTabMutationOptions = Apollo.BaseMutationOptions<CreateTabMutation, CreateTabMutationVariables>;
+export const UpdateCustomerUpdateTabTypeDocument = gql`
+    mutation UpdateCustomerUpdateTabType($input: UpdateCustomerUpdateTabTypeInput!) {
+  updateCustomerUpdateTabType(input: $input) {
+    _id
+  }
+}
+    `;
+export type UpdateCustomerUpdateTabTypeMutationFn = Apollo.MutationFunction<UpdateCustomerUpdateTabTypeMutation, UpdateCustomerUpdateTabTypeMutationVariables>;
+
+/**
+ * __useUpdateCustomerUpdateTabTypeMutation__
+ *
+ * To run a mutation, you first call `useUpdateCustomerUpdateTabTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCustomerUpdateTabTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCustomerUpdateTabTypeMutation, { data, loading, error }] = useUpdateCustomerUpdateTabTypeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateCustomerUpdateTabTypeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCustomerUpdateTabTypeMutation, UpdateCustomerUpdateTabTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCustomerUpdateTabTypeMutation, UpdateCustomerUpdateTabTypeMutationVariables>(UpdateCustomerUpdateTabTypeDocument, options);
+      }
+export type UpdateCustomerUpdateTabTypeMutationHookResult = ReturnType<typeof useUpdateCustomerUpdateTabTypeMutation>;
+export type UpdateCustomerUpdateTabTypeMutationResult = Apollo.MutationResult<UpdateCustomerUpdateTabTypeMutation>;
+export type UpdateCustomerUpdateTabTypeMutationOptions = Apollo.BaseMutationOptions<UpdateCustomerUpdateTabTypeMutation, UpdateCustomerUpdateTabTypeMutationVariables>;
 export const RequestCloseTabDocument = gql`
     mutation RequestCloseTab($input: GetById) {
   requestCloseTab(input: $input) {
@@ -4415,6 +4474,43 @@ export function useRequestCloseTabMutation(baseOptions?: Apollo.MutationHookOpti
 export type RequestCloseTabMutationHookResult = ReturnType<typeof useRequestCloseTabMutation>;
 export type RequestCloseTabMutationResult = Apollo.MutationResult<RequestCloseTabMutation>;
 export type RequestCloseTabMutationOptions = Apollo.BaseMutationOptions<RequestCloseTabMutation, RequestCloseTabMutationVariables>;
+export const UpdateTypeAndAddressDocument = gql`
+    mutation UpdateTypeAndAddress($input: UpdateCustomerUpdateTabTypeInput!, $createCustomerAddressInput2: AddressInput!) {
+  updateCustomerUpdateTabType(input: $input) {
+    _id
+  }
+  createCustomerAddress(input: $createCustomerAddressInput2) {
+    _id
+  }
+}
+    `;
+export type UpdateTypeAndAddressMutationFn = Apollo.MutationFunction<UpdateTypeAndAddressMutation, UpdateTypeAndAddressMutationVariables>;
+
+/**
+ * __useUpdateTypeAndAddressMutation__
+ *
+ * To run a mutation, you first call `useUpdateTypeAndAddressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTypeAndAddressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTypeAndAddressMutation, { data, loading, error }] = useUpdateTypeAndAddressMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *      createCustomerAddressInput2: // value for 'createCustomerAddressInput2'
+ *   },
+ * });
+ */
+export function useUpdateTypeAndAddressMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTypeAndAddressMutation, UpdateTypeAndAddressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTypeAndAddressMutation, UpdateTypeAndAddressMutationVariables>(UpdateTypeAndAddressDocument, options);
+      }
+export type UpdateTypeAndAddressMutationHookResult = ReturnType<typeof useUpdateTypeAndAddressMutation>;
+export type UpdateTypeAndAddressMutationResult = Apollo.MutationResult<UpdateTypeAndAddressMutation>;
+export type UpdateTypeAndAddressMutationOptions = Apollo.BaseMutationOptions<UpdateTypeAndAddressMutation, UpdateTypeAndAddressMutationVariables>;
 export const GetTabByIdDocument = gql`
     query GetTabByID($input: GetById!) {
   getTabByID(input: $input) {
