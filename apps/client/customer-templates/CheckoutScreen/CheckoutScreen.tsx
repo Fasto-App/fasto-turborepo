@@ -1,4 +1,4 @@
-import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack } from 'native-base'
+import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack, Link } from 'native-base'
 import { useTranslation } from "next-i18next"
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -12,6 +12,7 @@ import { shallow } from 'zustand/shallow'
 import { Icon } from '../../components/atoms/NavigationButton'
 import { customerRoute } from 'fasto-route'
 import { useGetBusinessInformation, useGetClientSession } from '../../hooks'
+import { ModalAddress } from '../../components/ModalAddress'
 
 export const CheckoutScreen = () => {
   const { data: businessData, loading: businessLoading } = useGetBusinessInformation()
@@ -114,86 +115,81 @@ export const CheckoutScreen = () => {
 
   }, [generatePaymentIntent, payment])
 
+  // if the tab is Delivery, should show the User Address, and if it's takeout should show business addess
+
+  const [updateAddressModalOpen, setUpdateAddressModalOpen] = useState(false)
+
   return (
-    <>
+    <Box flex={1}>
+      <PastOrdersList />
+      <Divider marginY={2} />
+      <VStack paddingX={"4"} paddingY={"2"} space={"2"} >
+        <Text pb={"2"} bold fontSize={"lg"}>Delivery Info</Text>
+        <Text fontSize={"lg"}>{clientData?.getClientSession.user.name}</Text>
+        <Text fontSize={"lg"}>{clientData?.getClientSession.user.address?.streetAddress}</Text>
+        <Link
+          onPress={() => setUpdateAddressModalOpen(true)}
+          _text={{ fontSize: "lg", color: "blue.500" }}
+          isUnderlined={false}>Edit Address</Link>
+      </VStack>
       {!splitType ?
-        <Box flex={1}>
-          <Box flex="1">
-            <PastOrdersList />
-          </Box>
-          <Box>
-            <OrderTotals />
-            <HStack space={"4"} p={4}>
+        <Box>
+          <OrderTotals />
+          <HStack space={"4"} p={4}>
+            <Button
+              _text={{ bold: true }}
+              flex={1}
+              colorScheme={"primary"}
+              isDisabled={!(clientData?.getClientSession.tab?.admin === clientData?.getClientSession.user._id)
+                || !checkoutId || !clientData?.getClientSession.tab?.checkout}
+              isLoading={loading}
+              onPress={pay}>
+              {t("finalize")}
+            </Button>
+            {(clientData?.getClientSession.tab?.users?.length || 0) > 1 ? (
               <Button
                 _text={{ bold: true }}
                 flex={1}
-                colorScheme={"primary"}
-                isDisabled={!(clientData?.getClientSession.tab?.admin === clientData?.getClientSession.user._id)
-                  || !checkoutId || !clientData?.getClientSession.tab?.checkout}
-                isLoading={loading}
-                onPress={pay}>
-                {t("finalize")}
-              </Button>
-              {(clientData?.getClientSession.tab?.users?.length || 0) > 1 ? (
-                <Button
-                  _text={{ bold: true }}
-                  flex={1}
-                  colorScheme={"tertiary"}
-                  onPress={navigateToSplit}>{t("split")}</Button>
-              ) : null}
+                colorScheme={"tertiary"}
+                onPress={navigateToSplit}>{t("split")}</Button>
+            ) : null}
+          </HStack>
+        </Box> : <Box>
+          <VStack p={4} space={2}>
+            <HStack justifyContent={"space-between"}>
+              <Text fontSize="lg" fontWeight="bold">{t("splitType")}</Text>
+              <Text fontSize="lg" fontWeight="bold">{t(splitType)}</Text>
             </HStack>
-          </Box>
-        </Box> :
-        <>
-          {/* <PastOrdersModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
-          <Box flex={1}>
-            {/* <Box flex={1}>
-              <Center p={"4"}>
-                <Box pt={8} pb={12}>
-                  <Image src="/images/fasto-logo.svg"
-                    alt="Fasto Logo"
-                    height={36} width={180} />
-                </Box>
-                <Box size={"24"}>
-                  <SuccessAnimation />
-                </Box>
-                <Text textAlign={"center"} fontSize={"lg"} mt={8}>{t("successMessage")}</Text>
-              </Center>
-            </Box> */}
-            <Box flex="1">
-              <PastOrdersList />
-            </Box>
-            <VStack p={4} space={2}>
-              <HStack justifyContent={"space-between"}>
-                <Text fontSize="lg" fontWeight="bold">{t("splitType")}</Text>
-                <Text fontSize="lg" fontWeight="bold">{t(splitType)}</Text>
-              </HStack>
-              <Divider />
-              <HStack justifyContent={"space-between"}>
-                <Text fontSize="lg" fontWeight="bold">{t("totalAmount")}</Text>
-                <Text fontSize="lg" fontWeight="bold">{parseToCurrency(data?.getCheckoutByID.total)}</Text>
-              </HStack>
-              <Divider />
-              <HStack justifyContent={"space-between"}>
-                <Text fontSize="lg" fontWeight="bold">{t("amountToBePaid")}</Text>
-                <Text fontSize="lg" fontWeight="bold">{parseToCurrency(payment?.amount)}</Text>
-              </HStack>
-              <Divider />
-            </VStack>
-            <HStack space={"4"} p={4}>
-              <Button
-                flex={1}
-                onPress={endSession}
-                isLoading={isPaymentIntLoading}
-                _text={{ bold: true }}
-              >
-                {t("payNow")}
-              </Button>
+            <Divider />
+            <HStack justifyContent={"space-between"}>
+              <Text fontSize="lg" fontWeight="bold">{t("totalAmount")}</Text>
+              <Text fontSize="lg" fontWeight="bold">{parseToCurrency(data?.getCheckoutByID.total)}</Text>
             </HStack>
-          </Box>
-        </>
-      }
-    </>
+            <Divider />
+            <HStack justifyContent={"space-between"}>
+              <Text fontSize="lg" fontWeight="bold">{t("amountToBePaid")}</Text>
+              <Text fontSize="lg" fontWeight="bold">{parseToCurrency(payment?.amount)}</Text>
+            </HStack>
+            <Divider />
+          </VStack>
+          <HStack space={"4"} p={4}>
+            <Button
+              flex={1}
+              onPress={endSession}
+              isLoading={isPaymentIntLoading}
+              _text={{ bold: true }}
+            >
+              {t("payNow")}
+            </Button>
+          </HStack>
+        </Box>}
+      {clientData?.getClientSession.tab?._id ? (
+        <ModalAddress
+          isOpen={updateAddressModalOpen}
+          tabId={clientData?.getClientSession.tab._id}
+          setIsOpen={setUpdateAddressModalOpen}
+        />) : null}
+    </Box>
   )
 }
 

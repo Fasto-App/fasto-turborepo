@@ -7,7 +7,7 @@ import { createTabInput, updateTabInput, updateTabObject } from "./types";
 import { getPercentageOfValue, RequestStatus, TableStatus, TableStatusType, TabStatus, TabType } from "app-helpers";
 import { BusinessModel, OrderDetailModel, RequestModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
-import { MutationResolvers } from "../../../generated/graphql";
+import { MutationResolvers, TakeoutDelivery } from "../../../generated/graphql";
 
 const createTab = async (_parent: any, { input }: createTabInput, { db, business }: Context) => {
     const Tab = TabModel(db);
@@ -187,17 +187,8 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
         tabId = foundRequest.tab;
     }
 
+    //todo: Hacky, why not just ask for the tabId or have that on the context
     const foundTab = await Tab.findById(tabId || args.input?._id);
-
-    const changeTableStatus = async (toStatus: TableStatusType) => {
-        if (foundTab?.table) {
-            const foundTable = await Table.findById(foundTab.table);
-            if (foundTable) {
-                foundTable.status = toStatus;
-                await foundTable.save();
-            }
-        }
-    }
 
     if (!foundTab) throw ApolloError('NotFound')
 
@@ -217,10 +208,26 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
             await RequestModel(db).updateMany({ tab: foundTab._id }, { status: RequestStatus.Completed });
         }
         // upadate the table status to available
-        changeTableStatus(TableStatus.Available)
+        if (foundTab?.table) {
+            const foundTable = await Table.findById(foundTab.table);
+            if (foundTable) {
+                foundTable.status = TableStatus.Available;
+                await foundTable.save();
+            }
+        }
 
-        await foundTab.save();
-        return foundTab;
+        // add the address to the foundTab
+        // the address right now is coming from the user addres
+        // and the address will only be added to Deliveries, not Takeout
+        if (foundTab.type === TakeoutDelivery.Delivery) {
+            const foundUser = await UserModel(db).findById(foundTab?.admin)
+
+            if (!foundUser || !foundUser.address) throw ApolloError("BadGateway", "No Address for Delivery");
+
+            foundTab.address = foundUser.address
+        }
+
+        return await foundTab.save();
     }
 
     const subTotal = foundOrderDetails.reduce((acc, orderDetail) => acc + orderDetail.subTotal, 0);

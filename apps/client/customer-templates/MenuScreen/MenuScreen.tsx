@@ -43,8 +43,12 @@ export const MenuScreen = () => {
   })
 
   const inputValue = useMemo(() => {
-    const { streetAddress, city, stateOrProvince, complement } = clientData?.getClientSession.user.address || {}
-    const { type } = clientData?.getClientSession.tab || {}
+    if (!clientData?.getClientSession.tab || !clientData?.getClientSession.tab) return ""
+    const { type } = clientData?.getClientSession.tab
+
+    if (!clientData?.getClientSession.user.address) return type
+
+    const { streetAddress, city, stateOrProvince, complement } = clientData?.getClientSession.user.address
 
     return type === TakeoutDelivery.Takeout ? `${type}` :
       `${type} to ${streetAddress}, ${complement} ${city} - ${stateOrProvince}`
