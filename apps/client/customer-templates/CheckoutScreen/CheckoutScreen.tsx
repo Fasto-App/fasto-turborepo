@@ -1,8 +1,8 @@
 import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack, Link } from 'native-base'
 import { useTranslation } from "next-i18next"
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useCustomerRequestPayFullMutation, useGeneratePaymentIntentMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
+import { TakeoutDelivery, useCustomerRequestPayFullMutation, useGeneratePaymentIntentMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
 import { showToast } from '../../components/showToast'
 import { PastOrdersList } from '../CartScreen/PastOrdersModal'
 import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from '../../business-templates/Checkout/checkoutStore'
@@ -116,22 +116,36 @@ export const CheckoutScreen = () => {
   }, [generatePaymentIntent, payment])
 
   // if the tab is Delivery, should show the User Address, and if it's takeout should show business addess
-
   const [updateAddressModalOpen, setUpdateAddressModalOpen] = useState(false)
+
+  const userAddress = useMemo(() => {
+    if (clientData?.getClientSession.tab?.type !== TakeoutDelivery.Delivery ||
+      !clientData?.getClientSession.user?.address) return undefined
+
+    const { stateOrProvince, city, streetAddress, complement } = clientData?.getClientSession.user?.address
+
+    return `${streetAddress}, ${complement} - ${city}, ${stateOrProvince}`
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clientData?.getClientSession.user?.address?._id])
 
   return (
     <Box flex={1}>
       <PastOrdersList />
       <Divider marginY={2} />
-      <VStack paddingX={"4"} paddingY={"2"} space={"2"} >
+      {userAddress ? <VStack paddingX={"4"} paddingY={"2"} space={"2"} >
         <Text pb={"2"} bold fontSize={"lg"}>Delivery Info</Text>
         <Text fontSize={"lg"}>{clientData?.getClientSession.user.name}</Text>
-        <Text fontSize={"lg"}>{clientData?.getClientSession.user.address?.streetAddress}</Text>
-        <Link
-          onPress={() => setUpdateAddressModalOpen(true)}
-          _text={{ fontSize: "lg", color: "blue.500" }}
-          isUnderlined={false}>Edit Address</Link>
-      </VStack>
+        <Text fontSize={"lg"}>{userAddress}</Text>
+        <Pressable
+          isDisabled={!!splitType}
+          _disabled={{ opacity: 0.6 }}
+          onPress={() => setUpdateAddressModalOpen(true)}>
+          <Text fontSize={"lg"} color={"blue.500"}>
+            Edit Address
+          </Text>
+        </Pressable>
+
+      </VStack> : null}
       {!splitType ?
         <Box>
           <OrderTotals />
@@ -176,7 +190,7 @@ export const CheckoutScreen = () => {
             <Button
               flex={1}
               onPress={endSession}
-              isLoading={isPaymentIntLoading}
+              isLoading={isPaymentIntLoading || businessLoading}
               _text={{ bold: true }}
             >
               {t("payNow")}
@@ -188,6 +202,9 @@ export const CheckoutScreen = () => {
           isOpen={updateAddressModalOpen}
           tabId={clientData?.getClientSession.tab._id}
           setIsOpen={setUpdateAddressModalOpen}
+          selectedType={clientData?.getClientSession.tab.type}
+          address={clientData?.getClientSession.user.address}
+
         />) : null}
     </Box>
   )
@@ -215,7 +232,7 @@ export const OrderTotals = () => {
 
   const { loading } = useGetCheckoutByIdQuery({
     skip: !checkoutId,
-    pollInterval: 1000 * 60 * 2,
+    pollInterval: 1000 * 60,
     variables: {
       input: {
         _id: checkoutId as string

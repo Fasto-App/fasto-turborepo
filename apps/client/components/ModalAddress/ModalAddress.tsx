@@ -15,7 +15,6 @@ type ModalAddressProps = {
   selectedType?: TakeoutDelivery | null;
   address?: any;
   screenName?: "ProductDescription" | "MenuScreen";
-  setIsModalOpen?: boolean;
   tabId: string;
 }
 export const ModalAddress = ({
@@ -147,25 +146,20 @@ export const ModalAddress = ({
 
 
   const shouldUpdateBeEnabled = useMemo(() => {
-    return (orderUpdate === TakeoutDelivery["Delivery"] && (selectedAddress || userAddress) ||
-      (!orderUpdate && selectedType === TakeoutDelivery["Delivery"]) && selectedAddress) ||
-      orderUpdate !== selectedType
+    // Change if a new address is selected and the local state is Delivery
+    const newAddress = !!selectedAddress && (orderUpdate === TakeoutDelivery["Delivery"] || !orderUpdate && selectedType === TakeoutDelivery["Delivery"])
 
-  }, [orderUpdate, selectedAddress, selectedType, userAddress])
+    // Change to Takeout. We changed locally, It's different from DB and It's Takeout
+    const changeToTakeout = !!orderUpdate && orderUpdate !== selectedType && orderUpdate === TakeoutDelivery["Takeout"]
 
-  console.log({ shouldUpdateBeEnabled })
-  console.log(orderUpdate, selectedType, selectedAddress, userAddress)
+    return newAddress || changeToTakeout
+  }, [orderUpdate, selectedAddress, selectedType])
 
   const onClear = () => {
     setDisregardSavedAddress(true)
     setSelectedAddress(undefined)
     setinputAddress("")
   }
-
-
-  console.log({
-    selectedAddress, userAddress
-  })
 
   return (
     <CustomModal
@@ -249,7 +243,7 @@ export const ModalAddress = ({
                 <Button
                   size="lg" variant={"ghost"}
                   isDisabled={inputAddressDisabled}
-                  onPress={onClear}>{"Clear 2"}</Button>
+                  onPress={onClear}>{"Clear"}</Button>
               </HStack>
               {selectedAddress ? <FormControl pl={"2"}>
                 <FormControl.Label>Apt, suite, floor (optional)</FormControl.Label>
