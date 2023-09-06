@@ -12,7 +12,7 @@ extend type Mutation {
 	updateBusinessInformation(input: UpdateBusinessInfoInput!): Business!
 	deleteBusiness(businessID: ID!): DeleteBusinessPayload
 	updateBusinessToken(input: String): String
-	updateBusinessLocation(input: AddressInput!): Business
+	updateBusinessLocation(input: UpdateAddressInput!): Business!
 	manageBusinessEmployees(input: ManageBusinessEmployeesInput!): Employee!
 	deleteBusinessEmployee(input: DeleteEmployee!): ID!
 	shareQRCode(input: ShareQRCodeInput!): Boolean!

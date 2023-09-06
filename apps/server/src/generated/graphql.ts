@@ -458,7 +458,7 @@ export type Mutation = {
   shareQRCode: Scalars['Boolean'];
   updateAddress: Address;
   updateBusinessInformation: Business;
-  updateBusinessLocation?: Maybe<Business>;
+  updateBusinessLocation: Business;
   updateBusinessToken?: Maybe<Scalars['String']>;
   updateCategory?: Maybe<Category>;
   updateCustomerUpdateTabType?: Maybe<Tab>;
@@ -685,7 +685,7 @@ export type MutationRecoverPasswordArgs = {
 
 
 export type MutationRequestCloseTabArgs = {
-  input: GetById;
+  input?: InputMaybe<GetById>;
 };
 
 
@@ -705,7 +705,7 @@ export type MutationShareQrCodeArgs = {
 
 
 export type MutationUpdateAddressArgs = {
-  input?: InputMaybe<UpdateAddressInput>;
+  input: UpdateAddressInput;
 };
 
 
@@ -715,7 +715,7 @@ export type MutationUpdateBusinessInformationArgs = {
 
 
 export type MutationUpdateBusinessLocationArgs = {
-  input: AddressInput;
+  input: UpdateAddressInput;
 };
 
 
@@ -1710,13 +1710,13 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   passwordReset?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationPasswordResetArgs, 'input'>>;
   postUserLogin?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationPostUserLoginArgs, 'input'>>;
   recoverPassword?: Resolver<Maybe<ResolversTypes['RequestResponseOK']>, ParentType, ContextType, RequireFields<MutationRecoverPasswordArgs, 'input'>>;
-  requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationRequestCloseTabArgs, 'input'>>;
+  requestCloseTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, Partial<MutationRequestCloseTabArgs>>;
   requestJoinTab?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRequestJoinTabArgs, 'input'>>;
   requestUserAccountCreation?: Resolver<ResolversTypes['AccountCreationResponse'], ParentType, ContextType, RequireFields<MutationRequestUserAccountCreationArgs, 'input'>>;
   shareQRCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationShareQrCodeArgs, 'input'>>;
-  updateAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, Partial<MutationUpdateAddressArgs>>;
+  updateAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationUpdateAddressArgs, 'input'>>;
   updateBusinessInformation?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationUpdateBusinessInformationArgs, 'input'>>;
-  updateBusinessLocation?: Resolver<Maybe<ResolversTypes['Business']>, ParentType, ContextType, RequireFields<MutationUpdateBusinessLocationArgs, 'input'>>;
+  updateBusinessLocation?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationUpdateBusinessLocationArgs, 'input'>>;
   updateBusinessToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, Partial<MutationUpdateBusinessTokenArgs>>;
   updateCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationUpdateCategoryArgs>>;
   updateCustomerUpdateTabType?: Resolver<Maybe<ResolversTypes['Tab']>, ParentType, ContextType, RequireFields<MutationUpdateCustomerUpdateTabTypeArgs, 'input'>>;

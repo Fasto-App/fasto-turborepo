@@ -170,10 +170,11 @@ const updateBusinessInformation = async (
   }
 }
 
-const updateBusinessLocation = async (
-  _parent: any,
-  { input }: { input: businessLocationSchemaInput },
-  { db, business }: Context) => {
+//@ts-ignore
+const updateBusinessLocation: MutationResolvers["updateBusinessLocation"] = async (
+  _parent,
+  { input },
+  { db, business }) => {
   console.log("Location Input", input)
   const Business = BusinessModel(db)
   const Address = AddressModel(db)
@@ -207,8 +208,6 @@ const updateBusinessLocation = async (
 
       const savedAddress = await address.save()
       updateBusiness.address = savedAddress._id
-
-      await updateBusiness.save()
     }
 
     return await updateBusiness.save()

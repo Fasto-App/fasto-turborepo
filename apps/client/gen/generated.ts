@@ -458,7 +458,7 @@ export type Mutation = {
   shareQRCode: Scalars['Boolean'];
   updateAddress: Address;
   updateBusinessInformation: Business;
-  updateBusinessLocation?: Maybe<Business>;
+  updateBusinessLocation: Business;
   updateBusinessToken?: Maybe<Scalars['String']>;
   updateCategory?: Maybe<Category>;
   updateCustomerUpdateTabType?: Maybe<Tab>;
@@ -705,7 +705,7 @@ export type MutationShareQrCodeArgs = {
 
 
 export type MutationUpdateAddressArgs = {
-  input?: InputMaybe<UpdateAddressInput>;
+  input: UpdateAddressInput;
 };
 
 
@@ -715,7 +715,7 @@ export type MutationUpdateBusinessInformationArgs = {
 
 
 export type MutationUpdateBusinessLocationArgs = {
-  input: AddressInput;
+  input: UpdateAddressInput;
 };
 
 
@@ -1075,7 +1075,6 @@ export enum TakeoutDelivery {
 }
 
 export type UpdateAddressInput = {
-  _id: Scalars['ID'];
   city: Scalars['String'];
   complement?: InputMaybe<Scalars['String']>;
   country: Scalars['String'];
@@ -1260,11 +1259,11 @@ export type UpdateBusinessInformationMutationVariables = Exact<{
 export type UpdateBusinessInformationMutation = { __typename?: 'Mutation', updateBusinessInformation: { __typename?: 'Business', name: string, picture?: string | null, description?: string | null, _id: string } };
 
 export type UpdateBusinessLocationMutationVariables = Exact<{
-  input: AddressInput;
+  input: UpdateAddressInput;
 }>;
 
 
-export type UpdateBusinessLocationMutation = { __typename?: 'Mutation', updateBusinessLocation?: { __typename?: 'Business', address?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null } | null };
+export type UpdateBusinessLocationMutation = { __typename?: 'Mutation', updateBusinessLocation: { __typename?: 'Business', address?: { __typename?: 'Address', streetAddress: string, stateOrProvince: string, postalCode: string, country: string, complement?: string | null, city: string, _id: string } | null } };
 
 export type GetAllBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1967,7 +1966,7 @@ export type UpdateBusinessInformationMutationHookResult = ReturnType<typeof useU
 export type UpdateBusinessInformationMutationResult = Apollo.MutationResult<UpdateBusinessInformationMutation>;
 export type UpdateBusinessInformationMutationOptions = Apollo.BaseMutationOptions<UpdateBusinessInformationMutation, UpdateBusinessInformationMutationVariables>;
 export const UpdateBusinessLocationDocument = gql`
-    mutation UpdateBusinessLocation($input: AddressInput!) {
+    mutation UpdateBusinessLocation($input: UpdateAddressInput!) {
   updateBusinessLocation(input: $input) {
     address {
       streetAddress

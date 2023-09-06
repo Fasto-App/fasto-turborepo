@@ -9,6 +9,7 @@ import { DevTool } from "@hookform/devtools";
 import { Loading } from "../../components/Loading";
 import { useAppStore } from "../UseAppStore";
 import { useTranslation } from "next-i18next";
+import { showToast } from "../../components/showToast";
 
 export const ManageBusinessLocation = () => {
   const setNetworkState = useAppStore(state => state.setNetworkState)
@@ -38,10 +39,13 @@ export const ManageBusinessLocation = () => {
   const [updateBusinessLocation, { loading }] = useUpdateBusinessLocationMutation({
     refetchQueries: ["GetBusinessLocation"],
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: "Success" })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 
@@ -83,7 +87,8 @@ export const ManageBusinessLocation = () => {
     country: {
       ...ManageLocationConfig.country,
       label: t("country"),
-      placeholder: t("country")
+      placeholder: t("country"),
+      isDisabled: !!data?.getBusinessLocation?.country
     },
   }
 

@@ -14,11 +14,10 @@ type AutoCompleteRes {
 
 extend type Mutation {
 	createCustomerAddress(input: AddressInput!): Address!
-	updateAddress(input: UpdateAddressInput): Address!
+	updateAddress(input: UpdateAddressInput!): Address!
 }
 
 input UpdateAddressInput {
-	_id: ID!
 	streetAddress: String!
 	complement: String
 	postalCode: String!

@@ -14,6 +14,7 @@ import { DevTool } from "@hookform/devtools"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
 import { useTranslation } from "next-i18next"
+import { showToast } from "../../components/showToast"
 
 export const ManageBusiness = () => {
   const setNetworkState = useAppStore(state => state.setNetworkState)
@@ -55,10 +56,13 @@ export const ManageBusiness = () => {
   const [updateBusinessInformationMutation, { loading }] = useUpdateBusinessInformationMutation({
     refetchQueries: ["GetBusinessInformation"],
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: "Success" })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: `Error`,
+        status: "error"
+      })
     }
   })
 
