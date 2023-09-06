@@ -17,6 +17,22 @@ type ModalAddressProps = {
   screenName?: "ProductDescription" | "MenuScreen";
   tabId: string;
 }
+
+const successAndFailure = {
+  onCompleted() {
+    showToast({
+      message: "Success"
+    })
+  },
+  onError() {
+    showToast({
+      message: "Error",
+      status: "error"
+    })
+  },
+}
+
+
 export const ModalAddress = ({
   isOpen,
   setIsOpen,
@@ -29,27 +45,19 @@ export const ModalAddress = ({
 
   const [updateTabTypeAndAddress, { loading: loadingTypeAndAddress }] = useUpdateTypeAndAddressMutation({
     refetchQueries: [{ query: GetClientSessionDocument }],
+    ...successAndFailure
   })
 
   const [updateTabType, { loading: loadingType }] = useUpdateCustomerUpdateTabTypeMutation({
     refetchQueries: [{ query: GetClientSessionDocument }],
+    ...successAndFailure
   })
 
   const [getAutocomplete, { data, loading }] = useGetGoogleAutocompleteLazyQuery()
 
   const [createCustomerAddress, { loading: loadingCreateAddress }] = useCreateCustomerAddressMutation({
     refetchQueries: [{ query: GetClientSessionDocument }],
-    onCompleted() {
-      showToast({
-        message: "Success"
-      })
-    },
-    onError() {
-      showToast({
-        message: "Error",
-        status: "error"
-      })
-    },
+    ...successAndFailure
   })
 
   const [selectedAddress, setSelectedAddress] = useState<{ place_id: string; description: string }>()
@@ -149,11 +157,14 @@ export const ModalAddress = ({
     // Change if a new address is selected and the local state is Delivery
     const newAddress = !!selectedAddress && (orderUpdate === TakeoutDelivery["Delivery"] || !orderUpdate && selectedType === TakeoutDelivery["Delivery"])
 
-    // Change to Takeout. We changed locally, It's different from DB and It's Takeout
+    // Change to Takeout
     const changeToTakeout = !!orderUpdate && orderUpdate !== selectedType && orderUpdate === TakeoutDelivery["Takeout"]
 
-    return newAddress || changeToTakeout
-  }, [orderUpdate, selectedAddress, selectedType])
+    // change to delivery from takeout with saved address
+    const changeToDelivery = !!orderUpdate && orderUpdate !== selectedType && orderUpdate === TakeoutDelivery["Delivery"] && userAddress
+
+    return newAddress || changeToTakeout || changeToDelivery
+  }, [orderUpdate, selectedAddress, selectedType, userAddress])
 
   const onClear = () => {
     setDisregardSavedAddress(true)

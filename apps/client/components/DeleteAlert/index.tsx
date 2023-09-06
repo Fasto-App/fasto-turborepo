@@ -28,7 +28,7 @@ export const DeleteAlert = (props: DeleteAlertProps) => {
 				isOpen={isOpen}
 				onClose={() => setIsOpen(false)}
 				onPress={closeDeleteAlert}
-				title=""
+				title={title}
 			/>
 		</Center>
 	)
@@ -47,6 +47,8 @@ const Alert = (props: AlertProps) => {
 	const { body, isOpen, onClose, title, cancel, onPress } = props
 	const cancelRef = React.useRef(null);
 
+	console.log(title)
+
 	return (
 		<AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
 			<AlertDialog.Content>
@@ -56,11 +58,11 @@ const Alert = (props: AlertProps) => {
 					{body}
 				</AlertDialog.Body>
 				<AlertDialog.Footer>
-					<Button.Group space={2}>
-						<Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef}>
+					<Button.Group space={2} flex={1}>
+						<Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef} flex={1}>
 							{cancel}
 						</Button>
-						<Button colorScheme="error" onPress={onPress}>
+						<Button colorScheme="error" onPress={onPress} flex={1}>
 							{title}
 						</Button>
 					</Button.Group>
