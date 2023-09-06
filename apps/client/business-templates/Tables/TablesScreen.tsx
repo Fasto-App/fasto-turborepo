@@ -17,6 +17,7 @@ import { Tile, TileLoading } from "../../components/Tile"
 import { OrangeBox } from "../../components/OrangeBox"
 import { useTranslation } from "next-i18next"
 import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton"
+import { showToast } from "../../components/showToast"
 
 export const TablesScreen = () => {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
@@ -46,8 +47,6 @@ export const TablesScreen = () => {
     }),
     shallow
   )
-
-  const setNetworkState = useAppStore(state => state.setNetworkState)
 
   const { t } = useTranslation("businessTables")
 
@@ -88,10 +87,15 @@ export const TablesScreen = () => {
   const [createTable] = useCreateTableMutation({
     refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
     onCompleted: () => {
-      setNetworkState(("success"))
+      showToast({
+        message: "Success"
+      })
     },
     onError: () => {
-      setNetworkState(("error"))
+      showToast({
+        status: "error",
+        message: "Error"
+      })
     }
   });
 

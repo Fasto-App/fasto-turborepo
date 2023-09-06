@@ -12,7 +12,6 @@ import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 
 export const ManageBusinessLocation = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
   const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetBusinessLocationQuery({
@@ -25,7 +24,10 @@ export const ManageBusinessLocation = () => {
       setValue("complement", data.getBusinessLocation?.complement || "")
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 

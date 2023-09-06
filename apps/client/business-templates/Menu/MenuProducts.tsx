@@ -11,6 +11,7 @@ import { GetAllMenusByBusinessIdDocument, useDeleteMenuMutation, useGetAllCatego
 import { Icon } from '../../components/atoms/NavigationButton'
 import { Pressable } from 'react-native'
 import { useTranslation } from 'next-i18next'
+import { showToast } from '../../components/showToast'
 
 function MenuProducts() {
   const { favoriteMenus, setFavoriteMenus } = useAppStore(state => ({
@@ -18,7 +19,6 @@ function MenuProducts() {
     setFavoriteMenus: state.setFavoriteMenus
   }))
 
-  const setNetworkState = useAppStore(state => state.setNetworkState)
   const { data: menusData, loading: loadingQuery } = useGetAllMenusByBusinessIdQuery({
     onCompleted: (data) => {
 
@@ -31,7 +31,10 @@ function MenuProducts() {
 
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        status: "error",
+        message: "Error"
+      })
     }
   });
 

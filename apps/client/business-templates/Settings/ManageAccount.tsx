@@ -14,7 +14,6 @@ import { useTranslation } from "next-i18next"
 import { showToast } from "../../components/showToast"
 
 export const ManageAccount = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
   const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetUserInformationQuery({
@@ -23,7 +22,10 @@ export const ManageAccount = () => {
       setValue("email", data?.getUserInformation?.email || "")
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 

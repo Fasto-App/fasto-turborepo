@@ -19,13 +19,15 @@ import { showToast } from "../../components/showToast"
 
 export const ManageEmployee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const setNetworkState = useAppStore(state => state.setNetworkState)
 
   const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetAllEmployeesQuery({
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   });
 

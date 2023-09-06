@@ -17,8 +17,6 @@ import { useTranslation } from "next-i18next"
 import { showToast } from "../../components/showToast"
 
 export const ManageBusiness = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
-
   const { daysOfTheWeek, setCloseHour, setOpenHour, toggleDay } = useScheduleStore(state => ({
     daysOfTheWeek: state.daysOfTheWeek,
     setOpenHour: state.setOpenHour,
@@ -49,7 +47,10 @@ export const ManageBusiness = () => {
       // })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 
