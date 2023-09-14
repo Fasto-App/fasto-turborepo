@@ -29,7 +29,7 @@ import { RiUserSettingsLine } from "react-icons/ri"
 import { ImQrcode } from "react-icons/im"
 import { BsBag } from "react-icons/bs"
 import { BsPeopleFill } from "react-icons/bs"
-import { MdOutlinePhoneIphone } from "react-icons/md"
+import { MdOutlinePhoneIphone, MdLocationPin } from "react-icons/md"
 import { AiFillStar, AiOutlineStar } from "react-icons/ai"
 import { HiOutlineClipboardList } from "react-icons/hi"
 
@@ -41,6 +41,8 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "Location":
+      return <MdLocationPin color={color} size={size} />;
     case "ArrowUp":
       return <IoIosArrowUp color={color} size={size} />;
     case "ArrowDown":
@@ -115,7 +117,7 @@ export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) =>
 
 const NavigationButton = ({
   type,
-  selected = false,
+  selected,
   text,
   onPress,
   color,
@@ -133,17 +135,14 @@ const NavigationButton = ({
   numNotifications?: number;
   disabled?: boolean;
 }) => {
-  const [isHovered, setIsHovered] = React.useState(false);
-  const selectedColor = selected || isHovered ? colors.orange : colors.white;
   const isRow = flexDirection === "row";
+  const colorSelected = color ? color : selected ? colors.orange : colors.white
 
   return (
     <Pressable
       isDisabled={disabled}
       _disabled={{ opacity: 0.3 }}
       onPress={onPress}
-      onHoverIn={() => setIsHovered(true)}
-      onHoverOut={() => setIsHovered(false)}
       flexDirection={flexDirection}
       width={isRow ? "90%" : "auto"}
       background={selected ? "secondary.300" : "clear"}
@@ -161,12 +160,12 @@ const NavigationButton = ({
           {numNotifications}
         </Badge>
         : null}
-      <Icon type={type} size={"2em"} color={color ?? selectedColor} />
+      <Icon type={type} size={"2em"} color={colorSelected} />
       <Box w={"2"} />
       <Text
         fontSize={isRow ? "lg" : "xs"}
         textAlign={"center"}
-        color={color ?? selectedColor}
+        color={colorSelected}
       >
         {text}
       </Text>

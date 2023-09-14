@@ -26,5 +26,6 @@
 	"splitBill": "Dividir cuenta",
 	"back": "Atrás",
 	"splitType": "Tipo de división",
-	"splitNow": "Dividir ahora"
+	"splitNow": "Dividir ahora",
+	"customer": "Cliente"
 }

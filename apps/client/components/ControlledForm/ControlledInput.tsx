@@ -1,4 +1,4 @@
-import { AspectRatio, Box, CheckIcon, FormControl, Hidden, HStack, IInputProps, Input, Select, Switch, TextArea, Text } from 'native-base'
+import { Radio, Box, CheckIcon, FormControl, Hidden, HStack, IInputProps, Input, Select, Switch, TextArea, Text } from 'native-base'
 import React, { SyntheticEvent } from 'react'
 import { Control, Controller, UseControllerProps } from 'react-hook-form'
 import { AiOutlineCloudDownload } from 'react-icons/ai';
@@ -21,7 +21,7 @@ type CustomInputProps = {
   accessibilityLabel?: string;
 }
 
-type InputType = "Input" | "TextArea" | "Select" | "File" | "Date" | "Currency" | "Number"
+type InputType = "Input" | "TextArea" | "Select" | "File" | "Date" | "Currency" | "Number" | "Radio"
 
 export type InputProps = IInputProps & CustomInputProps
 export type ControlledFormInput<T extends Record<string, string | number>> = Omit<UseControllerProps, "control"> & InputProps &
@@ -73,8 +73,8 @@ export const ControlledInput = <T extends Record<string, string>>({
               case "Select":
                 return (
                   <Select
+                    isDisabled={rest.isDisabled}
                     selectedValue={field.value}
-                    // minWidth="200"
                     fontSize="lg"
                     accessibilityLabel={rest.accessibilityLabel}
                     placeholder={placeholder}
@@ -85,6 +85,26 @@ export const ControlledInput = <T extends Record<string, string>>({
                       <Select.Item key={item._id} label={item.name} value={item._id} />))
                     }
                   </Select>
+                )
+              case "Radio":
+                const { ref, ...noRef } = field
+
+                return (
+                  <Radio.Group
+                    {...noRef}
+                    accessibilityLabel='group options'
+                    value={field.value}>
+                    {array?.map(item => (
+                      <Radio
+                        accessibilityLabel={item.name}
+                        size="lg"
+                        my={2}
+                        key={item._id}
+                        value={item._id}>
+                        {item.name}
+                      </Radio>
+                    ))}
+                  </Radio.Group>
                 )
               case "Date":
                 return (

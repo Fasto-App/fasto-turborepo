@@ -15,16 +15,19 @@ import { DeleteAlert } from "../../components/DeleteAlert"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
 import { useTranslation } from "next-i18next"
+import { showToast } from "../../components/showToast"
 
 export const ManageEmployee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const setNetworkState = useAppStore(state => state.setNetworkState)
 
   const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetAllEmployeesQuery({
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   });
 
@@ -40,10 +43,13 @@ export const ManageEmployee = () => {
   const [manageEmployee, { loading }] = useManageBusinessEmployeesMutation({
     refetchQueries: ["GetAllEmployees"],
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: "Success" })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "error",
+        status: "error"
+      })
     }
   })
 

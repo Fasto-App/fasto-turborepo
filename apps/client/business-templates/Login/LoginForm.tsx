@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { LoginFormFields } from '../types';
 import { Center, Box, Heading, VStack, HStack, Text, Button, Image } from "native-base"
 import { useRouter } from 'next/router';
@@ -6,7 +6,7 @@ import { ControlledForm, RegularInputConfig } from '../../components/ControlledF
 import { LoginConfig, useLoginFormHook } from './hooks';
 import { usePostUserLoginMutation } from '../../gen/generated';
 import { setBusinessCookies } from '../../cookies';
-import { businessRoute } from '../../routes';
+import { businessRoute } from 'fasto-route';
 import { PasswordIcon } from '../../components/atoms/PasswordIcon';
 import { Link } from '../../components/atoms/Link';
 import { FDSSelect } from '../../components/FDSSelect';
@@ -42,7 +42,7 @@ export const LoginForm = () => {
 		}
 	})
 
-	const onSubmit = async (formData: LoginFormFields) => {
+	const onSubmit = useCallback((async (formData: LoginFormFields) => {
 		setError(undefined);
 
 		try {
@@ -57,7 +57,7 @@ export const LoginForm = () => {
 		} catch {
 			console.log("ERROR")
 		}
-	};
+	}), [postUserLogin]);
 
 	const passwordInputProps: RegularInputConfig = useMemo(() => ({
 		...LoginConfig,
@@ -77,8 +77,9 @@ export const LoginForm = () => {
 					showPassword={showPass}
 				/>
 			),
+			onSubmitEditing: () => handleSubmit(onSubmit)()
 		}
-	}), [showPass, t]);
+	}), [handleSubmit, onSubmit, showPass, t]);
 
 	return (
 		<Center w="100%" height={"100%"}>

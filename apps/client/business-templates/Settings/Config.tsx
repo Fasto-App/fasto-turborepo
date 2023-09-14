@@ -31,6 +31,14 @@ export const ManageLocationConfig: RegularInputConfig = {
     name: "country",
     label: "Country",
     isRequired: true,
+    inputType: "Select",
+    array: [{
+      _id: "US",
+      name: "US"
+    }, {
+      _id: "BR",
+      name: "BR"
+    }]
   },
 };
 

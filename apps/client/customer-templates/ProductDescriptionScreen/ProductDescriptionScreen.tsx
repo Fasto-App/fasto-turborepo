@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Addon } from "../../components/atoms/AddonCheckbox";
-import { Box, Button, Image, TextArea, Text, ScrollView, Divider, VStack } from "native-base";
+import { Box, Button, TextArea, Text, ScrollView, Divider, VStack, Heading, Input, FormControl, Spinner, HStack, Pressable } from "native-base";
 import { useSpring, animated } from "react-spring";
 import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
-import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from "app-helpers";
-import { getClientCookies } from "../../cookies";
-import { useAddItemToCartMutation, useGetProductByIdQuery } from "../../gen/generated";
+import { parseToCurrency } from "app-helpers";
+import { useAddItemToCartMutation, useCreateCustomerAddressMutation, useGetGoogleAutocompleteLazyQuery, useGetProductByIdQuery } from "../../gen/generated";
 import { LoadingPDP } from "./LoadingPDP";
-import { customerRoute } from "../../routes";
+import { customerRoute } from "fasto-route";
 import { showToast } from "../../components/showToast";
 import { useTranslation } from "next-i18next";
 import NextImage from 'next/image'
+import { useGetClientSession } from "../../hooks";
+import { ModalAddress } from "../../components/ModalAddress";
 
 const AnimatedBox = animated(Box);
 
@@ -26,10 +27,12 @@ export const ProductDescriptionScreen = () => {
   const route = useRouter();
   const { businessId, productId } = route.query;
 
+  const [isModalAddresOpen, setIsModalOpen] = useState(false);
+
   const [quantity, setQuantity] = useState(1);
   const [text, setText] = useState("");
 
-  const tab = getClientCookies(businessId as string)
+  const { data: clientData } = useGetClientSession()
   const { t } = useTranslation("customerProductDescription");
 
   // function to query product by id
@@ -79,9 +82,16 @@ export const ProductDescriptionScreen = () => {
   const onAddToCartPress = useCallback(() => {
     console.log("Pressed");
 
-    if (typeof productId !== "string" || typeof tab !== "string") {
+    if (typeof productId !== "string" || !clientData?.getClientSession.tab) {
       throw new Error("Product id is not defined")
     };
+
+    // if client has no address but is a delivery
+    if (clientData?.getClientSession.tab?.type === "Delivery" &&
+      !clientData.getClientSession.user.address) {
+      setIsModalOpen(true)
+      return
+    }
 
     addItemToCart({
       variables: {
@@ -93,8 +103,11 @@ export const ProductDescriptionScreen = () => {
       }
     })
 
-
-  }, [addItemToCart, productId, quantity, tab, text]);
+  }, [
+    productId, clientData?.getClientSession.tab,
+    clientData?.getClientSession.user.address,
+    addItemToCart, quantity, text
+  ]);
 
 
   return (
@@ -127,7 +140,7 @@ export const ProductDescriptionScreen = () => {
               quantity={quantity}
               onPlusPress={increaseQuantity}
               onMinusPress={decreaseQuantity}
-              disabled={!tab || addToCartLoading}
+              disabled={!clientData?.getClientSession.tab || addToCartLoading}
             />
           </Box>
           <Divider my={"5"} backgroundColor={"gray.300"} />
@@ -136,7 +149,7 @@ export const ProductDescriptionScreen = () => {
             <Text fontWeight={"semibold"} fontSize={"25"}>{t("extras")}</Text>
             {addons.map((addon, index) => (
               <Addon
-                isDisabled={!tab}
+                isDisabled={!clientData?.getClientSession.tab}
                 key={index}
                 name={addon.name}
                 price={parseToCurrency(addon.price)}
@@ -147,7 +160,7 @@ export const ProductDescriptionScreen = () => {
           </VStack>}
           <TextArea
             h={"32"}
-            isDisabled={!tab}
+            isDisabled={!clientData?.getClientSession.tab}
             borderWidth={1}
             onChangeText={(text) => setText(text)}
             value={text}
@@ -159,18 +172,33 @@ export const ProductDescriptionScreen = () => {
         </ScrollView>
       }
       <Box padding={4}>
-        <Button
-          isDisabled={!tab}
-          isLoading={addToCartLoading}
-          onPress={onAddToCartPress}
-          size={"lg"}
-          colorScheme="primary"
-          _text={{ fontSize: "18", bold: true }}
-        >
-          {t("addToCart")}
-        </Button>
+        {!clientData ?
+          <Button _text={{ fontSize: "18", bold: true }}
+            onPress={() => route.push({
+              pathname: customerRoute["/customer/[businessId]"],
+              query: { businessId: businessId }
+            })}
+          >
+            {t("startOrdering")}
+          </Button>
+          : <Button
+            isDisabled={!clientData?.getClientSession.tab}
+            isLoading={addToCartLoading}
+            onPress={onAddToCartPress}
+            colorScheme="primary"
+            _text={{ fontSize: "18", bold: true }}
+          >
+            {t("addToCart")}
+          </Button>}
       </Box>
+      {clientData?.getClientSession.tab?._id ? <ModalAddress
+        isOpen={isModalAddresOpen}
+        setIsOpen={setIsModalOpen}
+        screenName="ProductDescription"
+        address={clientData?.getClientSession.user.address}
+        selectedType={clientData?.getClientSession.tab?.type}
+        tabId={clientData?.getClientSession.tab?._id}
+      /> : null}
     </AnimatedBox>
   );
 };
-

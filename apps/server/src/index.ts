@@ -15,9 +15,10 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { getClientFromToken, getUserFromToken } from "./graphql/resolvers/utils";
 import { ApolloError } from "./graphql/ApolloErrorExtended/ApolloErrorExtended";
 import { dbConnection } from "./dbConnection";
-import { pubsub } from "./graphql/resolvers/pubSub";
 import { Context } from "./graphql/resolvers/types";
 import { Locale, locales } from "app-helpers";
+import { Metada, confirmPaymentWebHook, stripe } from "./stripe";
+import { AddressModel, BusinessModel } from "./models";
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
@@ -126,6 +127,81 @@ async function main() {
     }));
   }
 
+  app.post('/webhook/br', express.raw({ type: 'application/json' }), async (request, response) => {
+    const sig = request.headers['stripe-signature'];
+    let event;
+
+    try {
+      if (!sig || !process.env.STRIPE_WEBHOOK_SECRET_BRAZIL) {
+        throw "No Stripe signature"
+      }
+
+      event = stripe("BR").webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET_BRAZIL)
+    } catch (err) {
+      // @ts-ignore
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.created':
+        const paymentCreated = event.data.object
+        break
+      case 'payment_intent.succeeded':
+        const paymentIntentSucceeded = event.data.object;
+        // @ts-ignore
+        confirmPaymentWebHook(paymentIntentSucceeded.metadata, db)
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  })
+
+
+  app.post('/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
+    const sig = request.headers['stripe-signature'];
+    let event;
+
+    try {
+      if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
+        throw "No Stripe signature"
+      }
+
+      event = stripe("US").webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
+    } catch (err) {
+      // @ts-ignore
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.created':
+        const paymentCreated = event.data.object
+        break
+      case 'payment_intent.succeeded':
+        const paymentIntentSucceeded = event.data.object;
+        try {
+          // @ts-ignore
+          confirmPaymentWebHook(paymentIntentSucceeded.metadata, db)
+        } catch {
+          // @ts-ignore
+          response.status(400).send(`Webhook Error: ${err.message}`);
+        }
+        break;
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  });
+
   httpServer.listen(PORT, () => {
     console.log(`[🚀 GraphQL SERVER] ready at http://localhost:${PORT}/graphql`);
     console.log(`[📬 Subscription ENDPOINT] ready at ws://localhost:${PORT}/graphql`);
@@ -155,12 +231,12 @@ async function proccessContext({ businessToken, clientToken, headersAPIKey, loca
   };
 }
 
-let currentNumber = 0;
-function incrementNumber() {
-  currentNumber++;
-  pubsub.publish('NUMBER_INCREMENTED', { numberIncremented: currentNumber });
-  setTimeout(incrementNumber, 1000);
-}
+// let currentNumber = 0;
+// function incrementNumber() {
+//   currentNumber++;
+//   pubsub.publish('NUMBER_INCREMENTED', { numberIncremented: currentNumber });
+//   setTimeout(incrementNumber, 1000);
+// }
 
 // Start incrementing
-incrementNumber();
+// incrementNumber();

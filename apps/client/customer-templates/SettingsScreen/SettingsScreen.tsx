@@ -6,7 +6,7 @@ import { NavigationButtonType } from "../../components/types";
 import { ILinearGradientProps } from "native-base/lib/typescript/components/primitives/Box/types";
 import { ResponsiveValue, ColorType } from "native-base/lib/typescript/components/types";
 import { useGetClientSession } from "../../hooks";
-import { customerRoute, customerRouteParams } from "../../routes";
+import { customerRoute, customerRouteParams } from "fasto-route";
 import { useRouter } from "next/router";
 import { PendingInvitationModal } from "./PendingInvitationModal";
 import { QRCodeReaderModal } from "./QRCodeReaderModal";
@@ -127,6 +127,9 @@ const SettingsScreen = () => {
           });
 
         } catch (error) {
+          // @ts-ignore
+          if (error.name === "AbortError") return
+
           showToast({
             message: t("shareError"),
             status: "error"

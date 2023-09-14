@@ -9,6 +9,7 @@ const withTM = require('next-transpile-modules')([
 	'react-native-svg',
 	'react-native',
 	'app-helpers',
+	'fasto-route',
 ]);
 
 /**
@@ -28,6 +29,8 @@ const nextConfig = {
 		FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
 		FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
 		FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
+		STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+		STRIPE_PUBLISHABLE_KEY_BRAZIL: process.env.STRIPE_PUBLISHABLE_KEY_BRAZIL,
 	},
 	images: {
 		remotePatterns: [
@@ -41,6 +44,14 @@ const nextConfig = {
 	webpack(config) {
 		config.experiments = { ...config.experiments, topLevelAwait: true };
 		return config;
+	},
+	headers() {
+		return [
+			{
+				source: '/.well-known/apple-developer-merchantid-domain-association',
+				headers: [{ key: 'content-type', value: 'application/json' }],
+			},
+		];
 	},
 };
 

@@ -19,8 +19,9 @@ export const AllAndEditButtons = ({
     <HStack space={2}>
       <Button
         width={"100"}
-        variant={"outline"}
+        variant={"ghost"}
         onPress={allAction}
+        colorScheme="lightBlue"
       >
         {t("all")}
       </Button>
@@ -28,9 +29,9 @@ export const AllAndEditButtons = ({
       <Button
         disabled={!categoryId}
         isDisabled={!categoryId}
-
+        variant={"ghost"}
         width={"100px"}
-        colorScheme="tertiary"
+        colorScheme="lightBlue"
         onPress={() => editAction(categoryId)}>
         {t("edit")}
       </Button>

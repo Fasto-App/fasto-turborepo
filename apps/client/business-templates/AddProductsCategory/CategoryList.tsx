@@ -1,17 +1,15 @@
 import React, { useCallback, useState } from 'react';
 import {
-	Button, Box, Heading, Text, FlatList, HStack
+	Box, Heading, Text, FlatList, HStack, VStack
 } from 'native-base';
-import { AddMoreButton } from '../../components/atoms/AddMoreButton';
-// import { CategoryModal } from './CategoryModal';
-import { CategoryTile } from '../../components/Category/Category';
-import { Category } from '../../components/Category/types';
+import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { useAppStore } from '../UseAppStore';
 import { AllAndEditButtons } from '../../components/AllAndAddButons';
 import { useCategoryFormHook } from './useCategoryFormHook';
 import { CategoryModal } from './CategoryModal';
 import { GetAllCategoriesByBusinessQuery } from '../../gen/generated';
 import { useTranslation } from 'react-i18next';
+import { Tile } from '../../components/Tile';
 
 type Categories = NonNullable<GetAllCategoriesByBusinessQuery["getAllCategoriesByBusiness"]>
 
@@ -55,23 +53,22 @@ const CategoryList = ({ resetAll, categories }:
 		if (!item) return null
 
 		return (
-			<CategoryTile
-				category={{ name: item.name, id: item._id }}
+			<Tile
+				key={item._id}
 				selected={categoryId === item._id}
 				onPress={() => {
-					// set the id of the category in the state.
 					addQueryParams(item._id, item.name, item.description)
 				}}
-			/>
+			>
+				{item.name}
+			</Tile>
 		)
 	}, [addQueryParams, categoryId])
 
 	const EmptyState = () => {
 		return (
-			<Box py={3} >
-				<AddMoreButton
-					widthProps={200}
-					horizontal
+			<Box>
+				<SmallAddMoreButton
 					onPress={() => setShowCategoryModal(true)}
 				/>
 				<Text pt={3} fontSize={"xl"}>{t("emptyListText")}</Text>
@@ -79,47 +76,20 @@ const CategoryList = ({ resetAll, categories }:
 		)
 	}
 
-	return (
-		<Box
+	return (<>
+		<VStack
+			space={4}
 			p={"4"}
-			w={"100%"}
 			shadow={"4"}
 			borderWidth={1}
 			borderRadius={"md"}
 			borderColor={"trueGray.400"}
 			backgroundColor={"white"}
-			flexDirection={"column"}
 		>
-
-			{/* Header */}
 			<Box flexDirection={"row"}>
-				{/* Title */}
 				<Heading flex={1}>
 					{t("categories")}
 				</Heading>
-			</Box>
-
-			<Box>
-				<Box flexDirection={"row"} width={"100%"} flex={1} mb={2} p={'1'}>
-					{categories.length ? <AddMoreButton
-						widthProps={200}
-						horizontal
-						onPress={() => {
-							removeQueryParams()
-							setShowCategoryModal(true)
-						}}
-					/> : null}
-					<HStack flex={1} space={1}>
-						<FlatList
-							horizontal
-							data={categories.length ? categories : []}
-							renderItem={renderCategory}
-							ListEmptyComponent={EmptyState}
-							keyExtractor={(item) => `${item?._id}_category`}
-						/>
-					</HStack>
-				</Box>
-
 				<HStack>
 					<AllAndEditButtons
 						categoryId={categoryId}
@@ -129,16 +99,36 @@ const CategoryList = ({ resetAll, categories }:
 				</HStack>
 			</Box>
 
-			<CategoryModal
-				// @ts-ignore
-				categoryControl={categoryControl}
-				showModal={showCategoryModal}
-				setShowModal={setShowCategoryModal}
-				categoryFormState={categoryFormState}
-				handleCategorySubmit={handleCategorySubmit}
-				resetCategoryForm={resetCategoryForm}
-			/>
-		</Box>
+			<HStack space={2}>
+				{categories.length ?
+					<SmallAddMoreButton onPress={() => {
+						removeQueryParams()
+						setShowCategoryModal(true)
+					}} />
+					: null}
+				<HStack flex={1} space={1}>
+					<FlatList
+						horizontal
+						data={categories.length ? categories : []}
+						renderItem={renderCategory}
+						ListEmptyComponent={EmptyState}
+						ItemSeparatorComponent={() => <Box w={"2"} />}
+						keyExtractor={(item) => `${item?._id}_category`}
+					/>
+				</HStack>
+			</HStack>
+		</VStack>
+		<CategoryModal
+			// @ts-ignore
+			categoryControl={categoryControl}
+			showModal={showCategoryModal}
+			setShowModal={setShowCategoryModal}
+			categoryFormState={categoryFormState}
+			handleCategorySubmit={handleCategorySubmit}
+			resetCategoryForm={resetCategoryForm}
+		/>
+
+	</>
 	);
 };
 

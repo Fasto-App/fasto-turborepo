@@ -1,7 +1,7 @@
 import { onError } from "@apollo/client/link/error";
 import Router from "next/router";
 import { clearBusinessCookies, clearClientCookies } from "../cookies";
-import { businessRoute } from "../routes";
+import { businessRoute } from "fasto-route";
 import { ApolloError } from "@apollo/client";
 
 export const errorLink = onError(({ graphQLErrors, networkError }) => {

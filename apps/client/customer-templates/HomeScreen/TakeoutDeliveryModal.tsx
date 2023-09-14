@@ -1,17 +1,24 @@
 import React, { useCallback } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { JoinTabForm, joinTabSchema } from 'app-helpers'
 import { Button, Heading } from 'native-base'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, SideBySideInputConfig } from '../../components/ControlledForm'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
-import { GetTabRequestsDocument, useCreateNewTakeoutOrDeliveryMutation } from '../../gen/generated'
+import { GetTabRequestsDocument, TakeoutDelivery, useCreateNewTakeoutOrDeliveryMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies'
-import { customerRoute } from '../../routes'
+import { customerRoute } from 'fasto-route'
 import { useTranslation } from 'next-i18next'
 import { getCustomerName, getCustomerPhone, setCustomerName, setCustomerPhone } from '../../localStorage/customerStorage'
+import { z } from 'zod'
+
+export const joinTabSchema = z.object({
+  name: z.string().min(3, { message: 'error.nameRequired' }),
+  phoneNumber: z.string().min(6, { message: 'error.required' }),
+  type: z.nativeEnum(TakeoutDelivery),
+})
+export type JoinTabForm = z.infer<typeof joinTabSchema>
 
 const Config: SideBySideInputConfig = {
   name: {
@@ -30,6 +37,22 @@ const Config: SideBySideInputConfig = {
     autoFocus: true,
     autoComplete: "tel-country-code"
   },
+  type: {
+    name: "type",
+    inputType: "Select",
+    label: "Takeout or Delivery",
+    placeholder: "Enter an option",
+    isRequired: true,
+    defaultValue: TakeoutDelivery.Takeout,
+    array: [{
+      _id: TakeoutDelivery.Delivery,
+      name: TakeoutDelivery.Delivery,
+    },
+    {
+      _id: TakeoutDelivery.Takeout,
+      name: TakeoutDelivery.Takeout,
+    }]
+  }
 }
 
 type OpenTabModalProps = {
@@ -47,6 +70,7 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
     defaultValues: {
       name: getCustomerName() || "",
       phoneNumber: getCustomerPhone() || "",
+      type: TakeoutDelivery.Takeout
     },
   })
 
@@ -74,7 +98,7 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
   })
 
   const handleNewTakeoutOrDelivery = useCallback(async (data: JoinTabForm) => {
-    const { name, phoneNumber } = data
+    const { name, phoneNumber, type } = data
 
     if (!businessId) return
 
@@ -84,6 +108,7 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
           name,
           phoneNumber,
           business: businessId as string,
+          type
         },
       },
     })

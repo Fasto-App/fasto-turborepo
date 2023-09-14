@@ -1,7 +1,7 @@
 import React from 'react'
 import { Center, Box, Heading, VStack, Link, HStack, Button, Pressable, Text, Image } from "native-base";
 import NextLink from "next/link";
-import { businessRoute } from '../../routes';
+import { businessRoute } from 'fasto-route';
 import { ResetPasswordConfig, useResetPasswordHook } from './hook';
 import { useRouter } from 'next/router';
 import { usePasswordResetMutation } from '../../gen/generated';

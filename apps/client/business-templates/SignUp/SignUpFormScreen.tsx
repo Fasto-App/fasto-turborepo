@@ -2,7 +2,7 @@ import React from 'react'
 import { Center, Box, Heading, VStack, FormControl, Input, Link, HStack, Button, Pressable, Text, AlertDialog, Image } from "native-base";
 import NextLink from "next/link";
 import { Controller } from "react-hook-form";
-import { businessRoute } from '../../routes';
+import { businessRoute } from 'fasto-route';
 import { validateEmail } from '../../authUtilities/utils';
 import { useSignUpHook } from './hooks';
 import { useRequestUserAccountCreationMutation } from '../../gen/generated';

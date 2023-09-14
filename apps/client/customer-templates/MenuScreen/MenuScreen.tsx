@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Box, SectionList, HStack, ScrollView, Skeleton, Spacer, VStack, Text, Divider } from "native-base"
+import { Box, SectionList, HStack, ScrollView, Skeleton, Spacer, VStack, Text, Divider, Input, Pressable, useTheme } from "native-base"
 import { MenuItem } from "../../components/molecules/MenuItem";
 import { Tab } from "./Tab";
 import { useRouter } from "next/router";
-import { customerRoute } from "../../routes";
-import { useGetClientMenuQuery } from "../../gen/generated";
+import { customerRoute } from "fasto-route";
+import { TakeoutDelivery, useGetClientMenuQuery, useGetClientSessionQuery } from "../../gen/generated";
 import { useTranslation } from "next-i18next";
+import { Icon } from "../../components/atoms/NavigationButton";
+import { ModalAddress } from "../../components/ModalAddress";
+
 
 export const MenuScreen = () => {
   const router = useRouter();
@@ -14,6 +17,10 @@ export const MenuScreen = () => {
   const sectionListRef = useRef<typeof SectionList | null>(null);
   const scrollViewRef = useRef<typeof ScrollView | null>(null);
   const { t } = useTranslation("common")
+
+  const theme = useTheme()
+
+  const [isModalAddresOpen, setIsModalOpen] = useState(false);
 
   // function that fetchs either an specific menu or the default one
   const { data, loading: loadingQuery, error: errorQuery } = useGetClientMenuQuery({
@@ -30,6 +37,30 @@ export const MenuScreen = () => {
       }
     }
   });
+
+  const { data: clientData, loading: clientLoadingData } = useGetClientSessionQuery({
+    skip: false
+  })
+
+  const inputValue = useMemo(() => {
+    if (!clientData?.getClientSession.tab || !clientData?.getClientSession.tab) return ""
+    const { type } = clientData?.getClientSession.tab
+
+    if (!clientData?.getClientSession.user.address) return type
+
+    const { streetAddress, city, stateOrProvince, complement } = clientData?.getClientSession.user.address
+
+    return type === TakeoutDelivery.Takeout ? `${type}` :
+      `${type} to ${streetAddress}, ${complement} ${city} - ${stateOrProvince}`
+  },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      clientData?.getClientSession.tab?.type,
+      clientData?.getClientSession.user.address?.city,
+      clientData?.getClientSession.user.address?.streetAddress,
+      clientData?.getClientSession.user.address?.stateOrProvince]
+  )
 
   const formatToSectionData = useMemo(() => {
     if (!data?.getClientMenu?.sections) return []
@@ -59,6 +90,36 @@ export const MenuScreen = () => {
       loadingQuery ? <LoadingMenu /> :
         <>
           <Box>
+            {!inputValue ? null :
+              <>
+                <Pressable
+                  paddingX={"4"}
+                  paddingBottom={"3"}
+                  paddingTop={"1"}
+                  onPress={() => setIsModalOpen(!isModalAddresOpen)}
+                  isDisabled={clientLoadingData}
+                >
+                  <Input
+                    isReadOnly
+                    color={"gray.500"}
+                    fontSize={"lg"}
+                    value={inputValue}
+                    rightElement={(
+                      <Box paddingX={"2"} >
+                        <Icon color={theme.colors["gray"][400]} type="ArrowDown" />
+                      </Box>)}
+                  />
+                </Pressable>
+                {clientData?.getClientSession.tab?._id ? <ModalAddress
+                  screenName="MenuScreen"
+                  isOpen={isModalAddresOpen}
+                  selectedType={clientData?.getClientSession.tab?.type}
+                  setIsOpen={setIsModalOpen}
+                  address={clientData?.getClientSession.user.address}
+                  tabId={clientData?.getClientSession.tab?._id}
+                /> : null}
+              </>
+            }
             <ScrollView
               horizontal
               borderWidth={1}

@@ -1,6 +1,7 @@
 // import the original type declarations
 import "i18next";
 
+import businessPayments from "../public/locales/en/businessPayments.json";
 import businessOrders from "../public/locales/en/businessOrders.json";
 import businessCheckout from "../public/locales/en/businessCheckout.json";
 import businessAddToOrder from "../public/locales/en/businessAddToOrder.json";
@@ -20,6 +21,7 @@ import customerSettings from "../public/locales/en/customerSettings.json";
 import customerCart from "../public/locales/en/customerCart.json";
 import common from "../public/locales/en/common.json";
 import landingPage from "../public/locales/en/landingPage.json"
+import customerPayment from "../public/locales/en/customerPayment.json";
 
 declare module "i18next" {
   // Extend CustomTypeOptions
@@ -34,6 +36,7 @@ declare module "i18next" {
       customerCheckout: typeof customerCheckout;
       customerHome: typeof customerHome;
       customerProductDescription: typeof customerProductDescription;
+      customerPayment: typeof customerPayment;
       businessLogin: typeof businessLogin;
       businessSignUp: typeof businessSignUp;
       businessCreateAccount: typeof businessCreateAccount;
@@ -46,6 +49,7 @@ declare module "i18next" {
       businessAddToOrder: typeof businessAddToOrder;
       businessCheckout: typeof businessCheckout;
       businessOrders: typeof businessOrders;
+      businessPayments: typeof businessPayments;
       landingPage: typeof landingPage;
     };
   }

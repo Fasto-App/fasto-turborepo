@@ -7,6 +7,7 @@ import { OrderDetail } from './orderDetail';
 import { TabStatus } from 'app-helpers';
 import type { TabStatusType, TabTypeType } from 'app-helpers';
 import { CartItem } from './cartItem';
+import { Address } from './address';
 
 @modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Tab {
@@ -22,8 +23,8 @@ export class Tab {
     @prop()
     public table?: Ref<Table>;
 
-    @prop()
-    public type?: TabTypeType;
+    @prop({ required: true })
+    public type!: TabTypeType;
 
     @prop({ required: true, default: [] })
     public cartItems!: Ref<CartItem>[];
@@ -33,6 +34,9 @@ export class Tab {
 
     @prop({ required: true })
     public users!: Ref<User>[];
+
+    @prop({ ref: Address })
+    public address?: Ref<Address>;
 
     @prop({ default: Date.now() })
     public created_date!: Date;

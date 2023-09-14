@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig } from "../../components/ControlledForm/ControlledForm";
 import { GetSpacesFromBusinessDocument, useCreateTabMutation, useGetTabByIdQuery, useGetTableByIdQuery } from "../../gen/generated";
-import { businessRoute } from "../../routes";
+import { businessRoute } from "fasto-route";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
 import * as z from "zod"

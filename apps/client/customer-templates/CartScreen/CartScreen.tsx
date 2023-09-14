@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from "react";
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency, typedKeys } from "app-helpers";
-import { Box, Button, HStack, SectionList, Skeleton, Text, useTheme } from "native-base";
+import { Box, Button, HStack, Pressable, SectionList, Skeleton, Text, useTheme } from "native-base";
 import { useRouter } from "next/router";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { CartTile } from "../../components/organisms/CartTile";
-import { customerRoute } from "../../routes";
+import { customerRoute } from "fasto-route";
 import { GetCartItemsPerTabDocument, GetClientSessionDocument, useClientCreateMultipleOrderDetailsMutation, useGetCartItemsPerTabQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { clearClientCookies, getClientCookies } from "../../cookies";
 import { PastOrdersModal } from "./PastOrdersModal";
@@ -19,7 +19,7 @@ export const CartScreen = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const route = useRouter();
-  const { businessId, checkoutId } = route.query;
+  const { businessId } = route.query;
 
   const token = getClientCookies(businessId as string)
 
@@ -28,7 +28,7 @@ export const CartScreen = () => {
   const { data: clientSession } = useGetClientSession()
 
   const { data, loading, error } = useGetCartItemsPerTabQuery({
-    skip: !token,
+    skip: !token || !clientSession?.getClientSession.tab,
     pollInterval: 1000 * 60, // 1 minute
     fetchPolicy: "network-only"
   })
@@ -205,10 +205,15 @@ export const CartScreen = () => {
               ListEmptyComponent={
                 <Box>
                   <Text justifyContent={"center"} alignItems={"flex-end"} pt={"8"} textAlign={"center"}>
-                    <Text key={t("yourCartIsEmpty")} fontSize={"18"}>{t("yourCartIsEmpty")}</Text>
-                    <Box key={"Listar"} px={"2"}>
+                    <Text fontSize={"18"}>{t("yourCartIsEmpty")}</Text>
+                    {" "}
+                    <Pressable px={"2"} onPress={() => route.push({
+                      pathname: customerRoute["/customer/[businessId]/menu"],
+                      query: { businessId: businessId }
+                    })}>
                       <Icon type="ListStar" color={theme.colors.primary["500"]} size={"2em"} />
-                    </Box>
+                    </Pressable>
+                    {" "}
                     <Text key={t("andStartOrdering")} fontSize={"18"}>{t("andStartOrdering")}</Text>
                   </Text>
                 </Box>

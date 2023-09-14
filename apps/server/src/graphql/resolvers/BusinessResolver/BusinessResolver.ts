@@ -18,8 +18,9 @@ import {
 import { uploadFileS3Bucket } from '../../../s3/s3';
 import { ApolloError } from '../../ApolloErrorExtended/ApolloErrorExtended';
 import { SessionModel } from '../../../models/session';
-import { sendEployeeAccountCreation, sendExistingUserEployeeEmail } from '../../../email-tool';
-import { MutationResolvers } from '../../../generated/graphql';
+import { sendEployeeAccountCreation, sendExistingUserEployeeEmail, sendQRCodeAttachment } from '../../../email-tool';
+import { MutationResolvers, QueryResolvers } from '../../../generated/graphql';
+import { Stream } from "stream"
 
 
 //FIX: this should be a validation of the token, not the business id
@@ -41,12 +42,18 @@ const getAllBusinessByUser = async (_parent: any, _args: any, { db, user }: Cont
 }
 
 const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection }) => {
-  return await BusinessModel(db).find({ picture: { $ne: null } })
+  return await BusinessModel(db).find({ picture: { $ne: null }, address: { $ne: null } }).sort({ description: -1 })
 }
 
-const getBusinessById = async (_parent: any, { input }: { input: { _id: string } }, { db }: { db: Connection }) => {
-  const Business = BusinessModel(db)
-  return await Business.findById(input._id)
+// @ts-ignore
+const getBusinessById: QueryResolvers["getBusinessById"] = async (_parent, { input }, { db }) => {
+  const foundBusiness = BusinessModel(db).findById(input._id)
+  if (!foundBusiness) throw ApolloError("NotFound", 'Business not found')
+
+  const foundAddress = await AddressModel(db).findById(foundBusiness.address)
+  if (foundAddress) foundBusiness.address = foundAddress
+
+  return foundBusiness
 }
 
 const getBusinessInformation = async (
@@ -163,10 +170,11 @@ const updateBusinessInformation = async (
   }
 }
 
-const updateBusinessLocation = async (
-  _parent: any,
-  { input }: { input: businessLocationSchemaInput },
-  { db, business }: Context) => {
+//@ts-ignore
+const updateBusinessLocation: MutationResolvers["updateBusinessLocation"] = async (
+  _parent,
+  { input },
+  { db, business }) => {
   console.log("Location Input", input)
   const Business = BusinessModel(db)
   const Address = AddressModel(db)
@@ -200,8 +208,6 @@ const updateBusinessLocation = async (
 
       const savedAddress = await address.save()
       updateBusiness.address = savedAddress._id
-
-      await updateBusiness.save()
     }
 
     return await updateBusiness.save()
@@ -473,6 +479,27 @@ const deleteBusinessEmployee = async (parent: any, args: { input: any }, { busin
   throw ApolloError("BadRequest", "Employee not found or there was an error deleting the them.")
 }
 
+const shareQRCode: MutationResolvers["shareQRCode"] = async (_parent, { input: { email, file } },
+  { business, db, locale }) => {
+  if (!business) throw ApolloError("Unauthorized")
+
+  const { createReadStream } = await file;
+  const stream: Stream = createReadStream();
+
+  let bufs: Buffer[] = [];
+  stream.on('data', (d) => bufs.push(d));
+  stream.on('end', async () => {
+    const buf = Buffer.concat(bufs);
+
+    await sendQRCodeAttachment({
+      buffer: buf,
+      emailTo: email,
+      locale
+    })
+  })
+
+  return true
+}
 
 const BusinessResolverMutation = {
   createBusiness,
@@ -481,7 +508,8 @@ const BusinessResolverMutation = {
   updateBusinessInformation,
   updateBusinessLocation,
   manageBusinessEmployees,
-  deleteBusinessEmployee
+  deleteBusinessEmployee,
+  shareQRCode
 }
 const BusinessResolverQuery = {
   getBusinessById,

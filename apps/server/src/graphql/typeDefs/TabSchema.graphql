@@ -9,6 +9,12 @@ extend type Mutation {
 	updateTab(input: UpdateTabInput!): Tab!
 	deleteTab(input: GetById!): Tab
 	requestCloseTab(input: GetById): Tab!
+	updateCustomerUpdateTabType(input: UpdateCustomerUpdateTabTypeInput!): Tab
+}
+
+input UpdateCustomerUpdateTabTypeInput {
+	tab: ID!
+	type: TakeoutDelivery!
 }
 
 type Tab {
@@ -20,6 +26,7 @@ type Tab {
 	status: TabStatus!
 	users: [User!]
 	cartItems: [ID!]!
+	type: TakeoutDelivery
 }
 
 input CreateTabInput {

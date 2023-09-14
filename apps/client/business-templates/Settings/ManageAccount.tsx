@@ -11,9 +11,9 @@ import { AccountInformation } from "app-helpers"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
 import { useTranslation } from "next-i18next"
+import { showToast } from "../../components/showToast"
 
 export const ManageAccount = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
   const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetUserInformationQuery({
@@ -22,7 +22,10 @@ export const ManageAccount = () => {
       setValue("email", data?.getUserInformation?.email || "")
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 
@@ -36,10 +39,13 @@ export const ManageAccount = () => {
   const { imageFile, imageSrc, handleFileOnChange } = useUploadFileHook()
   const [updateUserInformation, { loading }] = useUpdateUserInformationMutation({
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: "Success" })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 

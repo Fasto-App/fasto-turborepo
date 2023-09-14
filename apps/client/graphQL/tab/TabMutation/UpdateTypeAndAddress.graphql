@@ -1,0 +1,8 @@
+mutation UpdateTypeAndAddress($input: UpdateCustomerUpdateTabTypeInput!, $createCustomerAddressInput2: AddressInput!) {
+	updateCustomerUpdateTabType(input: $input) {
+		_id
+	}
+	createCustomerAddress(input: $createCustomerAddressInput2) {
+		_id
+	}
+}

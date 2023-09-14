@@ -18,7 +18,7 @@ export class Address {
     public postalCode!: string;
 
     @prop({ required: true })
-    public country!: string;
+    public country!: "BR" | "US";
 
 
     @prop({ default: Date.now() })

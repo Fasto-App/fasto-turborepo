@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { clearClientCookies, getClientCookies } from "../cookies";
 import { RequestStatus, TabStatus, useGetBusinessByIdQuery, useGetClientSessionQuery } from "../gen/generated";
-import { customerRoute } from "../routes";
+import { customerRoute } from "fasto-route";
 import { showToast } from "../components/showToast";
 import { texts } from "./texts";
 import { getCause } from "../apollo-client/ErrorLink";
@@ -91,7 +91,11 @@ export const useGetClientSession = () => {
       }
 
       if (!checkoutId && data.getClientSession.tab?.status === TabStatus.Pendent
-        && data.getClientSession.tab.checkout) {
+        && data.getClientSession.tab.checkout
+        && route.pathname !== customerRoute["/customer/[businessId]/payment"]
+        // todo: should Trust the user that navigate to this page?
+        && route.pathname !== customerRoute["/customer/[businessId]/success"]
+      ) {
         return route.push({
           pathname: customerRoute["/customer/[businessId]/checkout/[checkoutId]"],
           query: {

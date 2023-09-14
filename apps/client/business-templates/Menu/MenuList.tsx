@@ -60,13 +60,6 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
               </HStack>
             </ScrollView>
           </HStack>
-          {/* <AllAndEditButtons
-            // FIX: should probably only have one button here
-            // edit will open the modal to edit the menu name
-            allAction={() => console.log("Hello")}
-            editAction={() => console.log("Hello")}
-            categoryId={"true"}
-          /> */}
         </VStack>
       </Box>
 

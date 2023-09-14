@@ -32,6 +32,9 @@ export class Business {
     @prop()
     public website?: string;
 
+    @prop()
+    public stripeAccountId?: string;
+
     @prop({ ref: Address })
     public address?: Ref<Address>;
 

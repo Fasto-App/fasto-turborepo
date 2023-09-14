@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import { getLocale } from '../../authUtilities/utils'
 import { ColorSchemeType } from 'native-base/lib/typescript/components/types'
 import { OrdersModal } from './OrdersModal'
+import { Icon } from '../../components/atoms/NavigationButton'
 
 const TableHeader: FC = ({ children }) => <Heading textAlign={"center"} flex="1" size={"md"}>{children}</Heading>
 
@@ -22,11 +23,16 @@ const Header = () => {
   const { t } = useTranslation("businessOrders")
   return (
     <>
-      <HStack justifyContent={"space-between"} pb="2" bgColor={"white"}>
-        <TableHeader>{t("orders")}</TableHeader>
-        <TableHeader> {t("date")}</TableHeader>
-        <TableHeader>{t("amount")}</TableHeader>
-        <TableHeader>{t("status")}</TableHeader>
+      <HStack bgColor={"white"}>
+        <Box p="2">
+          <Icon type='TrashCan' size={"1.5em"} color='white' />
+        </Box>
+        <HStack justifyContent={"space-between"} pb="2" bgColor={"white"} flex={1}>
+          <TableHeader>{t("orders")}</TableHeader>
+          <TableHeader> {t("date")}</TableHeader>
+          <TableHeader>{t("amount")}</TableHeader>
+          <TableHeader>{t("status")}</TableHeader>
+        </HStack>
       </HStack>
       <Divider />
     </>
@@ -40,20 +46,30 @@ type OrderDetailsProps = {
   status: string;
   colorScheme: ColorSchemeType;
   onPress: () => void;
+  onDelete: () => void;
 }
 
-const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress }: OrderDetailsProps) => {
+const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress, onDelete }: OrderDetailsProps) => {
   return (
-    <Pressable _hover={{ backgroundColor: "secondary.100" }} onPress={onPress}>
-      <HStack justifyContent={"space-between"} py="4">
-        <TableData>{_id}</TableData>
-        <TableData>{date}</TableData>
-        <TableData>{total}</TableData>
-        <TableData>
-          <Badge w={"full"} variant={"subtle"} colorScheme={colorScheme}>{status}</Badge>
-        </TableData>
-      </HStack>
-    </Pressable>
+    <HStack alignItems={"center"} >
+      <Pressable p={2}
+        borderRadius={"md"}
+        _hover={{ backgroundColor: "danger.100" }}
+        onPress={onDelete}
+      >
+        <Icon type='TrashCan' size={"1.5em"} />
+      </Pressable>
+      <Pressable _hover={{ backgroundColor: "secondary.100" }} onPress={onPress} flex={1}>
+        <HStack justifyContent={"space-between"} py={2}>
+          <TableData>{_id}</TableData>
+          <TableData>{date}</TableData>
+          <TableData>{total}</TableData>
+          <TableData>
+            <Badge w={"full"} variant={"subtle"} colorScheme={colorScheme}>{status}</Badge>
+          </TableData>
+        </HStack>
+      </Pressable>
+    </HStack>
   )
 }
 
@@ -105,17 +121,20 @@ export const OrdersScreen = () => {
           {loading ? <LoadingItems /> :
             error || !data?.getCheckoutsByBusiness ? null :
               <FlatList
+                contentContainerStyle={{ paddingRight: 4 }}
                 ListHeaderComponent={<Header />}
                 data={data?.getCheckoutsByBusiness}
                 stickyHeaderIndices={[0]}
+                keyExtractor={(checkout) => `${checkout._id}`}
                 renderItem={({ item: checkout }) => (
                   <OrderDetails
                     key={checkout._id}
-                    _id={`#${checkout._id.slice(0, 8)}`}
+                    _id={`#${checkout._id.slice(-6)}`}
                     date={format(Number(checkout.created_date), "PPpp", getLocale(router.locale))}
                     total={parseToCurrency(checkout.total)}
                     status={t(CheckoutStatusKeys[checkout.status])}
                     colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
+                    onDelete={() => console.log("deleting Order")}
                     onPress={() => {
                       setModalData({
                         checkoutId: checkout._id,

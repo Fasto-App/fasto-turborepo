@@ -8,7 +8,7 @@ import { PastOrdersTile } from '../../customer-templates/CartScreen/PastOrdersMo
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from 'app-helpers'
 import { format } from 'date-fns'
 import { getLocale } from '../../authUtilities/utils'
-import { businessRoute } from '../../routes'
+import { businessRoute } from 'fasto-route'
 import { useTranslation } from 'next-i18next'
 
 type OrdersModalProps = {
