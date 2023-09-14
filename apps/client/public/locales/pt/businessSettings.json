@@ -59,5 +59,6 @@
 	"somethingWentWrongQRCode": "Algo deu errado ao compartilhar o QR Code",
 	"somethingWentWrongSharingLink": "Algo deu errado ao compartilhar o link",
 	"qrCodeSent": "QR Code Enviado",
-	"notSupported": "Não suportado no seu navegador"
+	"notSupported": "Não suportado no seu navegador",
+	"tooltip": "Uma vez que o país for escolhido, não haverá possibilidade de atualização."
 }
