@@ -128,7 +128,7 @@ export const createPaymentIntent = async ({
 
   try {
     const paymentIntent = await stripe(country).paymentIntents.create({
-      amount,
+      amount: Math.trunc(amount),
       currency: country === "US" ? "USD" : "BRL",
       description,
       automatic_payment_methods: { enabled: true },
