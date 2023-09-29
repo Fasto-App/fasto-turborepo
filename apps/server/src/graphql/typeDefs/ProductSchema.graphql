@@ -17,6 +17,7 @@ type Product {
 	imageUrl: String
 	addonsID: [ID]
 	category: Category
+	quantity: Int
 }
 
 input CreateProductInput {
@@ -26,6 +27,7 @@ input CreateProductInput {
 	file: Upload
 	addons: [CreateProductInput]
 	category: ID!
+	quantity: Int
 }
 
 input UpdateProductInput {
@@ -35,4 +37,5 @@ input UpdateProductInput {
 	price: Int!
 	file: Upload
 	category: ID!
+	quantity: Int
 }

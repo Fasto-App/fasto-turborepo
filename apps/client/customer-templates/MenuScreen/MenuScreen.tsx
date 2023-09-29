@@ -172,6 +172,7 @@ export const MenuScreen = () => {
                 price={item.price}
                 description={item.description}
                 uri={item.imageUrl}
+                quantity={item?.quantity}
                 onPress={() => {
                   if (typeof businessId !== "string") throw new Error("businessId is not a string")
 

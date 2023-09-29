@@ -215,6 +215,7 @@ export type CreateProductInput = {
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
   price: Scalars['Int'];
+  quantity?: InputMaybe<Scalars['Int']>;
 };
 
 export type CreateSpaceInput = {
@@ -838,6 +839,7 @@ export type Product = {
   imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   price: Scalars['Int'];
+  quantity?: Maybe<Scalars['Int']>;
 };
 
 export type Query = {
@@ -1075,7 +1077,6 @@ export enum TakeoutDelivery {
 }
 
 export type UpdateAddressInput = {
-  _id: Scalars['ID'];
   city: Scalars['String'];
   complement?: InputMaybe<Scalars['String']>;
   country: Scalars['String'];
@@ -1130,6 +1131,7 @@ export type UpdateProductInput = {
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
   price: Scalars['Int'];
+  quantity?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateSectionInput = {
@@ -1769,6 +1771,7 @@ export type ProductResolvers<ContextType = Context, ParentType extends Resolvers
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  quantity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

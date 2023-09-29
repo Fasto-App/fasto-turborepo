@@ -9,7 +9,8 @@ const productSchema = z.object({
   price: z.number().min(1, { message: 'error.required' }),
   category: z.string().min(1, { message: 'error.required' }),
   file: z.string().optional().nullable(),
-  description: z.string().optional()
+  description: z.string().optional(),
+  quantity: z.number().optional()
 });
 
 export type ProductFields = z.infer<typeof productSchema>;
@@ -31,6 +32,7 @@ export const useProductFormHook = () => {
       description: '',
       price: 0,
       file: undefined,
+      quantity: undefined,
     },
     resolver: zodResolver(productSchema),
   });

@@ -1,10 +1,11 @@
 
 import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
-import { BusinessModel, OrderDetailModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
+import { BusinessModel, OrderDetailModel, ProductModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { MutationResolvers } from "../../../generated/graphql";
+import { updateProductQuantity } from "../helpers/helpers";
 
 // @ts-ignore
 const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (parent, { input }, { db }) => {
@@ -44,6 +45,8 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
 
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
+
+    await updateProductQuantity(foundCheckout, db)
 
     // update all the requests associated with this tab
     const foundRequests = await Request.find({ tab: foundTab?._id })
@@ -150,6 +153,8 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
       foundCheckout.paid = true
       foundCheckout.payments = [payment._id]
       foundCheckout.splitType = "Full"
+
+      await updateProductQuantity(foundCheckout, db)
 
       await updateTabTableAndRequests()
 

@@ -5,6 +5,7 @@ query GetAllProductsByBusinessID {
 		price
 		description
 		imageUrl
+		quantity
 		category {
 			name
 			_id

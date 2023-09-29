@@ -9,7 +9,7 @@ import { useProductMutationHook } from '../../graphQL/ProductQL';
 import { useAppStore } from '../UseAppStore';
 import { ProductFields } from './useProductFormHook';
 import { DevTool } from "@hookform/devtools";
-import { ControlledForm, RegularInputConfig } from '../../components/ControlledForm/ControlledForm';
+import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from '../../components/ControlledForm/ControlledForm';
 import { UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { useUploadFileHook } from '../../hooks';
@@ -141,7 +141,8 @@ const ProductModal = ({
 						description: values.description,
 						price: Number(values.price),
 						file: imageFile,
-						category: values.category
+						category: values.category,
+						quantity: values.quantity
 					}
 				}
 			});
@@ -155,7 +156,8 @@ const ProductModal = ({
 						description: values.description,
 						price: Number(values.price),
 						file: imageFile,
-						category: values.category
+						category: values.category,
+						quantity: values.quantity
 					},
 				},
 			});
@@ -164,7 +166,8 @@ const ProductModal = ({
 		closeModalAndClearQueryParams();
 	};
 
-	const ProductFormConfig: RegularInputConfig = useMemo(() => ({
+	// @ts-ignore
+	const ProductFormConfig: SideBySideInputConfig = useMemo(() => ({
 		name: {
 			isRequired: true,
 			name: 'name',
@@ -172,19 +175,28 @@ const ProductModal = ({
 			placeholder: t("dishesProducts"),
 
 		},
-		price: {
-			isRequired: true,
-			name: 'price',
-			label: t("price"),
-			placeholder: t("pricePlaceholder"),
-			inputType: "Currency",
+		priceAndQuantity: [{
+			price: {
+				isRequired: true,
+				name: 'price',
+				label: t("price"),
+				placeholder: t("pricePlaceholder"),
+				inputType: "Currency",
+			},
 		},
+		{
+			quantity: {
+				name: 'quantity',
+				label: t("quantity"),
+				placeholder: t("quantity"),
+				inputType: "Number",
+			},
+		}],
 		category: {
 			isRequired: true,
 			name: 'category',
 			label: t("category"),
 			placeholder: t("category"),
-
 			inputType: 'Select',
 			array: allCategories.map(cat => ({ name: cat.name, _id: cat._id })) ?? []
 		},
@@ -238,9 +250,10 @@ const ProductModal = ({
 							<Button
 								flex={1}
 								isLoading={createProductIsLoading || updateProductIsLoading || deleteProductIsLoading}
-								w={"100px"} variant="outline" colorScheme="tertiary" onPress={() => {
-									closeModalAndClearQueryParams();
-								}}>
+								w={"100px"}
+								variant="outline"
+								colorScheme="tertiary"
+								onPress={closeModalAndClearQueryParams}>
 								{t("cancel")}
 							</Button>
 							<Button

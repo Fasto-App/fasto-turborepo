@@ -23,6 +23,9 @@ export class Product {
   public addons?: Types.ObjectId[];
 
   @prop()
+  public quantity?: number;
+
+  @prop()
   public imageUrl?: string;
 
   @prop({ default: Date.now() })

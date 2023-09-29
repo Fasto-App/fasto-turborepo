@@ -132,7 +132,11 @@ export const ProductDescriptionScreen = () => {
             <PriceTag price={parseToCurrency(data?.getProductByID?.price)} />
           </Box>
           <Box pt={"4"}>
-            <Text fontWeight={"semibold"} fontSize={"25"}>{data?.getProductByID?.name}</Text>
+            <Text>
+              <Text fontWeight={"semibold"} fontSize={"25"}>{data?.getProductByID?.name}</Text>
+              {data?.getProductByID?.quantity ?
+                <Text fontWeight={"semibold"} fontSize={"lg"}>{` (${data?.getProductByID?.quantity})`}</Text> : null}
+            </Text>
             <Text pt={"2"}>{data?.getProductByID?.description}</Text>
           </Box>
           <Box pt={"4"}>
@@ -140,7 +144,9 @@ export const ProductDescriptionScreen = () => {
               quantity={quantity}
               onPlusPress={increaseQuantity}
               onMinusPress={decreaseQuantity}
-              disabled={!clientData?.getClientSession.tab || addToCartLoading}
+              disabled={!clientData?.getClientSession.tab ||
+                addToCartLoading}
+              disablePlus={(!!data?.getProductByID?.quantity && quantity >= data?.getProductByID?.quantity)}
             />
           </Box>
           <Divider my={"5"} backgroundColor={"gray.300"} />

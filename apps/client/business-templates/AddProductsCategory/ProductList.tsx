@@ -45,7 +45,7 @@ const ProductList = (
 	const { t } = useTranslation("businessCategoriesProducts");
 
 	const setProductValues = useCallback((item) => {
-		const { _id, name, description, price, imageUrl } = item
+		const { _id, name, description, price, imageUrl, quantity } = item
 
 		setProduct(_id)
 		setProductValue("_id", _id)
@@ -54,6 +54,7 @@ const ProductList = (
 		setProductValue("price", price)
 		setProductValue("file", imageUrl)
 		setProductValue("category", item?.category?._id)
+		setProductValue("quantity", quantity)
 
 		setShowProductModal(true)
 
@@ -143,6 +144,7 @@ const ProductList = (
 					products.map(item => (
 						!item ? null :
 							<ProductCard
+								quantity={item?.quantity || undefined}
 								name={item.name}
 								description={item.description ?? ""}
 								price={item.price}

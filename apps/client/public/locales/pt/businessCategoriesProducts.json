@@ -39,5 +39,6 @@
 	"categoryDeletedError": "Erro ao excluir a categoria",
 	"deleteProductTitle": "Delete Product",
 	"deleteProductBody": "Isso removerá todos os dados relacionados a este produto. Esta ação não pode ser revertida.",
-	"deleteCategoryBody": "Isso removerá todos os dados relacionados a esta categoria. Esta ação não pode ser revertida."
+	"deleteCategoryBody": "Isso removerá todos os dados relacionados a esta categoria. Esta ação não pode ser revertida.",
+	"quantity": "Quantidade"
 }

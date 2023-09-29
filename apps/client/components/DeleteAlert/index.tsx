@@ -47,8 +47,6 @@ const Alert = (props: AlertProps) => {
 	const { body, isOpen, onClose, title, cancel, onPress } = props
 	const cancelRef = React.useRef(null);
 
-	console.log(title)
-
 	return (
 		<AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
 			<AlertDialog.Content>

@@ -63,12 +63,9 @@ const CheckoutForm = () => {
 
   return (
     <>
-      <ScrollView padding={4}>
-        {/* <AddressElement options={{ mode: 'shipping' }} /> */}
+      <ScrollView padding={4} flex={1} borderWidth={1}>
         <PaymentElement />
-        {message && <Text color={"error.500"} fontSize={"lg"}>
-          {message}
-        </Text>}
+        {message && <Text color={"error.500"} fontSize={"lg"}>{message}</Text>}
       </ScrollView>
       <Center p={"4"}>
         <Button

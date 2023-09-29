@@ -3,13 +3,14 @@ import Stripe from 'stripe';
 import { ApolloError } from '../graphql/ApolloErrorExtended/ApolloErrorExtended';
 import { appRoute, businessRoute } from "fasto-route"
 import { Locale } from 'app-helpers';
-import { Request, Response } from 'express';
 import { PaymentModel } from '../models/payment';
 import { CheckoutModel } from '../models/checkout';
 import { RequestModel, TabModel, TableModel } from '../models';
+import { Connection } from 'mongoose';
+import { updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
 
 if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
-  throw new Error('Missing Stripe secret key env var');
+  throw ApolloError('InternalServerError', 'Missing Stripe secret key env var');
 }
 
 const apiVersion = '2022-11-15'
@@ -162,17 +163,17 @@ export type Metada = {
   payment_id: string;
 }
 
-export const confirmPaymentWebHook = async (metadata: Metada, db: any) => {
+export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) => {
   const { payment_id } = metadata
 
   const foundPayment = await PaymentModel(db).findById(payment_id)
-  if (!foundPayment) throw Error("Payment not found.")
+  if (!foundPayment) throw ApolloError("BadRequest", "Payment not found.")
 
   const foundCheckout = await CheckoutModel(db).findById(foundPayment?.checkout)
-  if (!foundCheckout) throw Error("Payment not found.")
+  if (!foundCheckout) throw ApolloError("BadRequest", "Payment not found.")
 
   const foundTab = await TabModel(db).findById(foundCheckout.tab)
-  if (!foundTab) throw Error('Tab not found')
+  if (!foundTab) throw ApolloError("BadRequest", 'Tab not found')
 
   foundPayment.paid = true;
   await foundPayment.save()
@@ -183,7 +184,7 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: any) => {
 
     if (foundTab?.table) {
       const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table)
-      if (!foundTable) throw Error('Table not found')
+      if (!foundTable) throw ApolloError("BadRequest", 'Table not found')
 
       foundTable.status = "Available"
       foundTable.tab = undefined
@@ -193,8 +194,11 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: any) => {
     foundTab.status = "Closed"
     await foundTab.save()
 
+    // when the payment is made, subtract from
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
+
+    await updateProductQuantity(foundCheckout, db)
 
     // update all the requests associated with this tab
     const foundRequests = await RequestModel(db).find({ tab: foundTab?._id })

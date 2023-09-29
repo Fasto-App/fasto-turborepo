@@ -9,11 +9,10 @@ type MenuItemProps = {
   uri?: string | null;
   description?: string | null;
   onPress: () => void;
+  quantity?: number | null
 };
 
-const MenuItem = ({ onPress, name, price, uri, description }: MenuItemProps) => {
-  // const { name, ingredients, price, uri } = sectionCellProps;
-
+const MenuItem = ({ onPress, name, price, uri, description, quantity }: MenuItemProps) => {
   return (
     <Pressable
       onPress={onPress}
@@ -21,7 +20,7 @@ const MenuItem = ({ onPress, name, price, uri, description }: MenuItemProps) => 
     >
       <HStack justifyContent={"space-between"} p={2.5} space={2}>
         <Box flex={1}>
-          <Text fontSize={"18"} fontWeight={"500"}>{name}</Text>
+          <Text fontSize={"18"} fontWeight={"500"}>{quantity ? `${name} (${quantity})` : name}</Text>
           <Text
             fontSize={"15"}
             pt={"1"}

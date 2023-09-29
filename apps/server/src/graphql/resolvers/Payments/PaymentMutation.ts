@@ -1,9 +1,10 @@
 import { MutationResolvers } from "../../../generated/graphql";
-import { AddressModel, BusinessModel, RequestModel, TabModel, TableModel, UserModel } from "../../../models";
-import { CheckoutModel } from "../../../models/checkout";
+import { AddressModel, BusinessModel, OrderDetailModel, ProductModel, RequestModel, TabModel, TableModel, UserModel } from "../../../models";
+import { Checkout, CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { createPaymentIntent, stripe, stripeAuthorize, stripeOnboard } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { updateProductQuantity } from "../helpers/helpers";
 
 const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async (parent, { input },
   { db, user, locale, client }) => {
@@ -176,7 +177,7 @@ const confirmPayment: MutationResolvers['confirmPayment'] = async (
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
 
-    console.log("foundCheckout", foundCheckout)
+    await updateProductQuantity(foundCheckout, db)
 
     // update all the requests associated with this tab
     const foundRequests = await RequestModel(db).find({ tab: foundTab?._id })
