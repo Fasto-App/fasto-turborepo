@@ -19,8 +19,8 @@ type IncrementButtonsProps = {
   quantity: number;
   onPlusPress?: () => void;
   onMinusPress?: () => void;
-  disabled: boolean;
-  disablePlus: boolean;
+  disabled?: boolean;
+  disablePlus?: boolean;
 }
 
 export const IncrementButtons = (props: IncrementButtonsProps) => {

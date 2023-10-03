@@ -102,18 +102,26 @@ export default function Index() {
                 </a>
               </Link>
               <nav role="navigation" className="w-nav-menu">
-                <a href="#How-it-works" className="nav-link w-nav-link">
-                  {t("how-it-works")}
-                </a>
-                <a href="#Features-and-benefits" className="nav-link w-nav-link">
-                  {(t("features-and-benefits"))}
-                </a>
-                <a href="#Pricing" className="nav-link w-nav-link">
-                  {t("pricing")}
-                </a>
-                <a href="partners" className="nav-link w-nav-link">
-                  {t("partners")}
-                </a>
+                <Link href="#How-it-works">
+                  <a className="nav-link w-nav-link">
+                    {t("how-it-works")}
+                  </a>
+                </Link>
+                <Link href="#Features-and-benefits">
+                  <a className="nav-link w-nav-link">
+                    {(t("features-and-benefits"))}
+                  </a>
+                </Link>
+                <Link href="#Pricing">
+                  <a className="nav-link w-nav-link">
+                    {t("pricing")}
+                  </a>
+                </Link>
+                <Link href="#partners">
+                  <a className="nav-link w-nav-link">
+                    {t("partners")}
+                  </a>
+                </Link>
               </nav>
               <Link href="business/login">
                 <a className="link-block w-inline-block">
