@@ -8,6 +8,7 @@ import { TakeoutDelivery, useGetClientMenuQuery, useGetClientSessionQuery } from
 import { useTranslation } from "next-i18next";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { ModalAddress } from "../../components/ModalAddress";
+import { getClientCookies } from "../../cookies";
 
 
 export const MenuScreen = () => {
@@ -38,8 +39,11 @@ export const MenuScreen = () => {
     }
   });
 
+  // if the user is vewing the menu, skip this
+  console.log("cookies", getClientCookies(businessId as string))
+
   const { data: clientData, loading: clientLoadingData } = useGetClientSessionQuery({
-    skip: false
+    skip: !getClientCookies(businessId as string)
   })
 
   const inputValue = useMemo(() => {

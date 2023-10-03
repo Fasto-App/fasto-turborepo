@@ -24,6 +24,7 @@ export const HomeScreen = () => {
   const { businessId, tabId, adminId, name } = route.query
 
   const onViewMenu = useCallback(() => {
+    console.log("navigate")
     route.push({
       pathname: customerRoute["/customer/[businessId]/menu"],
       query: {
@@ -115,9 +116,9 @@ export const HomeScreen = () => {
         <Button onPress={() => setIsTakeoutDeliveryModalOpen(true)}
           _text={{ bold: true }}
           colorScheme={"secondary"}>{t("takeoutOrDelivery")}</Button>
-        <Button onPress={onViewMenu}
+        {/* <Button onPress={onViewMenu}
           _text={{ bold: true }}
-          colorScheme={"blueGray"}>{t("viewMenu")}</Button>
+          colorScheme={"blueGray"}>{t("viewMenu")}</Button> */}
       </VStack>
       <JoinTabModal
         isOpen={isJoinTabModalOpen}
