@@ -117,7 +117,7 @@ export default function Index() {
                     {t("pricing")}
                   </a>
                 </Link>
-                <Link href="#partners">
+                <Link href="partners">
                   <a className="nav-link w-nav-link">
                     {t("partners")}
                   </a>
