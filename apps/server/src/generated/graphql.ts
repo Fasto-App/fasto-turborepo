@@ -197,7 +197,7 @@ export type CreateNewTakeoutOrDeliveryInput = {
   business: Scalars['ID'];
   name: Scalars['String'];
   phoneNumber: Scalars['String'];
-  type: TakeoutDelivery;
+  type: TakeoutDeliveryDineIn;
 };
 
 export type CreateOrderInput = {
@@ -1045,7 +1045,7 @@ export type Tab = {
   orders: Array<OrderDetail>;
   status: TabStatus;
   table?: Maybe<Table>;
-  type?: Maybe<TakeoutDelivery>;
+  type?: Maybe<TakeoutDeliveryDineIn>;
   users?: Maybe<Array<User>>;
 };
 
@@ -1071,7 +1071,7 @@ export enum TableStatus {
   Reserved = 'Reserved'
 }
 
-export enum TakeoutDelivery {
+export enum TakeoutDeliveryDineIn {
   Delivery = 'Delivery',
   Takeout = 'Takeout'
 }
@@ -1102,7 +1102,7 @@ export type UpdateCategoryInput = {
 
 export type UpdateCustomerUpdateTabTypeInput = {
   tab: Scalars['ID'];
-  type: TakeoutDelivery;
+  type: TakeoutDeliveryDineIn;
 };
 
 export type UpdateMenuInfoInput = {
@@ -1375,7 +1375,7 @@ export type ResolversTypes = {
   TabStatus: TabStatus;
   Table: ResolverTypeWrapper<Table>;
   TableStatus: TableStatus;
-  TakeoutDelivery: TakeoutDelivery;
+  TakeoutDeliveryDineIn: TakeoutDeliveryDineIn;
   UpdateAddressInput: UpdateAddressInput;
   UpdateBusinessInfoInput: UpdateBusinessInfoInput;
   UpdateCategoryInput: UpdateCategoryInput;
@@ -1864,7 +1864,7 @@ export type TabResolvers<ContextType = Context, ParentType extends ResolversPare
   orders?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['TabStatus'], ParentType, ContextType>;
   table?: Resolver<Maybe<ResolversTypes['Table']>, ParentType, ContextType>;
-  type?: Resolver<Maybe<ResolversTypes['TakeoutDelivery']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['TakeoutDeliveryDineIn']>, ParentType, ContextType>;
   users?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

@@ -4,7 +4,7 @@ import { MenuItem } from "../../components/molecules/MenuItem";
 import { Tab } from "./Tab";
 import { useRouter } from "next/router";
 import { customerRoute } from "fasto-route";
-import { TakeoutDelivery, useGetClientMenuQuery, useGetClientSessionQuery } from "../../gen/generated";
+import { TakeoutDeliveryDineIn, useGetClientMenuQuery, useGetClientSessionQuery } from "../../gen/generated";
 import { useTranslation } from "next-i18next";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { ModalAddress } from "../../components/ModalAddress";
@@ -54,7 +54,7 @@ export const MenuScreen = () => {
 
     const { streetAddress, city, stateOrProvince, complement } = clientData?.getClientSession.user.address
 
-    return type === TakeoutDelivery.Takeout ? `${type}` :
+    return type === TakeoutDeliveryDineIn.Takeout ? `${type}` :
       `${type} to ${streetAddress}, ${complement} ${city} - ${stateOrProvince}`
   },
 

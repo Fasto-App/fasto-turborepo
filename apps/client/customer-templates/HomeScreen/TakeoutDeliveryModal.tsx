@@ -4,7 +4,7 @@ import { Button, Heading } from 'native-base'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, SideBySideInputConfig } from '../../components/ControlledForm'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
-import { GetTabRequestsDocument, TakeoutDelivery, useCreateNewTakeoutOrDeliveryMutation } from '../../gen/generated'
+import { GetTabRequestsDocument, TakeoutDeliveryDineIn, useCreateNewTakeoutOrDeliveryMutation } from '../../gen/generated'
 import { useRouter } from 'next/router'
 import { DevTool } from '@hookform/devtools'
 import { setClientCookies } from '../../cookies'
@@ -16,7 +16,7 @@ import { z } from 'zod'
 export const joinTabSchema = z.object({
   name: z.string().min(3, { message: 'error.nameRequired' }),
   phoneNumber: z.string().min(6, { message: 'error.required' }),
-  type: z.nativeEnum(TakeoutDelivery),
+  type: z.nativeEnum(TakeoutDeliveryDineIn),
 })
 export type JoinTabForm = z.infer<typeof joinTabSchema>
 
@@ -43,14 +43,14 @@ const Config: SideBySideInputConfig = {
     label: "Takeout or Delivery",
     placeholder: "Enter an option",
     isRequired: true,
-    defaultValue: TakeoutDelivery.Takeout,
+    defaultValue: TakeoutDeliveryDineIn.Takeout,
     array: [{
-      _id: TakeoutDelivery.Delivery,
-      name: TakeoutDelivery.Delivery,
+      _id: TakeoutDeliveryDineIn.Delivery,
+      name: TakeoutDeliveryDineIn.Delivery,
     },
     {
-      _id: TakeoutDelivery.Takeout,
-      name: TakeoutDelivery.Takeout,
+      _id: TakeoutDeliveryDineIn.Takeout,
+      name: TakeoutDeliveryDineIn.Takeout,
     }]
   }
 }
@@ -70,7 +70,7 @@ export const TakeoutDeliveryModal = ({ isOpen, setModalVisibility }: OpenTabModa
     defaultValues: {
       name: getCustomerName() || "",
       phoneNumber: getCustomerPhone() || "",
-      type: TakeoutDelivery.Takeout
+      type: TakeoutDeliveryDineIn.Takeout
     },
   })
 

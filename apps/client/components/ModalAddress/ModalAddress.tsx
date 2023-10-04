@@ -3,7 +3,7 @@ import { debounce } from "lodash";
 import { Heading, FormControl, Input, Box, Spinner, HStack, Pressable, Button, Text, Divider } from "native-base";
 import { useState, useCallback } from "react";
 import { useTranslation } from "next-i18next";
-import { useGetGoogleAutocompleteLazyQuery, useCreateCustomerAddressMutation, TakeoutDelivery, useUpdateCustomerUpdateTabTypeMutation, useUpdateTypeAndAddressMutation, GetClientSessionDocument } from "../../gen/generated";
+import { useGetGoogleAutocompleteLazyQuery, useCreateCustomerAddressMutation, TakeoutDeliveryDineIn, useUpdateCustomerUpdateTabTypeMutation, useUpdateTypeAndAddressMutation, GetClientSessionDocument } from "../../gen/generated";
 import { CustomModal } from "../CustomModal/CustomModal";
 import { showToast } from "../showToast";
 import { Icon } from "../../components/atoms/NavigationButton";
@@ -12,7 +12,7 @@ import { typedKeys } from "app-helpers";
 type ModalAddressProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedType?: TakeoutDelivery | null;
+  selectedType?: TakeoutDeliveryDineIn | null;
   address?: any;
   screenName?: "ProductDescription" | "MenuScreen";
   tabId: string;
@@ -66,7 +66,7 @@ export const ModalAddress = ({
   const [inputAddress, setinputAddress] = useState("")
   const [complement, setComplement] = useState("")
 
-  const [orderUpdate, setOrderUpdate] = useState<TakeoutDelivery>()
+  const [orderUpdate, setOrderUpdate] = useState<TakeoutDeliveryDineIn>()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onAddressValidation = useCallback(debounce(async (text: string) => {
@@ -114,7 +114,7 @@ export const ModalAddress = ({
       return onModalClose()
     }
 
-    if (orderUpdate && !selectedAddress || orderUpdate === TakeoutDelivery["Takeout"]) {
+    if (orderUpdate && !selectedAddress || orderUpdate === TakeoutDeliveryDineIn["Takeout"]) {
       // if there's an address, but we are changing to takeout, update only the type
       updateTabType({
         variables: {
@@ -149,19 +149,19 @@ export const ModalAddress = ({
 
 
   const inputAddressDisabled = useMemo(() => {
-    return orderUpdate === TakeoutDelivery["Takeout"] || (!orderUpdate && selectedType === TakeoutDelivery["Takeout"])
+    return orderUpdate === TakeoutDeliveryDineIn["Takeout"] || (!orderUpdate && selectedType === TakeoutDeliveryDineIn["Takeout"])
   }, [orderUpdate, selectedType])
 
 
   const shouldUpdateBeEnabled = useMemo(() => {
     // Change if a new address is selected and the local state is Delivery
-    const newAddress = !!selectedAddress && (orderUpdate === TakeoutDelivery["Delivery"] || !orderUpdate && selectedType === TakeoutDelivery["Delivery"])
+    const newAddress = !!selectedAddress && (orderUpdate === TakeoutDeliveryDineIn["Delivery"] || !orderUpdate && selectedType === TakeoutDeliveryDineIn["Delivery"])
 
     // Change to Takeout
-    const changeToTakeout = !!orderUpdate && orderUpdate !== selectedType && orderUpdate === TakeoutDelivery["Takeout"]
+    const changeToTakeout = !!orderUpdate && orderUpdate !== selectedType && orderUpdate === TakeoutDeliveryDineIn["Takeout"]
 
     // change to delivery from takeout with saved address
-    const changeToDelivery = !!orderUpdate && orderUpdate !== selectedType && orderUpdate === TakeoutDelivery["Delivery"] && userAddress
+    const changeToDelivery = !!orderUpdate && orderUpdate !== selectedType && orderUpdate === TakeoutDeliveryDineIn["Delivery"] && userAddress
 
     return newAddress || changeToTakeout || changeToDelivery
   }, [orderUpdate, selectedAddress, selectedType, userAddress])
@@ -297,24 +297,24 @@ export const ModalAddress = ({
 
 
 const HeaderTab = ({ selectedType, onHeaderPress }: {
-  selectedType: TakeoutDelivery,
-  onHeaderPress: (type: TakeoutDelivery) => void;
+  selectedType: TakeoutDeliveryDineIn,
+  onHeaderPress: (type: TakeoutDeliveryDineIn) => void;
 }) => {
   // if the user select something, lets save so we can send to the DB
 
   return <Box paddingX={"4"}>
     <HStack justifyContent={"space-around"}>
-      {typedKeys(TakeoutDelivery).map(type => (
-        <Pressable flex={1} key={type} onPress={() => onHeaderPress(TakeoutDelivery[type])}>
+      {typedKeys(TakeoutDeliveryDineIn).map(type => (
+        <Pressable flex={1} key={type} onPress={() => onHeaderPress(TakeoutDeliveryDineIn[type])}>
           <Heading
             size={"md"}
             textAlign={"center"}
             pb={2}
-            color={selectedType === TakeoutDelivery[type] ?
+            color={selectedType === TakeoutDeliveryDineIn[type] ?
               "primary.500" :
               "gray.400"}
           >
-            {TakeoutDelivery[type]}
+            {TakeoutDeliveryDineIn[type]}
           </Heading>
         </Pressable>
       ))}

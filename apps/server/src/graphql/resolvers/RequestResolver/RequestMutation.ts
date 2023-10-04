@@ -105,7 +105,6 @@ const acceptTabRequest: MutationResolvers["acceptTabRequest"] = async (
   }
 
   const foundAdmin = await User.findOne({ _id: foundRequest.admin })
-
   if (!foundAdmin) throw ApolloError('BadRequest', "Admin Not Found")
 
   const table = await Table.findOne({ _id: input.table, business });

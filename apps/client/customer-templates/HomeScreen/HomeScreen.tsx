@@ -17,7 +17,7 @@ import { Pressable } from 'react-native'
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
   const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
-  const [isTakeoutDeliveryModalOpen, setIsTakeoutDeliveryModalOpen] = useState(false)
+  const [isTakeoutDeliveryDineInModalOpen, setIsTakeoutDeliveryDineInModalOpen] = useState(false)
 
   const { t } = useTranslation("customerHome")
   const route = useRouter()
@@ -113,7 +113,7 @@ export const HomeScreen = () => {
           isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
           onPress={() => setIsOpenTabModalOpen(true)}
           _text={{ bold: true }}>{t("openNewTab")}</Button>
-        <Button onPress={() => setIsTakeoutDeliveryModalOpen(true)}
+        <Button onPress={() => setIsTakeoutDeliveryDineInModalOpen(true)}
           _text={{ bold: true }}
           colorScheme={"secondary"}>{t("takeoutOrDelivery")}</Button>
         {/* <Button onPress={onViewMenu}
@@ -129,8 +129,8 @@ export const HomeScreen = () => {
         setModalVisibility={() => setIsOpenTabModalOpen(false)}
       />
       <TakeoutDeliveryModal
-        isOpen={isTakeoutDeliveryModalOpen}
-        setModalVisibility={() => setIsTakeoutDeliveryModalOpen(false)}
+        isOpen={isTakeoutDeliveryDineInModalOpen}
+        setModalVisibility={() => setIsTakeoutDeliveryDineInModalOpen(false)}
       />
     </Center>
   )

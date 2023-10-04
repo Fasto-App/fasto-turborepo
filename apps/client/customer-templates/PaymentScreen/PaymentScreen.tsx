@@ -63,7 +63,7 @@ const CheckoutForm = () => {
 
   return (
     <>
-      <ScrollView padding={4} flex={1} borderWidth={1}>
+      <ScrollView padding={4} flex={1}>
         <PaymentElement />
         {message && <Text color={"error.500"} fontSize={"lg"}>{message}</Text>}
       </ScrollView>

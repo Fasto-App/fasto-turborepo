@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { customerRoute } from 'fasto-route'
 import { clearClientCookies } from '../../cookies'
 import { PastOrdersModal } from '../CartScreen/PastOrdersModal'
-import { TakeoutDelivery, useGetCheckoutByIdQuery } from '../../gen/generated'
+import { TakeoutDeliveryDineIn, useGetCheckoutByIdQuery } from '../../gen/generated'
 import { useGetClientSession } from '../../hooks'
 import { parseToCurrency } from 'app-helpers'
 
@@ -31,7 +31,7 @@ export const SuccessScreen = () => {
   })
 
   const userAddress = useMemo(() => {
-    if (clientData?.getClientSession.tab?.type !== TakeoutDelivery.Delivery ||
+    if (clientData?.getClientSession.tab?.type !== TakeoutDeliveryDineIn.Delivery ||
       !clientData?.getClientSession.user?.address) return undefined
 
     const { stateOrProvince, city, streetAddress, complement } = clientData?.getClientSession.user?.address

@@ -214,6 +214,7 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
   const foundUsers = await User.find({ _id: { $in: input.selectedUsers } })
   const foundBusiness = await Business.findById(client?.business)
 
+  // TODO: this function is being used for both business and customer
   if (!foundBusiness?.stripeAccountId) throw ApolloError('Unauthorized', 'Business not configured to accept payments')
   if (!foundCheckout) throw ApolloError('BadRequest')
   if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
@@ -336,9 +337,6 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
 
       updateCheckout()
       return foundCheckout.save()
-
-      break;
-
     default:
       throw ApolloError('BadRequest', 'Split type not supported')
   }

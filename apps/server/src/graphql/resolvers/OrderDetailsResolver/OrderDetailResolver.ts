@@ -113,7 +113,8 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
                 subTotal: (product?.price || 0) * parsedInput.quantity,
                 user: user?._id,
                 tab: tab?._id,
-                createdByUser: businessUser?._id
+                createdByUser: businessUser?._id,
+                type: "DineIn"
             });
 
             tab.orders.push(orderDetails._id);

@@ -2,7 +2,7 @@ import { Box, Button, Divider, HStack, Text, Input, Pressable, VStack, Link } fr
 import { useTranslation } from "next-i18next"
 import React, { useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { TakeoutDelivery, useCustomerRequestPayFullMutation, useGeneratePaymentIntentMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
+import { TakeoutDeliveryDineIn, useCustomerRequestPayFullMutation, useGeneratePaymentIntentMutation, useGetCheckoutByIdQuery } from '../../gen/generated'
 import { showToast } from '../../components/showToast'
 import { PastOrdersList } from '../CartScreen/PastOrdersModal'
 import { percentageSelectData, useCheckoutStore, useComputedChekoutStore } from '../../business-templates/Checkout/checkoutStore'
@@ -119,7 +119,7 @@ export const CheckoutScreen = () => {
   const [updateAddressModalOpen, setUpdateAddressModalOpen] = useState(false)
 
   const userAddress = useMemo(() => {
-    if (clientData?.getClientSession.tab?.type !== TakeoutDelivery.Delivery ||
+    if (clientData?.getClientSession.tab?.type !== TakeoutDeliveryDineIn.Delivery ||
       !clientData?.getClientSession.user?.address) return undefined
 
     const { stateOrProvince, city, streetAddress, complement } = clientData?.getClientSession.user?.address
