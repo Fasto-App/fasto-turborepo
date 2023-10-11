@@ -53,6 +53,12 @@ export type AutoCompleteRes = {
   place_id: Scalars['String'];
 };
 
+export type AveragePerDay = {
+  __typename?: 'AveragePerDay';
+  _id: Scalars['String'];
+  totalAmount: Scalars['Int'];
+};
+
 export type Balance = {
   __typename?: 'Balance';
   balanceAvailable: Scalars['Float'];
@@ -251,6 +257,12 @@ export type CustomerRequestSplitInput = {
   tip: Scalars['Float'];
 };
 
+export enum DateType {
+  NinetyDays = 'NinetyDays',
+  SevenDays = 'SevenDays',
+  ThirtyDays = 'ThirtyDays'
+}
+
 export enum DaysOfWeek {
   Friday = 'Friday',
   Monday = 'Monday',
@@ -313,6 +325,10 @@ export type GetMenu = {
 
 export type GetMenuById = {
   id: Scalars['ID'];
+};
+
+export type GetPaidCheckout = {
+  type: DateType;
 };
 
 export type GetTabRequestInput = {
@@ -811,6 +827,12 @@ export enum OrderStatus {
   Pendent = 'Pendent'
 }
 
+export type PaidCheckoutRes = {
+  __typename?: 'PaidCheckoutRes';
+  data: Array<Maybe<AveragePerDay>>;
+  sortBy: DateType;
+};
+
 export type Payment = {
   __typename?: 'Payment';
   _id: Scalars['ID'];
@@ -874,6 +896,7 @@ export type Query = {
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
+  getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
@@ -934,6 +957,11 @@ export type QueryGetOrderDetailByIdArgs = {
 
 export type QueryGetOrdersByCheckoutArgs = {
   input: GetById;
+};
+
+
+export type QueryGetPaidCheckoutByDateArgs = {
+  input: GetPaidCheckout;
 };
 
 
@@ -1073,6 +1101,7 @@ export enum TableStatus {
 
 export enum TakeoutDeliveryDineIn {
   Delivery = 'Delivery',
+  DineIn = 'DineIn',
   Takeout = 'Takeout'
 }
 
@@ -1296,6 +1325,7 @@ export type ResolversTypes = {
   AddressInput: AddressInput;
   AutoCompleteInput: AutoCompleteInput;
   AutoCompleteRes: ResolverTypeWrapper<AutoCompleteRes>;
+  AveragePerDay: ResolverTypeWrapper<AveragePerDay>;
   Balance: ResolverTypeWrapper<Balance>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Business: ResolverTypeWrapper<Business>;
@@ -1323,6 +1353,7 @@ export type ResolversTypes = {
   CustomSplitInput: CustomSplitInput;
   CustomerRequestPayFullInput: CustomerRequestPayFullInput;
   CustomerRequestSplitInput: CustomerRequestSplitInput;
+  DateType: DateType;
   DaysOfWeek: DaysOfWeek;
   DeleteBusinessPayload: ResolverTypeWrapper<DeleteBusinessPayload>;
   DeleteEmployee: DeleteEmployee;
@@ -1335,6 +1366,7 @@ export type ResolversTypes = {
   GetById: GetById;
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
+  GetPaidCheckout: GetPaidCheckout;
   GetTabRequestInput: GetTabRequestInput;
   Hours: ResolverTypeWrapper<Hours>;
   HoursInput: HoursInput;
@@ -1355,6 +1387,7 @@ export type ResolversTypes = {
   OrderDetail: ResolverTypeWrapper<OrderDetail>;
   OrderDetailInput: OrderDetailInput;
   OrderStatus: OrderStatus;
+  PaidCheckoutRes: ResolverTypeWrapper<PaidCheckoutRes>;
   Payment: ResolverTypeWrapper<Payment>;
   PaymentIntent: ResolverTypeWrapper<PaymentIntent>;
   Product: ResolverTypeWrapper<Product>;
@@ -1408,6 +1441,7 @@ export type ResolversParentTypes = {
   AddressInput: AddressInput;
   AutoCompleteInput: AutoCompleteInput;
   AutoCompleteRes: AutoCompleteRes;
+  AveragePerDay: AveragePerDay;
   Balance: Balance;
   Boolean: Scalars['Boolean'];
   Business: Business;
@@ -1444,6 +1478,7 @@ export type ResolversParentTypes = {
   GetById: GetById;
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
+  GetPaidCheckout: GetPaidCheckout;
   GetTabRequestInput: GetTabRequestInput;
   Hours: Hours;
   HoursInput: HoursInput;
@@ -1462,6 +1497,7 @@ export type ResolversParentTypes = {
   OpenTabRequestInput: OpenTabRequestInput;
   OrderDetail: OrderDetail;
   OrderDetailInput: OrderDetailInput;
+  PaidCheckoutRes: PaidCheckoutRes;
   Payment: Payment;
   PaymentIntent: PaymentIntent;
   Product: Product;
@@ -1521,6 +1557,12 @@ export type AddressResolvers<ContextType = Context, ParentType extends Resolvers
 export type AutoCompleteResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AutoCompleteRes'] = ResolversParentTypes['AutoCompleteRes']> = {
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   place_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AveragePerDayResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AveragePerDay'] = ResolversParentTypes['AveragePerDay']> = {
+  _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1744,6 +1786,12 @@ export type OrderDetailResolvers<ContextType = Context, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PaidCheckoutResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaidCheckoutRes'] = ResolversParentTypes['PaidCheckoutRes']> = {
+  data?: Resolver<Array<Maybe<ResolversTypes['AveragePerDay']>>, ParentType, ContextType>;
+  sortBy?: Resolver<ResolversTypes['DateType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PaymentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Payment'] = ResolversParentTypes['Payment']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1806,6 +1854,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
   getOrdersByCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;
   getOrdersBySession?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
+  getPaidCheckoutByDate?: Resolver<Maybe<ResolversTypes['PaidCheckoutRes']>, ParentType, ContextType, RequireFields<QueryGetPaidCheckoutByDateArgs, 'input'>>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
   getSpacesFromBusiness?: Resolver<Maybe<Array<ResolversTypes['Space']>>, ParentType, ContextType>;
@@ -1904,6 +1953,7 @@ export type Resolvers<ContextType = Context> = {
   AccountCreationResponse?: AccountCreationResponseResolvers<ContextType>;
   Address?: AddressResolvers<ContextType>;
   AutoCompleteRes?: AutoCompleteResResolvers<ContextType>;
+  AveragePerDay?: AveragePerDayResolvers<ContextType>;
   Balance?: BalanceResolvers<ContextType>;
   Business?: BusinessResolvers<ContextType>;
   BusinessPrivileges?: BusinessPrivilegesResolvers<ContextType>;
@@ -1921,6 +1971,7 @@ export type Resolvers<ContextType = Context> = {
   Menu?: MenuResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   OrderDetail?: OrderDetailResolvers<ContextType>;
+  PaidCheckoutRes?: PaidCheckoutResResolvers<ContextType>;
   Payment?: PaymentResolvers<ContextType>;
   PaymentIntent?: PaymentIntentResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;

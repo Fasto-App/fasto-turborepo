@@ -53,6 +53,12 @@ export type AutoCompleteRes = {
   place_id: Scalars['String'];
 };
 
+export type AveragePerDay = {
+  __typename?: 'AveragePerDay';
+  _id: Scalars['String'];
+  totalAmount: Scalars['Int'];
+};
+
 export type Balance = {
   __typename?: 'Balance';
   balanceAvailable: Scalars['Float'];
@@ -251,6 +257,12 @@ export type CustomerRequestSplitInput = {
   tip: Scalars['Float'];
 };
 
+export enum DateType {
+  NinetyDays = 'NinetyDays',
+  SevenDays = 'SevenDays',
+  ThirtyDays = 'ThirtyDays'
+}
+
 export enum DaysOfWeek {
   Friday = 'Friday',
   Monday = 'Monday',
@@ -313,6 +325,10 @@ export type GetMenu = {
 
 export type GetMenuById = {
   id: Scalars['ID'];
+};
+
+export type GetPaidCheckout = {
+  type: DateType;
 };
 
 export type GetTabRequestInput = {
@@ -811,6 +827,12 @@ export enum OrderStatus {
   Pendent = 'Pendent'
 }
 
+export type PaidCheckoutRes = {
+  __typename?: 'PaidCheckoutRes';
+  data: Array<Maybe<AveragePerDay>>;
+  sortBy: DateType;
+};
+
 export type Payment = {
   __typename?: 'Payment';
   _id: Scalars['ID'];
@@ -874,6 +896,7 @@ export type Query = {
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
+  getPaidCheckoutByDate: PaidCheckoutRes;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
@@ -934,6 +957,11 @@ export type QueryGetOrderDetailByIdArgs = {
 
 export type QueryGetOrdersByCheckoutArgs = {
   input: GetById;
+};
+
+
+export type QueryGetPaidCheckoutByDateArgs = {
+  input: GetPaidCheckout;
 };
 
 
@@ -1073,6 +1101,7 @@ export enum TableStatus {
 
 export enum TakeoutDeliveryDineIn {
   Delivery = 'Delivery',
+  DineIn = 'DineIn',
   Takeout = 'Takeout'
 }
 
@@ -1374,6 +1403,13 @@ export type MakeCheckoutPaymentMutationVariables = Exact<{
 
 
 export type MakeCheckoutPaymentMutation = { __typename?: 'Mutation', makeCheckoutPayment: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, splitType?: SplitType | null, created_date: string, payments: Array<{ __typename?: 'Payment', _id: string, amount: number, patron: string, tip: number, splitType?: SplitType | null, discount?: number | null, paid: boolean } | null> } };
+
+export type GetPaidCheckoutByDateQueryVariables = Exact<{
+  input: GetPaidCheckout;
+}>;
+
+
+export type GetPaidCheckoutByDateQuery = { __typename?: 'Query', getPaidCheckoutByDate: { __typename?: 'PaidCheckoutRes', sortBy: DateType, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -2705,6 +2741,45 @@ export function useMakeCheckoutPaymentMutation(baseOptions?: Apollo.MutationHook
 export type MakeCheckoutPaymentMutationHookResult = ReturnType<typeof useMakeCheckoutPaymentMutation>;
 export type MakeCheckoutPaymentMutationResult = Apollo.MutationResult<MakeCheckoutPaymentMutation>;
 export type MakeCheckoutPaymentMutationOptions = Apollo.BaseMutationOptions<MakeCheckoutPaymentMutation, MakeCheckoutPaymentMutationVariables>;
+export const GetPaidCheckoutByDateDocument = gql`
+    query GetPaidCheckoutByDate($input: GetPaidCheckout!) {
+  getPaidCheckoutByDate(input: $input) {
+    sortBy
+    data {
+      _id
+      totalAmount
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPaidCheckoutByDateQuery__
+ *
+ * To run a query within a React component, call `useGetPaidCheckoutByDateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaidCheckoutByDateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaidCheckoutByDateQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetPaidCheckoutByDateQuery(baseOptions: Apollo.QueryHookOptions<GetPaidCheckoutByDateQuery, GetPaidCheckoutByDateQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetPaidCheckoutByDateQuery, GetPaidCheckoutByDateQueryVariables>(GetPaidCheckoutByDateDocument, options);
+}
+export function useGetPaidCheckoutByDateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaidCheckoutByDateQuery, GetPaidCheckoutByDateQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetPaidCheckoutByDateQuery, GetPaidCheckoutByDateQueryVariables>(GetPaidCheckoutByDateDocument, options);
+}
+export type GetPaidCheckoutByDateQueryHookResult = ReturnType<typeof useGetPaidCheckoutByDateQuery>;
+export type GetPaidCheckoutByDateLazyQueryHookResult = ReturnType<typeof useGetPaidCheckoutByDateLazyQuery>;
+export type GetPaidCheckoutByDateQueryResult = Apollo.QueryResult<GetPaidCheckoutByDateQuery, GetPaidCheckoutByDateQueryVariables>;
 export const GetCheckoutByIdDocument = gql`
     query GetCheckoutByID($input: GetById!) {
   getCheckoutByID(input: $input) {

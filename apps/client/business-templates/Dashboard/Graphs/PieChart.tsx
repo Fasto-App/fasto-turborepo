@@ -34,19 +34,14 @@ export const data = {
   ],
 };
 
+const Row = () => (
+  <HStack justifyContent={"space-between"} paddingX={8} paddingY={2}>
+    <Text fontSize={"lg"} fontWeight={"500"}>{"DineIn"}</Text>
+    <Text fontSize={"lg"} fontWeight={"500"}>{"0"}</Text>
+  </HStack>)
+
 export function PieChart() {
   return <ScrollView pr={2} pb={2}>
-    <Box
-      p={2}
-      borderWidth={0.5}
-      borderColor={"gray.50"}
-      borderRadius={"md"}
-      bgColor={"white"}
-    >
-      <Heading textAlign={"center"} size={"xs"}>{"Top Categories"}</Heading>
-      <Pie data={data} />
-    </Box>
-
     <VStack mt={2} p={2} space={2}
       borderWidth={0.5}
       borderColor={"gray.50"}
@@ -54,11 +49,26 @@ export function PieChart() {
       borderRadius={"md"}
       bgColor={"white"}
     >
-      <Heading textAlign={"center"} size={"xs"}>{"Most Selling Items"}</Heading>
+      <Heading textAlign={"center"} size={"sm"}>{"Most Selling Items"}</Heading>
+      <ProductItem />
+      <ProductItem />
       <ProductItem />
       <ProductItem />
       <ProductItem />
     </VStack>
+    <Box
+      p={2}
+      borderWidth={0.5}
+      borderColor={"gray.50"}
+      borderRadius={"md"}
+      bgColor={"white"}
+      mt={4}
+    >
+      <Heading pb={2} textAlign={"center"} size={"sm"}>{"Number Of Orders"}</Heading>
+      <Row />
+      <Row />
+      <Row />
+    </Box>
   </ScrollView>
 }
 

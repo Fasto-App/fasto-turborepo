@@ -1,0 +1,9 @@
+query GetPaidCheckoutByDate($input: GetPaidCheckout!) {
+	getPaidCheckoutByDate(input: $input) {
+		sortBy
+		data {
+			_id
+			totalAmount
+		}
+	}
+}

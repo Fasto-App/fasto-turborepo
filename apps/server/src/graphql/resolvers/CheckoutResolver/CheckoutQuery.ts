@@ -1,4 +1,5 @@
-import { QueryResolvers } from "../../../generated/graphql";
+import { ObjectId } from "mongodb";
+import { DateType, QueryResolvers } from "../../../generated/graphql";
 import { CheckoutModel } from "../../../models/checkout";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
@@ -31,11 +32,73 @@ export const getOrdersByCheckout: QueryResolvers["getOrdersByCheckout"] = async 
   return checkout
 }
 
+type AveragePerDay = {
+  _id: string; totalAmount: number
+}
+
+export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = async (par, { input }, { db, user, business }) => {
+  let days;
+
+  switch (input.type) {
+    case DateType.SevenDays:
+      days = 7
+      break;
+    case DateType.ThirtyDays:
+      days = 30
+      break;
+    case DateType.NinetyDays:
+      days = 90
+      break;
+  }
+
+  const daysAgo = new Date();
+  daysAgo.setDate(daysAgo.getDate() - days);
+
+  console.log("Ronaldo", business)
+
+  const dataResult: AveragePerDay[] = await CheckoutModel(db).aggregate([
+    {
+      $match: {
+        business: new ObjectId(business),
+        paid: true,
+        created_date: {
+          $gte: daysAgo,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$created_date' } },
+        totalAmount: { $sum: '$total' }, // Assuming "total" is the field with the amount
+      },
+    },
+    {
+      // Sort by date in ascending order
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  if (!dataResult.length) return null
+
+  const today = new Date();
+  const resultArray = new Array(days).fill(null) as AveragePerDay[];
+
+  dataResult.forEach(group => {
+    const date = new Date(group._id);
+    const timeDifference = today.getTime() - date.getTime();
+    const diffInDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    resultArray[diffInDays] = group;
+  });
+
+  return { sortBy: input.type, data: resultArray.reverse() }
+}
+
 
 const CheckoutResolverQuery = {
   getCheckoutByID,
   getCheckoutsByBusiness,
   getOrdersByCheckout,
+  getPaidCheckoutByDate
 }
 
 export {

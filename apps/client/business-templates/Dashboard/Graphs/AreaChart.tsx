@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,7 +12,10 @@ import {
   ChartData,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { Box, Heading, Stack, Button } from 'native-base';
+import { Box, Heading, Stack, Button, Text, Skeleton } from 'native-base';
+import { DateType, useGetPaidCheckoutByDateQuery } from '../../../gen/generated';
+import { useRouter } from 'next/router';
+import { parseToCurrency } from 'app-helpers';
 
 ChartJS.register(
   CategoryScale,
@@ -44,33 +47,48 @@ export const options = {
   }
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June']
 
-export const data: ChartData<'line'> = {
-  labels,
-  datasets: [
-    {
-      fill: true,
-      label: 'Rendimento Bruto R$',
-      data: labels.map(() => Math.round(Math.random() * 100)),
-      borderColor: 'rgb(31, 178, 80)',
-      backgroundColor: 'rgba(53, 235, 117, 0.5)',
-      pointRadius: 5,
-    },
-  ],
-};
 
 export function AreaChart() {
+  const router = useRouter()
+
+  const [selectedCheckoutFilter, setSelectedCheckoutFilter] = useState(DateType.SevenDays)
+
+  const { loading, data: checkoutData, error } = useGetPaidCheckoutByDateQuery({
+    variables: {
+      input: {
+        type: selectedCheckoutFilter
+      }
+    }
+  })
+
+  if (!checkoutData?.getPaidCheckoutByDate.data) return <Skeleton h="80" rounded={"md"} />
+
+  const labels = checkoutData?.getPaidCheckoutByDate.data.map(day => day?._id || "")
+  const values = checkoutData?.getPaidCheckoutByDate.data.map(day => (day?.totalAmount || 0) / 100)
+
+  const data: ChartData<'line'> = {
+    labels,
+    datasets: [
+      {
+        fill: true,
+        label: 'Rendimento Bruto R$',
+        data: values,
+        borderColor: 'rgb(31, 178, 80)',
+        backgroundColor: 'rgba(53, 235, 117, 0.5)',
+        pointRadius: 5,
+      },
+    ],
+  };
+
+  const triggerShallowNav = (type: DateType) => () => {
+    if (selectedCheckoutFilter === type) return
+    setSelectedCheckoutFilter(type)
+  }
+
 
   return (
-    <Box flex={1}
-      borderWidth={1}
-      borderColor={"gray.200"}
-      shadow={"2"}
-      borderRadius={"md"}
-      bgColor={"white"}
-      justifyContent={"center"}
-      p={4}>
+    <Border>
       <Stack mb="2.5" mt="1.5" direction={{
         base: "column",
         md: "row"
@@ -78,17 +96,33 @@ export function AreaChart() {
         base: "auto",
         md: "0"
       }}>
-        <Button size="sm" variant="ghost">
+        <Button
+          size="sm" variant="ghost"
+          isPressed={selectedCheckoutFilter === DateType.SevenDays}
+          onPress={triggerShallowNav(DateType.SevenDays)}
+        >
           7 Days
         </Button>
-        <Button size="sm" variant="ghost">
+        <Button
+          onPress={triggerShallowNav(DateType.ThirtyDays)}
+          isPressed={selectedCheckoutFilter === DateType.ThirtyDays}
+          size="sm" variant="ghost" >
           30 Days
-        </Button>
-        <Button size="sm" variant="ghost" isPressed>
-          Last   year
         </Button>
       </Stack>
       <Line options={options} data={data} />
-    </Box>
+    </Border>
   )
 }
+
+const Border: React.FC = ({ children }) =>
+  <Box flex={1}
+    borderWidth={1}
+    borderColor={"gray.200"}
+    shadow={"2"}
+    borderRadius={"md"}
+    bgColor={"white"}
+    justifyContent={"center"}
+    p={4}>
+    {children}
+  </Box>
