@@ -1,3 +1,4 @@
+import { SubscriptionQuery } from './SubscriptionResolvers/SubscriptionQuery';
 import { GraphQLUpload } from 'graphql-upload';
 import {
   BusinessResolverMutation,
@@ -66,6 +67,7 @@ export const resolvers = {
     ...TableResolverQuery,
     ...CartItemResolverQuery,
     ...PaymentQuery,
+    ...SubscriptionQuery
   },
   Mutation: {
     ...AddressResolverMutation,

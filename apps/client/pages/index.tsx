@@ -3,16 +3,18 @@ import Script from "next/script";
 import Link from "next/link";
 import { FDSSelect } from "../components/FDSSelect";
 import { useRouter } from "next/router";
-import { Locale, localeObj } from "app-helpers";
+import { Locale, localeObj, parseToCurrency } from "app-helpers";
 import { Box, HStack } from "native-base";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticProps } from "next";
+import { useGetSubscriptionPricesQuery } from "../gen/generated";
 
 export default function Index() {
 
   const router = useRouter();
   const { t } = useTranslation("landingPage");
+  const { data } = useGetSubscriptionPricesQuery()
 
   return (
     <>
@@ -329,40 +331,18 @@ export default function Index() {
           <div className="content-container">
             <h2 className="heading-2">{t("pricing")}</h2>
             <div className="w-layout-hflex pricing-box">
-              <div className="pricing-cards">
-                <h3 className="heading-3">{t("online-menu")}</h3>
-                <h3 className="h3-highlight">{t("free")}</h3>
-                <div className="text-block">{t("free-text")}</div>
-                <Link href="business/signup" >
-                  <a href="business/signup" className="button small w-button">
-                    {t("select")}
-                  </a>
-                </Link>
-              </div>
-              <div className="pricing-cards">
-                <h3 className="heading-3">{t("pos-order")}</h3>
-                <h3 className="h3-highlight">{t("pos-order-price")}</h3>
-                <div className="text-block">
-                  {t("pos-order-text")}
+              {data?.getSubscriptionPrices.map(price => (
+                <div className="pricing-cards" key={price.id}>
+                  <h3 className="heading-3">{price.product.name}</h3>
+                  <h3 className="h3-highlight">{parseToCurrency(price.unit_amount)}</h3>
+                  <div className="text-block">{price.product.description}</div>
+                  <Link href="business/signup" >
+                    <a href="business/signup" className="button small w-button">
+                      {t("select")}
+                    </a>
+                  </Link>
                 </div>
-                <Link href="business/signup" >
-                  <a className="button small w-button">
-                    {t("select")}
-                  </a>
-                </Link>
-              </div>
-              <div className="pricing-cards">
-                <h3 className="heading-3">{t("full-service")}</h3>
-                <h3 className="h3-highlight">{t("full-service-price")}</h3>
-                <div className="text-block">
-                  {t("full-service-text")}
-                </div>
-                <Link href="business/signup">
-                  <a className="button small w-button">
-                    {t("select")}
-                  </a>
-                </Link>
-              </div>
+              ))}
             </div>
           </div>
         </section>

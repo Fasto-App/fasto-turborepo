@@ -1,0 +1,12 @@
+query GetSubscriptionPrices {
+	getSubscriptionPrices {
+		currency
+		id
+		unit_amount
+		product {
+			id
+			name
+			description
+		}
+	}
+}

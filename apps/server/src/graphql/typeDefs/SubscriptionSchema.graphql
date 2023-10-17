@@ -1,0 +1,16 @@
+extend type Query {
+	getSubscriptionPrices: [Price!]!
+}
+
+type Price {
+	id: ID!
+	currency: String!
+	unit_amount: Int!
+	product: StripeProduct!
+}
+
+type StripeProduct {
+	id: ID!
+	name: String!
+	description: String
+}
