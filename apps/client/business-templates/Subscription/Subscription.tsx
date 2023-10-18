@@ -33,7 +33,7 @@ export const Subscriptions: React.FC = ({ children }) => {
       <OrangeBox />
       <VStack paddingX={6} paddingY={4} space={"6"}>
         <UpperSection >
-          <Heading size={"md"}>
+          <Heading>
             Subscriptions
           </Heading>
 

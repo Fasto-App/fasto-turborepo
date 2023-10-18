@@ -62,7 +62,7 @@ export function AreaChart() {
     }
   })
 
-  if (!checkoutData?.getPaidCheckoutByDate.data) return <Skeleton h="80" rounded={"md"} />
+  if (!checkoutData?.getPaidCheckoutByDate?.data) return <Skeleton h="80" rounded={"md"} />
 
   const labels = checkoutData?.getPaidCheckoutByDate.data.map(day => day?._id || "")
   const values = checkoutData?.getPaidCheckoutByDate.data.map(day => (day?.totalAmount || 0) / 100)
