@@ -30,6 +30,9 @@ export class User {
     @prop({ default: true })
     public isGuest!: boolean;
 
+    @prop()
+    public stripeCustomer?: string;
+
     @prop({ ref: Address })
     public address?: Ref<Address>;
 

@@ -13,25 +13,20 @@ import {
   AiOutlineUserAdd,
   AiOutlinePlus,
   AiOutlineClose,
+  AiFillStar, AiOutlineStar
 } from "react-icons/ai";
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
-import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid } from "react-icons/bs";
-import { Badge, Box, Pressable, Text, } from "native-base";
+import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid, BsPeopleFill, BsBag, BsTrash, BsCalendarDate } from "react-icons/bs";
 import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
-import { RiDashboard3Line } from "react-icons/ri"
+import { RiDashboard3Line, RiUserSettingsLine } from "react-icons/ri"
 import { BiLogOutCircle } from "react-icons/bi"
-import { MdOutlineFrontHand } from "react-icons/md"
-import { BsTrash } from "react-icons/bs"
-import { RiUserSettingsLine } from "react-icons/ri"
+import { MdOutlineFrontHand, MdOutlinePhoneIphone, MdLocationPin } from "react-icons/md"
 import { ImQrcode } from "react-icons/im"
-import { BsBag } from "react-icons/bs"
-import { BsPeopleFill } from "react-icons/bs"
-import { MdOutlinePhoneIphone, MdLocationPin } from "react-icons/md"
-import { AiFillStar, AiOutlineStar } from "react-icons/ai"
 import { HiOutlineClipboardList } from "react-icons/hi"
+import { Badge, Box, Pressable, Text, } from "native-base";
 
 type IconProps = {
   type: NavigationButtonType;
@@ -41,6 +36,8 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "Calendar":
+      return <BsCalendarDate color={color} size={size} />;
     case "Location":
       return <MdLocationPin color={color} size={size} />;
     case "ArrowUp":

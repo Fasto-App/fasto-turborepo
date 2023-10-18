@@ -17,6 +17,7 @@ const signup = "signup";
 const tables = "tables";
 const resetPassword = "reset-password";
 const payments = "payments";
+const subscriptions = "subscriptions"
 
 export const businessRoute = {
   [addProductsCategories]: `${BUSINESS_ADMIN}/${addProductsCategories}`,
@@ -34,6 +35,7 @@ export const businessRoute = {
   [tables]: `${BUSINESS_ADMIN}/${tables}`,
   [resetPassword]: `${BUSINESS}/${resetPassword}`,
   [payments]: `${BUSINESS_ADMIN}/${payments}`,
+  [subscriptions]: `${BUSINESS_ADMIN}/${subscriptions}`
 } as const;
 
 export const businessPathName = {

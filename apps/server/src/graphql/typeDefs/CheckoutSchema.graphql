@@ -2,7 +2,7 @@ extend type Query {
 	getCheckoutByID(input: GetById!): Checkout!
 	getCheckoutsByBusiness: [Checkout!]!
 	getOrdersByCheckout(input: GetById!): Checkout!
-	getPaidCheckoutByDate(input: GetPaidCheckout!): PaidCheckoutRes!
+	getPaidCheckoutByDate(input: GetPaidCheckout!): PaidCheckoutRes
 }
 
 extend type Mutation {

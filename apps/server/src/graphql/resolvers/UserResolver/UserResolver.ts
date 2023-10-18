@@ -149,8 +149,6 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
 }
 
 export const getUserInformation = async (_parent: any, _args: any, { db, user }: Context) => {
-
-  console.log("getUserInformation", user)
   const foundUser = await UserModel(db).findById(user);
 
   if (!foundUser) return null

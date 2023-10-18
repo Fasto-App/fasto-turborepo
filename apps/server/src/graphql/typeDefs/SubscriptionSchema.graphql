@@ -2,6 +2,14 @@ extend type Query {
 	getSubscriptionPrices: [Price!]!
 }
 
+extend type Mutation {
+	createSubscription(input: CreateSubInput!): CreateSubResponse!
+}
+
+input CreateSubInput {
+	price: ID!
+}
+
 type Price {
 	id: ID!
 	currency: String!
@@ -13,4 +21,9 @@ type StripeProduct {
 	id: ID!
 	name: String!
 	description: String
+}
+
+type CreateSubResponse {
+	subscriptionId: String!
+	clientSecret: String!
 }

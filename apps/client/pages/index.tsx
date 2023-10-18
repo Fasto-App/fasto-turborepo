@@ -337,7 +337,7 @@ export default function Index() {
                   <h3 className="h3-highlight">{parseToCurrency(price.unit_amount)}</h3>
                   <div className="text-block">{price.product.description}</div>
                   <Link href="business/signup" >
-                    <a href="business/signup" className="button small w-button">
+                    <a className="button small w-button">
                       {t("select")}
                     </a>
                   </Link>

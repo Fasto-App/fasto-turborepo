@@ -57,6 +57,7 @@
 	"Pending": "Pendiente",
 	"Rejected": "Rechazado",
 	"payments": "Pagos",
+	"subscriptions": "Suscripciones",
 	"error": {
 		"email": "Por favor, proporciona una dirección de correo electrónico válida",
 		"password": "Por favor, proporciona una contraseña",

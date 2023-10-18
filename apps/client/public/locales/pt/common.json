@@ -57,6 +57,7 @@
 	"Pending": "Pendente",
 	"Rejected": "Rejeitado",
 	"payments": "Pagamentos",
+	"subscriptions": "Assinaturas",
 	"error": {
 		"email": "Por favor, forneça um endereço de e-mail válido",
 		"password": "Por favor, forneça uma senha",

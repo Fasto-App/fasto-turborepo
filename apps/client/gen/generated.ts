@@ -228,6 +228,16 @@ export type CreateSpaceInput = {
   name: Scalars['String'];
 };
 
+export type CreateSubInput = {
+  price: Scalars['ID'];
+};
+
+export type CreateSubResponse = {
+  __typename?: 'CreateSubResponse';
+  clientSecret: Scalars['String'];
+  subscriptionId: Scalars['String'];
+};
+
 export type CreateTabInput = {
   admin?: InputMaybe<Scalars['ID']>;
   table: Scalars['ID'];
@@ -441,6 +451,7 @@ export type Mutation = {
   createOrdersCheckout: Checkout;
   createProduct: Product;
   createSpace: Space;
+  createSubscription: CreateSubResponse;
   createTab: Tab;
   createTable: Table;
   createUser: User;
@@ -568,6 +579,11 @@ export type MutationCreateProductArgs = {
 
 export type MutationCreateSpaceArgs = {
   input?: InputMaybe<CreateSpaceInput>;
+};
+
+
+export type MutationCreateSubscriptionArgs = {
+  input: CreateSubInput;
 };
 
 
@@ -904,7 +920,7 @@ export type Query = {
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
-  getPaidCheckoutByDate: PaidCheckoutRes;
+  getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
@@ -1425,7 +1441,7 @@ export type GetPaidCheckoutByDateQueryVariables = Exact<{
 }>;
 
 
-export type GetPaidCheckoutByDateQuery = { __typename?: 'Query', getPaidCheckoutByDate: { __typename?: 'PaidCheckoutRes', sortBy: DateType, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } };
+export type GetPaidCheckoutByDateQuery = { __typename?: 'Query', getPaidCheckoutByDate?: { __typename?: 'PaidCheckoutRes', sortBy: DateType, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } | null };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -1692,6 +1708,13 @@ export type GetSpacesFromBusinessQueryVariables = Exact<{ [key: string]: never; 
 
 
 export type GetSpacesFromBusinessQuery = { __typename?: 'Query', getSpacesFromBusiness?: Array<{ __typename?: 'Space', _id: string, name: string, business: string, tables?: Array<{ __typename?: 'Table', _id: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string } | null }> | null }> | null };
+
+export type CreateSubscriptionMutationVariables = Exact<{
+  input: CreateSubInput;
+}>;
+
+
+export type CreateSubscriptionMutation = { __typename?: 'Mutation', createSubscription: { __typename?: 'CreateSubResponse', subscriptionId: string, clientSecret: string } };
 
 export type GetSubscriptionPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4466,6 +4489,40 @@ export function useGetSpacesFromBusinessLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetSpacesFromBusinessQueryHookResult = ReturnType<typeof useGetSpacesFromBusinessQuery>;
 export type GetSpacesFromBusinessLazyQueryHookResult = ReturnType<typeof useGetSpacesFromBusinessLazyQuery>;
 export type GetSpacesFromBusinessQueryResult = Apollo.QueryResult<GetSpacesFromBusinessQuery, GetSpacesFromBusinessQueryVariables>;
+export const CreateSubscriptionDocument = gql`
+    mutation CreateSubscription($input: CreateSubInput!) {
+  createSubscription(input: $input) {
+    subscriptionId
+    clientSecret
+  }
+}
+    `;
+export type CreateSubscriptionMutationFn = Apollo.MutationFunction<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
+
+/**
+ * __useCreateSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useCreateSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSubscriptionMutation, { data, loading, error }] = useCreateSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>(CreateSubscriptionDocument, options);
+      }
+export type CreateSubscriptionMutationHookResult = ReturnType<typeof useCreateSubscriptionMutation>;
+export type CreateSubscriptionMutationResult = Apollo.MutationResult<CreateSubscriptionMutation>;
+export type CreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
 export const GetSubscriptionPricesDocument = gql`
     query GetSubscriptionPrices {
   getSubscriptionPrices {

@@ -73,6 +73,14 @@ const BusinessNavigationTab = () => {
           }}
         />
         <BusinessNavigationButton
+          text={t("subscriptions")}
+          type={"Calendar"}
+          selected={useIsPageSelected(businessRoute.subscriptions)}
+          onPress={() => {
+            router.push(businessRoute.subscriptions);
+          }}
+        />
+        <BusinessNavigationButton
           text={t("settings")}
           type={"Settings"}
           selected={useIsPageSelected(businessRoute.settings)}

@@ -228,6 +228,16 @@ export type CreateSpaceInput = {
   name: Scalars['String'];
 };
 
+export type CreateSubInput = {
+  price: Scalars['ID'];
+};
+
+export type CreateSubResponse = {
+  __typename?: 'CreateSubResponse';
+  clientSecret: Scalars['String'];
+  subscriptionId: Scalars['String'];
+};
+
 export type CreateTabInput = {
   admin?: InputMaybe<Scalars['ID']>;
   table: Scalars['ID'];
@@ -441,6 +451,7 @@ export type Mutation = {
   createOrdersCheckout: Checkout;
   createProduct: Product;
   createSpace: Space;
+  createSubscription: CreateSubResponse;
   createTab: Tab;
   createTable: Table;
   createUser: User;
@@ -568,6 +579,11 @@ export type MutationCreateProductArgs = {
 
 export type MutationCreateSpaceArgs = {
   input?: InputMaybe<CreateSpaceInput>;
+};
+
+
+export type MutationCreateSubscriptionArgs = {
+  input: CreateSubInput;
 };
 
 
@@ -852,6 +868,14 @@ export type PaymentIntent = {
   paymentIntent: Scalars['ID'];
 };
 
+export type Price = {
+  __typename?: 'Price';
+  currency: Scalars['String'];
+  id: Scalars['ID'];
+  product: StripeProduct;
+  unit_amount: Scalars['Int'];
+};
+
 export type Product = {
   __typename?: 'Product';
   _id: Scalars['ID'];
@@ -900,6 +924,7 @@ export type Query = {
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
+  getSubscriptionPrices: Array<Price>;
   getTabByID: Tab;
   getTabRequest: Request;
   getTabRequests: Array<Request>;
@@ -1055,6 +1080,13 @@ export enum SplitType {
   Equally = 'Equally',
   Full = 'Full'
 }
+
+export type StripeProduct = {
+  __typename?: 'StripeProduct';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -1348,6 +1380,8 @@ export type ResolversTypes = {
   CreateOrderInput: CreateOrderInput;
   CreateProductInput: CreateProductInput;
   CreateSpaceInput: CreateSpaceInput;
+  CreateSubInput: CreateSubInput;
+  CreateSubResponse: ResolverTypeWrapper<CreateSubResponse>;
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
   CustomSplitInput: CustomSplitInput;
@@ -1390,6 +1424,7 @@ export type ResolversTypes = {
   PaidCheckoutRes: ResolverTypeWrapper<PaidCheckoutRes>;
   Payment: ResolverTypeWrapper<Payment>;
   PaymentIntent: ResolverTypeWrapper<PaymentIntent>;
+  Price: ResolverTypeWrapper<Price>;
   Product: ResolverTypeWrapper<Product>;
   Query: ResolverTypeWrapper<{}>;
   Request: ResolverTypeWrapper<Request>;
@@ -1403,6 +1438,7 @@ export type ResolversTypes = {
   Space: ResolverTypeWrapper<Space>;
   SplitType: SplitType;
   String: ResolverTypeWrapper<Scalars['String']>;
+  StripeProduct: ResolverTypeWrapper<StripeProduct>;
   Subscription: ResolverTypeWrapper<{}>;
   Tab: ResolverTypeWrapper<Tab>;
   TabStatus: TabStatus;
@@ -1462,6 +1498,8 @@ export type ResolversParentTypes = {
   CreateOrderInput: CreateOrderInput;
   CreateProductInput: CreateProductInput;
   CreateSpaceInput: CreateSpaceInput;
+  CreateSubInput: CreateSubInput;
+  CreateSubResponse: CreateSubResponse;
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
   CustomSplitInput: CustomSplitInput;
@@ -1500,6 +1538,7 @@ export type ResolversParentTypes = {
   PaidCheckoutRes: PaidCheckoutRes;
   Payment: Payment;
   PaymentIntent: PaymentIntent;
+  Price: Price;
   Product: Product;
   Query: {};
   Request: Request;
@@ -1511,6 +1550,7 @@ export type ResolversParentTypes = {
   ShareQRCodeInput: ShareQrCodeInput;
   Space: Space;
   String: Scalars['String'];
+  StripeProduct: StripeProduct;
   Subscription: {};
   Tab: Tab;
   Table: Table;
@@ -1654,6 +1694,12 @@ export type CreateBusinessPayloadResolvers<ContextType = Context, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type CreateSubResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateSubResponse'] = ResolversParentTypes['CreateSubResponse']> = {
+  clientSecret?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  subscriptionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type DeleteBusinessPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeleteBusinessPayload'] = ResolversParentTypes['DeleteBusinessPayload']> = {
   message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1726,6 +1772,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createOrdersCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationCreateOrdersCheckoutArgs, 'input'>>;
   createProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'input'>>;
   createSpace?: Resolver<ResolversTypes['Space'], ParentType, ContextType, Partial<MutationCreateSpaceArgs>>;
+  createSubscription?: Resolver<ResolversTypes['CreateSubResponse'], ParentType, ContextType, RequireFields<MutationCreateSubscriptionArgs, 'input'>>;
   createTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationCreateTabArgs, 'input'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, Partial<MutationCreateTableArgs>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationCreateUserArgs>>;
@@ -1811,6 +1858,14 @@ export type PaymentIntentResolvers<ContextType = Context, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PriceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
+  currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  product?: Resolver<ResolversTypes['StripeProduct'], ParentType, ContextType>;
+  unit_amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ProductResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Product'] = ResolversParentTypes['Product']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   addonsID?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType>;
@@ -1858,6 +1913,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
   getSpacesFromBusiness?: Resolver<Maybe<Array<ResolversTypes['Space']>>, ParentType, ContextType>;
+  getSubscriptionPrices?: Resolver<Array<ResolversTypes['Price']>, ParentType, ContextType>;
   getTabByID?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<QueryGetTabByIdArgs, 'input'>>;
   getTabRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType>;
   getTabRequests?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, Partial<QueryGetTabRequestsArgs>>;
@@ -1895,6 +1951,13 @@ export type SpaceResolvers<ContextType = Context, ParentType extends ResolversPa
   business?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tables?: Resolver<Maybe<Array<ResolversTypes['Table']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StripeProductResolvers<ContextType = Context, ParentType extends ResolversParentTypes['StripeProduct'] = ResolversParentTypes['StripeProduct']> = {
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1962,6 +2025,7 @@ export type Resolvers<ContextType = Context> = {
   Checkout?: CheckoutResolvers<ContextType>;
   ClientSession?: ClientSessionResolvers<ContextType>;
   CreateBusinessPayload?: CreateBusinessPayloadResolvers<ContextType>;
+  CreateSubResponse?: CreateSubResponseResolvers<ContextType>;
   DeleteBusinessPayload?: DeleteBusinessPayloadResolvers<ContextType>;
   Employee?: EmployeeResolvers<ContextType>;
   Employees?: EmployeesResolvers<ContextType>;
@@ -1974,12 +2038,14 @@ export type Resolvers<ContextType = Context> = {
   PaidCheckoutRes?: PaidCheckoutResResolvers<ContextType>;
   Payment?: PaymentResolvers<ContextType>;
   PaymentIntent?: PaymentIntentResolvers<ContextType>;
+  Price?: PriceResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Request?: RequestResolvers<ContextType>;
   RequestResponseOK?: RequestResponseOkResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;
   Space?: SpaceResolvers<ContextType>;
+  StripeProduct?: StripeProductResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   Tab?: TabResolvers<ContextType>;
   Table?: TableResolvers<ContextType>;

@@ -1,15 +1,11 @@
 import { useRouter } from 'next/router'
 import { Center, Text, Box, Button, ScrollView } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { AddressElement, Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { customerRoute } from 'fasto-route';
 import { parseToCurrency } from 'app-helpers';
 import { useTranslation } from 'next-i18next';
-
-// this file needs some refactoring
-// too many components, 
-// unnecessary prop drilling
+import { stripePromise } from '../../stripe/stripe';
 
 export const PaymentScreen = () => {
   return (
@@ -84,10 +80,6 @@ const CheckoutForm = () => {
     </>
   )
 }
-
-const stripePromiseBR = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY_BRAZIL || "");
-const stripePromiseUS = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY || "");
-const stripePromise = (country: string) => country === "US" ? stripePromiseUS : stripePromiseBR;
 
 export const StripeWrapper: React.FC = ({ children }) => {
   const router = useRouter()

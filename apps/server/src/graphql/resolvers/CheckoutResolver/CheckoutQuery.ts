@@ -54,8 +54,6 @@ export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = as
   const daysAgo = new Date();
   daysAgo.setDate(daysAgo.getDate() - days);
 
-  console.log("Ronaldo", business)
-
   const dataResult: AveragePerDay[] = await CheckoutModel(db).aggregate([
     {
       $match: {
