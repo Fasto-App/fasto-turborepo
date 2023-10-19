@@ -1,0 +1,6 @@
+query GetSignUpSubscriptions {
+	getSignUpSubscriptions {
+		id
+		status
+	}
+}

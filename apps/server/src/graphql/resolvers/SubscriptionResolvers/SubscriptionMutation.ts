@@ -31,7 +31,8 @@ const createSubscription: MutationResolvers["createSubscription"] = async (par, 
 
   return ({
     subscriptionId: subscription.id,
-    clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
+    clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+    price
   });
 }
 

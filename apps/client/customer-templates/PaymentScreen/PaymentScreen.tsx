@@ -7,14 +7,6 @@ import { parseToCurrency } from 'app-helpers';
 import { useTranslation } from 'next-i18next';
 import { stripePromise } from '../../stripe/stripe';
 
-export const PaymentScreen = () => {
-  return (
-    <StripeWrapper>
-      <CheckoutForm />
-    </StripeWrapper>
-  )
-}
-
 const CheckoutForm = () => {
   const { t } = useTranslation("customerPayment")
 
@@ -81,7 +73,7 @@ const CheckoutForm = () => {
   )
 }
 
-export const StripeWrapper: React.FC = ({ children }) => {
+const StripeWrapper: React.FC = ({ children }) => {
   const router = useRouter()
   const { clientSecret, businessId, checkoutId, country } = router.query
 
@@ -103,5 +95,13 @@ export const StripeWrapper: React.FC = ({ children }) => {
       options={{ clientSecret: typeof clientSecret === "string" ? clientSecret : clientSecret[0] }}>
       {children}
     </Elements>
+  )
+}
+
+export const PaymentScreen = () => {
+  return (
+    <StripeWrapper>
+      <CheckoutForm />
+    </StripeWrapper>
   )
 }

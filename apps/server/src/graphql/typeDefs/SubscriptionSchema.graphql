@@ -1,5 +1,6 @@
 extend type Query {
 	getSubscriptionPrices: [Price!]!
+	getSignUpSubscriptions: [StripeSubscription]
 }
 
 extend type Mutation {
@@ -24,6 +25,12 @@ type StripeProduct {
 }
 
 type CreateSubResponse {
-	subscriptionId: String!
+	subscriptionId: ID!
 	clientSecret: String!
+	price: ID!
+}
+
+type StripeSubscription {
+	id: ID!
+	status: String!
 }

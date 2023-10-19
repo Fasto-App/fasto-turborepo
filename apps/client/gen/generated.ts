@@ -235,7 +235,8 @@ export type CreateSubInput = {
 export type CreateSubResponse = {
   __typename?: 'CreateSubResponse';
   clientSecret: Scalars['String'];
-  subscriptionId: Scalars['String'];
+  price: Scalars['ID'];
+  subscriptionId: Scalars['ID'];
 };
 
 export type CreateTabInput = {
@@ -923,6 +924,7 @@ export type Query = {
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
+  getSignUpSubscriptions?: Maybe<Array<Maybe<StripeSubscription>>>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getSubscriptionPrices: Array<Price>;
   getTabByID: Tab;
@@ -1086,6 +1088,12 @@ export type StripeProduct = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+};
+
+export type StripeSubscription = {
+  __typename?: 'StripeSubscription';
+  id: Scalars['ID'];
+  status: Scalars['String'];
 };
 
 export type Subscription = {
@@ -1714,7 +1722,12 @@ export type CreateSubscriptionMutationVariables = Exact<{
 }>;
 
 
-export type CreateSubscriptionMutation = { __typename?: 'Mutation', createSubscription: { __typename?: 'CreateSubResponse', subscriptionId: string, clientSecret: string } };
+export type CreateSubscriptionMutation = { __typename?: 'Mutation', createSubscription: { __typename?: 'CreateSubResponse', subscriptionId: string, clientSecret: string, price: string } };
+
+export type GetSignUpSubscriptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSignUpSubscriptionsQuery = { __typename?: 'Query', getSignUpSubscriptions?: Array<{ __typename?: 'StripeSubscription', id: string, status: string } | null> | null };
 
 export type GetSubscriptionPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4494,6 +4507,7 @@ export const CreateSubscriptionDocument = gql`
   createSubscription(input: $input) {
     subscriptionId
     clientSecret
+    price
   }
 }
     `;
@@ -4523,6 +4537,41 @@ export function useCreateSubscriptionMutation(baseOptions?: Apollo.MutationHookO
 export type CreateSubscriptionMutationHookResult = ReturnType<typeof useCreateSubscriptionMutation>;
 export type CreateSubscriptionMutationResult = Apollo.MutationResult<CreateSubscriptionMutation>;
 export type CreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
+export const GetSignUpSubscriptionsDocument = gql`
+    query GetSignUpSubscriptions {
+  getSignUpSubscriptions {
+    id
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetSignUpSubscriptionsQuery__
+ *
+ * To run a query within a React component, call `useGetSignUpSubscriptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSignUpSubscriptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSignUpSubscriptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSignUpSubscriptionsQuery(baseOptions?: Apollo.QueryHookOptions<GetSignUpSubscriptionsQuery, GetSignUpSubscriptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSignUpSubscriptionsQuery, GetSignUpSubscriptionsQueryVariables>(GetSignUpSubscriptionsDocument, options);
+      }
+export function useGetSignUpSubscriptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSignUpSubscriptionsQuery, GetSignUpSubscriptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSignUpSubscriptionsQuery, GetSignUpSubscriptionsQueryVariables>(GetSignUpSubscriptionsDocument, options);
+        }
+export type GetSignUpSubscriptionsQueryHookResult = ReturnType<typeof useGetSignUpSubscriptionsQuery>;
+export type GetSignUpSubscriptionsLazyQueryHookResult = ReturnType<typeof useGetSignUpSubscriptionsLazyQuery>;
+export type GetSignUpSubscriptionsQueryResult = Apollo.QueryResult<GetSignUpSubscriptionsQuery, GetSignUpSubscriptionsQueryVariables>;
 export const GetSubscriptionPricesDocument = gql`
     query GetSubscriptionPrices {
   getSubscriptionPrices {

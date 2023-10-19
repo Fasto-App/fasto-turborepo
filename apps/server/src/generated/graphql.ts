@@ -235,7 +235,8 @@ export type CreateSubInput = {
 export type CreateSubResponse = {
   __typename?: 'CreateSubResponse';
   clientSecret: Scalars['String'];
-  subscriptionId: Scalars['String'];
+  price: Scalars['ID'];
+  subscriptionId: Scalars['ID'];
 };
 
 export type CreateTabInput = {
@@ -923,6 +924,7 @@ export type Query = {
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
+  getSignUpSubscriptions?: Maybe<Array<Maybe<Subscription>>>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getSubscriptionPrices: Array<Price>;
   getTabByID: Tab;
@@ -1091,6 +1093,7 @@ export type StripeProduct = {
 export type Subscription = {
   __typename?: 'Subscription';
   _empty?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
   numberIncremented: Scalars['Int'];
   onTabRequest: Request;
   onTabRequestResponse: Request;
@@ -1696,7 +1699,8 @@ export type CreateBusinessPayloadResolvers<ContextType = Context, ParentType ext
 
 export type CreateSubResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateSubResponse'] = ResolversParentTypes['CreateSubResponse']> = {
   clientSecret?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  subscriptionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  subscriptionId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1912,6 +1916,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getPaidCheckoutByDate?: Resolver<Maybe<ResolversTypes['PaidCheckoutRes']>, ParentType, ContextType, RequireFields<QueryGetPaidCheckoutByDateArgs, 'input'>>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
+  getSignUpSubscriptions?: Resolver<Maybe<Array<Maybe<ResolversTypes['Subscription']>>>, ParentType, ContextType>;
   getSpacesFromBusiness?: Resolver<Maybe<Array<ResolversTypes['Space']>>, ParentType, ContextType>;
   getSubscriptionPrices?: Resolver<Array<ResolversTypes['Price']>, ParentType, ContextType>;
   getTabByID?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<QueryGetTabByIdArgs, 'input'>>;
@@ -1963,6 +1968,7 @@ export type StripeProductResolvers<ContextType = Context, ParentType extends Res
 
 export type SubscriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
   _empty?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "_empty", ParentType, ContextType>;
+  id?: SubscriptionResolver<ResolversTypes['ID'], "id", ParentType, ContextType>;
   numberIncremented?: SubscriptionResolver<ResolversTypes['Int'], "numberIncremented", ParentType, ContextType>;
   onTabRequest?: SubscriptionResolver<ResolversTypes['Request'], "onTabRequest", ParentType, ContextType>;
   onTabRequestResponse?: SubscriptionResolver<ResolversTypes['Request'], "onTabRequestResponse", ParentType, ContextType>;
