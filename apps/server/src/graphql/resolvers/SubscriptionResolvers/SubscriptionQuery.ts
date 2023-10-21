@@ -13,23 +13,22 @@ const getSubscriptionPrices: QueryResolvers["getSubscriptionPrices"] = async () 
   return pricesResponse.data.reverse()
 }
 
-const getSignUpSubscriptions: QueryResolvers["getSignUpSubscriptions"] = async (parent, args, { db, user }) => {
+//@ts-ignore
+const getSignUpSubscription: QueryResolvers["getSignUpSubscription"] = async (parent, args, { db, user }) => {
   const foundUser = await UserModel(db).findById(user?._id)
   if (!foundUser?.stripeCustomer) return null
 
   const subscriptions = await stripe("US").subscriptions.list({
-    customer: foundUser.stripeCustomer,
-    status: 'all',
+    customer: foundUser?.stripeCustomer,
+    status: 'active',
     expand: ['data.default_payment_method'],
   });
 
-  console.log(subscriptions)
-
-  return subscriptions.data
+  return subscriptions.data?.[0]
 }
 
 
 export const SubscriptionQuery = {
   getSubscriptionPrices,
-  getSignUpSubscriptions
+  getSignUpSubscription
 }

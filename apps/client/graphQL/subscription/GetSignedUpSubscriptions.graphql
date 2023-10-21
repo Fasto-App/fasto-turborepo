@@ -1,6 +1,15 @@
 query GetSignUpSubscriptions {
-	getSignUpSubscriptions {
+	getSignUpSubscription {
 		id
 		status
+		current_period_end
+		current_period_start
+		items {
+			data {
+				price {
+					id
+				}
+			}
+		}
 	}
 }

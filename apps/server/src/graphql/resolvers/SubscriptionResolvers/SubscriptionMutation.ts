@@ -35,7 +35,37 @@ const createSubscription: MutationResolvers["createSubscription"] = async (par, 
     price
   });
 }
+// @ts-ignore
+const updateSubscription: MutationResolvers["updateSubscription"] = async (parent, { input: {
+  price, subscription
+} }) => {
+  const foundSubscription = await stripe("US").subscriptions.retrieve(
+    subscription
+  );
+
+  if (!foundSubscription) throw ApolloError("NotFound", "Subscription Not Found")
+
+  const updatedSubscription = await stripe("US").subscriptions.update(
+    subscription, {
+    items: [{
+      id: foundSubscription.items.data[0].id,
+      price,
+    }],
+  });
+
+  return updatedSubscription
+}
+// @ts-ignore
+const cancelSubscription: MutationResolvers["cancelSubscription"] = async (parent, { input: { subscription } }) => {
+
+  const deletedSubscription = await stripe("US").subscriptions.del(subscription);
+  if (!deletedSubscription) throw ApolloError("NotFound", "Subscription Not Found")
+
+  return deletedSubscription
+}
 
 export const SubscriptionMutation = {
-  createSubscription
+  createSubscription,
+  updateSubscription,
+  cancelSubscription
 }

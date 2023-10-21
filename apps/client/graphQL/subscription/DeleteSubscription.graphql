@@ -1,0 +1,6 @@
+mutation CancelSubscription($input: DeleteSubInput!) {
+	cancelSubscription(input: $input) {
+		id
+		status
+	}
+}

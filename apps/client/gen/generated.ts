@@ -105,6 +105,11 @@ export enum BusinessType {
   Individual = 'individual'
 }
 
+export type Card = {
+  __typename?: 'Card';
+  last4: Scalars['String'];
+};
+
 export type CartItem = {
   __typename?: 'CartItem';
   _id: Scalars['ID'];
@@ -284,6 +289,11 @@ export enum DaysOfWeek {
   Wednesday = 'Wednesday'
 }
 
+export type DefaultPaymentMethod = {
+  __typename?: 'DefaultPaymentMethod';
+  card?: Maybe<Card>;
+};
+
 export type DeleteBusinessPayload = {
   __typename?: 'DeleteBusinessPayload';
   message?: Maybe<Scalars['String']>;
@@ -296,6 +306,10 @@ export type DeleteEmployee = {
 
 export type DeleteSpaceInput = {
   space: Scalars['ID'];
+};
+
+export type DeleteSubInput = {
+  subscription: Scalars['ID'];
 };
 
 export type DeleteTableInput = {
@@ -439,6 +453,7 @@ export type Mutation = {
   acceptInvitation: Request;
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
+  cancelSubscription: StripeSubscription;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
   confirmPayment: Scalars['Boolean'];
   connectExpressPayment: Scalars['String'];
@@ -497,6 +512,7 @@ export type Mutation = {
   updateOrderDetail: OrderDetail;
   updateProductByID: Product;
   updateSpace: Space;
+  updateSubscription: StripeSubscription;
   updateTab: Tab;
   updateUserInformation: User;
   uploadFile: Scalars['String'];
@@ -515,6 +531,11 @@ export type MutationAcceptTabRequestArgs = {
 
 export type MutationAddItemToCartArgs = {
   input: AddItemToCartInput;
+};
+
+
+export type MutationCancelSubscriptionArgs = {
+  input: DeleteSubInput;
 };
 
 
@@ -798,6 +819,11 @@ export type MutationUpdateSpaceArgs = {
 };
 
 
+export type MutationUpdateSubscriptionArgs = {
+  input: UpdatedSubInput;
+};
+
+
 export type MutationUpdateTabArgs = {
   input: UpdateTabInput;
 };
@@ -924,7 +950,7 @@ export type Query = {
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
-  getSignUpSubscriptions?: Maybe<Array<Maybe<StripeSubscription>>>;
+  getSignUpSubscription?: Maybe<StripeSubscription>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getSubscriptionPrices: Array<Price>;
   getTabByID: Tab;
@@ -1092,7 +1118,10 @@ export type StripeProduct = {
 
 export type StripeSubscription = {
   __typename?: 'StripeSubscription';
+  current_period_end: Scalars['Int'];
+  current_period_start: Scalars['Int'];
   id: Scalars['ID'];
+  items: SubscriptionItem;
   status: Scalars['String'];
 };
 
@@ -1102,6 +1131,17 @@ export type Subscription = {
   numberIncremented: Scalars['Int'];
   onTabRequest: Request;
   onTabRequestResponse: Request;
+};
+
+export type SubscriptionData = {
+  __typename?: 'SubscriptionData';
+  price: Price;
+};
+
+export type SubscriptionItem = {
+  __typename?: 'SubscriptionItem';
+  data: Array<SubscriptionData>;
+  object: Scalars['String'];
 };
 
 export type Tab = {
@@ -1228,6 +1268,11 @@ export type UpdateUserInput = {
   newPasswordConfirmation?: InputMaybe<Scalars['String']>;
   oldPassword?: InputMaybe<Scalars['String']>;
   picture?: InputMaybe<Scalars['Upload']>;
+};
+
+export type UpdatedSubInput = {
+  price: Scalars['ID'];
+  subscription: Scalars['ID'];
 };
 
 export type User = {
@@ -1724,15 +1769,29 @@ export type CreateSubscriptionMutationVariables = Exact<{
 
 export type CreateSubscriptionMutation = { __typename?: 'Mutation', createSubscription: { __typename?: 'CreateSubResponse', subscriptionId: string, clientSecret: string, price: string } };
 
+export type CancelSubscriptionMutationVariables = Exact<{
+  input: DeleteSubInput;
+}>;
+
+
+export type CancelSubscriptionMutation = { __typename?: 'Mutation', cancelSubscription: { __typename?: 'StripeSubscription', id: string, status: string } };
+
 export type GetSignUpSubscriptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSignUpSubscriptionsQuery = { __typename?: 'Query', getSignUpSubscriptions?: Array<{ __typename?: 'StripeSubscription', id: string, status: string } | null> | null };
+export type GetSignUpSubscriptionsQuery = { __typename?: 'Query', getSignUpSubscription?: { __typename?: 'StripeSubscription', id: string, status: string, current_period_end: number, current_period_start: number, items: { __typename?: 'SubscriptionItem', data: Array<{ __typename?: 'SubscriptionData', price: { __typename?: 'Price', id: string } }> } } | null };
 
 export type GetSubscriptionPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetSubscriptionPricesQuery = { __typename?: 'Query', getSubscriptionPrices: Array<{ __typename?: 'Price', currency: string, id: string, unit_amount: number, product: { __typename?: 'StripeProduct', id: string, name: string, description?: string | null } }> };
+
+export type UpdateSubscriptionMutationVariables = Exact<{
+  input: UpdatedSubInput;
+}>;
+
+
+export type UpdateSubscriptionMutation = { __typename?: 'Mutation', updateSubscription: { __typename?: 'StripeSubscription', id: string, status: string, current_period_end: number, current_period_start: number } };
 
 export type CreateTabMutationVariables = Exact<{
   input: CreateTabInput;
@@ -4537,11 +4596,54 @@ export function useCreateSubscriptionMutation(baseOptions?: Apollo.MutationHookO
 export type CreateSubscriptionMutationHookResult = ReturnType<typeof useCreateSubscriptionMutation>;
 export type CreateSubscriptionMutationResult = Apollo.MutationResult<CreateSubscriptionMutation>;
 export type CreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
-export const GetSignUpSubscriptionsDocument = gql`
-    query GetSignUpSubscriptions {
-  getSignUpSubscriptions {
+export const CancelSubscriptionDocument = gql`
+    mutation CancelSubscription($input: DeleteSubInput!) {
+  cancelSubscription(input: $input) {
     id
     status
+  }
+}
+    `;
+export type CancelSubscriptionMutationFn = Apollo.MutationFunction<CancelSubscriptionMutation, CancelSubscriptionMutationVariables>;
+
+/**
+ * __useCancelSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useCancelSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelSubscriptionMutation, { data, loading, error }] = useCancelSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCancelSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<CancelSubscriptionMutation, CancelSubscriptionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CancelSubscriptionMutation, CancelSubscriptionMutationVariables>(CancelSubscriptionDocument, options);
+      }
+export type CancelSubscriptionMutationHookResult = ReturnType<typeof useCancelSubscriptionMutation>;
+export type CancelSubscriptionMutationResult = Apollo.MutationResult<CancelSubscriptionMutation>;
+export type CancelSubscriptionMutationOptions = Apollo.BaseMutationOptions<CancelSubscriptionMutation, CancelSubscriptionMutationVariables>;
+export const GetSignUpSubscriptionsDocument = gql`
+    query GetSignUpSubscriptions {
+  getSignUpSubscription {
+    id
+    status
+    current_period_end
+    current_period_start
+    items {
+      data {
+        price {
+          id
+        }
+      }
+    }
   }
 }
     `;
@@ -4613,6 +4715,42 @@ export function useGetSubscriptionPricesLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetSubscriptionPricesQueryHookResult = ReturnType<typeof useGetSubscriptionPricesQuery>;
 export type GetSubscriptionPricesLazyQueryHookResult = ReturnType<typeof useGetSubscriptionPricesLazyQuery>;
 export type GetSubscriptionPricesQueryResult = Apollo.QueryResult<GetSubscriptionPricesQuery, GetSubscriptionPricesQueryVariables>;
+export const UpdateSubscriptionDocument = gql`
+    mutation UpdateSubscription($input: UpdatedSubInput!) {
+  updateSubscription(input: $input) {
+    id
+    status
+    current_period_end
+    current_period_start
+  }
+}
+    `;
+export type UpdateSubscriptionMutationFn = Apollo.MutationFunction<UpdateSubscriptionMutation, UpdateSubscriptionMutationVariables>;
+
+/**
+ * __useUpdateSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useUpdateSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSubscriptionMutation, { data, loading, error }] = useUpdateSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateSubscriptionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSubscriptionMutation, UpdateSubscriptionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSubscriptionMutation, UpdateSubscriptionMutationVariables>(UpdateSubscriptionDocument, options);
+      }
+export type UpdateSubscriptionMutationHookResult = ReturnType<typeof useUpdateSubscriptionMutation>;
+export type UpdateSubscriptionMutationResult = Apollo.MutationResult<UpdateSubscriptionMutation>;
+export type UpdateSubscriptionMutationOptions = Apollo.BaseMutationOptions<UpdateSubscriptionMutation, UpdateSubscriptionMutationVariables>;
 export const CreateTabDocument = gql`
     mutation CreateTab($input: CreateTabInput!) {
   createTab(input: $input) {

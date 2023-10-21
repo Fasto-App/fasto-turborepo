@@ -1,14 +1,25 @@
 extend type Query {
 	getSubscriptionPrices: [Price!]!
-	getSignUpSubscriptions: [StripeSubscription]
+	getSignUpSubscription: StripeSubscription
 }
 
 extend type Mutation {
 	createSubscription(input: CreateSubInput!): CreateSubResponse!
+	updateSubscription(input: UpdatedSubInput!): StripeSubscription!
+	cancelSubscription(input: DeleteSubInput!): StripeSubscription!
+}
+
+input UpdatedSubInput {
+	subscription: ID!
+	price: ID!
 }
 
 input CreateSubInput {
 	price: ID!
+}
+
+input DeleteSubInput {
+	subscription: ID!
 }
 
 type Price {
@@ -33,4 +44,25 @@ type CreateSubResponse {
 type StripeSubscription {
 	id: ID!
 	status: String!
+	current_period_end: Int!
+	current_period_start: Int!
+	items: SubscriptionItem!
+	# default_payment_method: DefaultPaymentMethod
+}
+
+type SubscriptionItem {
+	object: String!
+	data: [SubscriptionData!]!
+}
+
+type SubscriptionData {
+	price: Price!
+}
+
+type DefaultPaymentMethod {
+	card: Card
+}
+
+type Card {
+	last4: String!
 }
