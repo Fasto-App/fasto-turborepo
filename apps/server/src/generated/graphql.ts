@@ -274,6 +274,7 @@ export type CustomerRequestSplitInput = {
 };
 
 export enum DateType {
+  AllTime = 'AllTime',
   NinetyDays = 'NinetyDays',
   SevenDays = 'SevenDays',
   ThirtyDays = 'ThirtyDays'
@@ -874,6 +875,7 @@ export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
   sortBy: DateType;
+  total: Scalars['Int'];
 };
 
 export type Payment = {
@@ -1916,6 +1918,7 @@ export type OrderDetailResolvers<ContextType = Context, ParentType extends Resol
 export type PaidCheckoutResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaidCheckoutRes'] = ResolversParentTypes['PaidCheckoutRes']> = {
   data?: Resolver<Array<Maybe<ResolversTypes['AveragePerDay']>>, ParentType, ContextType>;
   sortBy?: Resolver<ResolversTypes['DateType'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

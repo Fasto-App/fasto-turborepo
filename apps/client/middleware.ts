@@ -83,7 +83,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent, cookie: 
   // otherwise, navigate back to LOGIN
   if (request.nextUrl.pathname.startsWith(BUSINESS_ADMIN)) {
     if (requestCookiesToken) {
-      console.log("token", requestCookiesToken)
 
       try {
         // const { payload } = await jose.jwtVerify(requestCookiesToken, new TextEncoder().encode(secret))

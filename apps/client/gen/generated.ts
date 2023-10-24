@@ -274,6 +274,7 @@ export type CustomerRequestSplitInput = {
 };
 
 export enum DateType {
+  AllTime = 'AllTime',
   NinetyDays = 'NinetyDays',
   SevenDays = 'SevenDays',
   ThirtyDays = 'ThirtyDays'
@@ -874,6 +875,7 @@ export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
   sortBy: DateType;
+  total: Scalars['Int'];
 };
 
 export type Payment = {
@@ -1494,7 +1496,7 @@ export type GetPaidCheckoutByDateQueryVariables = Exact<{
 }>;
 
 
-export type GetPaidCheckoutByDateQuery = { __typename?: 'Query', getPaidCheckoutByDate?: { __typename?: 'PaidCheckoutRes', sortBy: DateType, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } | null };
+export type GetPaidCheckoutByDateQuery = { __typename?: 'Query', getPaidCheckoutByDate?: { __typename?: 'PaidCheckoutRes', total: number, sortBy: DateType, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } | null };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -2860,6 +2862,7 @@ export type MakeCheckoutPaymentMutationOptions = Apollo.BaseMutationOptions<Make
 export const GetPaidCheckoutByDateDocument = gql`
     query GetPaidCheckoutByDate($input: GetPaidCheckout!) {
   getPaidCheckoutByDate(input: $input) {
+    total
     sortBy
     data {
       _id

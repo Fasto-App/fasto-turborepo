@@ -49,20 +49,28 @@ export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = as
     case DateType.NinetyDays:
       days = 90
       break;
+    case DateType.AllTime:
+      days = 0
+      break
   }
 
   const daysAgo = new Date();
   daysAgo.setDate(daysAgo.getDate() - days);
 
+  const matchQuery: any = {
+    business: new ObjectId(business),
+    paid: true,
+  };
+
+  if (input.type !== DateType.AllTime) {
+    matchQuery.created_date = {
+      $gte: daysAgo,
+    };
+  }
+
   const dataResult: AveragePerDay[] = await CheckoutModel(db).aggregate([
     {
-      $match: {
-        business: new ObjectId(business),
-        paid: true,
-        created_date: {
-          $gte: daysAgo,
-        },
-      },
+      $match: matchQuery,
     },
     {
       $group: {
@@ -78,17 +86,26 @@ export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = as
 
   if (!dataResult.length) return null
 
+  if (input.type == DateType.AllTime) {
+    const total = dataResult.reduce((accu, current) => accu + current.totalAmount, 0)
+    return { sortBy: input.type, data: dataResult, total }
+  }
+
   const today = new Date();
   const resultArray = new Array(days).fill(null) as AveragePerDay[];
+
+  let total = 0
 
   dataResult.forEach(group => {
     const date = new Date(group._id);
     const timeDifference = today.getTime() - date.getTime();
     const diffInDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
     resultArray[diffInDays] = group;
+    total += group.totalAmount
   });
 
-  return { sortBy: input.type, data: resultArray.reverse() }
+  return { sortBy: input.type, data: resultArray.reverse(), total }
 }
 
 

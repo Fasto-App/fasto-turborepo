@@ -127,7 +127,6 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
         return orderDetails;
 
     } catch (err) {
-        console.log({ err })
         throw ApolloError("BadRequest", `Error creating OrderDetail ${err}`);
     }
 }
@@ -217,7 +216,6 @@ const updateOrderDetail = async (_parent: any,
         }, { new: true });
 
     } catch (err) {
-        console.log({ err })
         throw ApolloError("InternalServerError", `Error updating OrderDetail ${err}`);
     }
 }
@@ -231,7 +229,6 @@ const deleteOrderDetail = async (_parent: any, { input }: { input: any }, { db }
 
         return await OrderDetail.findOneAndDelete({ _id: input._id });
     } catch (err) {
-        console.log({ err })
         throw ApolloError("BadRequest", `Error deleting OrderDetail ${err}`);
     }
 }

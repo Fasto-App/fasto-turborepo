@@ -67,6 +67,7 @@ enum DateType {
 	SevenDays
 	ThirtyDays
 	NinetyDays
+	AllTime
 }
 
 type AveragePerDay {
@@ -77,6 +78,7 @@ type AveragePerDay {
 type PaidCheckoutRes {
 	sortBy: DateType!
 	data: [AveragePerDay]!
+	total: Int!
 }
 
 input CustomSplitInput {

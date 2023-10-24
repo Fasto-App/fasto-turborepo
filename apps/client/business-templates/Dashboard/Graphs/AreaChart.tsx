@@ -12,7 +12,7 @@ import {
   ChartData,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { Box, Heading, Stack, Button, Text, Skeleton } from 'native-base';
+import { Box, Heading, Stack, Button, Text, Skeleton, View } from 'native-base';
 import { DateType, useGetPaidCheckoutByDateQuery } from '../../../gen/generated';
 import { useRouter } from 'next/router';
 import { parseToCurrency } from 'app-helpers';
@@ -62,7 +62,11 @@ export function AreaChart() {
     }
   })
 
-  if (!checkoutData?.getPaidCheckoutByDate?.data) return <Skeleton h="80" rounded={"md"} />
+  if (!checkoutData?.getPaidCheckoutByDate?.data && loading) return <Skeleton h="80" rounded={"md"} />
+  if (!checkoutData?.getPaidCheckoutByDate?.data) return (
+    <View h="80" rounded={"md"}>
+      <Text>No Data Available</Text>
+    </View>)
 
   const labels = checkoutData?.getPaidCheckoutByDate.data.map(day => day?._id || "")
   const values = checkoutData?.getPaidCheckoutByDate.data.map(day => (day?.totalAmount || 0) / 100)
@@ -97,11 +101,10 @@ export function AreaChart() {
         md: "0"
       }}>
         <Button
-          size="sm" variant="ghost"
-          isPressed={selectedCheckoutFilter === DateType.SevenDays}
-          onPress={triggerShallowNav(DateType.SevenDays)}
-        >
-          7 Days
+          onPress={triggerShallowNav(DateType.AllTime)}
+          isPressed={selectedCheckoutFilter === DateType.AllTime}
+          size="sm" variant="ghost" >
+          All Time
         </Button>
         <Button
           onPress={triggerShallowNav(DateType.ThirtyDays)}
@@ -109,7 +112,20 @@ export function AreaChart() {
           size="sm" variant="ghost" >
           30 Days
         </Button>
+        <Button
+          size="sm" variant="ghost"
+          isPressed={selectedCheckoutFilter === DateType.SevenDays}
+          onPress={triggerShallowNav(DateType.SevenDays)}
+        >
+          7 Days
+        </Button>
       </Stack>
+      <Text fontSize={"md"}>
+        {`Total: `}
+        <Text fontSize={"md"} bold>
+          {parseToCurrency(checkoutData.getPaidCheckoutByDate.total)}
+        </Text>
+      </Text>
       <Line options={options} data={data} />
     </Border>
   )
