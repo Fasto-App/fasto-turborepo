@@ -22,6 +22,7 @@ import customerCart from "../public/locales/en/customerCart.json";
 import common from "../public/locales/en/common.json";
 import landingPage from "../public/locales/en/landingPage.json"
 import customerPayment from "../public/locales/en/customerPayment.json";
+import businessSubscriptions from "../public/locales/en/businessSubscriptions.json"
 
 declare module "i18next" {
   // Extend CustomTypeOptions
@@ -51,6 +52,7 @@ declare module "i18next" {
       businessOrders: typeof businessOrders;
       businessPayments: typeof businessPayments;
       landingPage: typeof landingPage;
+      businessSubscriptions: typeof businessSubscriptions;
     };
   }
 }

@@ -91,11 +91,14 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
 
     const savedUser = await user.save()
 
+    // business can only belong to one country
+    // address will auto populate
     const creatingBusiness = await Business.create({
       user: savedUser._id,
       name: savedUser.name,
       email: savedUser.email,
-      employees: [savedUser._id]
+      employees: [savedUser._id],
+      country: validInput.country
     })
 
     const businessToString = creatingBusiness._id.toString()

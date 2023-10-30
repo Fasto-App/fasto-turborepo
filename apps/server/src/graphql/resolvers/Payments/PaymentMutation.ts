@@ -4,7 +4,7 @@ import { Checkout, CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { createPaymentIntent, stripe, stripeAuthorize, stripeOnboard } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
-import { updateProductQuantity } from "../helpers/helpers";
+import { getCountry, updateProductQuantity } from "../helpers/helpers";
 
 const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async (parent, { input },
   { db, user, locale, client }) => {
@@ -75,14 +75,8 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
     throw ApolloError('Unauthorized', "Not Authorized. Please login again.")
   }
 
-  // from the business, get the address
-  const foundAddress = await Address.findOne({ _id: foundBusiness.address })
-
-  // if no country, throw an error asking to set the address first
-  // TODO: Delete all the addresses and make country standard
-  if (!foundAddress?.country) {
-    throw ApolloError('BadRequest', "Please set the address first.")
-  }
+  const country = await getCountry({ db, business: foundBusiness._id })
+  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
 
   let accountId = foundBusiness.stripeAccountId;
 
@@ -92,7 +86,7 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
       firstName: foundUser.name as string,
       email: foundBusiness.email,
       businessName: foundBusiness.name,
-      country: foundAddress?.country,
+      country,
       business_type: input.business_type,
       businessId: foundBusiness._id,
       locale
@@ -102,7 +96,7 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
     await foundBusiness.save();
   }
 
-  const accountLink = await stripeOnboard(accountId, locale, foundAddress?.country);
+  const accountLink = await stripeOnboard(accountId, locale, country);
 
   return accountLink.url
 }
@@ -115,13 +109,10 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
 
   if (!foundBusiness?.stripeAccountId) throw ApolloError('BadRequest', "Stripe Account not found")
 
-  const foundAddress = await Address.findOne({ _id: foundBusiness.address })
-
-  if (!foundAddress?.country) {
-    throw ApolloError('BadRequest', "Please set the address first.")
-  }
+  const country = await getCountry({ db, business: foundBusiness._id })
+  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
   // Fetch the account balance to determine the available funds
-  const balance = await stripe(foundAddress?.country).balance.retrieve({
+  const balance = await stripe(country).balance.retrieve({
     stripeAccount: foundBusiness?.stripeAccountId,
   });
 
@@ -133,7 +124,7 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
     throw ApolloError('BadRequest', "Not enough funds to payout.")
   }
 
-  await stripe(foundAddress?.country).payouts.create({
+  await stripe(country).payouts.create({
     amount: amount,
     currency: currency,
     statement_descriptor: "Fasto App",

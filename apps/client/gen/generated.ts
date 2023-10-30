@@ -621,7 +621,7 @@ export type MutationCreateTableArgs = {
 
 
 export type MutationCreateUserArgs = {
-  input?: InputMaybe<UserInput>;
+  input: UserInput;
 };
 
 
@@ -1025,6 +1025,11 @@ export type QueryGetProductByIdArgs = {
 };
 
 
+export type QueryGetSubscriptionPricesArgs = {
+  country?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryGetTabByIdArgs = {
   input: GetById;
 };
@@ -1290,6 +1295,7 @@ export type User = {
 };
 
 export type UserInput = {
+  country: Scalars['String'];
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
@@ -1867,7 +1873,7 @@ export type CreateEmployeeAccountMutationVariables = Exact<{
 export type CreateEmployeeAccountMutation = { __typename?: 'Mutation', createEmployeeAccount: { __typename?: 'User', token: string, name?: string | null, email?: string | null, _id: string, picture?: string | null } };
 
 export type CreateUserMutationVariables = Exact<{
-  input?: InputMaybe<UserInput>;
+  input: UserInput;
 }>;
 
 
@@ -5172,7 +5178,7 @@ export type CreateEmployeeAccountMutationHookResult = ReturnType<typeof useCreat
 export type CreateEmployeeAccountMutationResult = Apollo.MutationResult<CreateEmployeeAccountMutation>;
 export type CreateEmployeeAccountMutationOptions = Apollo.BaseMutationOptions<CreateEmployeeAccountMutation, CreateEmployeeAccountMutationVariables>;
 export const CreateUserDocument = gql`
-    mutation CreateUser($input: UserInput) {
+    mutation CreateUser($input: UserInput!) {
   createUser(input: $input) {
     _id
     name

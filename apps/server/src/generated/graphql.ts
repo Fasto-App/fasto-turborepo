@@ -1025,6 +1025,11 @@ export type QueryGetProductByIdArgs = {
 };
 
 
+export type QueryGetSubscriptionPricesArgs = {
+  country?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryGetTabByIdArgs = {
   input: GetById;
 };
@@ -1997,7 +2002,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
   getSignUpSubscription?: Resolver<Maybe<ResolversTypes['StripeSubscription']>, ParentType, ContextType>;
   getSpacesFromBusiness?: Resolver<Maybe<Array<ResolversTypes['Space']>>, ParentType, ContextType>;
-  getSubscriptionPrices?: Resolver<Array<ResolversTypes['Price']>, ParentType, ContextType>;
+  getSubscriptionPrices?: Resolver<Array<ResolversTypes['Price']>, ParentType, ContextType, Partial<QueryGetSubscriptionPricesArgs>>;
   getTabByID?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<QueryGetTabByIdArgs, 'input'>>;
   getTabRequest?: Resolver<ResolversTypes['Request'], ParentType, ContextType>;
   getTabRequests?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType, Partial<QueryGetTabRequestsArgs>>;

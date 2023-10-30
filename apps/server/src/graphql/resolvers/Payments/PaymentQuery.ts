@@ -3,6 +3,7 @@ import { QueryResolvers } from "../../../generated/graphql";
 import { AddressModel, BusinessModel } from "../../../models";
 import { stripe } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { getCountry } from "../helpers/helpers";
 
 const getIsConnected: QueryResolvers["getIsConnected"] = async (_, _args, { business, db }) => {
 
@@ -10,16 +11,14 @@ const getIsConnected: QueryResolvers["getIsConnected"] = async (_, _args, { busi
 
   if (!foundBusiness?.stripeAccountId) return null
 
-  const foundAddress = await AddressModel(db).findById(foundBusiness.address)
-  if (!foundAddress || !foundAddress.country) {
-    throw new Error("Address not found")
-  }
+  const country = await getCountry({ db, business: foundBusiness._id })
+  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
 
-  const account = await stripe(foundAddress.country).accounts.retrieve(foundBusiness?.stripeAccountId);
+  const account = await stripe(country).accounts.retrieve(foundBusiness?.stripeAccountId);
 
   if (!account.details_submitted) return null
 
-  const balance = await stripe(foundAddress.country).balance.retrieve({
+  const balance = await stripe(country).balance.retrieve({
     stripeAccount: foundBusiness?.stripeAccountId,
   });
 
@@ -37,12 +36,12 @@ const createStripeAccessLink: QueryResolvers["createStripeAccessLink"] = async (
 
   if (!foundBusiness?.stripeAccountId) return null
 
-  const foundAddress = await AddressModel(db).findById(foundBusiness.address)
-  if (!foundAddress || !foundAddress.country) {
-    throw new Error("Address not found")
-  }
+  const country = await getCountry({ db, business: foundBusiness._id })
+  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
 
-  const loginLink = await stripe(foundAddress.country).accounts.createLoginLink(
+  const foundAddress = await AddressModel(db).findById(foundBusiness.address)
+
+  const loginLink = await stripe(country).accounts.createLoginLink(
     foundBusiness?.stripeAccountId
   );
 

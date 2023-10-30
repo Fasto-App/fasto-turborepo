@@ -1,14 +1,23 @@
 import { MutationResolvers } from "../../../generated/graphql";
-import { UserModel } from "../../../models";
+import { BusinessModel, UserModel } from "../../../models";
 import { stripe } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { getCountry } from "../helpers/helpers";
 
-const createSubscription: MutationResolvers["createSubscription"] = async (par, { input: { price } }, { user, db }) => {
+const createSubscription: MutationResolvers["createSubscription"] = async (par, { input: { price } }, { user, db, business }) => {
+  if (!business) throw ApolloError("BadRequest")
+
+  const foundBusiness = await BusinessModel(db).findById(business)
   const foundUser = await UserModel(db).findById(user?._id)
-  if (!foundUser || !foundUser.email) throw ApolloError("NotFound", "User Not Found")
+  if (!foundUser || !foundBusiness || !foundUser.email) {
+    throw ApolloError("NotFound", "User, Email or Business not found")
+  }
+
+  const country = await getCountry({ db, business });
+  if (!country) throw ApolloError("Unauthorized", "you need a country")
 
   if (!foundUser.stripeCustomer) {
-    const customer = await stripe("US").customers.create({
+    const customer = await stripe(country).customers.create({
       email: foundUser.email,
     });
 
@@ -16,7 +25,7 @@ const createSubscription: MutationResolvers["createSubscription"] = async (par, 
     await foundUser.save()
   }
 
-  const subscription = await stripe("US").subscriptions.create({
+  const subscription = await stripe(country).subscriptions.create({
     customer: foundUser.stripeCustomer,
     items: [{ price }],
     payment_behavior: 'default_incomplete',
@@ -38,14 +47,17 @@ const createSubscription: MutationResolvers["createSubscription"] = async (par, 
 // @ts-ignore
 const updateSubscription: MutationResolvers["updateSubscription"] = async (parent, { input: {
   price, subscription
-} }) => {
-  const foundSubscription = await stripe("US").subscriptions.retrieve(
+} }, { db, business }) => {
+  const country = await getCountry({ db, business });
+  if (!country) throw ApolloError("Unauthorized", "you need a country")
+
+  const foundSubscription = await stripe(country).subscriptions.retrieve(
     subscription
   );
 
   if (!foundSubscription) throw ApolloError("NotFound", "Subscription Not Found")
 
-  const updatedSubscription = await stripe("US").subscriptions.update(
+  const updatedSubscription = await stripe(country).subscriptions.update(
     subscription, {
     items: [{
       id: foundSubscription.items.data[0].id,
@@ -56,9 +68,11 @@ const updateSubscription: MutationResolvers["updateSubscription"] = async (paren
   return updatedSubscription
 }
 // @ts-ignore
-const cancelSubscription: MutationResolvers["cancelSubscription"] = async (parent, { input: { subscription } }) => {
+const cancelSubscription: MutationResolvers["cancelSubscription"] = async (parent, { input: { subscription } }, { db, business }) => {
+  const country = await getCountry({ db, business });
+  if (!country) throw ApolloError("Unauthorized", "you need a country")
 
-  const deletedSubscription = await stripe("US").subscriptions.del(subscription);
+  const deletedSubscription = await stripe(country).subscriptions.del(subscription);
   if (!deletedSubscription) throw ApolloError("NotFound", "Subscription Not Found")
 
   return deletedSubscription

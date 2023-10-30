@@ -109,6 +109,7 @@ export const createAccountSchema = z.object({
   name: z.string().min(3).max(50),
   password: z.string().min(6, { message: 'error.passwordMinimumLength' }).max(50),
   passwordConfirmation: z.string().min(6, { message: 'error.passwordMinimumLength' }).max(50),
+  country: z.string(),
 }).superRefine((data, ctx) => {
   if (data.password !== data.passwordConfirmation) {
     ctx.addIssue({

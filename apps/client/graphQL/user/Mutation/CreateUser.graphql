@@ -1,4 +1,4 @@
-mutation CreateUser($input: UserInput) {
+mutation CreateUser($input: UserInput!) {
 	createUser(input: $input) {
 		_id
 		name
