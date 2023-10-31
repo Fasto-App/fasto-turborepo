@@ -4,6 +4,7 @@ query GetBusinessInformation {
 		name
 		description
 		picture
+		country
 		# hoursOfOperation {
 		# 	Friday {
 		# 		isOpen

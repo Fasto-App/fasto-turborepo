@@ -621,7 +621,7 @@ export type MutationCreateTableArgs = {
 
 
 export type MutationCreateUserArgs = {
-  input?: InputMaybe<UserInput>;
+  input: UserInput;
 };
 
 
@@ -1130,6 +1130,7 @@ export type StripeSubscription = {
   id: Scalars['ID'];
   items: SubscriptionItem;
   status: Scalars['String'];
+  tier?: Maybe<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -1295,6 +1296,7 @@ export type User = {
 };
 
 export type UserInput = {
+  country: Scalars['String'];
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
@@ -1861,7 +1863,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createSubscription?: Resolver<ResolversTypes['CreateSubResponse'], ParentType, ContextType, RequireFields<MutationCreateSubscriptionArgs, 'input'>>;
   createTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationCreateTabArgs, 'input'>>;
   createTable?: Resolver<ResolversTypes['Table'], ParentType, ContextType, Partial<MutationCreateTableArgs>>;
-  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationCreateUserArgs>>;
+  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   customerRequestPayFull?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationCustomerRequestPayFullArgs, 'input'>>;
   customerRequestSplit?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<MutationCustomerRequestSplitArgs, 'input'>>;
   declineInvitation?: Resolver<ResolversTypes['Request'], ParentType, ContextType, RequireFields<MutationDeclineInvitationArgs, 'input'>>;
@@ -2056,6 +2058,7 @@ export type StripeSubscriptionResolvers<ContextType = Context, ParentType extend
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   items?: Resolver<ResolversTypes['SubscriptionItem'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tier?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

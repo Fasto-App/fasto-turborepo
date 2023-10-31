@@ -56,13 +56,16 @@ const getBusinessById: QueryResolvers["getBusinessById"] = async (_parent, { inp
   return foundBusiness
 }
 
-const getBusinessInformation = async (
-  _parent: any,
-  args: any,
-  { db, business }: Context,
+// @ts-ignore
+const getBusinessInformation: QueryResolvers["getBusinessInformation"] = async (
+  _parent,
+  args,
+  { db, business },
 ) => {
-  const Business = BusinessModel(db)
-  return await Business.findById(business);
+  const foundBusiness = await BusinessModel(db).findById(business)
+  if (!foundBusiness) throw ApolloError("BadRequest", "Error Findind Business Info")
+
+  return foundBusiness
 };
 
 const createBusiness = async (_parent: any,
@@ -131,8 +134,7 @@ const createBusiness = async (_parent: any,
     // based on the users information, create a new token
     return ({ business: savedBusiness, token: newToken })
   } catch (error) {
-
-    return null
+    throw ApolloError("BadRequest", `${error}`)
   }
 };
 

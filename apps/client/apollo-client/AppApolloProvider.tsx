@@ -78,6 +78,7 @@ export const AppApolloProvider: React.FC = ({ children }) => {
     link: errorLink.concat(authLink.concat(splitLink)),
     cache: new InMemoryCache(),
     connectToDevTools: true,
+    ssrMode: typeof window === 'undefined'
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

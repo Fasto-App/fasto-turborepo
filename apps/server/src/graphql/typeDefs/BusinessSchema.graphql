@@ -95,7 +95,8 @@ type CreateBusinessPayload {
 
 type Business {
 	_id: ID!
-	user: ID
+	country: String
+	user: ID!
 	name: String!
 	description: String
 	email: String!

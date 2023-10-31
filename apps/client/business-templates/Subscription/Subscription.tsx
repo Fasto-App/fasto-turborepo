@@ -1,30 +1,33 @@
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
-import { Button, HStack, Heading, ScrollView, Text, VStack, View } from 'native-base'
+import { Badge, Box, Button, Flex, HStack, Heading, ScrollView, Text, VStack, View } from 'native-base'
 import React, { useCallback, useState } from 'react'
 import { stripePromise } from '../../stripe/stripe'
-import { GetSignUpSubscriptionsDocument, GetSignUpSubscriptionsQuery, useCancelSubscriptionMutation, useCreateSubscriptionMutation, useGetSignUpSubscriptionsQuery, useGetSubscriptionPricesQuery, useUpdateSubscriptionMutation } from '../../gen/generated'
+import { GetSignUpSubscriptionsDocument, GetSignUpSubscriptionsQuery, useCancelSubscriptionMutation, useCreateSubscriptionMutation, useGetBusinessInformationQuery, useGetSignUpSubscriptionsQuery, useGetSubscriptionPricesQuery, useUpdateSubscriptionMutation } from '../../gen/generated'
 import { parseToCurrency } from 'app-helpers'
 import { OrangeBox } from '../../components/OrangeBox'
 import { UpperSection } from '../../components/UpperSection'
 import { showToast } from '../../components/showToast'
 import { useRouter } from 'next/router'
 import { DeleteAlert } from '../../components/DeleteAlert'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'next-i18next'
+import { format } from 'date-fns'
+import { getLocale } from '../../authUtilities/utils'
 
 const Subscription = ({ signedUpSub }: { signedUpSub: GetSignUpSubscriptionsQuery["getSignUpSubscription"] }) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation("businessSubscriptions")
+  const router = useRouter()
 
   const [cancelSubscription, { loading: cancelLoading }] = useCancelSubscriptionMutation({
     onError(error) {
       showToast({
         status: "error",
-        message: "Error Updating",
+        message: t("errorCanceling"),
         subMessage: error.message
       })
     },
     onCompleted(data) {
       showToast({
-        message: "Success Deleting"
+        message: t("successCanceling")
       })
     },
     refetchQueries: [{ query: GetSignUpSubscriptionsDocument }]
@@ -33,34 +36,46 @@ const Subscription = ({ signedUpSub }: { signedUpSub: GetSignUpSubscriptionsQuer
   if (!signedUpSub) return null
 
   return (
-    <VStack>
-      <View borderWidth={1} p={8} borderRadius={"md"}>
-        <Text>{`${"Status: "}${signedUpSub.status}`}</Text>
-        <Text>{`Start: ${new Date(signedUpSub.current_period_start * 1000).toString()}`}</Text>
-        <Text>{`Finish: ${new Date(signedUpSub.current_period_end * 1000).toString()}`}</Text>
-        <Button.Group>
-          <DeleteAlert
-            deleteItem={() => {
-              cancelSubscription({
-                variables: {
-                  input: {
-                    subscription: signedUpSub.id
-                  }
-                }
-              })
-            }}
-            body={t("delete")}
-            title={t("cancel")}
-            cancel={t("close")}
-          />
-          <Button
-            isLoading={cancelLoading}
-            my={2} colorScheme={"tertiary"} onPress={() => console.log("update")}>
-            Update
-          </Button>
-        </Button.Group>
-      </View>
 
+    <VStack
+      p={8}
+      space={2}
+      borderWidth={1}
+      borderRadius={"md"}
+      borderColor={"primary.500"}
+    >
+      <HStack pb={2}>
+        <Badge w={"24"} colorScheme="success">{signedUpSub.status.toUpperCase()}</Badge>
+      </HStack>
+      <Text fontSize={"lg"}>
+        {"Tier: "}
+        <Text bold>
+          {signedUpSub.tier}
+        </Text>
+      </Text>
+      <Text fontSize={"lg"}>
+        {`${t("start")}: ${format((signedUpSub.current_period_start * 1000), "PPPP", getLocale(router.locale))}`}
+      </Text>
+      <Text fontSize={"lg"}>
+        {`${t("finish")}: ${format((signedUpSub.current_period_end * 1000), "PPPP", getLocale(router.locale))}`}
+      </Text>
+
+      <Box pt={4}>
+        <DeleteAlert
+          deleteItem={() => {
+            cancelSubscription({
+              variables: {
+                input: {
+                  subscription: signedUpSub.id
+                }
+              }
+            })
+          }}
+          body={t("body")}
+          title={t("cancel")}
+          cancel={t("close")}
+        />
+      </Box>
     </VStack>
   )
 }
@@ -68,11 +83,14 @@ const Subscription = ({ signedUpSub }: { signedUpSub: GetSignUpSubscriptionsQuer
 
 const PriceSubscriptions = ({ selectedPrice, onPricePress, isLoading }:
   { isLoading: boolean; selectedPrice?: string, onPricePress: (price: string) => () => void }) => {
+  const { t } = useTranslation("businessSubscriptions")
+  const { data: businessInfo } = useGetBusinessInformationQuery()
+
   const { data, loading } = useGetSubscriptionPricesQuery({
     onError(error) {
       showToast({
         status: "error",
-        message: "Error Getting Subscriptions",
+        message: t("errorGettingSubs"),
         subMessage: error.message
       })
     },
@@ -94,8 +112,8 @@ const PriceSubscriptions = ({ selectedPrice, onPricePress, isLoading }:
         >
           <Heading size={"md"}>{price.product.name}</Heading>
           <Text flex={1}>{price.product.description}</Text>
-          <Text fontSize={"lg"}>{parseToCurrency(price.unit_amount) + "/Month"}</Text>
-
+          <Text fontSize={"lg"}>{parseToCurrency(price.unit_amount,
+            businessInfo?.getBusinessInformation.country) + `/${t("month")}`}</Text>
           <Button
             isLoading={loading || isLoading}
             _text={{ bold: true }}
@@ -106,7 +124,7 @@ const PriceSubscriptions = ({ selectedPrice, onPricePress, isLoading }:
             isPressed={selectedPrice === price.id}
             isDisabled={selectedPrice === price.id || loading}
           >
-            Select
+            {selectedPrice === price.id ? t("selected") : t("select")}
           </Button>
         </VStack>
       ))}
@@ -116,8 +134,9 @@ const PriceSubscriptions = ({ selectedPrice, onPricePress, isLoading }:
 }
 
 export const Subscriptions = () => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation("businessSubscriptions")
   const { data: signedUpSubs, refetch } = useGetSignUpSubscriptionsQuery()
+  const { data: businessInfo } = useGetBusinessInformationQuery()
 
   const [createSub, { loading: createLoading, data: createSubData, reset }] = useCreateSubscriptionMutation({
     refetchQueries: [{ query: GetSignUpSubscriptionsDocument }],
@@ -134,14 +153,14 @@ export const Subscriptions = () => {
     refetchQueries: [{ query: GetSignUpSubscriptionsDocument }],
     onError(error) {
       showToast({
+        message: t("errorUpdating"),
         status: "error",
-        message: "Error Updating",
         subMessage: error.message
       })
     },
     onCompleted(data) {
       showToast({
-        message: "Success Updating"
+        message: t("successUpdating")
       })
     },
   })
@@ -161,15 +180,16 @@ export const Subscriptions = () => {
     }
   })
 
+  if (!businessInfo?.getBusinessInformation.country) return null
+
   return (
     <ScrollView flex={1}>
       <OrangeBox />
       <VStack paddingX={6} paddingY={4} space={"6"}>
         <UpperSection>
-          <Heading>Subscriptions</Heading>
+          <Heading>{t("subscription")}</Heading>
           {signedUpSubs?.getSignUpSubscription ? (
             <>
-              <Subscription signedUpSub={signedUpSubs?.getSignUpSubscription} />
               {/* Only show this when the update is pressed */}
               {/* We will show wich one is selected and let choose other plan */}
               <PriceSubscriptions
@@ -177,6 +197,7 @@ export const Subscriptions = () => {
                 onPricePress={updateSubWithPrice}
                 selectedPrice={signedUpSubs?.getSignUpSubscription.items.data[0].price.id}
               />
+              <Subscription signedUpSub={signedUpSubs?.getSignUpSubscription} />
             </>
           ) : (
             <>
@@ -187,7 +208,7 @@ export const Subscriptions = () => {
               />
               {createSubData?.createSubscription.clientSecret ?
                 <Elements
-                  stripe={stripePromise("US")}
+                  stripe={stripePromise(businessInfo?.getBusinessInformation.country)}
                   options={{ clientSecret: createSubData?.createSubscription.clientSecret }}
                 >
                   <PaymentForm refetch={() => {
@@ -204,6 +225,8 @@ export const Subscriptions = () => {
 }
 
 const PaymentForm = ({ refetch }: { refetch: () => void }) => {
+  const { t } = useTranslation("businessSubscriptions")
+
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -232,7 +255,7 @@ const PaymentForm = ({ refetch }: { refetch: () => void }) => {
     if (error) {
       showToast({
         status: "error",
-        message: "Error Subscribing",
+        message: t("errorSubscribing"),
         subMessage: error.message
       })
     }
@@ -240,7 +263,7 @@ const PaymentForm = ({ refetch }: { refetch: () => void }) => {
     if (paymentIntent?.status === "succeeded") {
       showToast({
         status: "success",
-        message: "Success subscribing",
+        message: t("successSubscribing"),
       })
 
       refetch()
@@ -257,7 +280,7 @@ const PaymentForm = ({ refetch }: { refetch: () => void }) => {
           maxW={600}
           _text={{ bold: true }}
           isLoading={isProcessing}>
-          Subscribe
+          {t("subscribe")}
         </Button>
       </View>
     </VStack>)

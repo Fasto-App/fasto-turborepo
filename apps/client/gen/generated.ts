@@ -73,6 +73,7 @@ export type Business = {
   _id: Scalars['ID'];
   address?: Maybe<Address>;
   categories: Array<Category>;
+  country?: Maybe<Scalars['String']>;
   cuisine?: Maybe<Array<Scalars['String']>>;
   description?: Maybe<Scalars['String']>;
   email: Scalars['String'];
@@ -83,7 +84,7 @@ export type Business = {
   picture?: Maybe<Scalars['String']>;
   price_range?: Maybe<Scalars['String']>;
   products: Array<Product>;
-  user?: Maybe<Scalars['ID']>;
+  user: Scalars['ID'];
   website: Scalars['String'];
 };
 
@@ -1130,6 +1131,7 @@ export type StripeSubscription = {
   id: Scalars['ID'];
   items: SubscriptionItem;
   status: Scalars['String'];
+  tier?: Maybe<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -1410,7 +1412,7 @@ export type GetBusinessByIdQuery = { __typename?: 'Query', getBusinessById: { __
 export type GetBusinessInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null } };
+export type GetBusinessInformationQuery = { __typename?: 'Query', getBusinessInformation: { __typename?: 'Business', _id: string, name: string, description?: string | null, picture?: string | null, country?: string | null } };
 
 export type GetBusinessLocationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1787,7 +1789,7 @@ export type CancelSubscriptionMutation = { __typename?: 'Mutation', cancelSubscr
 export type GetSignUpSubscriptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSignUpSubscriptionsQuery = { __typename?: 'Query', getSignUpSubscription?: { __typename?: 'StripeSubscription', id: string, status: string, current_period_end: number, current_period_start: number, items: { __typename?: 'SubscriptionItem', data: Array<{ __typename?: 'SubscriptionData', price: { __typename?: 'Price', id: string } }> } } | null };
+export type GetSignUpSubscriptionsQuery = { __typename?: 'Query', getSignUpSubscription?: { __typename?: 'StripeSubscription', id: string, tier?: string | null, status: string, current_period_end: number, current_period_start: number, items: { __typename?: 'SubscriptionItem', data: Array<{ __typename?: 'SubscriptionData', price: { __typename?: 'Price', id: string } }> } } | null };
 
 export type GetSubscriptionPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2305,6 +2307,7 @@ export const GetBusinessInformationDocument = gql`
     name
     description
     picture
+    country
   }
 }
     `;
@@ -4643,6 +4646,7 @@ export const GetSignUpSubscriptionsDocument = gql`
     query GetSignUpSubscriptions {
   getSignUpSubscription {
     id
+    tier
     status
     current_period_end
     current_period_start

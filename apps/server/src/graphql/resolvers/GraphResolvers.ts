@@ -1,5 +1,5 @@
 import { SubscriptionMutation } from './SubscriptionResolvers/SubscriptionMutation';
-import { SubscriptionQuery } from './SubscriptionResolvers/SubscriptionQuery';
+import { SubscriptionQuery, SubscriptionResolvers } from './SubscriptionResolvers/SubscriptionQuery';
 import { GraphQLUpload } from 'graphql-upload';
 import {
   BusinessResolverMutation,
@@ -144,4 +144,8 @@ export const resolvers = {
     admin: RequestResolver.getAdminFromRequest,
     requestor: RequestResolver.getRequestorFromRequest,
   },
+  StripeSubscription: {
+    tier: SubscriptionResolvers.getTier
+  }
 };
+

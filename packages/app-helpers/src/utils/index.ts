@@ -5,10 +5,15 @@ export const typedValues = <T extends {}>(obj?: T) => Object.values(obj ?? {}) a
 export const FIXED_POINT_FACTOR_PERCENTAGE = 10000;
 const FIXED_POINT_FACTOR_CURRENCY = 100;
 
-export const parseToCurrency = (number?: number, currency: "USD" | "BRL" = "USD") => {
+const getCurrency = (str?: string | null): "BRL" | "USD" => {
+  if (str?.startsWith("B")) return "BRL"
+  return "USD"
+}
+
+export const parseToCurrency = (number?: number, currency?: string | null) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency,
+    currency: getCurrency(currency),
   }).format(Math.floor(number ?? 0) / FIXED_POINT_FACTOR_CURRENCY);
 }
 

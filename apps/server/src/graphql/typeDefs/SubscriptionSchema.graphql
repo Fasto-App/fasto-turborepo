@@ -47,6 +47,7 @@ type StripeSubscription {
 	current_period_end: Int!
 	current_period_start: Int!
 	items: SubscriptionItem!
+	tier: String
 	# default_payment_method: DefaultPaymentMethod
 }
 

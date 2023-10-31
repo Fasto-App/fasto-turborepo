@@ -7,12 +7,14 @@ import type { AppNavigation } from "fasto-route";
 import { LeftSideBar } from "../../components";
 import { AccountMenu } from "../../components/MenuHamburguer";
 import { useTranslation } from "next-i18next";
+import { useGetSignUpSubscriptionsQuery } from "../../gen/generated";
 
 const BusinessNavigationTab = () => {
   const router = useRouter();
   const useIsPageSelected = useMemo(() => (pathname: AppNavigation) =>
     pathname === router.pathname, [router.pathname])
 
+  const { data } = useGetSignUpSubscriptionsQuery()
   const { t } = useTranslation("common")
 
   return (
@@ -91,6 +93,8 @@ const BusinessNavigationTab = () => {
       </Center>
       <VStack space={10} bottom={0} paddingX={2} w={"full"}>
         <Button
+          isDisabled={!data?.getSignUpSubscription?.tier ||
+            data?.getSignUpSubscription?.tier === "Basic Plan"}
           _text={{ bold: true }}
           onPress={() => router.push(businessRoute["add-to-order"])}>
           {t("quickSale")}

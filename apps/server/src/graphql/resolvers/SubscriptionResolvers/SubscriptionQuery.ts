@@ -1,9 +1,10 @@
 import { Connection } from "mongoose";
-import { QueryResolvers } from "../../../generated/graphql";
+import { QueryResolvers, StripeSubscriptionResolvers } from "../../../generated/graphql";
 import { AddressModel, BusinessModel, UserModel } from "../../../models";
 import { stripe } from "../../../stripe";
 import { getCountry } from "../helpers/helpers";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import Stripe from "stripe";
 
 //@ts-ignore
 const getSubscriptionPrices: QueryResolvers["getSubscriptionPrices"] = async (_, {
@@ -29,7 +30,8 @@ const getSignUpSubscription: QueryResolvers["getSignUpSubscription"] = async (pa
   const country = await getCountry({ db, business, })
   if (!country) throw ApolloError("Unauthorized", "you need a country")
 
-  // O business que eh o customer, nao o Usuario
+  // Todo: achar o stripe ID do business logado, nao do usuario.
+  // Todo: O business que eh o customer, nao o Usuario.
   const foundUser = await UserModel(db).findById(user?._id)
   if (!foundUser?.stripeCustomer) return null
 
@@ -40,6 +42,25 @@ const getSignUpSubscription: QueryResolvers["getSignUpSubscription"] = async (pa
   });
 
   return subscriptions.data?.[0]
+}
+
+const getTier: StripeSubscriptionResolvers["tier"] = async (parent, args, { db, business, user }) => {
+
+  const country = await getCountry({ db, business, })
+  if (!country) throw ApolloError("Unauthorized", "you need a country")
+
+  const pricesResponse = await stripe(country).prices.list({
+    limit: 3,
+    expand: ['data.product'],
+  });
+
+  const plan = pricesResponse.data.find(price => price.id === parent.items.data[0].price.id)
+
+  return (plan?.product as Stripe.Product).name
+}
+
+export const SubscriptionResolvers = {
+  getTier
 }
 
 
