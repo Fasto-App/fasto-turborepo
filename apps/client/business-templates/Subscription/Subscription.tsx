@@ -180,8 +180,6 @@ export const Subscriptions = () => {
     }
   })
 
-  if (!businessInfo?.getBusinessInformation.country) return null
-
   return (
     <ScrollView flex={1}>
       <OrangeBox />
@@ -206,7 +204,7 @@ export const Subscriptions = () => {
                 onPricePress={createSubWithPrice}
                 selectedPrice={createSubData?.createSubscription.price}
               />
-              {createSubData?.createSubscription.clientSecret ?
+              {createSubData?.createSubscription.clientSecret && businessInfo?.getBusinessInformation.country ?
                 <Elements
                   stripe={stripePromise(businessInfo?.getBusinessInformation.country)}
                   options={{ clientSecret: createSubData?.createSubscription.clientSecret }}

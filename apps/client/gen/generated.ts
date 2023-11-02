@@ -187,6 +187,11 @@ export type ConnectExpressInput = {
   business_type: BusinessType;
 };
 
+export enum Countries {
+  Br = 'BR',
+  Us = 'US'
+}
+
 export type CreateBusinessPayload = {
   __typename?: 'CreateBusinessPayload';
   business: Business;
@@ -356,6 +361,10 @@ export type GetMenuById = {
 
 export type GetPaidCheckout = {
   type: DateType;
+};
+
+export type GetSubsInput = {
+  country: Countries;
 };
 
 export type GetTabRequestInput = {
@@ -1027,7 +1036,7 @@ export type QueryGetProductByIdArgs = {
 
 
 export type QueryGetSubscriptionPricesArgs = {
-  country?: InputMaybe<Scalars['String']>;
+  input?: InputMaybe<GetSubsInput>;
 };
 
 
@@ -1791,10 +1800,12 @@ export type GetSignUpSubscriptionsQueryVariables = Exact<{ [key: string]: never;
 
 export type GetSignUpSubscriptionsQuery = { __typename?: 'Query', getSignUpSubscription?: { __typename?: 'StripeSubscription', id: string, tier?: string | null, status: string, current_period_end: number, current_period_start: number, items: { __typename?: 'SubscriptionItem', data: Array<{ __typename?: 'SubscriptionData', price: { __typename?: 'Price', id: string } }> } } | null };
 
-export type GetSubscriptionPricesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetSubscriptionPricesQueryVariables = Exact<{
+  input?: InputMaybe<GetSubsInput>;
+}>;
 
 
-export type GetSubscriptionPricesQuery = { __typename?: 'Query', getSubscriptionPrices: Array<{ __typename?: 'Price', currency: string, id: string, unit_amount: number, product: { __typename?: 'StripeProduct', id: string, name: string, description?: string | null } }> };
+export type GetSubscriptionPricesQuery = { __typename?: 'Query', getSubscriptionPrices: Array<{ __typename?: 'Price', id: string, currency: string, unit_amount: number, product: { __typename?: 'StripeProduct', id: string, name: string, description?: string | null } }> };
 
 export type UpdateSubscriptionMutationVariables = Exact<{
   input: UpdatedSubInput;
@@ -4688,10 +4699,10 @@ export type GetSignUpSubscriptionsQueryHookResult = ReturnType<typeof useGetSign
 export type GetSignUpSubscriptionsLazyQueryHookResult = ReturnType<typeof useGetSignUpSubscriptionsLazyQuery>;
 export type GetSignUpSubscriptionsQueryResult = Apollo.QueryResult<GetSignUpSubscriptionsQuery, GetSignUpSubscriptionsQueryVariables>;
 export const GetSubscriptionPricesDocument = gql`
-    query GetSubscriptionPrices {
-  getSubscriptionPrices {
-    currency
+    query GetSubscriptionPrices($input: GetSubsInput) {
+  getSubscriptionPrices(input: $input) {
     id
+    currency
     unit_amount
     product {
       id
@@ -4714,6 +4725,7 @@ export const GetSubscriptionPricesDocument = gql`
  * @example
  * const { data, loading, error } = useGetSubscriptionPricesQuery({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */

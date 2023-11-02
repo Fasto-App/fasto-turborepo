@@ -45,3 +45,8 @@ type Geo {
 	lat: Float!
 	lng: Float!
 }
+
+enum Countries {
+	BR
+	US
+}

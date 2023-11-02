@@ -1,6 +1,7 @@
 import { Connection } from "mongoose";
 import { AddressModel, BusinessModel, OrderDetailModel, ProductModel } from "../../../models";
 import { Checkout } from "../../../models/checkout";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 
 export const updateProductQuantity = async (foundCheckout: Checkout, db: Connection) => {
   const ordersDetails = await OrderDetailModel(db).find({ _id: { $in: foundCheckout.orders } });
@@ -24,26 +25,13 @@ export const updateProductQuantity = async (foundCheckout: Checkout, db: Connect
 
 export const getCountry = async ({
   db, business, input
-}: { db: Connection, business?: string, input?: string | null }): Promise<"BR" | "US" | undefined> => {
+}: { db: Connection, business?: string, input?: string | null }): Promise<"BR" | "US"> => {
 
-  if (input === "BR") return input
-  if (input === "US") return input
+  const foundBusiness = await BusinessModel(db).findById(business)
 
-  let country: "US" | "BR" | undefined = undefined;
-
-  if (business) {
-    const foundBusiness = await BusinessModel(db).findById(business)
-    // if country exist return on Business Model return
-    if (foundBusiness?.country) {
-      country = foundBusiness.country
-
-    } else if (foundBusiness?.address) {
-      const foundAddress = await AddressModel(db).findById(foundBusiness.address)
-
-      if (foundAddress?.country) {
-        country = foundAddress.country
-      }
-    }
+  if (!foundBusiness || !foundBusiness?.country) {
+    throw ApolloError("Unauthorized", "you need a country")
   }
-  return country
+
+  return foundBusiness.country
 }

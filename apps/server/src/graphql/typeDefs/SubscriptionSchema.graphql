@@ -1,5 +1,5 @@
 extend type Query {
-	getSubscriptionPrices(country: String): [Price!]!
+	getSubscriptionPrices(input: GetSubsInput): [Price!]!
 	getSignUpSubscription: StripeSubscription
 }
 
@@ -7,6 +7,10 @@ extend type Mutation {
 	createSubscription(input: CreateSubInput!): CreateSubResponse!
 	updateSubscription(input: UpdatedSubInput!): StripeSubscription!
 	cancelSubscription(input: DeleteSubInput!): StripeSubscription!
+}
+
+input GetSubsInput {
+	country: Countries!
 }
 
 input UpdatedSubInput {

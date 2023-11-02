@@ -73,6 +73,7 @@ export type Business = {
   _id: Scalars['ID'];
   address?: Maybe<Address>;
   categories: Array<Category>;
+  country?: Maybe<Scalars['String']>;
   cuisine?: Maybe<Array<Scalars['String']>>;
   description?: Maybe<Scalars['String']>;
   email: Scalars['String'];
@@ -83,7 +84,7 @@ export type Business = {
   picture?: Maybe<Scalars['String']>;
   price_range?: Maybe<Scalars['String']>;
   products: Array<Product>;
-  user?: Maybe<Scalars['ID']>;
+  user: Scalars['ID'];
   website: Scalars['String'];
 };
 
@@ -185,6 +186,11 @@ export type ConfirmPaymentInput = {
 export type ConnectExpressInput = {
   business_type: BusinessType;
 };
+
+export enum Countries {
+  Br = 'BR',
+  Us = 'US'
+}
 
 export type CreateBusinessPayload = {
   __typename?: 'CreateBusinessPayload';
@@ -355,6 +361,10 @@ export type GetMenuById = {
 
 export type GetPaidCheckout = {
   type: DateType;
+};
+
+export type GetSubsInput = {
+  country: Countries;
 };
 
 export type GetTabRequestInput = {
@@ -1026,7 +1036,7 @@ export type QueryGetProductByIdArgs = {
 
 
 export type QueryGetSubscriptionPricesArgs = {
-  country?: InputMaybe<Scalars['String']>;
+  input?: InputMaybe<GetSubsInput>;
 };
 
 
@@ -1436,6 +1446,7 @@ export type ResolversTypes = {
   ClientSession: ResolverTypeWrapper<ClientSession>;
   ConfirmPaymentInput: ConfirmPaymentInput;
   ConnectExpressInput: ConnectExpressInput;
+  Countries: Countries;
   CreateBusinessPayload: ResolverTypeWrapper<CreateBusinessPayload>;
   CreateEmployeeAccountInput: CreateEmployeeAccountInput;
   CreateMenuInput: CreateMenuInput;
@@ -1466,6 +1477,7 @@ export type ResolversTypes = {
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
   GetPaidCheckout: GetPaidCheckout;
+  GetSubsInput: GetSubsInput;
   GetTabRequestInput: GetTabRequestInput;
   Hours: ResolverTypeWrapper<Hours>;
   HoursInput: HoursInput;
@@ -1589,6 +1601,7 @@ export type ResolversParentTypes = {
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
   GetPaidCheckout: GetPaidCheckout;
+  GetSubsInput: GetSubsInput;
   GetTabRequestInput: GetTabRequestInput;
   Hours: Hours;
   HoursInput: HoursInput;
@@ -1695,6 +1708,7 @@ export type BusinessResolvers<ContextType = Context, ParentType extends Resolver
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   address?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
   categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   cuisine?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1705,7 +1719,7 @@ export type BusinessResolvers<ContextType = Context, ParentType extends Resolver
   picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   price_range?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   website?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

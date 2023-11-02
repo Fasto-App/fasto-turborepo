@@ -8,13 +8,19 @@ import { Box, HStack } from "native-base";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticProps } from "next";
-import { useGetSubscriptionPricesQuery } from "../gen/generated";
+import { Countries, useGetSubscriptionPricesQuery } from "../gen/generated";
 
 export default function Index() {
-
   const router = useRouter();
   const { t } = useTranslation("landingPage");
-  const { data } = useGetSubscriptionPricesQuery()
+
+  const { data } = useGetSubscriptionPricesQuery({
+    variables: {
+      input: {
+        country: router.locale === "pt" ? Countries.Br : Countries.Us
+      }
+    }
+  })
 
   return (
     <>

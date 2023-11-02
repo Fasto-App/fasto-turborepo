@@ -8,16 +8,25 @@ import Stripe from "stripe";
 
 //@ts-ignore
 const getSubscriptionPrices: QueryResolvers["getSubscriptionPrices"] = async (_, {
-  country: countryInput
+  input
 }, {
   business,
   db
 }) => {
-  const country = await getCountry({ db, business, input: countryInput })
-  if (!country) throw ApolloError("Unauthorized", "you need a country")
+  if (business) {
 
-  // TODO: get the specific subscriptions instead of querying for the 3 first ones
-  const pricesResponse = await stripe(country).prices.list({
+    const foundCountry = await getCountry({ db, business })
+    const pricesResponse = await stripe(foundCountry).prices.list({
+      limit: 3,
+      expand: ['data.product'],
+    });
+
+    return pricesResponse.data.reverse()
+  }
+
+  if (!input?.country) throw ApolloError("BadRequest", "No country")
+
+  const pricesResponse = await stripe(input?.country).prices.list({
     limit: 3,
     expand: ['data.product'],
   });
