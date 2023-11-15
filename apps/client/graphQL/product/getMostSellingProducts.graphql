@@ -1,0 +1,12 @@
+query GetMostSellingProducts {
+	getMostSellingProducts {
+		_id
+		price
+		imageUrl
+		name
+		category {
+			name
+			_id
+		}
+	}
+}

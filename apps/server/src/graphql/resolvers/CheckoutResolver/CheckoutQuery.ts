@@ -3,6 +3,7 @@ import { DateType, QueryResolvers } from "../../../generated/graphql";
 import { CheckoutModel } from "../../../models/checkout";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
+import { getDaysAgo } from "../utils";
 
 // @ts-ignore
 export const getCheckoutByID: QueryResolvers["getCheckoutByID"] = async (parent, { input }, { db, client, user }) => {
@@ -37,25 +38,8 @@ type AveragePerDay = {
 }
 
 export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = async (par, { input }, { db, user, business }) => {
-  let days;
 
-  switch (input.type) {
-    case DateType.SevenDays:
-      days = 7
-      break;
-    case DateType.ThirtyDays:
-      days = 30
-      break;
-    case DateType.NinetyDays:
-      days = 90
-      break;
-    case DateType.AllTime:
-      days = 0
-      break
-  }
-
-  const daysAgo = new Date();
-  daysAgo.setDate(daysAgo.getDate() - days);
+  let { days, daysAgo } = getDaysAgo(input.type);
 
   const matchQuery: any = {
     business: new ObjectId(business),
@@ -84,7 +68,7 @@ export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = as
     },
   ]);
 
-  if (!dataResult.length) return null
+  if (!dataResult.length) return { sortBy: input.type, data: [], total: 0 }
 
   if (input.type == DateType.AllTime) {
     const total = dataResult.reduce((accu, current) => accu + current.totalAmount, 0)

@@ -874,6 +874,12 @@ export type OrderDetailInput = {
   quantity?: InputMaybe<Scalars['Int']>;
 };
 
+export type OrderDetailsByDate = {
+  __typename?: 'OrderDetailsByDate';
+  _id: Scalars['ID'];
+  count: Scalars['Int'];
+};
+
 export enum OrderStatus {
   Closed = 'Closed',
   Delivered = 'Delivered',
@@ -939,6 +945,7 @@ export type Query = {
   getAllMenus: Array<Menu>;
   getAllMenusByBusinessID: Array<Menu>;
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
+  getAllOrderDetailsByDate?: Maybe<Array<Maybe<OrderDetailsByDate>>>;
   getAllOrderDetailsByOrderID?: Maybe<Array<Maybe<OrderDetail>>>;
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
@@ -956,6 +963,7 @@ export type Query = {
   getGoogleAutoComplete: Array<AutoCompleteRes>;
   getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
+  getMostSellingProducts?: Maybe<Array<Maybe<Product>>>;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
@@ -1663,6 +1671,11 @@ export type DeleteProductMutationVariables = Exact<{
 
 
 export type DeleteProductMutation = { __typename?: 'Mutation', deleteProduct?: { __typename?: 'RequestResponseOK', ok?: boolean | null } | null };
+
+export type GetMostSellingProductsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSellingProducts?: Array<{ __typename?: 'Product', _id: string, price: number, imageUrl?: string | null, name: string, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> | null };
 
 export type GetAllProductsByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3853,6 +3866,47 @@ export function useDeleteProductMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteProductMutationHookResult = ReturnType<typeof useDeleteProductMutation>;
 export type DeleteProductMutationResult = Apollo.MutationResult<DeleteProductMutation>;
 export type DeleteProductMutationOptions = Apollo.BaseMutationOptions<DeleteProductMutation, DeleteProductMutationVariables>;
+export const GetMostSellingProductsDocument = gql`
+    query GetMostSellingProducts {
+  getMostSellingProducts {
+    _id
+    price
+    imageUrl
+    name
+    category {
+      name
+      _id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMostSellingProductsQuery__
+ *
+ * To run a query within a React component, call `useGetMostSellingProductsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMostSellingProductsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMostSellingProductsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMostSellingProductsQuery(baseOptions?: Apollo.QueryHookOptions<GetMostSellingProductsQuery, GetMostSellingProductsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMostSellingProductsQuery, GetMostSellingProductsQueryVariables>(GetMostSellingProductsDocument, options);
+      }
+export function useGetMostSellingProductsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMostSellingProductsQuery, GetMostSellingProductsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMostSellingProductsQuery, GetMostSellingProductsQueryVariables>(GetMostSellingProductsDocument, options);
+        }
+export type GetMostSellingProductsQueryHookResult = ReturnType<typeof useGetMostSellingProductsQuery>;
+export type GetMostSellingProductsLazyQueryHookResult = ReturnType<typeof useGetMostSellingProductsLazyQuery>;
+export type GetMostSellingProductsQueryResult = Apollo.QueryResult<GetMostSellingProductsQuery, GetMostSellingProductsQueryVariables>;
 export const GetAllProductsByBusinessIdDocument = gql`
     query GetAllProductsByBusinessID {
   getAllProductsByBusinessID {

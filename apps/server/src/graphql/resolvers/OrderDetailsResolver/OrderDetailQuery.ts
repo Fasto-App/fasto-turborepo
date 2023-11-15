@@ -1,7 +1,9 @@
-import { QueryResolvers } from "../../../generated/graphql";
-import { OrderDetailModel, RequestModel, TabModel } from "../../../models";
+import { ObjectId } from "mongodb";
+import { DateType, QueryResolvers } from "../../../generated/graphql";
+import { OrderDetailModel, ProductModel, RequestModel, TabModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
+import { getDaysAgo } from "../utils";
 
 // @ts-ignore
 const getOrderDetailByID: QueryResolvers["getOrderDetailByID"] = async (_parent: any, { orderDetailID }, { db }) => {
@@ -11,11 +13,39 @@ const getOrderDetailByID: QueryResolvers["getOrderDetailByID"] = async (_parent:
 }
 
 // TODO: implement this when theres a way to get OrderDetails from businesses
-// const getAllOrderDetails = async (_parent, _args, { db, business }: Context) => {
-//   const OrderDetail = OrderDetailModel(db);
-//   const allOrderDetails = await OrderDetail.find();
-//   return allOrderDetails;
-// }
+const getAllOrderDetailsByDate = async (_parent: any, { input }: any, { db, business }: Context) => {
+
+  // TODO: replace with the input data
+  const { days, daysAgo } = getDaysAgo(DateType.SevenDays);
+
+  const products = await ProductModel(db).find({ business });
+  const productsObjects = products.map(product => new ObjectId(product._id))
+
+  const matchQuery: any = {
+    product: { $in: productsObjects },
+  };
+
+  if (true || input.type !== DateType.AllTime) {
+    matchQuery.created_date = {
+      $gte: daysAgo,
+    };
+  }
+
+  const aggregatedOrders = await OrderDetailModel(db).aggregate([
+    { $match: matchQuery },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$created_date' } },
+        count: { $sum: '$quantity' } // Count the number of orders for each day
+      }
+    },
+    {
+      $sort: { _id: 1 },
+    }
+  ]);
+
+  return aggregatedOrders
+}
 
 const getAllOrderDetailsByOrderID = async (_parent: any, { input }: { input: any }, { db }: Context) => {
   const OrderDetail = OrderDetailModel(db);
@@ -48,7 +78,8 @@ const getOrdersBySession: QueryResolvers["getOrdersBySession"] = async (_parent,
 export const OrderDetailsResolverQuery = {
   getOrderDetailByID,
   getAllOrderDetailsByOrderID,
-  getOrdersBySession
+  getOrdersBySession,
+  getAllOrderDetailsByDate
 }
 export const OrderDetailsResolver = {
   getOrdersByTabID

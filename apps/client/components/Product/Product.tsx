@@ -51,7 +51,7 @@ const ProductCard = ({ name, price, imageUrl, description, onPress, quantity }: 
 
 	return (
 		<Box
-			w={"72"}
+			w={"64"}
 			maxH={"80"}
 			rounded="lg"
 			overflow="hidden"
