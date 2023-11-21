@@ -63,7 +63,7 @@ Doppler setup provides authentication for developers working on a project. You w
 ## How to Run the Fasto App
 To run the app:  
 
-- Navigate to  “opentab-turborepo” directory 
+- Navigate to the “opentab-turborepo” directory 
 
 - Then run the app by entering “yarn dev”. This will start the app on your machine in your browser. 
 
