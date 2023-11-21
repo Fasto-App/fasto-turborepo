@@ -27,5 +27,6 @@
 	"back": "Back",
 	"splitType": "Split Type",
 	"splitNow": "Split Now",
-	"customer": "Customer"
+	"customer": "Customer",
+	"serviceFee": "Service Fee"
 }

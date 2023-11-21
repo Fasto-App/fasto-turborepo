@@ -69,7 +69,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
             business: businessUser?.business,
             orders: orderDetails.map(orderDetail => orderDetail._id),
             subTotal,
-            total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
+            total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate ?? 0),
             tax: foundBusiness?.taxRate ?? 0,
         })
 

@@ -4,6 +4,7 @@ import { AreaChart } from "./Graphs/AreaChart"
 import { PieChart } from "./Graphs/PieChart"
 import { VerticalBar } from "./Graphs/VerticalBar"
 import { OrangeBox } from "../../components/OrangeBox"
+import { useTranslation } from "next-i18next"
 
 export const DashboardScreen = () => {
   return (
@@ -25,15 +26,66 @@ export const DashboardScreen = () => {
   )
 }
 
-const Panel = () => (
-  <VStack p={4} space={2} borderWidth={1}
-    borderColor={"gray.50"}
-    shadow={"2"}
-    borderRadius={"md"}
-    bgColor={"white"}
-  >
-    <Heading size="md">Ola, Customer Fasto</Heading>
-    <Heading size="xs">(Seja Bem vindo)</Heading>
-    <Text>Work in Progress</Text>
-  </VStack>
-)
+const Panel = () => {
+  const { t } = useTranslation("businessDashboard")
+
+
+  return (
+    <VStack p={4} space={2} borderWidth={1}
+      borderColor={"gray.50"}
+      shadow={"2"}
+      borderRadius={"md"}
+      bgColor={"white"}
+    >
+      <Heading size="md">{t('hello')}</Heading>
+      <Heading size="xs">{t('welcomeDashBoard')}</Heading>
+
+      <HStack space={"3"}>
+
+        <Box
+          p={"3"}
+          borderRadius={"md"}
+          borderColor={"coolGray.200"}
+          borderWidth={1}
+          w={"48"}
+        >
+          <Text fontSize={"md"}>
+            {`Total Revenue`}
+          </Text>
+          <Text fontSize={"md"} bold>
+            $45,231.89
+          </Text>
+        </Box>
+
+        <Box
+          p={"3"}
+          borderRadius={"md"}
+          borderWidth={1}
+          borderColor={"coolGray.200"}
+          w={"48"}
+        >
+          <Text fontSize={"md"}>
+            {`Most Selling Item`}
+          </Text>
+          <Text fontSize={"md"} bold>
+            {"Burbon"}
+          </Text>
+        </Box>
+        <Box
+          p={"3"}
+          borderRadius={"md"}
+          borderWidth={1}
+          borderColor={"coolGray.200"}
+          w={"48"}
+        >
+          <Text fontSize={"md"}>
+            {`Number of Orders`}
+          </Text>
+          <Text fontSize={"md"} bold>
+            +132
+          </Text>
+        </Box>
+      </HStack>
+    </VStack>
+  )
+}

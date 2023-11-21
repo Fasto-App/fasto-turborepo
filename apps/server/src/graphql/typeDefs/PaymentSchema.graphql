@@ -1,6 +1,7 @@
 extend type Query {
 	getIsConnected: Balance
 	createStripeAccessLink: String
+	getPaymentInformation(input: GetPayment!): Payment!
 }
 
 extend type Mutation {
@@ -10,17 +11,23 @@ extend type Mutation {
 	confirmPayment(input: ConfirmPaymentInput!): Boolean!
 }
 
+input GetPayment {
+	payment: ID!
+}
+
 input ConfirmPaymentInput {
 	payment: ID!
 }
 
 type Payment {
 	_id: ID!
+	checkout: Checkout!
 	amount: Float!
 	patron: ID!
 	tip: Float!
 	splitType: SplitType
 	discount: Float
+	serviceFee: Float
 	paid: Boolean!
 }
 

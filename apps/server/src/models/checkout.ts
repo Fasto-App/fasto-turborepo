@@ -1,6 +1,6 @@
 import { Connection, Types } from 'mongoose'
-import { prop, getModelForClass, Severity, modelOptions } from '@typegoose/typegoose';
-import type { CheckoutStatusKeys, SplitType } from 'app-helpers';
+import { prop, getModelForClass, Severity, modelOptions, DocumentType, } from '@typegoose/typegoose';
+import { getPercentageOfValue, type CheckoutStatusKeys, type SplitType } from 'app-helpers';
 
 @modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Checkout {
@@ -31,6 +31,10 @@ export class Checkout {
   @prop()
   public tip?: number;
 
+  public get tipValue() {
+    return getPercentageOfValue(this.total, this.tip ?? 0);
+  }
+
   @prop()
   public discount?: number;
 
@@ -42,6 +46,13 @@ export class Checkout {
 
   @prop({ required: true, default: 0 })
   public totalPaid!: number;
+
+  @prop({ default: 201 })
+  public serviceFee?: number;
+
+  public get serviceFeeValue() {
+    return getPercentageOfValue(this.total, this.serviceFee ?? 0);
+  }
 
   @prop({ default: Date.now() })
   public created_date!: Date;

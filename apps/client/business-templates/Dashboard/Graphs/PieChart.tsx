@@ -4,6 +4,7 @@ import { Pie } from 'react-chartjs-2';
 import { Box, Button, Center, HStack, VStack, Text, Image, Heading, ScrollView } from 'native-base';
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from 'app-helpers';
 import { PriceTag } from '../../../components/molecules/PriceTag';
+import { useGetMostSellingProductsQuery } from '../../../gen/generated';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -34,13 +35,17 @@ export const data = {
   ],
 };
 
-const Row = () => (
+const OrdersRow = ({
+  orderType, number
+}: any) => (
   <HStack justifyContent={"space-between"} paddingX={8} paddingY={2}>
-    <Text fontSize={"lg"} fontWeight={"500"}>{"DineIn"}</Text>
-    <Text fontSize={"lg"} fontWeight={"500"}>{"0"}</Text>
+    <Text fontSize={"lg"} fontWeight={"500"}>{orderType}</Text>
+    <Text fontSize={"lg"} fontWeight={"500"}>{number}</Text>
   </HStack>)
 
 export function PieChart() {
+  const { data } = useGetMostSellingProductsQuery()
+
   return <ScrollView pr={2} pb={2}>
     <VStack mt={2} p={2} space={2}
       borderWidth={0.5}
@@ -50,11 +55,11 @@ export function PieChart() {
       bgColor={"white"}
     >
       <Heading textAlign={"center"} size={"sm"}>{"Most Selling Items"}</Heading>
-      <ProductItem />
-      <ProductItem />
-      <ProductItem />
-      <ProductItem />
-      <ProductItem />
+      {data?.getMostSellingProducts?.map((product, i) => <ProductItem
+        key={product?._id}
+        {...product}
+        quantity={(20 - i)}
+      />)}
     </VStack>
     <Box
       p={2}
@@ -64,32 +69,38 @@ export function PieChart() {
       bgColor={"white"}
       mt={4}
     >
-      <Heading pb={2} textAlign={"center"} size={"sm"}>{"Number Of Orders"}</Heading>
-      <Row />
-      <Row />
-      <Row />
+      <Heading pb={4} textAlign={"center"} size={"sm"}>{"Number Of Orders"}</Heading>
+      <OrdersRow orderType={"Dine-in"} number={20} />
+      <OrdersRow orderType={"Take-out"} number={13} />
+      <OrdersRow orderType={"Delivery"} number={5} />
     </Box>
   </ScrollView>
 }
 
-const ProductItem = () => (
+const ProductItem = ({
+  name, imageUrl, price, quantity = 1, category
+}: any) => (
   <HStack justifyContent={"space-between"} space={2} padding={2} >
     <Box>
       <Image
         size={"sm"}
-        source={{ uri: PRODUCT_PLACEHOLDER_IMAGE }}
+        source={{ uri: imageUrl || PRODUCT_PLACEHOLDER_IMAGE }}
         alt={""}
         borderRadius={5}
       />
     </Box>
     <Box flex={1}>
-      <Text fontSize={"md"} fontWeight={"500"}>{"Plum Blossom"}</Text>
+      <Text fontSize={"lg"} fontWeight={"500"}>{name}</Text>
+      <Text fontSize={"md"} fontWeight={"500"} color={"gray.600"} fontStyle={"italic"}>{category.name}</Text>
+    </Box>
+    <VStack>
+
+      <Text alignSelf={"center"} fontSize={"md"} fontWeight={"500"}>{parseToCurrency(price)}</Text>
       <Text
         fontSize={"md"}
         fontStyle={"italic"}
         color={"gray.500"}
-        textAlign={"justify"}>{"Categoria"}</Text>
-    </Box>
-    <Text alignSelf={"center"} fontSize={"md"} fontWeight={"500"}>{parseToCurrency(1000)}</Text>
+        textAlign={"right"}>{`+${quantity}`}</Text>
+    </VStack>
   </HStack>
 )

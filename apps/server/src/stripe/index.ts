@@ -2,12 +2,14 @@
 import Stripe from 'stripe';
 import { ApolloError } from '../graphql/ApolloErrorExtended/ApolloErrorExtended';
 import { appRoute, businessRoute } from "fasto-route"
-import { Locale } from 'app-helpers';
+import { Locale, SERVICE_FEE, getPercentageOfValue } from 'app-helpers';
 import { PaymentModel } from '../models/payment';
 import { CheckoutModel } from '../models/checkout';
 import { RequestModel, TabModel, TableModel } from '../models';
 import { Connection } from 'mongoose';
 import { updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
+
+console.log(process.env.STRIPE_SECRET_KEY)
 
 if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
   throw ApolloError('InternalServerError', 'Missing Stripe secret key env var');
@@ -109,16 +111,19 @@ export const stripeOnboard = async (accountId: string, locale: Locale, country: 
 
 type CreatePaymentIntentProps = {
   amount: number;
+  serviceFee?: number;
   stripeAccount: string;
   businessId: string;
   checkoutId: string;
   paymentId: string;
   description: string;
+
   country: "US" | "BR";
 }
 
 export const createPaymentIntent = async ({
   amount,
+  serviceFee,
   stripeAccount,
   businessId,
   checkoutId,
@@ -133,7 +138,7 @@ export const createPaymentIntent = async ({
       currency: country === "US" ? "USD" : "BRL",
       description,
       automatic_payment_methods: { enabled: true },
-      application_fee_amount: Math.trunc(amount * 0.05) + country === "US" ? 30 : (5 * 30),
+      application_fee_amount: serviceFee,
       transfer_data: {
         destination: stripeAccount,
       },

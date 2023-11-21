@@ -76,26 +76,17 @@ const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress,
 //  create new array with 10 elements
 
 export const OrdersScreen = () => {
-  const router = useRouter()
   const { t } = useTranslation("businessOrders")
-  const { data, loading, error } = useGetCheckoutsByBusinessQuery()
   const [modalData, setModalData] = useState({ isOpen: false, checkoutId: "" })
 
   return (
     <Box flex="1">
       <OrangeBox height={"78"} />
-      <OrdersModal
-        checkoutId={modalData.checkoutId}
-        isOpen={modalData.isOpen}
-        setIsOpen={(isOpen) => setModalData({ checkoutId: "", isOpen })}
-      />
       <VStack flex={1} p={4} space={4}>
         <UpperSection >
           <Heading>{t("orders")}</Heading>
-
           <HStack justifyContent={"space-between"}>
             <Text>{t("hereIsYourList")}</Text>
-
             <HStack space={"2"}>
               <FDSSelect
                 w={"100px"}
@@ -117,36 +108,62 @@ export const OrdersScreen = () => {
             </HStack>
           </HStack>
         </UpperSection>
-        <BottomSection>
-          {loading ? <LoadingItems /> :
-            error || !data?.getCheckoutsByBusiness ? null :
-              <FlatList
-                contentContainerStyle={{ paddingRight: 4 }}
-                ListHeaderComponent={<Header />}
-                data={data?.getCheckoutsByBusiness}
-                stickyHeaderIndices={[0]}
-                keyExtractor={(checkout) => `${checkout._id}`}
-                renderItem={({ item: checkout }) => (
-                  <OrderDetails
-                    key={checkout._id}
-                    _id={`#${checkout._id.slice(-6)}`}
-                    date={format(Number(checkout.created_date), "PPpp", getLocale(router.locale))}
-                    total={parseToCurrency(checkout.total)}
-                    status={t(CheckoutStatusKeys[checkout.status])}
-                    colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
-                    onDelete={() => console.log("deleting Order")}
-                    onPress={() => {
-                      setModalData({
-                        checkoutId: checkout._id,
-                        isOpen: true
-                      })
-                    }}
-                  />
-                )}
-              />
-          }
-        </BottomSection>
+        <BottomCheckoutTableWithModal
+          setModalData={setModalData}
+          modalData={modalData}
+        />
       </VStack>
     </Box>
   )
+}
+
+type CheckoutState = {
+  isOpen: boolean;
+  checkoutId: string;
+}
+
+export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
+  modalData: CheckoutState,
+  setModalData: React.Dispatch<React.SetStateAction<CheckoutState>>
+}) => {
+  const router = useRouter()
+  const { t } = useTranslation("businessOrders")
+  const { data, loading, error } = useGetCheckoutsByBusinessQuery()
+
+  return <BottomSection>
+    {loading ? <LoadingItems /> :
+      error || !data?.getCheckoutsByBusiness ? null :
+        <>
+          <FlatList
+            contentContainerStyle={{ paddingRight: 4 }}
+            ListHeaderComponent={<Header />}
+            data={data?.getCheckoutsByBusiness}
+            stickyHeaderIndices={[0]}
+            keyExtractor={(checkout) => `${checkout._id}`}
+            renderItem={({ item: checkout }) => (
+              <OrderDetails
+                key={checkout._id}
+                _id={`#${checkout._id.slice(-6)}`}
+                date={format(Number(checkout.created_date), "PPpp", getLocale(router.locale))}
+                total={parseToCurrency(checkout.total)}
+                status={t(CheckoutStatusKeys[checkout.status])}
+                colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
+                onDelete={() => console.log("deleting Order")}
+                onPress={() => {
+                  setModalData({
+                    checkoutId: checkout._id,
+                    isOpen: true
+                  })
+                }}
+              />
+            )}
+          />
+          <OrdersModal
+            checkoutId={modalData.checkoutId}
+            isOpen={modalData.isOpen}
+            setIsOpen={(isOpen) => setModalData({ checkoutId: "", isOpen })}
+          />
+        </>
+    }
+  </BottomSection>
 }

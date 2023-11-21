@@ -14,7 +14,7 @@ import { Split } from './Split'
 import { businessRoute } from 'fasto-route';
 import { useCheckoutStore } from './checkoutStore';
 import { useTranslation } from 'next-i18next';
-import { formatAsPercentage, parseToCurrency, parseToFixedPoint } from 'app-helpers';
+import { formatAsPercentage, getPercentageOfValue, parseToCurrency, parseToFixedPoint } from 'app-helpers';
 import { PaymentTile } from './TableComponents';
 import { showToast } from '../../components/showToast';
 import { OrdersModal } from '../OrderScreen/OrdersModal';
@@ -98,11 +98,14 @@ export const Checkout = () => {
     totalPaid,
     splitType,
     payments,
+    // serviceFee,
+    serviceFeeValue,
     total } = data?.getCheckoutByID || {}
 
   // if the cehckout has a split type that is not "Full", change the selected option
   // show some different UI that will allow to make the payments
 
+  if (!subTotal) return null
   return (
     <>
       <OrdersModal
@@ -199,8 +202,11 @@ export const Checkout = () => {
                         label={t("subtotal")}
                         value={parseToCurrency(subTotal)} />
                       <SummaryRow
+                        label={t("serviceFee")}
+                        value={parseToCurrency(serviceFeeValue)} />
+                      <SummaryRow
                         label={t("tip")}
-                        value={parseToCurrency(tip ?? 0)} />
+                        value={parseToCurrency(parseToFixedPoint(tip ?? 0) * (subTotal ?? 0))} />
                       <SummaryRow
                         label={t("feesAndTax")}
                         value={parseToCurrency(tax)} />

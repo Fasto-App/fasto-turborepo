@@ -56,7 +56,7 @@ export type AutoCompleteRes = {
 export type AveragePerDay = {
   __typename?: 'AveragePerDay';
   _id: Scalars['String'];
-  totalAmount: Scalars['Int'];
+  totalAmount: Scalars['Float'];
 };
 
 export type Balance = {
@@ -149,12 +149,15 @@ export type Checkout = {
   orders: Array<Maybe<OrderDetail>>;
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
+  serviceFee: Scalars['Float'];
+  serviceFeeValue: Scalars['Float'];
   splitType?: Maybe<SplitType>;
   status: CheckoutStatusKeys;
   subTotal: Scalars['Float'];
   tab: Scalars['ID'];
   tax: Scalars['Float'];
   tip?: Maybe<Scalars['Float']>;
+  tipValue?: Maybe<Scalars['Float']>;
   total: Scalars['Float'];
   totalPaid: Scalars['Float'];
 };
@@ -361,6 +364,10 @@ export type GetMenuById = {
 
 export type GetPaidCheckout = {
   type: DateType;
+};
+
+export type GetPayment = {
+  payment: Scalars['ID'];
 };
 
 export type GetSubsInput = {
@@ -891,16 +898,18 @@ export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
   sortBy: DateType;
-  total: Scalars['Int'];
+  total: Scalars['Float'];
 };
 
 export type Payment = {
   __typename?: 'Payment';
   _id: Scalars['ID'];
   amount: Scalars['Float'];
+  checkout: Checkout;
   discount?: Maybe<Scalars['Float']>;
   paid: Scalars['Boolean'];
   patron: Scalars['ID'];
+  serviceFee?: Maybe<Scalars['Float']>;
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
 };
@@ -968,6 +977,7 @@ export type Query = {
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
+  getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSignUpSubscription?: Maybe<StripeSubscription>;
@@ -1035,6 +1045,11 @@ export type QueryGetOrdersByCheckoutArgs = {
 
 export type QueryGetPaidCheckoutByDateArgs = {
   input: GetPaidCheckout;
+};
+
+
+export type QueryGetPaymentInformationArgs = {
+  input: GetPayment;
 };
 
 
@@ -1528,7 +1543,7 @@ export type GetCheckoutByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null, paid: boolean } | null> } };
+export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, serviceFee: number, serviceFeeValue: number, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tipValue?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null, paid: boolean } | null> } };
 
 export type GetCheckoutsByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1650,6 +1665,13 @@ export type GetIsConnectdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetIsConnectdQuery = { __typename?: 'Query', getIsConnected?: { __typename?: 'Balance', balanceAvailable: number, balancePending: number, balanceCurrency: string, url?: string | null, name?: string | null } | null };
+
+export type GetPaymentInformationQueryVariables = Exact<{
+  input: GetPayment;
+}>;
+
+
+export type GetPaymentInformationQuery = { __typename?: 'Query', getPaymentInformation: { __typename?: 'Payment', _id: string, amount: number, patron: string, tip: number, splitType?: SplitType | null, discount?: number | null, paid: boolean, serviceFee?: number | null, checkout: { __typename?: 'Checkout', _id: string, subTotal: number } } };
 
 export type GetProductByIdQueryVariables = Exact<{
   productId: Scalars['ID'];
@@ -2936,6 +2958,8 @@ export const GetCheckoutByIdDocument = gql`
     query GetCheckoutByID($input: GetById!) {
   getCheckoutByID(input: $input) {
     _id
+    serviceFee
+    serviceFeeValue
     splitType
     business
     created_date
@@ -2944,6 +2968,7 @@ export const GetCheckoutByIdDocument = gql`
     totalPaid
     total
     tip
+    tipValue
     tax
     tab
     status
@@ -3756,6 +3781,52 @@ export function useGetIsConnectdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetIsConnectdQueryHookResult = ReturnType<typeof useGetIsConnectdQuery>;
 export type GetIsConnectdLazyQueryHookResult = ReturnType<typeof useGetIsConnectdLazyQuery>;
 export type GetIsConnectdQueryResult = Apollo.QueryResult<GetIsConnectdQuery, GetIsConnectdQueryVariables>;
+export const GetPaymentInformationDocument = gql`
+    query GetPaymentInformation($input: GetPayment!) {
+  getPaymentInformation(input: $input) {
+    _id
+    amount
+    patron
+    tip
+    splitType
+    discount
+    paid
+    checkout {
+      _id
+      subTotal
+    }
+    serviceFee
+  }
+}
+    `;
+
+/**
+ * __useGetPaymentInformationQuery__
+ *
+ * To run a query within a React component, call `useGetPaymentInformationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaymentInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaymentInformationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetPaymentInformationQuery(baseOptions: Apollo.QueryHookOptions<GetPaymentInformationQuery, GetPaymentInformationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPaymentInformationQuery, GetPaymentInformationQueryVariables>(GetPaymentInformationDocument, options);
+      }
+export function useGetPaymentInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaymentInformationQuery, GetPaymentInformationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPaymentInformationQuery, GetPaymentInformationQueryVariables>(GetPaymentInformationDocument, options);
+        }
+export type GetPaymentInformationQueryHookResult = ReturnType<typeof useGetPaymentInformationQuery>;
+export type GetPaymentInformationLazyQueryHookResult = ReturnType<typeof useGetPaymentInformationLazyQuery>;
+export type GetPaymentInformationQueryResult = Apollo.QueryResult<GetPaymentInformationQuery, GetPaymentInformationQueryVariables>;
 export const GetProductByIdDocument = gql`
     query GetProductByID($productId: ID!) {
   getProductByID(productID: $productId) {

@@ -21,7 +21,10 @@ type Checkout {
 	orders: [OrderDetail]!
 	payments: [Payment]!
 	subTotal: Float!
+	serviceFee: Float!
+	serviceFeeValue: Float!
 	tip: Float
+	tipValue: Float
 	discount: Float
 	tax: Float!
 	total: Float!
@@ -72,13 +75,13 @@ enum DateType {
 
 type AveragePerDay {
 	_id: String!
-	totalAmount: Int!
+	totalAmount: Float!
 }
 
 type PaidCheckoutRes {
 	sortBy: DateType!
 	data: [AveragePerDay]!
-	total: Int!
+	total: Float!
 }
 
 input CustomSplitInput {
