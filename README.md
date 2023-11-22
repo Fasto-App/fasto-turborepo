@@ -15,7 +15,7 @@ To install the dependencies and get Fasto running on your local machine follow t
 
 3. ✅ [Doppler Setup](docs/DOPPLER.md)
 
-4. ✅ [Pushing Changes to Github](docs/CHANGES.md)
+4. ✅ [Pushing Changes to Github](docs/CONTRIBUTE.md)
 
 ### Installation
 
