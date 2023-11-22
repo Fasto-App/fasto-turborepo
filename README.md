@@ -1,4 +1,4 @@
-Fasto Coding Environment Setup Documentation
+# Fasto Coding Environment Setup Documentation
 To install the dependencies and get Fasto running on your local machine follow the commands below. This will allow you the developer to make changes to the code and see them in real time.
 
 ## Clone the Github Repository
@@ -25,9 +25,9 @@ The environment setup requires that your versions for node and other environment
 
 - If you get errors such as: “The engine "node" is incompatible with this module. Expected version "18.x.x". Got "16.20.1" you will need to install NVM and select this node version. NVM or node version manager is a tool to help download and manage node versions. To download and install NVM enter this in the terminal: 
 
-    macOS and Linux:  Copy and paste this in the terminal and hit enter “curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash” or “wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash”
+    **macOS and Linux:**  Copy and paste this in the terminal and hit enter “curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash” or “wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash”
 
-    Windows: Follow the instructions from this url: https://codedamn.com/news/nodejs/nvm-installation-setup-guide. You will need to download the installer and follow the instructions.
+    **Windows:** Follow the instructions from this url: https://codedamn.com/news/nodejs/nvm-installation-setup-guide. You will need to download the installer and follow the instructions.
 
 - Once installed NVM will help us use the correct node version. Use these commands to configure the node version that is needed.
 
