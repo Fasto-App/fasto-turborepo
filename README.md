@@ -4,8 +4,8 @@ To install the dependencies and get Fasto running on your local machine follow t
 
 ## Requeriments
 
--   [Node 18.x.x](#https://nodejs.org/)
--   [Yarn 1.22.19](#)
+-   [Node 18.x.x](https://nodejs.org/en/download)
+-   [Yarn 1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/)
 
 ## Table of Contents
 
