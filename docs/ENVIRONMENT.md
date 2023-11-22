@@ -20,4 +20,4 @@ The environment setup requires that your versions for node and other environment
 
 -   You should get this error once the packages are installed: `ERROR run failed: command exited (1) error Command failed with exit code 1. info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command`
 
-This means you are not authorized yet and to login and set up [Doppler](docs/DOPPLER.md).
+This means you are not authorized yet, and to login and set up [Doppler](docs/DOPPLER.md).

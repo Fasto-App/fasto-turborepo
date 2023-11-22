@@ -16,7 +16,7 @@ for example
 
 -   Make sure you make your own so that things stay organized and you get credit for your work.
 
--   Once you do that commit the changes in VS Code clicking on the branch icon on the left sidebar. You will see the “Changes” dropdown showing what needs to be pushed to github.
+-   Once you do that, commit the changes in VS Code clicking on the branch icon on the left sidebar. You will see the “Changes” dropdown showing what needs to be pushed to github.
 
 -   Mouse over each change you want to commit and click the “+” sign to add the item.
 

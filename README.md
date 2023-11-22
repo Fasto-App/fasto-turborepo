@@ -2,7 +2,7 @@
 
 To install the dependencies and get Fasto running on your local machine follow the commands below. This will allow you the developer to make changes to the code and see them in real time.
 
-## Requeriments
+## Requirements
 
 -   [Node 18.x.x](https://nodejs.org/en/download)
 -   [Yarn 1.22.19](https://classic.yarnpkg.com/lang/en/docs/install/)
@@ -11,7 +11,7 @@ To install the dependencies and get Fasto running on your local machine follow t
 
 1. ✅ [Installation](#installation)
 
-2. ✅ [Enviroment Setup](docs/ENVIRONMENT.md)
+2. ✅ [Environment Setup](docs/ENVIRONMENT.md)
 
 3. ✅ [Doppler Setup](docs/DOPPLER.md)
 
