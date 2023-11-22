@@ -43,10 +43,10 @@ In order to push your changes to github you will need to checkout and create you
 
 5. **Open a Pull Request (PR):**
 
-    - Go to the [original repository](https://github.com/original-username/original-project).
-    - Click on the "New Pull Request" button.
+    - Go to the [fasto-turborepo](https://github.com/Fasto-App/fasto-turborepo).
+    - Click on the "Pull Request" button.
     - Select the branch with your changes.
-    - Provide a descriptive title and comment explaining your changes.
+    - Provide a descriptive title and comment explaining your changes and fill out the template.
 
 6. **Review Process:**
 
