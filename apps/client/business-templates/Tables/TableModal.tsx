@@ -229,17 +229,22 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
       isOpen={!!tabId}
       HeaderComponent={
         <>
+        
           <Text fontSize={"20"}>
             {`${t("table")} ${1}`}
           </Text>
+          
           <Badge
             mt={2}
             width={'20'}
             colorScheme={badgeScheme(data?.getTabByID?.status)}>
             {!!data?.getTabByID?.status && t(data?.getTabByID?.status)}
+            
           </Badge>
           {tabId ?
-              <Button
+              <Button 
+              alignSelf="end"
+              mt={-12}
                 colorScheme={"primary"}
                 width={"100px"}
                 onPress={requestCloseTab}
