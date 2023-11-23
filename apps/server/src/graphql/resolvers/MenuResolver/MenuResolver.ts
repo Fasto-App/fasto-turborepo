@@ -29,22 +29,24 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
 
 // @ts-ignore
 const getMenuByID: QueryResolvers["getMenuByID"] = async (_parent, args, { db, business }) => {
-
-    const Menu = MenuModel(db);
     let menu;
+
+    if (!business) throw ApolloError("Unauthorized", "Business does not exist")
+
     if (args.input?.id) {
-        menu = await Menu.findOne({ _id: args.input?.id });
+        menu = await MenuModel(db).findOne({ _id: args.input?.id });
         if (!menu) throw ApolloError('NotFound', 'Menu not found');
+
+        return menu
     } else {
-        menu = await Menu.findOne({ business, isFavorite: true });
+        menu = await MenuModel(db).findOne({ business, isFavorite: true });
 
         if (!menu) {
-            menu = await Menu.findOne({ business });
+            menu = await MenuModel(db).findOne({ business });
             if (!menu) throw ApolloError('NotFound', 'Menu not found');
         };
+        return menu
     }
-
-    return menu
 }
 
 
