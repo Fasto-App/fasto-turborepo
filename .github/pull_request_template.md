@@ -4,8 +4,8 @@
 Remove everything above
 _____________
 
-## Link
-<link.com/>
+## Link To The Notion Ticket
+<link.com/> 
 
 ## Description
 
