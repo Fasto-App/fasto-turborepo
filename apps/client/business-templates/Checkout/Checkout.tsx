@@ -186,7 +186,7 @@ export const Checkout = () => {
                   <Text fontSize={"2xl"} textAlign={"center"}>
                     {t("sessionEnded")}
                     <Link fontSize={"2xl"} href={businessRoute.orders}>
-                      {t("backToManageTables")}
+                      {t("backToOrders")}
                     </Link>
                   </Text>
                 </Center>
