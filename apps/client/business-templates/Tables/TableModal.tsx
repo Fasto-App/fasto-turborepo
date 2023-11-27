@@ -179,7 +179,7 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
     })
 
   }, [data?.getTabByID._id, data?.getTabByID.checkout, data?.getTabByID?.status, router])
-  
+
   const [requestCloseTabMutation, { loading: loadingCloseTab }] = useRequestCloseTabMutation({
     refetchQueries: ["GetSpacesFromBusiness"],
     onCompleted: (data) => {
@@ -187,20 +187,19 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
         message: t("requestToCloseTabSuccessfully"),
       })
 
-      const status = data?.requestCloseTab?.status
-      const checkoutId = data?.requestCloseTab?.checkout
-
-      switch (status) {
+      switch (data?.requestCloseTab?.status) {
         case "Pendent":
-          if (!checkoutId) throw new Error("Checkout id is missing")
+          if (!data?.requestCloseTab?.checkout) throw new Error("Checkout id is missing")
 
           router.push({
             pathname: businessRoute["checkout/[checkoutId]"],
             query: {
-              checkoutId,
+              checkoutId: data?.requestCloseTab?.checkout,
               tabId,
             }
           })
+
+          setIsModalOpen()
           break;
         default:
           router.back()
@@ -217,12 +216,11 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
         }
       }
     })
-    setIsModalOpen()
   }, [requestCloseTabMutation, tabId])
 
   if (!tabId) return null
 
-  
+
 
   return (
     <CustomModal
@@ -230,31 +228,31 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
       isOpen={!!tabId}
       HeaderComponent={
         <>
-        
+
           <Text fontSize={"20"}>
             {`${t("table")} ${1}`}
           </Text>
-          
+
           <Badge
             mt={2}
             width={'20'}
             colorScheme={badgeScheme(data?.getTabByID?.status)}>
             {!!data?.getTabByID?.status && t(data?.getTabByID?.status)}
-            
+
           </Badge>
           {tabId ?
-              <Button 
+            <Button
               alignSelf="end"
               mt={-12}
-                colorScheme={"primary"}
-                width={"100px"}
-                onPress={requestCloseTab}
-                
-                isLoading={loadingCloseTab}
-              >
-                {t("closeTab")}
-              </Button>
-              : null}
+              colorScheme={"primary"}
+              width={"100px"}
+              onPress={requestCloseTab}
+
+              isLoading={loadingCloseTab}
+            >
+              {t("closeTab")}
+            </Button>
+            : null}
         </>}
       ModalBody={
         <OccupiedModal
