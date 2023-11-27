@@ -1,0 +1,12 @@
+query GetSubscriptionPrices($input: GetSubsInput) {
+	getSubscriptionPrices(input: $input) {
+		id
+		currency
+		unit_amount
+		product {
+			id
+			name
+			description
+		}
+	}
+}

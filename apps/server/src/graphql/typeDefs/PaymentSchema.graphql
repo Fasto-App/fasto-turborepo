@@ -1,19 +1,33 @@
 extend type Query {
 	getIsConnected: Balance
+	createStripeAccessLink: String
+	getPaymentInformation(input: GetPayment!): Payment!
 }
 
 extend type Mutation {
 	connectExpressPayment(input: ConnectExpressInput!): String!
 	generatePaymentIntent(input: generatePaymentIntentInput!): PaymentIntent!
+	generateStripePayout: Boolean!
+	confirmPayment(input: ConfirmPaymentInput!): Boolean!
+}
+
+input GetPayment {
+	payment: ID!
+}
+
+input ConfirmPaymentInput {
+	payment: ID!
 }
 
 type Payment {
 	_id: ID!
+	checkout: Checkout!
 	amount: Float!
 	patron: ID!
 	tip: Float!
 	splitType: SplitType
 	discount: Float
+	serviceFee: Float
 	paid: Boolean!
 }
 
@@ -22,7 +36,6 @@ input generatePaymentIntentInput {
 }
 
 input ConnectExpressInput {
-	country: ISOCountry!
 	business_type: BusinessType!
 }
 

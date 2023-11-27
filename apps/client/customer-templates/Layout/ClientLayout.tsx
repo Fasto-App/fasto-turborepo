@@ -12,20 +12,19 @@ import { analytics } from "../../firebase/init";
 
 export const CustomerLayout: React.FC = ({ children }) => {
   const router = useRouter()
-  const { productId, businessId } = router.query
+  const { businessId } = router.query
 
   const token = getClientCookies(businessId as string)
 
   const isHome = router.pathname === customerRoute["/customer/[businessId]"]
-  const isCheckout = router.pathname === customerRoute["/customer/[businessId]/checkout/[checkoutId]"]
+  const isMenu = router.pathname === customerRoute["/customer/[businessId]/menu"]
   const isSettings = router.pathname === customerRoute["/customer/[businessId]/settings"]
   const isCart = router.pathname === customerRoute["/customer/[businessId]/cart"]
-  const isSplit = router.pathname === customerRoute["/customer/[businessId]/split/[checkoutId]"]
   const { data } = useGetClientSession()
 
   useEffect(() => {
-    if (!token && (isSettings || isCart || isSplit || isCheckout)) {
-      if (!businessId || typeof businessId !== "string") return
+    if (!token && !isHome) {
+      if (!businessId) throw "No business associated"
 
       router.push({
         pathname: customerRoute["/customer/[businessId]"],
@@ -34,7 +33,7 @@ export const CustomerLayout: React.FC = ({ children }) => {
         }
       })
     }
-  }, [isCart, isSettings, businessId, token, router, isSplit, isCheckout])
+  }, [isCart, isSettings, businessId, token, router, isHome])
 
   useEffect(() => {
 
@@ -60,8 +59,7 @@ export const CustomerLayout: React.FC = ({ children }) => {
       <Box flex={1}>
         {children}
       </Box>
-      {productId || isHome || isCheckout || isSplit || !token ? null :
-        <ClientTabBar />}
+      {isMenu || isSettings || isCart && token ? <ClientTabBar /> : null}
     </Flex>
   );
 };

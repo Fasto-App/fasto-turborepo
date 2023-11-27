@@ -73,8 +73,8 @@ export const ControlledInput = <T extends Record<string, string>>({
               case "Select":
                 return (
                   <Select
+                    isDisabled={rest.isDisabled}
                     selectedValue={field.value}
-                    // minWidth="200"
                     fontSize="lg"
                     accessibilityLabel={rest.accessibilityLabel}
                     placeholder={placeholder}

@@ -5,38 +5,44 @@ import { TableStatus } from "../../gen/generated"
 import { borderColor } from "./config"
 
 type SquareTableProps = {
-  index?: number;
   status?: TableStatus;
   onPress: () => void;
-  isButton?: boolean;
   tableNumber?: string;
 }
 
-export const SquareTable = (
-  { index, status, onPress, isButton = false, tableNumber }: SquareTableProps) => {
-
-  return (
-    <Pressable
-      onPress={onPress}
+export const PlusButton = ({ onPress }: { onPress: () => void }) => (
+  <Pressable onPress={onPress}>
+    <Box
+      h={"48"}
+      w={"48"}
+      mb={4}
+      borderWidth={1}
+      borderRadius={"md"}
+      justifyContent="center"
+      alignItems={"center"}
+      borderColor={"muted.500"}
     >
-      <Box
-        h={"48"}
-        w={"48"}
-        mb={4}
-        borderWidth={isButton ? 1 : 4}
-        borderRadius={"md"}
-        justifyContent="center"
-        alignItems={"center"}
-        borderColor={isButton ? "muted.500" : borderColor(status)}
-      >
-        {isButton ?
-          <Center size={16} borderWidth={3} borderRadius={"full"}>
-            <AiOutlinePlus size={"5em"} />
-          </Center>
-          :
-          <Heading color={borderColor(status)}>
-            {tableNumber}
-          </Heading>}
-      </Box>
-    </Pressable>)
-}
+      <Center size={16} borderWidth={3} borderRadius={"full"}>
+        <AiOutlinePlus size={"5em"} />
+      </Center>
+    </Box>
+  </Pressable>
+)
+
+export const SquareTable = ({ status, onPress, tableNumber }: SquareTableProps) => (
+  <Pressable onPress={onPress}>
+    <Box
+      h={"48"}
+      w={"48"}
+      mb={4}
+      borderWidth={4}
+      borderRadius={"md"}
+      justifyContent="center"
+      alignItems={"center"}
+      borderColor={borderColor(status)}
+    >
+      <Heading color={borderColor(status)}>
+        {tableNumber}
+      </Heading>
+    </Box>
+  </Pressable>)

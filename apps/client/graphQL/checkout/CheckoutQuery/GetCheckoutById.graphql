@@ -1,6 +1,8 @@
 query GetCheckoutByID($input: GetById!) {
 	getCheckoutByID(input: $input) {
 		_id
+		serviceFee
+		serviceFeeValue
 		splitType
 		business
 		created_date
@@ -9,6 +11,7 @@ query GetCheckoutByID($input: GetById!) {
 		totalPaid
 		total
 		tip
+		tipValue
 		tax
 		tab
 		status

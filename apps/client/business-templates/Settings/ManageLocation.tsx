@@ -1,5 +1,5 @@
 import React from "react";
-import { VStack, HStack, Button, } from "native-base"
+import { VStack, HStack, Button, Tooltip, WarningOutlineIcon, } from "native-base"
 import { ControlledForm, SideBySideInputConfig } from "../../components/ControlledForm/ControlledForm"
 import { ManageLocationConfig } from "./Config"
 import { useManageLocationFormHook, } from "./hooks"
@@ -9,9 +9,10 @@ import { DevTool } from "@hookform/devtools";
 import { Loading } from "../../components/Loading";
 import { useAppStore } from "../UseAppStore";
 import { useTranslation } from "next-i18next";
+import { showToast } from "../../components/showToast";
+import { Icon } from "../../components/atoms/NavigationButton";
 
 export const ManageBusinessLocation = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
   const { t } = useTranslation("businessSettings")
 
   const { data, loading: loadingQuery } = useGetBusinessLocationQuery({
@@ -24,7 +25,10 @@ export const ManageBusinessLocation = () => {
       setValue("complement", data.getBusinessLocation?.complement || "")
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 
@@ -38,10 +42,13 @@ export const ManageBusinessLocation = () => {
   const [updateBusinessLocation, { loading }] = useUpdateBusinessLocationMutation({
     refetchQueries: ["GetBusinessLocation"],
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: "Success" })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 
@@ -83,7 +90,8 @@ export const ManageBusinessLocation = () => {
     country: {
       ...ManageLocationConfig.country,
       label: t("country"),
-      placeholder: t("country")
+      placeholder: t("country"),
+      isDisabled: !!data?.getBusinessLocation?.country
     },
   }
 
@@ -95,15 +103,10 @@ export const ManageBusinessLocation = () => {
         formState={formState}
         Config={newManageLocationConfig}
       />
+      <Tooltip label={t("tooltip")} placement="right bottom">
+        <WarningOutlineIcon />
+      </Tooltip>
       <HStack pt={4} alignItems="center" space={4} justifyContent="end">
-        <Button
-          w={"30%"}
-          variant={"subtle"}
-          onPress={() => console.log("Cancel")}
-          isLoading={loading}
-        >
-          {t("cancel")}
-        </Button>
         <Button
           w={"30%"}
           colorScheme="tertiary"

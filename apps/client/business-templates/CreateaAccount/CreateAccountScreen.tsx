@@ -71,7 +71,8 @@ export const CreateAccountScreen = () => {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          passwordConfirmation: formData.passwordConfirmation
+          passwordConfirmation: formData.passwordConfirmation,
+          country: formData.country
         }
       }
     })

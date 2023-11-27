@@ -39,5 +39,6 @@
 	"categoryDeletedError": "Error deleting category",
 	"deleteProductTitle": "Delete Product",
 	"deleteProductBody": "This will remove all data relating to this product. This action cannot be reversed.",
-	"deleteCategoryBody": "This will remove all data relating to this category. This action cannot be reversed."
+	"deleteCategoryBody": "This will remove all data relating to this category. This action cannot be reversed.",
+	"quantity": "Quantity"
 }

@@ -57,6 +57,7 @@
 	"Pending": "Pending",
 	"Rejected": "Rejected",
 	"payments": "Payments",
+	"subscriptions": "Subscriptions",
 	"error": {
 		"email": "Please provide a valid email address",
 		"password": "Please provide a password",

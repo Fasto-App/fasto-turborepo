@@ -6,7 +6,7 @@ import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { useGetClientSession } from "../../hooks";
 
 
-const ClientTabBar: React.FC = (props) => {
+const ClientTabBar: React.FC = () => {
   const router = useRouter();
   const { businessId } = router.query
 
@@ -22,7 +22,7 @@ const ClientTabBar: React.FC = (props) => {
   const isSettings = useIsPageSelected("/customer/[businessId]/settings");
 
 
-  const { data: tabData } = useGetClientSession()
+  const { data: clientData } = useGetClientSession()
 
   const paddingX = useBreakpointValue({
     base: "8",
@@ -53,9 +53,8 @@ const ClientTabBar: React.FC = (props) => {
       />
       <NavigationButton
         type={"Bag"}
-        disabled={!tabData?.getClientSession.tab}
         selected={isCart}
-        numNotifications={tabData?.getClientSession.tab?.cartItems?.length}
+        numNotifications={clientData?.getClientSession.tab?.cartItems?.length}
         onPress={() => {
           router.push({
             pathname: customerRoute["/customer/[businessId]/cart"],

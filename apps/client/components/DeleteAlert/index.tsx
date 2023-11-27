@@ -10,10 +10,7 @@ type DeleteAlertProps = {
 
 export const DeleteAlert = (props: DeleteAlertProps) => {
 	const { title, cancel, body, deleteItem } = props;
-
 	const [isOpen, setIsOpen] = React.useState(false);
-	const onClose = () => setIsOpen(false);
-	const cancelRef = React.useRef(null);
 
 	const closeDeleteAlert = useCallback(() => {
 		deleteItem();
@@ -22,28 +19,53 @@ export const DeleteAlert = (props: DeleteAlertProps) => {
 
 	return (
 		<Center>
-			<Button w={"100%"} my={2} colorScheme="error" onPress={() => setIsOpen(!isOpen)}>
+			<Button _text={{ bold: true }} w={"100%"} my={2} colorScheme="error" onPress={() => setIsOpen(!isOpen)}>
 				{title}
 			</Button>
-			<AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
-				<AlertDialog.Content>
-					<AlertDialog.CloseButton />
-					<AlertDialog.Header>{title}</AlertDialog.Header>
-					<AlertDialog.Body>
-						{body}
-					</AlertDialog.Body>
-					<AlertDialog.Footer>
-						<Button.Group space={2}>
-							<Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef}>
-								{cancel}
-							</Button>
-							<Button colorScheme="error" onPress={closeDeleteAlert}>
-								{title}
-							</Button>
-						</Button.Group>
-					</AlertDialog.Footer>
-				</AlertDialog.Content>
-			</AlertDialog>
+			<Alert
+				body={body}
+				cancel={cancel}
+				isOpen={isOpen}
+				onClose={() => setIsOpen(false)}
+				onPress={closeDeleteAlert}
+				title={title}
+			/>
 		</Center>
+	)
+}
+
+type AlertProps = {
+	isOpen: boolean;
+	onClose: () => void;
+	title: string;
+	body: string;
+	cancel: string;
+	onPress: () => void;
+}
+
+const Alert = (props: AlertProps) => {
+	const { body, isOpen, onClose, title, cancel, onPress } = props
+	const cancelRef = React.useRef(null);
+
+	return (
+		<AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
+			<AlertDialog.Content>
+				<AlertDialog.CloseButton />
+				<AlertDialog.Header>{title}</AlertDialog.Header>
+				<AlertDialog.Body>
+					{body}
+				</AlertDialog.Body>
+				<AlertDialog.Footer>
+					<Button.Group space={2} flex={1}>
+						<Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef} flex={1}>
+							{cancel}
+						</Button>
+						<Button colorScheme="error" onPress={onPress} flex={1}>
+							{title}
+						</Button>
+					</Button.Group>
+				</AlertDialog.Footer>
+			</AlertDialog.Content>
+		</AlertDialog>
 	)
 }

@@ -40,8 +40,6 @@ const ClientNavBar = (props: { tableNumber?: string, status?: RequestStatus }) =
         borderColor={"coolGray.300"}
       >
         <Box flex={1}>
-
-
           {/* Avatar or back button */}
           {productId || isSplit || !token ?
             <NavigationButton

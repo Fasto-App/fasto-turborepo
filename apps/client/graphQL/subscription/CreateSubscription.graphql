@@ -1,0 +1,7 @@
+mutation CreateSubscription($input: CreateSubInput!) {
+	createSubscription(input: $input) {
+		subscriptionId
+		clientSecret
+		price
+	}
+}

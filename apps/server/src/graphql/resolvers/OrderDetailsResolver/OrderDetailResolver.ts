@@ -20,9 +20,6 @@ import { CheckoutModel } from '../../../models/checkout';
 const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (parent, { input },
     { db, user: businessUser }) => {
 
-    console.log("createOrdersCheckout")
-    console.log({ input })
-
     const Checkout = CheckoutModel(db);
     const OrderDetail = OrderDetailModel(db);
     const Business = BusinessModel(db);
@@ -72,7 +69,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
             business: businessUser?.business,
             orders: orderDetails.map(orderDetail => orderDetail._id),
             subTotal,
-            total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
+            total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate ?? 0),
             tax: foundBusiness?.taxRate ?? 0,
         })
 
@@ -116,7 +113,8 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
                 subTotal: (product?.price || 0) * parsedInput.quantity,
                 user: user?._id,
                 tab: tab?._id,
-                createdByUser: businessUser?._id
+                createdByUser: businessUser?._id,
+                type: "DineIn"
             });
 
             tab.orders.push(orderDetails._id);
@@ -129,7 +127,6 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
         return orderDetails;
 
     } catch (err) {
-        console.log({ err })
         throw ApolloError("BadRequest", `Error creating OrderDetail ${err}`);
     }
 }
@@ -219,7 +216,6 @@ const updateOrderDetail = async (_parent: any,
         }, { new: true });
 
     } catch (err) {
-        console.log({ err })
         throw ApolloError("InternalServerError", `Error updating OrderDetail ${err}`);
     }
 }
@@ -233,7 +229,6 @@ const deleteOrderDetail = async (_parent: any, { input }: { input: any }, { db }
 
         return await OrderDetail.findOneAndDelete({ _id: input._id });
     } catch (err) {
-        console.log({ err })
         throw ApolloError("BadRequest", `Error deleting OrderDetail ${err}`);
     }
 }

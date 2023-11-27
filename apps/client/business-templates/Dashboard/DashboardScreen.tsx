@@ -1,61 +1,91 @@
-import { Box, HStack, VStack } from "native-base"
 import React from "react"
-import { useIsSsr } from "../../hooks"
-import { AreaChart } from "./Ghaphs/AreaChart"
-import { PieChart } from "./Ghaphs/PieChart"
-import { VerticalBar } from "./Ghaphs/VerticalBar"
+import { Box, HStack, Heading, ScrollView, Text, VStack } from "native-base"
+import { AreaChart } from "./Graphs/AreaChart"
+import { PieChart } from "./Graphs/PieChart"
+import { VerticalBar } from "./Graphs/VerticalBar"
+import { OrangeBox } from "../../components/OrangeBox"
+import { useTranslation } from "next-i18next"
 
 export const DashboardScreen = () => {
+  return (
+    <Box flex={1} shadow={"2"} backgroundColor={"gray.100"}>
+      <OrangeBox />
+      <VStack space={4} p={4} flex={1}>
+        <Panel />
+        <HStack space={3} flex={1}>
+          <ScrollView pr={2} pb={2} borderRadius={"md"}>
+            <VStack space={8} flex={1}>
+              <AreaChart />
+              <VerticalBar />
+            </VStack>
+          </ScrollView>
+          <PieChart />
+        </HStack>
+      </VStack>
+    </Box>
+  )
+}
+
+const Panel = () => {
+  const { t } = useTranslation("businessDashboard")
 
 
   return (
-    <Box flex={1}>
+    <VStack p={4} space={2} borderWidth={1}
+      borderColor={"gray.50"}
+      shadow={"2"}
+      borderRadius={"md"}
+      bgColor={"white"}
+    >
+      <Heading size="md">{t('hello')}</Heading>
+      <Heading size="xs">{t('welcomeDashBoard')}</Heading>
 
-      <Box
-        backgroundColor={"primary.500"}
-        h={150}
-        w={"100%"}
-        position={"absolute"}
-        zIndex={-1}
-      />
+      <HStack space={"3"}>
 
-      <VStack space={3} p={"8"} flex={1}>
         <Box
-          borderWidth={0.5}
-          borderColor={"gray.50"}
-          shadow={"2"}
-          h={"50%"}
-          w={"100%"}
+          p={"3"}
           borderRadius={"md"}
-          bgColor={"white"}
-          justifyContent={"center"}
+          borderColor={"coolGray.200"}
+          borderWidth={1}
+          w={"48"}
         >
-          <AreaChart />
+          <Text fontSize={"md"}>
+            {`Total Revenue`}
+          </Text>
+          <Text fontSize={"md"} bold>
+            $45,231.89
+          </Text>
         </Box>
 
-        <HStack space={3} w={"100%"} flexDirection={"row"} flex={1}>
-          <Box borderWidth={0.5}
-            borderColor={"gray.50"}
-            shadow={"2"}
-            borderRadius={"md"}
-            bgColor={"white"}
-            p={2}
-            flex={1}
-          >
-            <VerticalBar />
-          </Box>
-          <Box borderWidth={0.5}
-            borderColor={"gray.50"}
-            shadow={"2"}
-            borderRadius={"md"}
-            bgColor={"white"}
-          >
-            <PieChart />
-          </Box>
-        </HStack>
-
-      </VStack>
-    </Box >
+        <Box
+          p={"3"}
+          borderRadius={"md"}
+          borderWidth={1}
+          borderColor={"coolGray.200"}
+          w={"48"}
+        >
+          <Text fontSize={"md"}>
+            {`Most Selling Item`}
+          </Text>
+          <Text fontSize={"md"} bold>
+            {"Burbon"}
+          </Text>
+        </Box>
+        <Box
+          p={"3"}
+          borderRadius={"md"}
+          borderWidth={1}
+          borderColor={"coolGray.200"}
+          w={"48"}
+        >
+          <Text fontSize={"md"}>
+            {`Number of Orders`}
+          </Text>
+          <Text fontSize={"md"} bold>
+            +132
+          </Text>
+        </Box>
+      </HStack>
+    </VStack>
   )
-
 }

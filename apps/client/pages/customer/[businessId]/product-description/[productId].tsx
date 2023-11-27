@@ -12,7 +12,7 @@ export default function ProductDescriptionPage() {
 
   return <>
     <Head>
-      <title>{t("checkout")}</title>
+      <title>{t("productDescription")}</title>
     </Head>
     <ProductDescriptionScreen />
   </>

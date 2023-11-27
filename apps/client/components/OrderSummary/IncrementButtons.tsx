@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddIcon, HStack, IconButton, MinusIcon, Text } from "native-base"
+import { AddIcon, Box, HStack, IconButton, MinusIcon, Text } from "native-base"
 
 const StyledIconButton = ({ type, onPress }: { type: "plus" | "minus", onPress?: () => void }) => {
   const Icon = type === "plus" ? AddIcon : MinusIcon
@@ -20,10 +20,11 @@ type IncrementButtonsProps = {
   onPlusPress?: () => void;
   onMinusPress?: () => void;
   disabled?: boolean;
+  disablePlus?: boolean;
 }
 
 export const IncrementButtons = (props: IncrementButtonsProps) => {
-  const { quantity, onPlusPress, onMinusPress, disabled } = props
+  const { quantity, onPlusPress, onMinusPress, disabled, disablePlus } = props
 
   return (
     <HStack alignItems={"center"} space={2} opacity={disabled ? 50 : undefined}>
@@ -33,7 +34,9 @@ export const IncrementButtons = (props: IncrementButtonsProps) => {
         alignSelf={"center"}
         textAlign={"center"}
         w={quantity > 99 ? 6 : 5}>{quantity}</Text>
-      <StyledIconButton type="plus" onPress={disabled ? () => { } : onPlusPress} />
+      <Box opacity={disablePlus ? 50 : undefined}>
+        <StyledIconButton type="plus" onPress={disabled || disablePlus ? () => { } : onPlusPress} />
+      </Box>
     </HStack>
   )
 }

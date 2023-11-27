@@ -116,6 +116,8 @@ const SettingsScreen = () => {
     return FE_URL.toString()
   }, [businessId, clientSession?.getClientSession.tab?._id, clientSession?.getClientSession.tab?.admin, clientSession?.getClientSession.user.name, locale])
 
+  console.log(QR_CODE)
+
   const handlePress = useCallback(async (title: SettingsTileId) => {
     switch (title) {
       case "share":
@@ -127,6 +129,9 @@ const SettingsScreen = () => {
           });
 
         } catch (error) {
+          // @ts-ignore
+          if (error.name === "AbortError") return
+
           showToast({
             message: t("shareError"),
             status: "error"

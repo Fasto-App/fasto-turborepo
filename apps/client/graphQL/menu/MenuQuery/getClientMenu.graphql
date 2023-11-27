@@ -9,6 +9,7 @@ query GetClientMenu($input: GetMenu!) {
 			}
 			products {
 				_id
+				quantity
 				name
 				description
 				price

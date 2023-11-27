@@ -7,6 +7,7 @@ import { useProductMutationHook } from "../../graphQL/ProductQL";
 import { useCategoryMutationHook } from "../../graphQL/CategoryQL";
 import { useAppStore } from "../UseAppStore";
 import { Box } from "native-base";
+import { OrangeBox } from "../../components/OrangeBox";
 
 export default function AddProductCategoriesScreen({ resetAll }: { resetAll: () => void }) {
   const { allCategories, loadingCategory } = useCategoryMutationHook();
@@ -19,13 +20,7 @@ export default function AddProductCategoriesScreen({ resetAll }: { resetAll: () 
 
   return (
     <Box flex={1}>
-      <Box
-        backgroundColor={"primary.500"}
-        h={150}
-        w={"100%"}
-        position={"absolute"}
-        zIndex={-1}
-      />
+      <OrangeBox />
       <Loading isLoading={loadingProduct || loadingCategory} />
       <VStack flex={1} p={"4"} space={"4"}>
         <CategoryList resetAll={resetAll} categories={allCategories} />

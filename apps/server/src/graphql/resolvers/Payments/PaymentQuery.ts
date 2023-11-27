@@ -1,7 +1,11 @@
+import { businessRoute } from "fasto-route";
 import { QueryResolvers } from "../../../generated/graphql";
-import { BusinessModel } from "../../../models";
+import { AddressModel, BusinessModel } from "../../../models";
 import { stripe } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { getCountry } from "../helpers/helpers";
+import { PaymentModel } from "../../../models/payment";
+import Bugsnag from "@bugsnag/js";
 
 const getIsConnected: QueryResolvers["getIsConnected"] = async (_, _args, { business, db }) => {
 
@@ -9,11 +13,14 @@ const getIsConnected: QueryResolvers["getIsConnected"] = async (_, _args, { busi
 
   if (!foundBusiness?.stripeAccountId) return null
 
-  const account = await stripe.accounts.retrieve(foundBusiness?.stripeAccountId);
+  const country = await getCountry({ db, business: foundBusiness._id })
+  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
+
+  const account = await stripe(country).accounts.retrieve(foundBusiness?.stripeAccountId);
 
   if (!account.details_submitted) return null
 
-  const balance = await stripe.balance.retrieve({
+  const balance = await stripe(country).balance.retrieve({
     stripeAccount: foundBusiness?.stripeAccountId,
   });
 
@@ -26,6 +33,34 @@ const getIsConnected: QueryResolvers["getIsConnected"] = async (_, _args, { busi
   })
 }
 
+const createStripeAccessLink: QueryResolvers["createStripeAccessLink"] = async (_, _args, { business, db }) => {
+  const foundBusiness = await BusinessModel(db).findById(business);
+
+  if (!foundBusiness?.stripeAccountId) return null
+
+  const country = await getCountry({ db, business: foundBusiness._id })
+  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
+
+  const loginLink = await stripe(country).accounts.createLoginLink(
+    foundBusiness?.stripeAccountId
+  );
+
+  return loginLink.url
+}
+
+//@ts-ignore
+const getPaymentInformation: QueryResolvers["getPaymentInformation"] = async (par, { input }, { db }) => {
+  // get the payment from PaymentModel(db)
+  console.log({ input })
+
+  const foundPayment = await PaymentModel(db).findById(input.payment)
+  if (!foundPayment) throw Bugsnag.notify(new Error(`Payment not Found`));
+
+  return foundPayment
+}
+
 export const PaymentQuery: QueryResolvers = {
-  getIsConnected
+  getIsConnected,
+  createStripeAccessLink,
+  getPaymentInformation
 }

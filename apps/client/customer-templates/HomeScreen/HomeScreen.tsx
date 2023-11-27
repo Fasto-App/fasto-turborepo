@@ -1,4 +1,4 @@
-import { Image, Box, Button, Center, Heading, VStack, Text, HStack } from 'native-base'
+import { Image, Box, Button, Center, Heading, VStack, Text, HStack, Skeleton } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { JoinTabModal } from './JoinTabModal'
@@ -17,13 +17,14 @@ import { Pressable } from 'react-native'
 export const HomeScreen = () => {
   const [isJoinTabModalOpen, setIsJoinTabModalOpen] = useState(false)
   const [isOpenTabModalOpen, setIsOpenTabModalOpen] = useState(false)
-  const [isTakeoutDeliveryModalOpen, setIsTakeoutDeliveryModalOpen] = useState(false)
+  const [isTakeoutDeliveryDineInModalOpen, setIsTakeoutDeliveryDineInModalOpen] = useState(false)
 
   const { t } = useTranslation("customerHome")
   const route = useRouter()
   const { businessId, tabId, adminId, name } = route.query
 
   const onViewMenu = useCallback(() => {
+    console.log("navigate")
     route.push({
       pathname: customerRoute["/customer/[businessId]/menu"],
       query: {
@@ -39,7 +40,7 @@ export const HomeScreen = () => {
   }, [route])
 
   const { data: tabData, loading, error } = useGetClientSession()
-  const { data: businessInfo } = useGetBusinessInformation()
+  const { data: businessInfo, loading: businessInfoLoading } = useGetBusinessInformation()
 
   const image = businessInfo?.getBusinessById?.picture
   const businessName = businessInfo?.getBusinessById?.name
@@ -91,35 +92,33 @@ export const HomeScreen = () => {
             return route.push(path, path, { locale: value });
           }} />
       </HStack>
-      <Heading size={"2xl"}>{businessName}</Heading>
-      <NextImage
-        src={image ?? "https://via.placeholder.com/150"}
-        alt={businessName}
-        width={"150"}
-        height={"150"}
-        objectFit='cover'
-        style={{ borderRadius: 5 }}
-      />
+      {businessInfoLoading ? <LoadingBusinessInfo /> :
+        <>
+          <Heading size={"2xl"}>{businessName}</Heading>
+          <NextImage
+            src={image ?? "/html/images/webclip.png"}
+            alt={businessName}
+            width={"150"}
+            height={"150"}
+            objectFit='cover'
+            style={{ borderRadius: 5 }}
+            priority
+            blurDataURL='/html/images/webclip.png'
+            placeholder='blur'
+          />
+        </>
+      }
       <VStack space={6} mt={"10"} w={"80%"}>
         <Button
           isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
           onPress={() => setIsOpenTabModalOpen(true)}
           _text={{ bold: true }}>{t("openNewTab")}</Button>
-        <Button onPress={() => setIsTakeoutDeliveryModalOpen(true)}
+        <Button onPress={() => setIsTakeoutDeliveryDineInModalOpen(true)}
           _text={{ bold: true }}
           colorScheme={"secondary"}>{t("takeoutOrDelivery")}</Button>
-        {/* <Button
-          isDisabled={loading || tabData?.getClientSession.request?.status === "Pending"}
-          onPress={joinTab}
+        {/* <Button onPress={onViewMenu}
           _text={{ bold: true }}
-          colorScheme={"tertiary"}>{t("joinTab")}</Button> */}
-        <Button onPress={onViewMenu}
-          _text={{ bold: true }}
-          colorScheme={"blueGray"}>{t("viewMenu")}</Button>
-
-        {/* <Link href='client/login'>
-          Re-enter existing tab
-        </Link> */}
+          colorScheme={"blueGray"}>{t("viewMenu")}</Button> */}
       </VStack>
       <JoinTabModal
         isOpen={isJoinTabModalOpen}
@@ -130,9 +129,16 @@ export const HomeScreen = () => {
         setModalVisibility={() => setIsOpenTabModalOpen(false)}
       />
       <TakeoutDeliveryModal
-        isOpen={isTakeoutDeliveryModalOpen}
-        setModalVisibility={() => setIsTakeoutDeliveryModalOpen(false)}
+        isOpen={isTakeoutDeliveryDineInModalOpen}
+        setModalVisibility={() => setIsTakeoutDeliveryDineInModalOpen(false)}
       />
     </Center>
   )
 }
+
+const LoadingBusinessInfo = () => (
+  <VStack>
+    <Skeleton my="4" rounded="lg" />
+    <Skeleton width={"150"} height={"150"} rounded="lg" />
+  </VStack>
+)

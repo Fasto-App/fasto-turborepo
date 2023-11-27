@@ -7,10 +7,10 @@ import { CreateProductInput } from "./types";
 import { uploadFileS3Bucket } from "../../../s3/s3";
 import { Context } from "../types";
 import { MenuModel } from "../../../models";
+import { MutationResolvers } from "../../../generated/graphql";
 
-const createProduct = async (_parent: any, { input }: { input: CreateProductInput }, { db, business }: { db: Connection, business: string }) => {
-
-
+// @ts-ignore
+const createProduct: MutationResolvers["createProduct"] = async (_parent, { input }, { db, business }) => {
     const Product = ProductModel(db);
     const Category = CategoryModel(db);
     const businessByID = await BusinessModel(db).findById(business)
@@ -46,6 +46,7 @@ const createProduct = async (_parent: any, { input }: { input: CreateProductInpu
             business: businessByID?._id,
             category: categoryByID?._id,
             addons: input?.addons,
+            quantity: input?.quantity
         });
 
         if (input.file) {
@@ -101,8 +102,8 @@ const getProductByID = async (_parent: any,
     return await ProductModel(db).findById(productID);;
 }
 
-// TODO: Properly type input
-const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, business }: Context) => {
+// @ts-ignore
+const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent, { input }, { db, user, business }) => {
     // TODO: change to updateOne instead?
     // await product.updateOne({
     //     $set: {
@@ -114,8 +115,6 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
     //         imageUrl: input.imageUrl,
     //     }
     // })
-
-    const { input } = arg;
 
     // use the _id to find the product, make sure the name is unique, and update the product
     const Product = ProductModel(db);
@@ -166,14 +165,17 @@ const updateProductByID = async (_parent: any, arg: { input: any }, { db, user, 
         const category = await Category.findById(input.category)
         if (!category) throw ApolloError('BadRequest', "Category not found. Please try it again.")
 
-        product.category = input.category;
+        product.category = category._id
     }
 
-    // if theres a addons, see if the addons are valid
-    if (input.addons) {
-        if (input.addons.length > 10)
-            throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
+    if (input.quantity) {
+        product.quantity = input.quantity
     }
+    // if theres a addons, see if the addons are valid
+    // if (input.addons) {
+    //     if (input.addons.length > 10)
+    //         throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
+    // }
 
     return await product.save()
 }
@@ -204,13 +206,12 @@ const getProductByOrderDetails = async (parent: any, args: any, { db }: Context)
     return product;
 }
 
+const getMostSellingProducts = async (par: any, args: any, { db, business }: any) => {
+    const foundProducts = await ProductModel(db).find({ business }).limit(5)
 
-
-
-
-type GetProductByIDInput = {
-    productID: string
+    return foundProducts
 }
+
 
 type Parent = {
     id: string
@@ -220,6 +221,7 @@ type Parent = {
 const ProductResolverQuery = {
     getAllProductsByBusinessID,
     getProductByID,
+    getMostSellingProducts
 }
 const ProductResolverMutation = {
     createProduct,

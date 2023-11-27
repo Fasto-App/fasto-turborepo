@@ -1,3 +1,5 @@
+import { SubscriptionMutation } from './SubscriptionResolvers/SubscriptionMutation';
+import { SubscriptionQuery, SubscriptionResolvers } from './SubscriptionResolvers/SubscriptionQuery';
 import { GraphQLUpload } from 'graphql-upload';
 import {
   BusinessResolverMutation,
@@ -48,6 +50,7 @@ import { RequestResolver, RequestResolverMutation, RequestResolverQuery, Request
 import { CartItemResolver, CartItemResolverMutation, CartItemResolverQuery } from './CartItemResolver';
 import { PaymentMutation } from './Payments';
 import { PaymentQuery } from './Payments/PaymentQuery';
+import { CheckoutModel } from '../../models/checkout';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -66,6 +69,7 @@ export const resolvers = {
     ...TableResolverQuery,
     ...CartItemResolverQuery,
     ...PaymentQuery,
+    ...SubscriptionQuery
   },
   Mutation: {
     ...AddressResolverMutation,
@@ -82,6 +86,7 @@ export const resolvers = {
     ...RequestResolverMutation,
     ...CartItemResolverMutation,
     ...PaymentMutation,
+    ...SubscriptionMutation
   },
   Subscription: {
     ...RequestSubscription,
@@ -94,6 +99,13 @@ export const resolvers = {
   Checkout: {
     payments: CheckoutResolver.payments,
     orders: CheckoutResolver.orders,
+  },
+  Payment: {
+    checkout: async (parent: any, _args: any, { db }: any) => {
+      console.log(parent)
+      console.log(parent._id)
+      return await CheckoutModel(db).findById(parent.checkout);
+    }
   },
   Product: {
     category: ProductResolver.getCategoryByProduct,
@@ -140,4 +152,8 @@ export const resolvers = {
     admin: RequestResolver.getAdminFromRequest,
     requestor: RequestResolver.getRequestorFromRequest,
   },
+  StripeSubscription: {
+    tier: SubscriptionResolvers.getTier
+  }
 };
+

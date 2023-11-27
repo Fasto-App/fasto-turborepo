@@ -1,0 +1,16 @@
+query GetSignUpSubscriptions {
+	getSignUpSubscription {
+		id
+		tier
+		status
+		current_period_end
+		current_period_start
+		items {
+			data {
+				price {
+					id
+				}
+			}
+		}
+	}
+}

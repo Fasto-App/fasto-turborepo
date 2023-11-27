@@ -4,10 +4,10 @@ import { UserModel } from "../../../models/user";
 import { TableModel } from "../../../models/table";
 import { Context } from "../types";
 import { createTabInput, updateTabInput, updateTabObject } from "./types";
-import { getPercentageOfValue, RequestStatus, TableStatus, TableStatusType, TabStatus } from "app-helpers";
+import { getPercentageOfValue, RequestStatus, TableStatus, TableStatusType, TabStatus, TabType } from "app-helpers";
 import { BusinessModel, OrderDetailModel, RequestModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
-import { MutationResolvers } from "../../../generated/graphql";
+import { MutationResolvers, TakeoutDeliveryDineIn } from "../../../generated/graphql";
 
 const createTab = async (_parent: any, { input }: createTabInput, { db, business }: Context) => {
     const Tab = TabModel(db);
@@ -36,6 +36,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
                 // TODO: can we add exsisting users this way?
                 // perhaps we need to add a new field to existing user emails or ids
                 users: allUsers.map(user => user._id),
+                type: TabType.DineIn
             });
 
             await table.updateOne({ status: TableStatus.Occupied, tab: tab._id });
@@ -55,6 +56,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             table: input.table,
             admin: allUsers[0]._id,
             users: allUsers.map(user => user._id),
+            type: TabType.DineIn
         });
 
         if (!tab) throw ApolloError("InternalServerError", "Error creating Tab")
@@ -68,6 +70,15 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
     } catch (error) {
         throw ApolloError("InternalServerError", "Error creating Tab");
     }
+}
+
+// @ts-ignore
+const updateCustomerUpdateTabType: MutationResolvers["updateCustomerUpdateTabType"] = async (_parent, { input: { type, tab } }, { db, client }) => {
+    if (!client) throw ApolloError("Unauthorized")
+
+    return await TabModel(db).findByIdAndUpdate(tab, {
+        type
+    }, { new: true })
 }
 
 const getAllOpenTabsByBusinessID = async (_parent: any, _args: any, { db, business }: Context) => {
@@ -176,17 +187,8 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
         tabId = foundRequest.tab;
     }
 
+    //todo: Hacky, why not just ask for the tabId or have that on the context
     const foundTab = await Tab.findById(tabId || args.input?._id);
-
-    const changeTableStatus = async (toStatus: TableStatusType) => {
-        if (foundTab?.table) {
-            const foundTable = await Table.findById(foundTab.table);
-            if (foundTable) {
-                foundTable.status = toStatus;
-                await foundTable.save();
-            }
-        }
-    }
 
     if (!foundTab) throw ApolloError('NotFound')
 
@@ -206,10 +208,26 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
             await RequestModel(db).updateMany({ tab: foundTab._id }, { status: RequestStatus.Completed });
         }
         // upadate the table status to available
-        changeTableStatus(TableStatus.Available)
+        if (foundTab?.table) {
+            const foundTable = await Table.findById(foundTab.table);
+            if (foundTable) {
+                foundTable.status = TableStatus.Available;
+                await foundTable.save();
+            }
+        }
 
-        await foundTab.save();
-        return foundTab;
+        // add the address to the foundTab
+        // the address right now is coming from the user addres
+        // and the address will only be added to Deliveries, not Takeout
+        if (foundTab.type === TakeoutDeliveryDineIn.Delivery) {
+            const foundUser = await UserModel(db).findById(foundTab?.admin)
+
+            if (!foundUser || !foundUser.address) throw ApolloError("BadGateway", "No Address for Delivery");
+
+            foundTab.address = foundUser.address
+        }
+
+        return await foundTab.save();
     }
 
     const subTotal = foundOrderDetails.reduce((acc, orderDetail) => acc + orderDetail.subTotal, 0);
@@ -219,7 +237,7 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
         business: foundBusiness?._id,
         orders: foundOrderDetails.map(orderDetail => orderDetail._id),
         subTotal,
-        total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate),
+        total: subTotal + getPercentageOfValue(subTotal, foundBusiness?.taxRate ?? 0),
         tax: foundBusiness?.taxRate ?? 0,
     })
 
@@ -234,6 +252,7 @@ const TabResolverMutation = {
     updateTab,
     deleteTab,
     requestCloseTab,
+    updateCustomerUpdateTabType
 }
 const TabResolverQuery = {
     getTabByID,

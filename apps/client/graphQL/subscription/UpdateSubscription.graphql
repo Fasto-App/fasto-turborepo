@@ -1,0 +1,8 @@
+mutation UpdateSubscription($input: UpdatedSubInput!) {
+	updateSubscription(input: $input) {
+		id
+		status
+		current_period_end
+		current_period_start
+	}
+}

@@ -41,11 +41,13 @@ interface CheckoutStore {
   selectedSplitType: SplitType;
   selectedUsers: { [key: string]: boolean };
   splitByPatron: SPlitByPatron;
+  serviceFeeValue: number;
   setSelectedUsers: (selectedUsers: { [key: string]: boolean }) => void;
   setSelectedSplitType: (selectedSplitType: SplitType) => void;
   setTotal: (total: number) => void;
   setTip: (tip: number) => void;
   setDiscount: (discount: number) => void;
+  setServiceFeeValue: (serviceFeeValue: number) => void;
   setSelectedTip: (selectedTip: typeof percentages[number]) => void;
   setSelectedDiscount: (selectedDiscount: typeof percentages[number]) => void;
   setCustomTip: (customTip: number) => void;
@@ -68,8 +70,10 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
   selectedTip: "10%",
   selectedDiscount: "0%",
   selectedSplitType: "Equally",
+  serviceFeeValue: 0,
   selectedUsers: {},
   splitByPatron: { tab: { subTotal: 0 } },
+  setServiceFeeValue: (serviceFeeValue) => set({ serviceFeeValue }),
   setSplitByPatron: (orders: Order[]) => {
     const splitByPatron = orders.reduce((acc, order) => {
       const { user, subTotal } = order
@@ -94,9 +98,9 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
     set({ splitByPatron })
 
   },
-  setSelectedUsers: (selectedUsers: { [key: string]: boolean }) => set({ selectedUsers }),
-  setSelectedSplitType: (selectedSplitType: SplitType) => set({ selectedSplitType }),
-  setTotal: (total: number) => set({ total }),
+  setSelectedUsers: (selectedUsers) => set({ selectedUsers }),
+  setSelectedSplitType: (selectedSplitType) => set({ selectedSplitType }),
+  setTotal: (total) => set({ total }),
   setCustomTip: (customTip) => {
     const { total } = get()
     const tip = getFixedPointPercentage(customTip, total)
@@ -217,6 +221,7 @@ export const useComputedChekoutStore = () => {
     selectedUsers: state.selectedUsers,
     splitByPatron: state.splitByPatron,
     customSubTotals: state.customSubTotals,
+    serviceFeeValue: state.serviceFeeValue
   }),
     shallow
   )
@@ -225,7 +230,7 @@ export const useComputedChekoutStore = () => {
   const percentageOfTip = getPercentageOfValue(store.total, store.tip)
   const valueOfDiscount = store.selectedDiscount === "Custom" ? store.customDiscount : percentageOfDiscount
   const valueOfTip = store.selectedTip === "Custom" ? store.customTip : percentageOfTip
-  const absoluteTotal = store.total - valueOfDiscount + valueOfTip
+  const absoluteTotal = store.total - valueOfDiscount + valueOfTip + store.serviceFeeValue
   const numberOfSelectedUsers = typedValues(store.selectedUsers).filter(Boolean).length
   const splitEqually = numberOfSelectedUsers > 0 ? absoluteTotal / numberOfSelectedUsers : 0
   let amountPerUser = 0

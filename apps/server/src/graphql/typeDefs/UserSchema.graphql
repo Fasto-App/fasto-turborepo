@@ -7,7 +7,7 @@ extend type Query {
 
 extend type Mutation {
 	requestUserAccountCreation(input: RequestUserAccountInput!): AccountCreationResponse!
-	createUser(input: UserInput): User!
+	createUser(input: UserInput!): User!
 	postUserLogin(input: LoginInput!): User!
 	updateUserInformation(input: UpdateUserInput!): User!
 	recoverPassword(input: String!): RequestResponseOK
@@ -26,6 +26,7 @@ input UserInput {
 	email: String!
 	password: String!
 	passwordConfirmation: String!
+	country: String!
 	privilege: UserPrivileges
 }
 
@@ -58,6 +59,7 @@ type User {
 	picture: String
 	businesses: [BusinessPrivileges!]!
 	phoneNumber: String
+	address: Address
 }
 
 input LoginInput {

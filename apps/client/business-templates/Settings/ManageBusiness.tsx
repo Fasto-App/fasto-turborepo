@@ -14,10 +14,9 @@ import { DevTool } from "@hookform/devtools"
 import { Loading } from "../../components/Loading"
 import { useAppStore } from "../UseAppStore"
 import { useTranslation } from "next-i18next"
+import { showToast } from "../../components/showToast"
 
 export const ManageBusiness = () => {
-  const setNetworkState = useAppStore(state => state.setNetworkState)
-
   const { daysOfTheWeek, setCloseHour, setOpenHour, toggleDay } = useScheduleStore(state => ({
     daysOfTheWeek: state.daysOfTheWeek,
     setOpenHour: state.setOpenHour,
@@ -32,33 +31,39 @@ export const ManageBusiness = () => {
       setValue("name", data.getBusinessInformation.name)
       setValue("description", data.getBusinessInformation.description || "")
 
-      const hoursOfOperation = data.getBusinessInformation.hoursOfOperation
-      // FIX: This loop is blocking the UI thread
-      // 01 find a way to just transfer this data to the store whitout looping through it
-      // 02 or manage everything in the store and just pass the data to the form
-      DaysOfTheWeekArray.forEach(day => {
-        const open = hoursOfOperation?.[day]?.hours?.open
-        const close = hoursOfOperation?.[day]?.hours?.close
+      // const hoursOfOperation = data.getBusinessInformation.hoursOfOperation
+      // // FIX: This loop is blocking the UI thread
+      // // 01 find a way to just transfer this data to the store whitout looping through it
+      // // 02 or manage everything in the store and just pass the data to the form
+      // DaysOfTheWeekArray.forEach(day => {
+      //   const open = hoursOfOperation?.[day]?.hours?.open
+      //   const close = hoursOfOperation?.[day]?.hours?.close
 
-        if (hoursOfOperation?.[day]?.isOpen && hoursOfOperation?.[day]?.hours && open && close) {
-          toggleDay(day)
-          setOpenHour(day, open)
-          setCloseHour(day, close)
-        }
-      })
+      //   if (hoursOfOperation?.[day]?.isOpen && hoursOfOperation?.[day]?.hours && open && close) {
+      //     toggleDay(day)
+      //     setOpenHour(day, open)
+      //     setCloseHour(day, close)
+      //   }
+      // })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: "Error",
+        status: "error"
+      })
     }
   })
 
   const [updateBusinessInformationMutation, { loading }] = useUpdateBusinessInformationMutation({
     refetchQueries: ["GetBusinessInformation"],
     onCompleted: () => {
-      setNetworkState("success")
+      showToast({ message: "Success" })
     },
     onError: () => {
-      setNetworkState("error")
+      showToast({
+        message: `Error`,
+        status: "error"
+      })
     }
   })
 

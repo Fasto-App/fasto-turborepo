@@ -1,0 +1,6 @@
+query GetGoogleAutocomplete($input: AutoCompleteInput!) {
+	getGoogleAutoComplete(input: $input) {
+		description
+		place_id
+	}
+}

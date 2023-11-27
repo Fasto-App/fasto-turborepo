@@ -1,6 +1,6 @@
-import React from "react"
-import { Avatar, Box, Button, Center, HStack, Heading, Link, Text, VStack } from "native-base"
-import { BusinessType, GetIsConnectdQuery, IsoCountry, useConnectExpressPaymentMutation, useGetIsConnectdQuery } from "../../gen/generated"
+import React, { useCallback, useState } from "react"
+import { Avatar, Box, Button, Center, HStack, Heading, Link, Skeleton, Text, VStack } from "native-base"
+import { BusinessType, GetIsConnectdQuery, IsoCountry, useConnectExpressPaymentMutation, useCreateStripeAccessLinkLazyQuery, useGenerateStripePayoutMutation, useGetBusinessInformationQuery, useGetIsConnectdQuery } from "../../gen/generated"
 import { showToast } from "../../components/showToast"
 import { ControlledForm, RegularInputConfig } from "../../components/ControlledForm"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -8,8 +8,9 @@ import { useForm } from "react-hook-form"
 import { OrangeBox } from "../../components/OrangeBox"
 import { z } from "zod"
 import { parseToCurrency, typedKeys } from "app-helpers"
-import { LoadingPDP } from "../../customer-templates/ProductDescriptionScreen/LoadingPDP"
 import { useTranslation } from "next-i18next"
+import { BottomCheckoutTableWithModal } from "../OrderScreen"
+import { UpperSection } from "../../components/UpperSection"
 
 const usePaymentFormHook = () => {
   return useForm({
@@ -29,18 +30,10 @@ const PaymentConfig: RegularInputConfig = {
     array: typedKeys(BusinessType).map((key) => ({ name: key, _id: BusinessType[key] })),
     defaultValue: "individual",
   },
-  country: {
-    name: "country",
-    label: "Country",
-    inputType: "Select",
-    array: typedKeys(IsoCountry).map((key) => ({ name: IsoCountry[key], _id: IsoCountry[key] })),
-    defaultValue: "US",
-  },
 }
 
 export const connectPaymentSchema = z.object({
-  accounttype: z.nativeEnum(BusinessType),
-  country: z.nativeEnum(IsoCountry),
+  accounttype: z.nativeEnum(BusinessType)
 })
 
 type ConnectPaymentSchema = z.infer<typeof connectPaymentSchema>
@@ -51,11 +44,9 @@ const ConnectPaymentForm = () => {
 
   const [connectExpressPayment, { loading }] = useConnectExpressPaymentMutation({
     onCompleted: (data) => {
-      console.log(data)
       window.location.assign(data.connectExpressPayment)
     },
-    onError: (error) => {
-
+    onError: () => {
       showToast({
         status: "error",
         message: t("errorConnectingToStripe")
@@ -68,7 +59,6 @@ const ConnectPaymentForm = () => {
       variables: {
         input: {
           business_type: data.accounttype,
-          country: data.country,
         }
       }
     })
@@ -79,7 +69,6 @@ const ConnectPaymentForm = () => {
     flex={1} space={4} borderWidth={1} maxW={700} p={8} borderColor={"gray.300"}
     borderRadius={"md"}
   >
-
     <Heading textAlign={"center"}>{t("setupYourPayments")}</Heading>
     <ControlledForm Config={PaymentConfig} control={control} formState={formState} />
     <Box borderRadius={"lg"}>
@@ -99,27 +88,47 @@ const ConnectPaymentForm = () => {
 }
 
 export const PaymentsScreen = () => {
-  const isConnected = false;
+  const [modalData, setModalData] = useState({ isOpen: false, checkoutId: "" })
 
   const { data, loading, error } = useGetIsConnectdQuery()
 
   return (
     <Box flex={1}>
       <OrangeBox />
-      <Center flex={1} py={6} px={8} justifyContent={"space-between"} >
-        {error ? <Text>Error</Text> :
-          typeof data === "undefined" || loading ? <LoadingPDP /> :
-            data.getIsConnected ?
+      {error ? <Text>Error</Text> :
+        typeof data === "undefined" || loading ?
+          <Center
+            flex={1}
+            py={6}
+            px={8}
+            justifyContent={"space-between"} >
+            <LoadingPDP />
+          </Center>
+          :
+          data.getIsConnected ?
+            <VStack flex={1} p={4} space={4}>
               <Payouts
                 balanceAvailable={data.getIsConnected.balanceAvailable}
                 balanceCurrency={data.getIsConnected.balanceCurrency}
                 balancePending={data.getIsConnected.balancePending}
                 name={data.getIsConnected.name}
                 url={data.getIsConnected.url}
-              /> :
+              />
+
+              <BottomCheckoutTableWithModal
+                setModalData={setModalData}
+                modalData={modalData}
+              />
+            </VStack>
+            :
+            <Center
+              flex={1}
+              py={6}
+              px={8}
+              justifyContent={"space-between"} >
               <ConnectPaymentForm />
-        }
-      </Center>
+            </Center>
+      }
     </Box>
   )
 }
@@ -128,10 +137,24 @@ const Payouts = (
   { balanceAvailable, balanceCurrency, balancePending, name, url }:
     NonNullable<GetIsConnectdQuery["getIsConnected"]>) => {
 
-  const onPress = () => {
-    console.log("pressed")
-    window.location.assign("https://google.com")
-  }
+  const { t } = useTranslation("businessPayments")
+
+  const { data } = useGetBusinessInformationQuery()
+
+  const [createStripeLink, { loading }] = useCreateStripeAccessLinkLazyQuery({
+    onCompleted: (data) => {
+      if (!data.createStripeAccessLink) return
+      window.open(data.createStripeAccessLink)
+    }
+  })
+
+  const [generatePayout, { loading: loadingPayout }] = useGenerateStripePayoutMutation({
+    refetchQueries: ["getIsConnectd"]
+  })
+
+  const onLinkPress = useCallback(() => {
+    createStripeLink()
+  }, [createStripeLink])
 
   return (
     <HStack
@@ -141,65 +164,84 @@ const Payouts = (
       borderWidth={1}
       justifyContent={"space-between"}
       paddingX={"10"}
-      paddingY={"4"} borderRadius={"md"}
-      minW={"864"}
+      paddingY={"4"}
+      borderRadius={"md"}
     >
       <HStack space={4}>
-        <Avatar size={"xl"}>
+        <Avatar size={"xl"} source={{ uri: data?.getBusinessInformation.picture || "" }} borderWidth={2}
+          borderColor={"primary.500"}>
           <Avatar.Badge bg="green.500" />
         </Avatar>
 
         <Box justifyContent={"space-evenly"}>
           <Heading >{name}</Heading>
           <Link
-            onPress={onPress} _text={{
+            onPress={onLinkPress} isExternal _text={{
               color: "blue.500",
               fontSize: "lg"
             }}>
-            View Stripe Account
+            {t("viewPayoutsOnStripe")}
           </Link>
         </Box>
       </HStack>
-
       <VStack justifyContent={"space-between"}>
-        <Text fontSize={"lg"}>This Week</Text>
-        <Text fontSize="xl">
-          $0.00
-        </Text>
-        <Text color={"gray.500"} fontSize={"lg"}>
-          0 orders
-        </Text>
-      </VStack>
-
-      <VStack justifyContent={"space-between"}>
-        <Text fontSize={"lg"}>Your Balance</Text>
+        <Text fontSize={"lg"}>{t("yourBalance")}</Text>
         <Text fontSize="xl">
           {parseToCurrency(balancePending)}
         </Text>
-
         <Text color={"gray.500"} fontSize={"lg"}>
-          {`${parseToCurrency(balanceAvailable)} available`}
+          {`${parseToCurrency(balanceAvailable)} ${t("available")}`}
         </Text>
-
       </VStack>
-
-      <VStack justifyContent={"space-between"} alignItems={"center"}>
-        <Button _text={{ bold: true }} colorScheme={"tertiary"} size={"lg"} w={"64"}>
-          Payout Now
+      <VStack justifyContent={"center"} alignItems={"center"}>
+        <Button
+          isDisabled={balanceAvailable <= 0}
+          onPress={() => generatePayout()}
+          isLoading={loading || loadingPayout}
+          _text={{ bold: true }} colorScheme={"tertiary"} size={"lg"} w={"64"}>
+          {t("payoutNow")}
         </Button>
-
-        <Link
-          onPress={onPress} isExternal _text={{
-            color: "blue.500",
-            fontSize: "lg"
-          }}>
-          View Payouts on Stripe
-        </Link>
       </VStack>
     </HStack>
   )
 }
 
-const Loading = () => {
+export const LoadingPDP = () => {
+  return (
+    <HStack
+      backgroundColor={"white"}
+      borderColor={"gray.300"}
+      w={"100%"}
+      borderWidth={1}
+      justifyContent={"space-between"}
+      paddingX={"10"}
+      paddingY={"4"}
+      borderRadius={"md"}
+      space={8}
+    >
 
+      <HStack space={4} flex={2}>
+        <Skeleton borderWidth={1} borderColor="coolGray.200" endColor="warmGray.50" size="20" rounded="full" />
+        <VStack space={4} flex={1}>
+          <Skeleton h="4" rounded="md" />
+          <Skeleton h="8" rounded="md" />
+          <Skeleton h="4" rounded="md" />
+        </VStack>
+      </HStack>
+      <VStack space={4} flex={1}>
+        <Skeleton h="4" rounded="md" />
+        <Skeleton h="8" rounded="md" />
+        <Skeleton h="4" rounded="md" />
+      </VStack>
+      <VStack space={4} flex={1}>
+        <Skeleton h="4" rounded="md" />
+        <Skeleton h="8" rounded="md" />
+        <Skeleton h="4" rounded="md" />
+      </VStack>
+      <VStack flex={1}>
+        <Skeleton mb="3" w="100%" h="16" rounded="sm" />
+        <Skeleton h="4" rounded="md" />
+      </VStack>
+    </HStack>
+  )
 }

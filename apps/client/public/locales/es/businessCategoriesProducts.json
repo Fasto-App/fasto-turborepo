@@ -39,5 +39,6 @@
 	"categoryDeletedError": "Error al eliminar la categoría",
 	"deleteProductTitle": "Eliminar Producto",
 	"deleteProductBody": "Esto eliminará todos los datos relacionados con este producto. Esta acción no se puede deshacer.",
-	"deleteCategoryBody": "Esto eliminará todos los datos relacionados con este producto. Esta acción no se puede deshacer."
+	"deleteCategoryBody": "Esto eliminará todos los datos relacionados con este producto. Esta acción no se puede deshacer.",
+	"quantity": "Cantidad"
 }

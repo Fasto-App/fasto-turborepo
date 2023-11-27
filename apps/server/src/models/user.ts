@@ -1,6 +1,8 @@
 import { Document, Connection } from 'mongoose'
 import { prop, getModelForClass, Severity, modelOptions } from '@typegoose/typegoose';
+import type { Ref } from '@typegoose/typegoose';
 import type { Businesses } from 'app-helpers';
+import { Address } from './address';
 
 @modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class User {
@@ -27,6 +29,12 @@ export class User {
 
     @prop({ default: true })
     public isGuest!: boolean;
+
+    @prop()
+    public stripeCustomer?: string;
+
+    @prop({ ref: Address })
+    public address?: Ref<Address>;
 
     @prop({ default: Date.now() })
     public createdAt!: Date

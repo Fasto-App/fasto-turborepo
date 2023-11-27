@@ -1,0 +1,73 @@
+extend type Query {
+	getSubscriptionPrices(input: GetSubsInput): [Price!]!
+	getSignUpSubscription: StripeSubscription
+}
+
+extend type Mutation {
+	createSubscription(input: CreateSubInput!): CreateSubResponse!
+	updateSubscription(input: UpdatedSubInput!): StripeSubscription!
+	cancelSubscription(input: DeleteSubInput!): StripeSubscription!
+}
+
+input GetSubsInput {
+	country: Countries!
+}
+
+input UpdatedSubInput {
+	subscription: ID!
+	price: ID!
+}
+
+input CreateSubInput {
+	price: ID!
+}
+
+input DeleteSubInput {
+	subscription: ID!
+}
+
+type Price {
+	id: ID!
+	currency: String!
+	unit_amount: Int!
+	product: StripeProduct!
+}
+
+type StripeProduct {
+	id: ID!
+	name: String!
+	description: String
+}
+
+type CreateSubResponse {
+	subscriptionId: ID!
+	clientSecret: String!
+	price: ID!
+}
+
+type StripeSubscription {
+	id: ID!
+	status: String!
+	current_period_end: Int!
+	current_period_start: Int!
+	items: SubscriptionItem!
+	tier: String
+	# default_payment_method: DefaultPaymentMethod
+}
+
+type SubscriptionItem {
+	object: String!
+	data: [SubscriptionData!]!
+}
+
+type SubscriptionData {
+	price: Price!
+}
+
+type DefaultPaymentMethod {
+	card: Card
+}
+
+type Card {
+	last4: String!
+}

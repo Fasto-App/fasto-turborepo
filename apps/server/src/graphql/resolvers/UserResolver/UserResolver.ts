@@ -91,11 +91,14 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
 
     const savedUser = await user.save()
 
+    // business can only belong to one country
+    // address will auto populate
     const creatingBusiness = await Business.create({
       user: savedUser._id,
       name: savedUser.name,
       email: savedUser.email,
-      employees: [savedUser._id]
+      employees: [savedUser._id],
+      country: validInput.country
     })
 
     const businessToString = creatingBusiness._id.toString()
@@ -149,8 +152,6 @@ export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: 
 }
 
 export const getUserInformation = async (_parent: any, _args: any, { db, user }: Context) => {
-
-  console.log("getUserInformation", user)
   const foundUser = await UserModel(db).findById(user);
 
   if (!foundUser) return null

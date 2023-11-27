@@ -1,7 +1,9 @@
-import { QueryResolvers } from "../../../generated/graphql";
+import { ObjectId } from "mongodb";
+import { DateType, QueryResolvers } from "../../../generated/graphql";
 import { CheckoutModel } from "../../../models/checkout";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
+import { getDaysAgo } from "../utils";
 
 // @ts-ignore
 export const getCheckoutByID: QueryResolvers["getCheckoutByID"] = async (parent, { input }, { db, client, user }) => {
@@ -31,11 +33,71 @@ export const getOrdersByCheckout: QueryResolvers["getOrdersByCheckout"] = async 
   return checkout
 }
 
+type AveragePerDay = {
+  _id: string; totalAmount: number
+}
+
+export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = async (par, { input }, { db, user, business }) => {
+
+  let { days, daysAgo } = getDaysAgo(input.type);
+
+  const matchQuery: any = {
+    business: new ObjectId(business),
+    paid: true,
+  };
+
+  if (input.type !== DateType.AllTime) {
+    matchQuery.created_date = {
+      $gte: daysAgo,
+    };
+  }
+
+  const dataResult: AveragePerDay[] = await CheckoutModel(db).aggregate([
+    {
+      $match: matchQuery,
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$created_date' } },
+        totalAmount: { $sum: '$total' }, // Assuming "total" is the field with the amount
+      },
+    },
+    {
+      // Sort by date in ascending order
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  if (!dataResult.length) return { sortBy: input.type, data: [], total: 0 }
+
+  if (input.type == DateType.AllTime) {
+    const total = dataResult.reduce((accu, current) => accu + current.totalAmount, 0)
+    return { sortBy: input.type, data: dataResult, total }
+  }
+
+  const today = new Date();
+  const resultArray = new Array(days).fill(null) as AveragePerDay[];
+
+  let total = 0
+
+  dataResult.forEach(group => {
+    const date = new Date(group._id);
+    const timeDifference = today.getTime() - date.getTime();
+    const diffInDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    resultArray[diffInDays] = group;
+    total += group.totalAmount
+  });
+
+  return { sortBy: input.type, data: resultArray.reverse(), total }
+}
+
 
 const CheckoutResolverQuery = {
   getCheckoutByID,
   getCheckoutsByBusiness,
   getOrdersByCheckout,
+  getPaidCheckoutByDate
 }
 
 export {

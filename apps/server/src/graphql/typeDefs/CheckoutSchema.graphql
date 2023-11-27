@@ -2,6 +2,7 @@ extend type Query {
 	getCheckoutByID(input: GetById!): Checkout!
 	getCheckoutsByBusiness: [Checkout!]!
 	getOrdersByCheckout(input: GetById!): Checkout!
+	getPaidCheckoutByDate(input: GetPaidCheckout!): PaidCheckoutRes
 }
 
 extend type Mutation {
@@ -20,7 +21,10 @@ type Checkout {
 	orders: [OrderDetail]!
 	payments: [Payment]!
 	subTotal: Float!
+	serviceFee: Float!
+	serviceFeeValue: Float!
 	tip: Float
+	tipValue: Float
 	discount: Float
 	tax: Float!
 	total: Float!
@@ -56,6 +60,28 @@ input CustomerRequestSplitInput {
 	customSplit: [CustomSplitInput!]
 	selectedUsers: [String!]!
 	tip: Float!
+}
+
+input GetPaidCheckout {
+	type: DateType!
+}
+
+enum DateType {
+	SevenDays
+	ThirtyDays
+	NinetyDays
+	AllTime
+}
+
+type AveragePerDay {
+	_id: String!
+	totalAmount: Float!
+}
+
+type PaidCheckoutRes {
+	sortBy: DateType!
+	data: [AveragePerDay]!
+	total: Float!
 }
 
 input CustomSplitInput {

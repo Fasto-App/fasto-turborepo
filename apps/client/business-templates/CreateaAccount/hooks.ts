@@ -27,9 +27,25 @@ export const CreateAccountConfig: RegularInputConfig = {
     autoComplete: 'password',
     autoFocus: true,
   },
+  country: {
+    name: "country",
+    label: "Country",
+    isRequired: true,
+    inputType: "Select",
+    array: [{
+      _id: "US",
+      name: "US"
+    }, {
+      _id: "BR",
+      name: "BR"
+    }]
+  },
 }
 
-export const useCreateAccountFormHook = (email: string) => {
+export const useCreateAccountFormHook = (email: string, country: "BR" | "US" = "US") => {
+  // Todo: we could try to guess the country by:
+  // 01. using localization from router
+  // 02. accessing navigator location
   const {
     control,
     handleSubmit,
@@ -41,7 +57,8 @@ export const useCreateAccountFormHook = (email: string) => {
       name: email as string,
       email: email as string,
       password: "",
-      passwordConfirmation: ""
+      passwordConfirmation: "",
+      country
     },
   });
 

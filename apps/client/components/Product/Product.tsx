@@ -21,6 +21,7 @@ type ProductTileProps = {
 	name: string;
 	imageUrl?: string;
 	description?: string | null;
+	quantity?: number;
 };
 
 type ProductCardProps = ProductTileProps & {
@@ -42,7 +43,7 @@ const Price = ({ price }: { price: number }) => (
 		{`$${(price / 100).toFixed(2)}`}
 	</Text>)
 
-const ProductCard = ({ name, price, imageUrl, description, onPress }: ProductCardProps) => {
+const ProductCard = ({ name, price, imageUrl, description, onPress, quantity }: ProductCardProps) => {
 	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
@@ -50,10 +51,12 @@ const ProductCard = ({ name, price, imageUrl, description, onPress }: ProductCar
 
 	return (
 		<Box
-			w={"72"}
+			w={"64"}
+			maxH={"80"}
 			rounded="lg"
 			overflow="hidden"
-			borderColor="coolGray.200"
+			borderWidth={0.5}
+			borderColor="coolGray.300"
 			backgroundColor="white"
 			shadow="4"
 			mr={"4"}
@@ -68,7 +71,7 @@ const ProductCard = ({ name, price, imageUrl, description, onPress }: ProductCar
 			</Box>
 			<Stack pt={8} p={2} space={2} flex={1}>
 				<Heading size="md" textAlign={"center"}>
-					{name}
+					{typeof quantity === "number" ? `${name} (${quantity})` : name}
 				</Heading>
 				<Text fontWeight="400" textAlign={"center"} flex={1}>
 					{formattedDescriptions}
@@ -82,7 +85,7 @@ const ProductCard = ({ name, price, imageUrl, description, onPress }: ProductCar
 };
 
 // create a new component that accepts the same props as ProductTile
-const ProductTile = ({ name, imageUrl, onPress, ctaTitle, description }: ProductTileProps) => {
+const ProductTile = ({ name, imageUrl, onPress, ctaTitle, description, quantity }: ProductTileProps) => {
 	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
@@ -95,7 +98,7 @@ const ProductTile = ({ name, imageUrl, onPress, ctaTitle, description }: Product
 			}} />
 			<VStack flex={1} h={"100%"} justifyContent={"space-between"}>
 				<Text color="coolGray.800" bold>
-					{name}
+					{typeof quantity === "number" ? `${name} (${quantity})` : name}
 				</Text>
 				{formattedDescriptions ? <Text color="coolGray.600" fontSize={"xs"}>
 					{formattedDescriptions}
@@ -111,7 +114,7 @@ const ProductTile = ({ name, imageUrl, onPress, ctaTitle, description }: Product
 }
 
 const ProductTileWithCheckbox = (
-	{ name, imageUrl, description, _id, isChecked, onCheck }: ProductTileWithCheckboxProps) => {
+	{ name, imageUrl, description, _id, isChecked, onCheck, quantity }: ProductTileWithCheckboxProps) => {
 	const { t } = useTranslation("common");
 
 	const formattedDescriptions = description && description.length > maxLength ?
@@ -124,7 +127,7 @@ const ProductTileWithCheckbox = (
 
 				<VStack flex={1} h={"100%"} justifyContent={"space-between"}>
 					<Text color="coolGray.800" bold>
-						{name}
+						{typeof quantity === "number" ? `${name} (${quantity})` : name}
 					</Text>
 					{formattedDescriptions ? <Text color="coolGray.600" fontSize={"xs"}>
 						{formattedDescriptions}

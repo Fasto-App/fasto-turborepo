@@ -1,21 +1,17 @@
-import { JoinTabForm, NewTabForm, newTabSchema, RequestStatusType, RequestStatus } from "app-helpers";
+import { RequestStatusType } from "app-helpers";
 import { withFilter } from "graphql-subscriptions";
 import { BusinessModel, UserModel, RequestModel, TabModel, TableModel } from "../../../models";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
-import { NUMBER_INCREMENTED, pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from "../pubSub";
+import { pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from "../pubSub";
 import { Context } from "../types"
 import { tokenClient } from "../utils";
 import { MutationResolvers } from "../../../generated/graphql";
 
 // client request a table
-const openTabRequest = async (
-  _parent: any,
-  { input }: {
-    input: NewTabForm & {
-      business: string, names?: string[]
-    }
-  },
-  { db }: Context
+const openTabRequest: MutationResolvers["openTabRequest"] = async (
+  _parent,
+  { input },
+  { db }
 ) => {
 
   const { business, phoneNumber, name, totalGuests, } = input
@@ -109,7 +105,6 @@ const acceptTabRequest: MutationResolvers["acceptTabRequest"] = async (
   }
 
   const foundAdmin = await User.findOne({ _id: foundRequest.admin })
-
   if (!foundAdmin) throw ApolloError('BadRequest', "Admin Not Found")
 
   const table = await Table.findOne({ _id: input.table, business });
@@ -186,10 +181,10 @@ const declineTabRequest = async (
 
 
 // TODO: Create a new Request, from a guest to a requestee
-const requestJoinTab = async (
-  _parent: any,
-  { input }: { input: JoinTabForm & { tab: string, admin: string, business: string } },
-  { db }: Context
+const requestJoinTab: MutationResolvers["requestJoinTab"] = async (
+  _parent,
+  { input },
+  { db }
 ) => {
   const Tab = TabModel(db)
   const User = UserModel(db)
@@ -330,10 +325,10 @@ const acceptInvitation = async (
   return pendingRequest;
 }
 
-const createNewTakeoutOrDelivery = async (
-  _parent: any,
-  { input }: { input: JoinTabForm & { business: string } },
-  { db, client }: Context
+const createNewTakeoutOrDelivery: MutationResolvers['createNewTakeoutOrDelivery'] = async (
+  _parent,
+  { input },
+  { db, client }
 ) => {
   const Request = RequestModel(db)
   const User = UserModel(db)
@@ -353,6 +348,7 @@ const createNewTakeoutOrDelivery = async (
       admin: newUser._id,
       users: [newUser._id],
       status: 'Open',
+      type: input.type,
     })
 
     const newRequest = await Request.create({
@@ -397,7 +393,7 @@ const createNewTakeoutOrDelivery = async (
     admin: foundUser._id,
     users: [foundUser._id],
     status: 'Open',
-    type: 'Takeout',
+    type: input.type,
   })
 
   const newRequest = await Request.create({

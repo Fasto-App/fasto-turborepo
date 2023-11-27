@@ -66,6 +66,9 @@ export class Business {
     @prop({ default: [] })
     public employeesPending?: Ref<Session>[];
 
+    @prop({ required: true })
+    public country!: "BR" | "US";
+
     @prop({ default: 0 })
     public taxRate?: number;
 

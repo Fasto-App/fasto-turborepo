@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from "react"
 import { Badge, Box, Button, Divider, FlatList, Heading, HStack, Pressable, ScrollView, VStack } from "native-base"
-import { SquareTable } from "./SquareTable"
+import { PlusButton, SquareTable } from "./SquareTable"
 import { Stats } from "./Stats"
 import { SpaceModal } from "./SpaceModal"
 import { AddTableModal } from "./AddTableModal"
@@ -16,6 +16,8 @@ import { UpperSection } from "../../components/UpperSection"
 import { Tile, TileLoading } from "../../components/Tile"
 import { OrangeBox } from "../../components/OrangeBox"
 import { useTranslation } from "next-i18next"
+import { SmallAddMoreButton } from "../../components/atoms/AddMoreButton"
+import { showToast } from "../../components/showToast"
 
 export const TablesScreen = () => {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
@@ -45,8 +47,6 @@ export const TablesScreen = () => {
     }),
     shallow
   )
-
-  const setNetworkState = useAppStore(state => state.setNetworkState)
 
   const { t } = useTranslation("businessTables")
 
@@ -87,10 +87,15 @@ export const TablesScreen = () => {
   const [createTable] = useCreateTableMutation({
     refetchQueries: [{ query: GetSpacesFromBusinessDocument }],
     onCompleted: () => {
-      setNetworkState(("success"))
+      showToast({
+        message: "Success"
+      })
     },
     onError: () => {
-      setNetworkState(("error"))
+      showToast({
+        status: "error",
+        message: "Error"
+      })
     }
   });
 
@@ -186,7 +191,7 @@ export const TablesScreen = () => {
                 </Heading>
 
                 <HStack flex={1} space={4}>
-                  <MoreButton onPress={() => setSpaceIsModalOpen(true)} />
+                  <SmallAddMoreButton onPress={() => setSpaceIsModalOpen(true)} />
                   {spaceLoading ? <TileLoading /> : (
                     <FlatList
                       horizontal
@@ -219,14 +224,13 @@ export const TablesScreen = () => {
                 </HStack>
                 <ScrollView>
                   <HStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-                    <SquareTable isButton={true} onPress={() => {
+                    <PlusButton onPress={() => {
                       console.log("new table", true)
                       setAddNewTableModalOpen(true)
                     }} />
                     {allTablesFromSpace?.map((table, index) =>
                       <SquareTable
                         key={table._id}
-                        index={index}
                         status={table?.status}
                         tableNumber={table?.tableNumber}
                         onPress={() => {

@@ -31,6 +31,13 @@ input CreateNewTakeoutOrDeliveryInput {
 	business: ID!
 	phoneNumber: String!
 	name: String!
+	type: TakeoutDeliveryDineIn!
+}
+
+enum TakeoutDeliveryDineIn {
+	Takeout
+	Delivery
+	DineIn
 }
 
 input JoinTabForm {

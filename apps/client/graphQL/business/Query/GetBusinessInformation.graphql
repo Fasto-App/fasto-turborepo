@@ -4,56 +4,57 @@ query GetBusinessInformation {
 		name
 		description
 		picture
-		hoursOfOperation {
-			Friday {
-				isOpen
-				hours {
-					close
-					open
-				}
-			}
-			Monday {
-				isOpen
-				hours {
-					close
-					open
-				}
-			}
-			Saturday {
-				isOpen
-				hours {
-					close
-					open
-				}
-			}
-			Sunday {
-				isOpen
-				hours {
-					close
-					open
-				}
-			}
-			Thursday {
-				isOpen
-				hours {
-					close
-					open
-				}
-			}
-			Tuesday {
-				isOpen
-				hours {
-					close
-					open
-				}
-			}
-			Wednesday {
-				isOpen
-				hours {
-					close
-					open
-				}
-			}
-		}
+		country
+		# hoursOfOperation {
+		# 	Friday {
+		# 		isOpen
+		# 		hours {
+		# 			close
+		# 			open
+		# 		}
+		# 	}
+		# 	Monday {
+		# 		isOpen
+		# 		hours {
+		# 			close
+		# 			open
+		# 		}
+		# 	}
+		# 	Saturday {
+		# 		isOpen
+		# 		hours {
+		# 			close
+		# 			open
+		# 		}
+		# 	}
+		# 	Sunday {
+		# 		isOpen
+		# 		hours {
+		# 			close
+		# 			open
+		# 		}
+		# 	}
+		# 	Thursday {
+		# 		isOpen
+		# 		hours {
+		# 			close
+		# 			open
+		# 		}
+		# 	}
+		# 	Tuesday {
+		# 		isOpen
+		# 		hours {
+		# 			close
+		# 			open
+		# 		}
+		# 	}
+		# 	Wednesday {
+		# 		isOpen
+		# 		hours {
+		# 			close
+		# 			open
+		# 		}
+		# 	}
+		# }
 	}
 }

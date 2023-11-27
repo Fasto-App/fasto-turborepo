@@ -1,0 +1,3 @@
+mutation ShareQRCode($input: ShareQRCodeInput!) {
+	shareQRCode(input: $input)
+}

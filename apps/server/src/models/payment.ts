@@ -12,6 +12,9 @@ export class Payment {
   @prop()
   public tip!: number;
 
+  @prop()
+  public serviceFee!: number;
+
   @prop({ required: true })
   public patron!: Types.ObjectId;
 

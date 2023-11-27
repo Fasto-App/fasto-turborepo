@@ -12,5 +12,6 @@
 	"continue": "Continuar",
 	"guestName": "Nombre",
 	"phoneNumber": "Número de teléfono",
-	"totalGuests": "Total de invitados"
+	"totalGuests": "Total de invitados",
+	"waitForYourRequest": "Espere a que su pedido sea aceptado."
 }

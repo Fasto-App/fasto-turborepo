@@ -9,6 +9,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { Box } from 'native-base';
 
 ChartJS.register(
   CategoryScale,
@@ -27,7 +28,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Numbers os dishes per month',
+      text: 'Numbers os Orders per month',
     },
   },
 };
@@ -38,18 +39,21 @@ export const data = {
   labels,
   datasets: [
     {
-      label: 'Dataset 1',
+      label: 'Total Orders',
       data: labels.map(() => Math.round(Math.random() * 100)),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: labels.map(() => Math.round(Math.random() * 100)),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      backgroundColor: 'rgba(38, 42, 160, 0.5)',
     },
   ],
 };
 
 export function VerticalBar() {
-  return <Bar options={options} data={data} />;
+  return <Box borderWidth={0.5}
+    borderColor={"gray.200"}
+    shadow={"2"}
+    borderRadius={"md"}
+    bgColor={"white"}
+    p={2}
+    flex={1}
+  ><Bar options={options} data={data} />
+  </Box>;
 }

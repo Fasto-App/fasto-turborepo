@@ -1,10 +1,11 @@
 
 import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
-import { BusinessModel, OrderDetailModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
+import { BusinessModel, OrderDetailModel, ProductModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { MutationResolvers } from "../../../generated/graphql";
+import { updateProductQuantity } from "../helpers/helpers";
 
 // @ts-ignore
 const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (parent, { input }, { db }) => {
@@ -45,6 +46,8 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
 
+    await updateProductQuantity(foundCheckout, db)
+
     // update all the requests associated with this tab
     const foundRequests = await Request.find({ tab: foundTab?._id })
     if (foundRequests.length > 0) {
@@ -57,8 +60,9 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
     }
   }
 
-  foundPayment.save()
-  return await foundCheckout.save()
+  await Promise.all([foundPayment.save(), foundCheckout.save()])
+
+  return foundCheckout
 }
 
 // TODO I will probably going to have to re-do this
@@ -150,6 +154,8 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
       foundCheckout.payments = [payment._id]
       foundCheckout.splitType = "Full"
 
+      await updateProductQuantity(foundCheckout, db)
+
       await updateTabTableAndRequests()
 
       return await foundCheckout.save()
@@ -178,15 +184,21 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
   if (!foundCheckout || !foundUser) throw ApolloError('BadRequest')
   if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
 
+  // before creating the payment, we get the total of service fee
+  // tipe and taxes, and then add all of the to update the total value
+  const serviceFeeValue = getPercentageOfValue(foundCheckout.subTotal, foundCheckout.serviceFee || 0)
+  const tipValue = getPercentageOfValue(foundCheckout.subTotal, input.tip)
+
   foundCheckout.splitType = "Full"
   foundCheckout.tip = input.tip
-  foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, input.tip)
+  foundCheckout.total = foundCheckout.subTotal + serviceFeeValue + tipValue
 
   const payment = await Payment.create({
     checkout: foundCheckout._id,
     amount: foundCheckout?.total,
     patron: foundUser._id,
-    tip: foundCheckout?.tip,
+    tip: tipValue,
+    serviceFee: serviceFeeValue,
     discount: foundCheckout?.discount,
     splitType: "Full",
   })
@@ -208,13 +220,15 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
   const foundUsers = await User.find({ _id: { $in: input.selectedUsers } })
   const foundBusiness = await Business.findById(client?.business)
 
+  // TODO: this function is being used for both business and customer
   if (!foundBusiness?.stripeAccountId) throw ApolloError('Unauthorized', 'Business not configured to accept payments')
   if (!foundCheckout) throw ApolloError('BadRequest')
   if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
   if (foundUsers.length < 1) throw ApolloError('BadRequest', 'No users selected')
 
   const tipValue = getPercentageOfValue(foundCheckout.subTotal, input.tip)
-  const absoluteTotal = foundCheckout.subTotal + tipValue
+  const serviceFeeValue = getPercentageOfValue(foundCheckout.subTotal, foundCheckout.serviceFee ?? 0)
+  const absoluteTotal = foundCheckout.subTotal + tipValue + serviceFeeValue
 
   function updateCheckout() {
     if (!foundCheckout) throw ApolloError('BadRequest', "No checkout found")
@@ -226,12 +240,14 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
 
   switch (input.splitType) {
     case "Equally":
+      const totalEqually = absoluteTotal / foundUsers.length
       // for each user, create a payment
       for (const user of foundUsers) {
         const payment = await Payment.create({
           patron: user._id,
-          amount: absoluteTotal / foundUsers.length,
-          tip: input.tip,
+          amount: totalEqually,
+          tip: getPercentageOfValue(totalEqually, input.tip),
+          serviceFee: getPercentageOfValue(totalEqually, foundCheckout.serviceFee ?? 0),
           splitType: input.splitType,
           checkout: foundCheckout._id
         })
@@ -281,12 +297,15 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
       })
 
       // take the total from tab and split it equally among the selected users
-      const tipSplited = tipValue / foundUsers.length
+      // const tipSplited = tipValue / foundUsers.length
       const tabSplited = ordersByPatron.tab.subTotal / foundUsers.length
 
       // for each user, create a payment
       for (const user of foundUsers) {
         const individualTotal = ordersByPatron[user._id.toString()].subTotal ?? 0
+
+        // if there's an individuototal then calculate the service fee, tip and the taxes
+        const tipSplited = getPercentageOfValue(individualTotal, foundCheckout.tip || 0)
 
         if (individualTotal + tipSplited + tabSplited <= 0) return
 
@@ -295,7 +314,8 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
           patron: user._id,
           amount: individualTotal + tipSplited + tabSplited,
           splitType: input.splitType,
-          tip: input.tip,
+
+          tip: tipSplited, // tip should be the total to be paid times the percentage
         })
 
         foundCheckout.payments?.push(payment._id)
@@ -330,9 +350,6 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
 
       updateCheckout()
       return foundCheckout.save()
-
-      break;
-
     default:
       throw ApolloError('BadRequest', 'Split type not supported')
   }

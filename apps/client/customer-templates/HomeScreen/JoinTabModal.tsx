@@ -2,9 +2,7 @@ import { useRouter } from 'next/router'
 import React, { useCallback } from 'react'
 import { Box, Button, Heading } from 'native-base'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
-import { QRCodeReader } from './QRCodeReader'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { JoinTabForm, joinTabSchema } from 'app-helpers'
 import { useForm } from 'react-hook-form'
 import { ControlledForm, SideBySideInputConfig } from '../../components/ControlledForm'
 import { useRequestJoinTabMutation } from '../../gen/generated'
@@ -14,6 +12,13 @@ import { showToast } from '../../components/showToast'
 import { getCause } from '../../apollo-client/ErrorLink'
 import { useTranslation } from 'next-i18next'
 import { getCustomerName, getCustomerPhone, setCustomerName, setCustomerPhone } from '../../localStorage/customerStorage'
+import { z } from 'zod'
+
+export const joinTabSchema = z.object({
+  name: z.string().min(3, { message: 'error.nameRequired' }),
+  phoneNumber: z.string().min(6, { message: 'error.required' }),
+})
+export type JoinTabForm = z.infer<typeof joinTabSchema>
 
 type JoinTabModalProps = {
   isOpen: boolean

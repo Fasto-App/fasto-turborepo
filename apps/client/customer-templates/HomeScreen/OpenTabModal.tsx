@@ -12,6 +12,7 @@ import { setClientCookies } from '../../cookies'
 import { customerRoute } from 'fasto-route'
 import { useTranslation } from 'next-i18next'
 import { getCustomerName, getCustomerPhone, setCustomerName, setCustomerPhone } from '../../localStorage/customerStorage'
+import { showToast } from '../../components/showToast'
 
 const array1to5 = Array.from({ length: 5 }, (_, i) => i + 1).map(
   (i) => ({ name: i.toString(), _id: i.toString() })
@@ -72,6 +73,8 @@ export const OpenTabModal = ({ isOpen, setModalVisibility }: OpenTabModalProps) 
       if (!data?.openTabRequest || typeof businessId !== "string") throw new Error("Tab Request Error")
 
       setClientCookies(businessId, data.openTabRequest)
+
+      showToast({ message: t("waitForYourRequest") })
 
       router.push({
         pathname: customerRoute['/customer/[businessId]/menu'],
