@@ -217,6 +217,7 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
         }
       }
     })
+    setIsModalOpen()
   }, [requestCloseTabMutation, tabId])
 
   if (!tabId) return null
@@ -248,6 +249,7 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
                 colorScheme={"primary"}
                 width={"100px"}
                 onPress={requestCloseTab}
+                
                 isLoading={loadingCloseTab}
               >
                 {t("closeTab")}
