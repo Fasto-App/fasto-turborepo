@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useState } from "react"
 import { Avatar, Box, Button, Center, HStack, Heading, Link, Skeleton, Text, VStack } from "native-base"
 import { BusinessType, GetIsConnectdQuery, IsoCountry, useConnectExpressPaymentMutation, useCreateStripeAccessLinkLazyQuery, useGenerateStripePayoutMutation, useGetBusinessInformationQuery, useGetIsConnectdQuery } from "../../gen/generated"
 import { showToast } from "../../components/showToast"
@@ -9,6 +9,8 @@ import { OrangeBox } from "../../components/OrangeBox"
 import { z } from "zod"
 import { parseToCurrency, typedKeys } from "app-helpers"
 import { useTranslation } from "next-i18next"
+import { BottomCheckoutTableWithModal } from "../OrderScreen"
+import { UpperSection } from "../../components/UpperSection"
 
 const usePaymentFormHook = () => {
   return useForm({
@@ -67,7 +69,6 @@ const ConnectPaymentForm = () => {
     flex={1} space={4} borderWidth={1} maxW={700} p={8} borderColor={"gray.300"}
     borderRadius={"md"}
   >
-
     <Heading textAlign={"center"}>{t("setupYourPayments")}</Heading>
     <ControlledForm Config={PaymentConfig} control={control} formState={formState} />
     <Box borderRadius={"lg"}>
@@ -87,25 +88,47 @@ const ConnectPaymentForm = () => {
 }
 
 export const PaymentsScreen = () => {
+  const [modalData, setModalData] = useState({ isOpen: false, checkoutId: "" })
+
   const { data, loading, error } = useGetIsConnectdQuery()
 
   return (
     <Box flex={1}>
       <OrangeBox />
-      <Center flex={1} py={6} px={8} justifyContent={"space-between"} >
-        {error ? <Text>Error</Text> :
-          typeof data === "undefined" || loading ? <LoadingPDP /> :
-            data.getIsConnected ?
+      {error ? <Text>Error</Text> :
+        typeof data === "undefined" || loading ?
+          <Center
+            flex={1}
+            py={6}
+            px={8}
+            justifyContent={"space-between"} >
+            <LoadingPDP />
+          </Center>
+          :
+          data.getIsConnected ?
+            <VStack flex={1} p={4} space={4}>
               <Payouts
                 balanceAvailable={data.getIsConnected.balanceAvailable}
                 balanceCurrency={data.getIsConnected.balanceCurrency}
                 balancePending={data.getIsConnected.balancePending}
                 name={data.getIsConnected.name}
                 url={data.getIsConnected.url}
-              /> :
+              />
+
+              <BottomCheckoutTableWithModal
+                setModalData={setModalData}
+                modalData={modalData}
+              />
+            </VStack>
+            :
+            <Center
+              flex={1}
+              py={6}
+              px={8}
+              justifyContent={"space-between"} >
               <ConnectPaymentForm />
-        }
-      </Center>
+            </Center>
+      }
     </Box>
   )
 }

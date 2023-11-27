@@ -50,6 +50,7 @@ import { RequestResolver, RequestResolverMutation, RequestResolverQuery, Request
 import { CartItemResolver, CartItemResolverMutation, CartItemResolverQuery } from './CartItemResolver';
 import { PaymentMutation } from './Payments';
 import { PaymentQuery } from './Payments/PaymentQuery';
+import { CheckoutModel } from '../../models/checkout';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -98,6 +99,13 @@ export const resolvers = {
   Checkout: {
     payments: CheckoutResolver.payments,
     orders: CheckoutResolver.orders,
+  },
+  Payment: {
+    checkout: async (parent: any, _args: any, { db }: any) => {
+      console.log(parent)
+      console.log(parent._id)
+      return await CheckoutModel(db).findById(parent.checkout);
+    }
   },
   Product: {
     category: ProductResolver.getCategoryByProduct,

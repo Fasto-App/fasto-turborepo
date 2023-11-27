@@ -24,5 +24,6 @@
 	"toAllocateAdditionalFunds": "*To allocate additional funds, please enter a higher tip value",
 	"errorRequestingfullCheckout": "Error requesting full checkout",
 	"successRequestingfullCheckout": "Success requesting full checkout",
-	"payNow": "Pay Now"
+	"payNow": "Pay Now",
+	"serviceFee": "Service Fee"
 }

@@ -120,12 +120,6 @@ export function AreaChart() {
           7 Days
         </Button>
       </Stack>
-      <Text fontSize={"md"}>
-        {`Total: `}
-        <Text fontSize={"md"} bold>
-          {parseToCurrency(checkoutData.getPaidCheckoutByDate.total)}
-        </Text>
-      </Text>
       <Line options={options} data={data} />
     </Border>
   )

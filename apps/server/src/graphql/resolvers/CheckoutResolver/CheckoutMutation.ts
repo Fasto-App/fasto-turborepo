@@ -184,15 +184,21 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
   if (!foundCheckout || !foundUser) throw ApolloError('BadRequest')
   if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
 
+  // before creating the payment, we get the total of service fee
+  // tipe and taxes, and then add all of the to update the total value
+  const serviceFeeValue = getPercentageOfValue(foundCheckout.subTotal, foundCheckout.serviceFee || 0)
+  const tipValue = getPercentageOfValue(foundCheckout.subTotal, input.tip)
+
   foundCheckout.splitType = "Full"
   foundCheckout.tip = input.tip
-  foundCheckout.total = foundCheckout.subTotal + getPercentageOfValue(foundCheckout.subTotal, input.tip)
+  foundCheckout.total = foundCheckout.subTotal + serviceFeeValue + tipValue
 
   const payment = await Payment.create({
     checkout: foundCheckout._id,
     amount: foundCheckout?.total,
     patron: foundUser._id,
-    tip: foundCheckout?.tip,
+    tip: tipValue,
+    serviceFee: serviceFeeValue,
     discount: foundCheckout?.discount,
     splitType: "Full",
   })
@@ -221,7 +227,8 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
   if (foundUsers.length < 1) throw ApolloError('BadRequest', 'No users selected')
 
   const tipValue = getPercentageOfValue(foundCheckout.subTotal, input.tip)
-  const absoluteTotal = foundCheckout.subTotal + tipValue
+  const serviceFeeValue = getPercentageOfValue(foundCheckout.subTotal, foundCheckout.serviceFee ?? 0)
+  const absoluteTotal = foundCheckout.subTotal + tipValue + serviceFeeValue
 
   function updateCheckout() {
     if (!foundCheckout) throw ApolloError('BadRequest', "No checkout found")
@@ -233,12 +240,14 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
 
   switch (input.splitType) {
     case "Equally":
+      const totalEqually = absoluteTotal / foundUsers.length
       // for each user, create a payment
       for (const user of foundUsers) {
         const payment = await Payment.create({
           patron: user._id,
-          amount: absoluteTotal / foundUsers.length,
-          tip: input.tip,
+          amount: totalEqually,
+          tip: getPercentageOfValue(totalEqually, input.tip),
+          serviceFee: getPercentageOfValue(totalEqually, foundCheckout.serviceFee ?? 0),
           splitType: input.splitType,
           checkout: foundCheckout._id
         })
@@ -288,12 +297,15 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
       })
 
       // take the total from tab and split it equally among the selected users
-      const tipSplited = tipValue / foundUsers.length
+      // const tipSplited = tipValue / foundUsers.length
       const tabSplited = ordersByPatron.tab.subTotal / foundUsers.length
 
       // for each user, create a payment
       for (const user of foundUsers) {
         const individualTotal = ordersByPatron[user._id.toString()].subTotal ?? 0
+
+        // if there's an individuototal then calculate the service fee, tip and the taxes
+        const tipSplited = getPercentageOfValue(individualTotal, foundCheckout.tip || 0)
 
         if (individualTotal + tipSplited + tabSplited <= 0) return
 
@@ -302,7 +314,8 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
           patron: user._id,
           amount: individualTotal + tipSplited + tabSplited,
           splitType: input.splitType,
-          tip: input.tip,
+
+          tip: tipSplited, // tip should be the total to be paid times the percentage
         })
 
         foundCheckout.payments?.push(payment._id)

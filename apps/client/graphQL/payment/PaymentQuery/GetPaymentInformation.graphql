@@ -1,0 +1,16 @@
+query GetPaymentInformation($input: GetPayment!) {
+	getPaymentInformation(input: $input) {
+		_id
+		amount
+		patron
+		tip
+		splitType
+		discount
+		paid
+		checkout {
+			_id
+			subTotal
+		}
+		serviceFee
+	}
+}

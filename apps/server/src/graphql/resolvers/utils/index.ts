@@ -2,6 +2,7 @@ import * as jose from "jose"
 import * as z from "zod"
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended"
 import { ClientContext, UserContext } from "../types"
+import { DateType } from "../../../generated/graphql"
 
 export async function tokenSigning(id: string, email: string, business?: string) {
   if (!process.env.TOKEN_SECRET) throw ApolloError('InternalServerError')
@@ -88,6 +89,30 @@ export const validateEmail = (email: string) => {
 
   return result.success
 };
+
+export const getDaysAgo = (input: DateType) => {
+  let days;
+
+  switch (input) {
+    case DateType.SevenDays:
+      days = 7
+      break;
+    case DateType.ThirtyDays:
+      days = 30
+      break;
+    case DateType.NinetyDays:
+      days = 90
+      break;
+    case DateType.AllTime:
+      days = 0
+      break
+  }
+
+  const daysAgo = new Date();
+  daysAgo.setDate(daysAgo.getDate() - days);
+
+  return { daysAgo, days }
+}
 
 
 

@@ -5,12 +5,14 @@ export const typedValues = <T extends {}>(obj?: T) => Object.values(obj ?? {}) a
 export const FIXED_POINT_FACTOR_PERCENTAGE = 10000;
 const FIXED_POINT_FACTOR_CURRENCY = 100;
 
+export const SERVICE_FEE = 201
+
 const getCurrency = (str?: string | null): "BRL" | "USD" => {
-  if (str?.startsWith("B")) return "BRL"
+  if (str?.toUpperCase().startsWith("B")) return "BRL"
   return "USD"
 }
 
-export const parseToCurrency = (number?: number, currency?: string | null) => {
+export const parseToCurrency = (number?: number | null, currency?: string | null) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: getCurrency(currency),
@@ -32,8 +34,8 @@ export const parseToFixedPoint = (percentage?: number) => {
 }
 
 // get percentage of a value
-export const getPercentageOfValue = (value?: number, percentage?: number) => {
-  return (Math.floor((value ?? 0) * ((percentage ?? 0)) / FIXED_POINT_FACTOR_PERCENTAGE));
+export const getPercentageOfValue = (value: number, percentage: number) => {
+  return Math.trunc((Math.floor(value * percentage) / FIXED_POINT_FACTOR_PERCENTAGE));
 }
 
 // get the percentage value with the fixed-point value

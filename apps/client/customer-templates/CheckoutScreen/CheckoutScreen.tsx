@@ -131,21 +131,24 @@ export const CheckoutScreen = () => {
   return (
     <Box flex={1}>
       <PastOrdersList />
-      <Divider marginY={2} />
-      {userAddress ? <VStack paddingX={"4"} paddingY={"2"} space={"2"} >
-        <Text pb={"2"} bold fontSize={"lg"}>Delivery Info</Text>
-        <Text fontSize={"lg"}>{clientData?.getClientSession.user.name}</Text>
-        <Text fontSize={"lg"}>{userAddress}</Text>
-        <Pressable
-          isDisabled={!!splitType}
-          _disabled={{ opacity: 0.6 }}
-          onPress={() => setUpdateAddressModalOpen(true)}>
-          <Text fontSize={"lg"} color={"blue.500"}>
-            Edit Address
-          </Text>
-        </Pressable>
-
-      </VStack> : null}
+      {userAddress ?
+        <>
+          <Divider marginY={2} />
+          <VStack paddingX={"4"} paddingY={"2"} space={"2"} >
+            <Text pb={"2"} bold fontSize={"lg"}>Delivery Info</Text>
+            <Text fontSize={"lg"}>{clientData?.getClientSession.user.name}</Text>
+            <Text fontSize={"lg"}>{userAddress}</Text>
+            <Pressable
+              isDisabled={!!splitType}
+              _disabled={{ opacity: 0.6 }}
+              onPress={() => setUpdateAddressModalOpen(true)}>
+              <Text fontSize={"lg"} color={"blue.500"}>
+                Edit Address
+              </Text>
+            </Pressable>
+          </VStack>
+        </>
+        : null}
       {!splitType ?
         <Box>
           <OrderTotals />
@@ -219,18 +222,19 @@ export const OrderTotals = () => {
   const { t } = useTranslation('customerCheckout')
   const { absoluteTotal, tipCalculation } = useComputedChekoutStore()
 
-  const { setSelectedTip, selectedTip, total, setCustomTip, customTip, setTotal } = useCheckoutStore(state => ({
+  const { setSelectedTip, selectedTip, total, setCustomTip, customTip, setTotal, setServiceFeeValue } = useCheckoutStore(state => ({
     setSelectedTip: state.setSelectedTip,
     selectedTip: state.selectedTip,
     total: state.total,
     setCustomTip: state.setCustomTip,
     customTip: state.customTip,
     setTotal: state.setTotal,
+    setServiceFeeValue: state.setServiceFeeValue
   }),
     shallow
   )
 
-  const { loading } = useGetCheckoutByIdQuery({
+  const { loading, data } = useGetCheckoutByIdQuery({
     skip: !checkoutId,
     pollInterval: 1000 * 60,
     variables: {
@@ -248,10 +252,12 @@ export const OrderTotals = () => {
       // on success set the total on the zustand store
       if (data.getCheckoutByID.subTotal) {
         setTotal(data.getCheckoutByID.subTotal)
+        setServiceFeeValue(data.getCheckoutByID.serviceFeeValue)
       }
     },
   })
 
+  const serviceFeeValue = data?.getCheckoutByID.serviceFeeValue || 0
 
   return (
     <Box>
@@ -270,6 +276,10 @@ export const OrderTotals = () => {
           <HStack justifyContent={"space-between"} pt={4} px={4}>
             <Text fontSize={"lg"}>{t("taxes")}</Text>
             <Text fontSize={"lg"}>{parseToCurrency(0)}</Text>
+          </HStack>
+          <HStack justifyContent={"space-between"} pt={4} px={4}>
+            <Text fontSize={"lg"}>{t("serviceFee")}</Text>
+            <Text fontSize={"lg"}>{parseToCurrency(serviceFeeValue)}</Text>
           </HStack>
           <HStack justifyContent={"space-between"} pt={4} px={4}>
             <Text fontSize={"lg"}>{t("tip")}</Text>
@@ -309,7 +319,7 @@ export const OrderTotals = () => {
 
       <HStack justifyContent={"space-between"} pt={2} px={4}>
         <Text fontSize={"xl"} bold>{t('totalAmount')}</Text>
-        <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
+        <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal + serviceFeeValue)}</Text>
       </HStack>
     </Box>
   )

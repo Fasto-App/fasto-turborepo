@@ -1,3 +1,4 @@
 {
-	"payNow": "Pay Now"
+	"payNow": "Pay Now",
+	"placedOrders": "See Placed Orders {{number}}"
 }

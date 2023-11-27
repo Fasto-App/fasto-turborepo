@@ -60,7 +60,7 @@ const Subscription = ({ signedUpSub }: { signedUpSub: GetSignUpSubscriptionsQuer
         {`${t("finish")}: ${format((signedUpSub.current_period_end * 1000), "PPPP", getLocale(router.locale))}`}
       </Text>
 
-      <Box pt={4}>
+      <Box w={"40"}>
         <DeleteAlert
           deleteItem={() => {
             cancelSubscription({

@@ -206,13 +206,12 @@ const getProductByOrderDetails = async (parent: any, args: any, { db }: Context)
     return product;
 }
 
+const getMostSellingProducts = async (par: any, args: any, { db, business }: any) => {
+    const foundProducts = await ProductModel(db).find({ business }).limit(5)
 
-
-
-
-type GetProductByIDInput = {
-    productID: string
+    return foundProducts
 }
+
 
 type Parent = {
     id: string
@@ -222,6 +221,7 @@ type Parent = {
 const ProductResolverQuery = {
     getAllProductsByBusinessID,
     getProductByID,
+    getMostSellingProducts
 }
 const ProductResolverMutation = {
     createProduct,

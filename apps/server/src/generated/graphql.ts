@@ -149,6 +149,7 @@ export type Checkout = {
   orders: Array<Maybe<OrderDetail>>;
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
+  serviceFee: Scalars['Float'];
   splitType?: Maybe<SplitType>;
   status: CheckoutStatusKeys;
   subTotal: Scalars['Float'];
@@ -361,6 +362,10 @@ export type GetMenuById = {
 
 export type GetPaidCheckout = {
   type: DateType;
+};
+
+export type GetPayment = {
+  payment: Scalars['ID'];
 };
 
 export type GetSubsInput = {
@@ -874,6 +879,12 @@ export type OrderDetailInput = {
   quantity?: InputMaybe<Scalars['Int']>;
 };
 
+export type OrderDetailsByDate = {
+  __typename?: 'OrderDetailsByDate';
+  _id: Scalars['ID'];
+  count: Scalars['Int'];
+};
+
 export enum OrderStatus {
   Closed = 'Closed',
   Delivered = 'Delivered',
@@ -939,6 +950,7 @@ export type Query = {
   getAllMenus: Array<Menu>;
   getAllMenusByBusinessID: Array<Menu>;
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
+  getAllOrderDetailsByDate?: Maybe<Array<Maybe<OrderDetailsByDate>>>;
   getAllOrderDetailsByOrderID?: Maybe<Array<Maybe<OrderDetail>>>;
   getAllProductsByBusinessID: Array<Maybe<Product>>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
@@ -956,10 +968,12 @@ export type Query = {
   getGoogleAutoComplete: Array<AutoCompleteRes>;
   getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
+  getMostSellingProducts?: Maybe<Array<Maybe<Product>>>;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
+  getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
   getProductByID?: Maybe<Product>;
   getSignUpSubscription?: Maybe<StripeSubscription>;
@@ -1027,6 +1041,11 @@ export type QueryGetOrdersByCheckoutArgs = {
 
 export type QueryGetPaidCheckoutByDateArgs = {
   input: GetPaidCheckout;
+};
+
+
+export type QueryGetPaymentInformationArgs = {
+  input: GetPayment;
 };
 
 
@@ -1477,6 +1496,7 @@ export type ResolversTypes = {
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
   GetPaidCheckout: GetPaidCheckout;
+  GetPayment: GetPayment;
   GetSubsInput: GetSubsInput;
   GetTabRequestInput: GetTabRequestInput;
   Hours: ResolverTypeWrapper<Hours>;
@@ -1497,6 +1517,7 @@ export type ResolversTypes = {
   OpenTabRequestInput: OpenTabRequestInput;
   OrderDetail: ResolverTypeWrapper<OrderDetail>;
   OrderDetailInput: OrderDetailInput;
+  OrderDetailsByDate: ResolverTypeWrapper<OrderDetailsByDate>;
   OrderStatus: OrderStatus;
   PaidCheckoutRes: ResolverTypeWrapper<PaidCheckoutRes>;
   Payment: ResolverTypeWrapper<Payment>;
@@ -1601,6 +1622,7 @@ export type ResolversParentTypes = {
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
   GetPaidCheckout: GetPaidCheckout;
+  GetPayment: GetPayment;
   GetSubsInput: GetSubsInput;
   GetTabRequestInput: GetTabRequestInput;
   Hours: Hours;
@@ -1620,6 +1642,7 @@ export type ResolversParentTypes = {
   OpenTabRequestInput: OpenTabRequestInput;
   OrderDetail: OrderDetail;
   OrderDetailInput: OrderDetailInput;
+  OrderDetailsByDate: OrderDetailsByDate;
   PaidCheckoutRes: PaidCheckoutRes;
   Payment: Payment;
   PaymentIntent: PaymentIntent;
@@ -1765,6 +1788,7 @@ export type CheckoutResolvers<ContextType = Context, ParentType extends Resolver
   orders?: Resolver<Array<Maybe<ResolversTypes['OrderDetail']>>, ParentType, ContextType>;
   paid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   payments?: Resolver<Array<Maybe<ResolversTypes['Payment']>>, ParentType, ContextType>;
+  serviceFee?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   splitType?: Resolver<Maybe<ResolversTypes['SplitType']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['CheckoutStatusKeys'], ParentType, ContextType>;
   subTotal?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1936,6 +1960,12 @@ export type OrderDetailResolvers<ContextType = Context, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type OrderDetailsByDateResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OrderDetailsByDate'] = ResolversParentTypes['OrderDetailsByDate']> = {
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PaidCheckoutResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaidCheckoutRes'] = ResolversParentTypes['PaidCheckoutRes']> = {
   data?: Resolver<Array<Maybe<ResolversTypes['AveragePerDay']>>, ParentType, ContextType>;
   sortBy?: Resolver<ResolversTypes['DateType'], ParentType, ContextType>;
@@ -1993,6 +2023,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getAllMenus?: Resolver<Array<ResolversTypes['Menu']>, ParentType, ContextType>;
   getAllMenusByBusinessID?: Resolver<Array<ResolversTypes['Menu']>, ParentType, ContextType>;
   getAllOpenTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
+  getAllOrderDetailsByDate?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderDetailsByDate']>>>, ParentType, ContextType>;
   getAllOrderDetailsByOrderID?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderDetail']>>>, ParentType, ContextType, RequireFields<QueryGetAllOrderDetailsByOrderIdArgs, 'orderID'>>;
   getAllProductsByBusinessID?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType>;
   getAllTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
@@ -2010,10 +2041,12 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getGoogleAutoComplete?: Resolver<Array<ResolversTypes['AutoCompleteRes']>, ParentType, ContextType, RequireFields<QueryGetGoogleAutoCompleteArgs, 'input'>>;
   getIsConnected?: Resolver<Maybe<ResolversTypes['Balance']>, ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
+  getMostSellingProducts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Product']>>>, ParentType, ContextType>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
   getOrdersByCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;
   getOrdersBySession?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   getPaidCheckoutByDate?: Resolver<Maybe<ResolversTypes['PaidCheckoutRes']>, ParentType, ContextType, RequireFields<QueryGetPaidCheckoutByDateArgs, 'input'>>;
+  getPaymentInformation?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<QueryGetPaymentInformationArgs, 'input'>>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
   getSignUpSubscription?: Resolver<Maybe<ResolversTypes['StripeSubscription']>, ParentType, ContextType>;
@@ -2163,6 +2196,7 @@ export type Resolvers<ContextType = Context> = {
   Menu?: MenuResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   OrderDetail?: OrderDetailResolvers<ContextType>;
+  OrderDetailsByDate?: OrderDetailsByDateResolvers<ContextType>;
   PaidCheckoutRes?: PaidCheckoutResResolvers<ContextType>;
   Payment?: PaymentResolvers<ContextType>;
   PaymentIntent?: PaymentIntentResolvers<ContextType>;

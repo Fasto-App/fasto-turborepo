@@ -45,7 +45,8 @@ In order to push your changes to github you will need to checkout and create you
 
     - Go to the [fasto-turborepo](https://github.com/Fasto-App/fasto-turborepo).
     - Click on the "Pull Request" button.
-    - Select the branch with your changes.
+    - Select the branch "development" in the dropdown menu, it will display "base: development" in the dropdown menu when done correctly. ⚠️ DO NOT SELECT THE MAIN BRANCH.⚠️
+    - Select the branch with your changes from the dropdown menu. It will display "compare: your-branch" if done correctly in the dropdown menu. For example: "compare: AS/FA-338_README"
     - Provide a descriptive title and comment explaining your changes and fill out the template.
 
 6. **Review Process:**

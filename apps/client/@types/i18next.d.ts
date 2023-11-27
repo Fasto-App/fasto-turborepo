@@ -1,3 +1,4 @@
+import { BusinessDashboard } from './../business-templates/Dashboard/BusinessDashboard';
 // import the original type declarations
 import "i18next";
 
@@ -23,6 +24,7 @@ import common from "../public/locales/en/common.json";
 import landingPage from "../public/locales/en/landingPage.json"
 import customerPayment from "../public/locales/en/customerPayment.json";
 import businessSubscriptions from "../public/locales/en/businessSubscriptions.json"
+import businessDashboard from "../public/locales/en/businessDashboard.json"
 
 declare module "i18next" {
   // Extend CustomTypeOptions
@@ -53,6 +55,7 @@ declare module "i18next" {
       businessPayments: typeof businessPayments;
       landingPage: typeof landingPage;
       businessSubscriptions: typeof businessSubscriptions;
+      businessDashboard: typeof businessDashboard
     };
   }
 }

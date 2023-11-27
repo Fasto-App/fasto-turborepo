@@ -1,6 +1,7 @@
 extend type Query {
 	getAllProductsByBusinessID: [Product]!
 	getProductByID(productID: ID!): Product
+	getMostSellingProducts: [Product]
 }
 
 extend type Mutation {

@@ -45,6 +45,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
       businessId: foundBusiness._id,
       checkoutId: foundCheckout._id,
       paymentId: foundPayment._id,
+      serviceFee: foundPayment.serviceFee,
       stripeAccount: foundBusiness.stripeAccountId,
       description,
       country: foundAddress?.country,
