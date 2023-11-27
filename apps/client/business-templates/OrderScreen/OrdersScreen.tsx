@@ -1,6 +1,6 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import { OrangeBox } from '../../components/OrangeBox'
-import { Box, Divider, HStack, Heading, Text, VStack, Pressable, ScrollView, Badge, FlatList } from 'native-base'
+import { Box, Divider, HStack, Heading, Text, VStack, Pressable, ScrollView, Badge, FlatList, Checkbox } from 'native-base'
 import { UpperSection } from '../../components/UpperSection'
 import { FDSSelect } from '../../components/FDSSelect'
 import { BottomSection } from '../../components/BottomSection'
@@ -50,15 +50,17 @@ type OrderDetailsProps = {
 }
 
 const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress, onDelete }: OrderDetailsProps) => {
+  console.log(_id)
   return (
     <HStack alignItems={"center"} >
-      <Pressable p={2}
+      {/* <Pressable p={2}
         borderRadius={"md"}
         _hover={{ backgroundColor: "danger.100" }}
         onPress={onDelete}
       >
         <Icon type='TrashCan' size={"1.5em"} />
-      </Pressable>
+      </Pressable> */}
+      <Checkbox value={_id} accessibilityLabel={total} onChange={onDelete} />
       <Pressable _hover={{ backgroundColor: "secondary.100" }} onPress={onPress} flex={1}>
         <HStack justifyContent={"space-between"} py={2}>
           <TableData>{_id}</TableData>
@@ -128,7 +130,16 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
 }) => {
   const router = useRouter()
   const { t } = useTranslation("businessOrders")
-  const { data, loading, error } = useGetCheckoutsByBusinessQuery()
+  const { data, loading, error } = useGetCheckoutsByBusinessQuery({
+    // the backend should provide no more than 50 checkouts
+    variables: { page: 1, pageSize: 10 },
+  })
+
+  const [checkoutObj, setCheckoutObj] = useState<{ [key: string]: boolean }>({})
+
+  // useEffect(() => {
+  //   console.log("Data has changed");
+  // }, [data?.getCheckoutsByBusiness]);
 
   return <BottomSection>
     {loading ? <LoadingItems /> :
@@ -148,7 +159,12 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
                 total={parseToCurrency(checkout.total)}
                 status={t(CheckoutStatusKeys[checkout.status])}
                 colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
-                onDelete={() => console.log("deleting Order")}
+                onDelete={() => {
+                  setCheckoutObj({
+                    ...checkoutObj,
+                    [checkout._id]: Boolean(!(checkoutObj?.[checkout._id]))
+                  })
+                }}
                 onPress={() => {
                   setModalData({
                     checkoutId: checkout._id,

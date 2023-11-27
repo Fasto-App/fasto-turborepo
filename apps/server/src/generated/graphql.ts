@@ -56,7 +56,7 @@ export type AutoCompleteRes = {
 export type AveragePerDay = {
   __typename?: 'AveragePerDay';
   _id: Scalars['String'];
-  totalAmount: Scalars['Int'];
+  totalAmount: Scalars['Float'];
 };
 
 export type Balance = {
@@ -150,12 +150,14 @@ export type Checkout = {
   paid: Scalars['Boolean'];
   payments: Array<Maybe<Payment>>;
   serviceFee: Scalars['Float'];
+  serviceFeeValue: Scalars['Float'];
   splitType?: Maybe<SplitType>;
   status: CheckoutStatusKeys;
   subTotal: Scalars['Float'];
   tab: Scalars['ID'];
   tax: Scalars['Float'];
   tip?: Maybe<Scalars['Float']>;
+  tipValue?: Maybe<Scalars['Float']>;
   total: Scalars['Float'];
   totalPaid: Scalars['Float'];
 };
@@ -896,16 +898,18 @@ export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
   sortBy: DateType;
-  total: Scalars['Int'];
+  total: Scalars['Float'];
 };
 
 export type Payment = {
   __typename?: 'Payment';
   _id: Scalars['ID'];
   amount: Scalars['Float'];
+  checkout: Checkout;
   discount?: Maybe<Scalars['Float']>;
   paid: Scalars['Boolean'];
   patron: Scalars['ID'];
+  serviceFee?: Maybe<Scalars['Float']>;
   splitType?: Maybe<SplitType>;
   tip: Scalars['Float'];
 };
@@ -1011,6 +1015,12 @@ export type QueryGetCategoryByIdArgs = {
 
 export type QueryGetCheckoutByIdArgs = {
   input: GetById;
+};
+
+
+export type QueryGetCheckoutsByBusinessArgs = {
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
@@ -1714,7 +1724,7 @@ export type AutoCompleteResResolvers<ContextType = Context, ParentType extends R
 
 export type AveragePerDayResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AveragePerDay'] = ResolversParentTypes['AveragePerDay']> = {
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  totalAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalAmount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1789,12 +1799,14 @@ export type CheckoutResolvers<ContextType = Context, ParentType extends Resolver
   paid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   payments?: Resolver<Array<Maybe<ResolversTypes['Payment']>>, ParentType, ContextType>;
   serviceFee?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  serviceFeeValue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   splitType?: Resolver<Maybe<ResolversTypes['SplitType']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['CheckoutStatusKeys'], ParentType, ContextType>;
   subTotal?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   tab?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   tax?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   tip?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  tipValue?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalPaid?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1969,16 +1981,18 @@ export type OrderDetailsByDateResolvers<ContextType = Context, ParentType extend
 export type PaidCheckoutResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaidCheckoutRes'] = ResolversParentTypes['PaidCheckoutRes']> = {
   data?: Resolver<Array<Maybe<ResolversTypes['AveragePerDay']>>, ParentType, ContextType>;
   sortBy?: Resolver<ResolversTypes['DateType'], ParentType, ContextType>;
-  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PaymentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Payment'] = ResolversParentTypes['Payment']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  checkout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType>;
   discount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   paid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   patron?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  serviceFee?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   splitType?: Resolver<Maybe<ResolversTypes['SplitType']>, ParentType, ContextType>;
   tip?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2034,7 +2048,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getCartItemsPerTab?: Resolver<Array<ResolversTypes['CartItem']>, ParentType, ContextType>;
   getCategoryByID?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoryByIdArgs, 'id'>>;
   getCheckoutByID?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetCheckoutByIdArgs, 'input'>>;
-  getCheckoutsByBusiness?: Resolver<Array<ResolversTypes['Checkout']>, ParentType, ContextType>;
+  getCheckoutsByBusiness?: Resolver<Array<ResolversTypes['Checkout']>, ParentType, ContextType, RequireFields<QueryGetCheckoutsByBusinessArgs, 'page' | 'pageSize'>>;
   getClientInformation?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   getClientMenu?: Resolver<Maybe<ResolversTypes['Menu']>, ParentType, ContextType, RequireFields<QueryGetClientMenuArgs, 'input'>>;
   getClientSession?: Resolver<ResolversTypes['ClientSession'], ParentType, ContextType>;

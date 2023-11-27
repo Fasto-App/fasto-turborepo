@@ -1018,6 +1018,12 @@ export type QueryGetCheckoutByIdArgs = {
 };
 
 
+export type QueryGetCheckoutsByBusinessArgs = {
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+
 export type QueryGetClientMenuArgs = {
   input: GetMenu;
 };
@@ -1545,10 +1551,13 @@ export type GetCheckoutByIdQueryVariables = Exact<{
 
 export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, serviceFee: number, serviceFeeValue: number, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tipValue?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null, paid: boolean } | null> } };
 
-export type GetCheckoutsByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCheckoutsByBusinessQueryVariables = Exact<{
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+}>;
 
 
-export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string }> };
+export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, serviceFee: number, serviceFeeValue: number, tip?: number | null, tipValue?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, splitType?: SplitType | null, created_date: string }> };
 
 export type GetOrdersByCheckoutQueryVariables = Exact<{
   input: GetById;
@@ -3013,19 +3022,23 @@ export type GetCheckoutByIdQueryHookResult = ReturnType<typeof useGetCheckoutByI
 export type GetCheckoutByIdLazyQueryHookResult = ReturnType<typeof useGetCheckoutByIdLazyQuery>;
 export type GetCheckoutByIdQueryResult = Apollo.QueryResult<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>;
 export const GetCheckoutsByBusinessDocument = gql`
-    query GetCheckoutsByBusiness {
-  getCheckoutsByBusiness {
+    query GetCheckoutsByBusiness($page: Int!, $pageSize: Int!) {
+  getCheckoutsByBusiness(page: $page, pageSize: $pageSize) {
     _id
     business
     tab
     status
     paid
     subTotal
+    serviceFee
+    serviceFeeValue
     tip
+    tipValue
     discount
     tax
     total
     totalPaid
+    splitType
     created_date
   }
 }
@@ -3043,10 +3056,12 @@ export const GetCheckoutsByBusinessDocument = gql`
  * @example
  * const { data, loading, error } = useGetCheckoutsByBusinessQuery({
  *   variables: {
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
  *   },
  * });
  */
-export function useGetCheckoutsByBusinessQuery(baseOptions?: Apollo.QueryHookOptions<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>) {
+export function useGetCheckoutsByBusinessQuery(baseOptions: Apollo.QueryHookOptions<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>(GetCheckoutsByBusinessDocument, options);
       }

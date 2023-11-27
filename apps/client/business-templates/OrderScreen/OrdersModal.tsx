@@ -18,7 +18,6 @@ type OrdersModalProps = {
 }
 
 export const OrdersModal = ({ isOpen, setIsOpen, checkoutId }: OrdersModalProps) => {
-  console.log("checkoutId", checkoutId)
   const { t } = useTranslation("businessOrders")
 
   const { data, loading, error } = useGetOrdersByCheckoutQuery({

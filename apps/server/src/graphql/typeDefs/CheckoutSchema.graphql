@@ -1,6 +1,6 @@
 extend type Query {
 	getCheckoutByID(input: GetById!): Checkout!
-	getCheckoutsByBusiness: [Checkout!]!
+	getCheckoutsByBusiness(page: Int!, pageSize: Int!): [Checkout!]!
 	getOrdersByCheckout(input: GetById!): Checkout!
 	getPaidCheckoutByDate(input: GetPaidCheckout!): PaidCheckoutRes
 }

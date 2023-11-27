@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { DateType, QueryResolvers } from "../../../generated/graphql";
 import { CheckoutModel } from "../../../models/checkout";
-import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError, ApolloErrorTest } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { getDaysAgo } from "../utils";
 
@@ -17,9 +17,13 @@ export const getCheckoutByID: QueryResolvers["getCheckoutByID"] = async (parent,
 }
 
 // @ts-ignore
-export const getCheckoutsByBusiness: QueryResolvers["getCheckoutsByBusiness"] = async (_parent, args, { db, business }) => {
-  const Checkout = CheckoutModel(db);
-  const checkouts = await Checkout.find({ business: business }).sort({ _id: -1 });
+export const getCheckoutsByBusiness: QueryResolvers["getCheckoutsByBusiness"] = async (_parent, { page = 1, pageSize = 10 }, { db, business }) => {
+  if (!business) {
+    throw ApolloErrorTest(new Error("Unauthorized"), "Unauthorized")
+  }
+  const skip = (page - 1) * pageSize;
+
+  const checkouts = await CheckoutModel(db).find({ business }).skip(skip).limit(pageSize).sort({ _id: -1 });
   return checkouts
 }
 
