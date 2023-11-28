@@ -3,7 +3,7 @@ import { SplitType, parseToCurrency } from "app-helpers";
 import { HStack, Box, Checkbox, Input, Text, Button } from "native-base";
 import { FC } from "react";
 import { useTranslation } from "next-i18next";
-
+//
 const Cell: FC<{ bold?: boolean, isDisabled?: boolean }> = ({ children, bold, isDisabled }) => {
   return (
     <Text
