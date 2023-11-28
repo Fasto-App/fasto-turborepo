@@ -19,7 +19,7 @@ import {
 } from "../../../gen/generated";
 import { useRouter } from "next/router";
 import { parseToCurrency } from "app-helpers";
-
+// 
 ChartJS.register(
   CategoryScale,
   LinearScale,
