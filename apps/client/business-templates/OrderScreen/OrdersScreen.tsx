@@ -1,6 +1,6 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { OrangeBox } from '../../components/OrangeBox'
-import { Box, Divider, HStack, Heading, Text, VStack, Pressable, ScrollView, Badge, FlatList, Checkbox, ChevronRightIcon, ChevronLeftIcon, Select, CheckIcon } from 'native-base'
+import { Box, Divider, HStack, Heading, Text, VStack, Pressable, Badge, FlatList, Checkbox, ChevronRightIcon, ChevronLeftIcon, Select } from 'native-base'
 import { UpperSection } from '../../components/UpperSection'
 import { FDSSelect } from '../../components/FDSSelect'
 import { BottomSection } from '../../components/BottomSection'
