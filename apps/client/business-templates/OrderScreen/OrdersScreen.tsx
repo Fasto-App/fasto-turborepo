@@ -215,7 +215,7 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
               <Select
                 width={"20"}
                 selectedValue={pagination.pageSize.toString()}
-                accessibilityLabel="Choose Service"
+                accessibilityLabel="Choose page size"
                 placeholder="Page size"
                 onValueChange={itemValue => setPagination({
                   ...pagination,
