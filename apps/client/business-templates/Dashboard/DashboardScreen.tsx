@@ -1,10 +1,13 @@
-import React from "react"
+import React, {useEffect, useState} from "react"
 import { Box, HStack, Heading, ScrollView, Text, VStack } from "native-base"
 import { AreaChart } from "./Graphs/AreaChart"
 import { PieChart } from "./Graphs/PieChart"
 import { VerticalBar } from "./Graphs/VerticalBar"
 import { OrangeBox } from "../../components/OrangeBox"
 import { useTranslation } from "next-i18next"
+import { DateType, useGetPaidCheckoutByDateQuery ,useGetUserInformationQuery } from '../../gen/generated';
+import { parseToCurrency } from "app-helpers"
+import { fieldNameFromStoreName } from "@apollo/client/cache"
 
 export const DashboardScreen = () => {
   return (
@@ -28,16 +31,32 @@ export const DashboardScreen = () => {
 
 const Panel = () => {
   const { t } = useTranslation("businessDashboard")
-
-
+  const { data: checkoutData, error } = useGetPaidCheckoutByDateQuery({
+    variables: {
+      input: {
+        type: DateType.ThirtyDays
+      }
+    }
+  }) 
+  const userData = useGetUserInformationQuery()
+  
+  const [loading, setLoading] = useState(true)
+  const [revenue, setRevenue] = useState("")
+  useEffect(()=>{
+    setTimeout(()=>{
+      setRevenue(parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total));
+      setLoading(false);
+    }, 1000)
+  }, [checkoutData]);
+  
   return (
     <VStack p={4} space={2} borderWidth={1}
-      borderColor={"gray.50"}
-      shadow={"2"}
-      borderRadius={"md"}
-      bgColor={"white"}
+    borderColor={"gray.50"}
+    shadow={"2"}
+    borderRadius={"md"}
+    bgColor={"white"}
     >
-      <Heading size="md">{t('hello')}</Heading>
+      <Heading size="md">{`${t('hello')} ${userData?.data?.getUserInformation?.name}`}</Heading>
       <Heading size="xs">{t('welcomeDashBoard')}</Heading>
 
       <HStack space={"3"}>
@@ -48,12 +67,12 @@ const Panel = () => {
           borderColor={"coolGray.200"}
           borderWidth={1}
           w={"48"}
-        >
+          >
           <Text fontSize={"md"}>
-            {`Total Revenue`}
+            {t("totalRevenue")}
           </Text>
-          <Text fontSize={"md"} bold>
-            $45,231.89
+          <Text fontSize={"md"} bold>            
+            {loading ? "Carregando" : revenue}
           </Text>
         </Box>
 
@@ -65,7 +84,7 @@ const Panel = () => {
           w={"48"}
         >
           <Text fontSize={"md"}>
-            {`Most Selling Item`}
+            {t("MostSellingItem")}
           </Text>
           <Text fontSize={"md"} bold>
             {"Burbon"}
@@ -79,7 +98,7 @@ const Panel = () => {
           w={"48"}
         >
           <Text fontSize={"md"}>
-            {`Number of Orders`}
+            {t("NumberOfOrders")}
           </Text>
           <Text fontSize={"md"} bold>
             +132

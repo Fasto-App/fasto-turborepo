@@ -1,4 +1,7 @@
 {
-	"hello": "Hello, Alex",
-	"welcomeDashBoard": "Welcome Back"
+	"hello": "Hello, ",
+	"welcomeDashBoard": "Welcome Back",
+	"totalRevenue": "Total Revenue",
+	"MostSellingItem": "Most Selling Item",
+	"NumberOfOrders": "Number of NumberOfOrders"
 }
