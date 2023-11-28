@@ -114,7 +114,6 @@ export const PaymentsScreen = () => {
                 name={data.getIsConnected.name}
                 url={data.getIsConnected.url}
               />
-
               <BottomCheckoutTableWithModal
                 setModalData={setModalData}
                 modalData={modalData}

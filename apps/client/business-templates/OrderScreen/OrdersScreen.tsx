@@ -1,6 +1,6 @@
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { OrangeBox } from '../../components/OrangeBox'
-import { Box, Divider, HStack, Heading, Text, VStack, Pressable, ScrollView, Badge, FlatList, Checkbox } from 'native-base'
+import { Box, Divider, HStack, Heading, Text, VStack, Pressable, ScrollView, Badge, FlatList, Checkbox, ChevronRightIcon, ChevronLeftIcon, Select, CheckIcon } from 'native-base'
 import { UpperSection } from '../../components/UpperSection'
 import { FDSSelect } from '../../components/FDSSelect'
 import { BottomSection } from '../../components/BottomSection'
@@ -50,7 +50,7 @@ type OrderDetailsProps = {
 }
 
 const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress, onDelete }: OrderDetailsProps) => {
-  console.log(_id)
+  console.log("Order Re-render")
   return (
     <HStack alignItems={"center"} >
       {/* <Pressable p={2}
@@ -130,16 +130,33 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
 }) => {
   const router = useRouter()
   const { t } = useTranslation("businessOrders")
-  const { data, loading, error } = useGetCheckoutsByBusinessQuery({
-    // the backend should provide no more than 50 checkouts
-    variables: { page: 1, pageSize: 10 },
+
+
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 })
+
+  const onNextPage = () => {
+    const nextPage = pagination.page + 1;
+    setPagination({ ...pagination, page: nextPage });
+    fetchMore({ variables: { page: nextPage, pageSize: pagination.pageSize } });
+  };
+
+  const onPreviousPage = () => {
+    const previousPage = Math.max(pagination.page - 1, 1);
+    setPagination({ ...pagination, page: previousPage });
+    fetchMore({ variables: { page: previousPage, pageSize: pagination.pageSize } });
+  };
+
+  const { data, loading, error, fetchMore } = useGetCheckoutsByBusinessQuery({
+    variables: { page: pagination.page, pageSize: pagination.pageSize },
   })
 
   const [checkoutObj, setCheckoutObj] = useState<{ [key: string]: boolean }>({})
 
-  // useEffect(() => {
-  //   console.log("Data has changed");
-  // }, [data?.getCheckoutsByBusiness]);
+  useEffect(() => {
+    console.log(data?.getCheckoutsByBusiness)
+  }, [data?.getCheckoutsByBusiness])
+
+
 
   return <BottomSection>
     {loading ? <LoadingItems /> :
@@ -179,6 +196,40 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
             isOpen={modalData.isOpen}
             setIsOpen={(isOpen) => setModalData({ checkoutId: "", isOpen })}
           />
+
+          <HStack w={"100%"}>
+            <HStack
+              flex={1}
+              justifyContent={"center"}
+              space={4}
+              alignItems={"center"}>
+              <Pressable onPress={onPreviousPage}>
+                <ChevronLeftIcon size="5" color="blue.500" />
+              </Pressable>
+              <Text>{pagination.page}</Text>
+              <Pressable onPress={onNextPage}>
+                <ChevronRightIcon size="5" color="blue.500" />
+              </Pressable>
+            </HStack>
+            <Box>
+              <Select
+                width={"20"}
+                selectedValue={pagination.pageSize.toString()}
+                accessibilityLabel="Choose Service"
+                placeholder="Page size"
+                onValueChange={itemValue => setPagination({
+                  ...pagination,
+                  pageSize: Number(itemValue)
+                })}>
+                {[10, 20, 30, 50].map(pageSize => (
+                  <Select.Item
+                    key={pageSize}
+                    label={pageSize.toString()}
+                    value={pageSize.toString()}
+                  />))}
+              </Select>
+            </Box>
+          </HStack>
         </>
     }
   </BottomSection>
