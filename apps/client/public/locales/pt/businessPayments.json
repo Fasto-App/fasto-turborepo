@@ -10,5 +10,19 @@
 	"thisWeek": "Esta semana",
 	"yourBalance": "Seu saldo",
 	"payoutNow": "Pagar agora",
-	"available": "Disponível"
+	"available": "Disponível",
+	"close": "Fechar",
+	"date": "Data",
+	"amount": "Valor",
+	"status": "Status",
+	"check": "Conta",
+	"Canceled": "Cancelado",
+	"Paid": "Pago",
+	"PartiallyPaid": "Pago parcialmente",
+	"Pending": "Pendente",
+	"checkout": "Conta",
+	"title": "Excluir Pagamentos",
+	"body": "Esta ação irá excluir permanentemente vários pagamentos. Tem certeza de que deseja continuar?",
+	"cancel": "Cancelar",
+	"delete": "Excluir"
 }

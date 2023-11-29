@@ -9,6 +9,18 @@
 	"viewStripeAccount": "Ver cuenta de Stripe",
 	"thisWeek": "Esta semana",
 	"yourBalance": "Tu saldo",
-	"payoutNow": "Pagar ahora",
-	"available": "Disponible"
+	"close": "Cerrar",
+	"available": "Disponible",
+	"date": "Fecha",
+	"amount": "Monto",
+	"status": "Estado",
+	"Canceled": "Cancelado",
+	"Paid": "Pagado",
+	"PartiallyPaid": "Pago parcial",
+	"Pending": "Pendiente",
+	"checkout": "Pagar",
+	"title": "Eliminar Pagos",
+	"body": "Esta acción eliminará de forma permanente varios pagos. ¿Está seguro de que desea continuar?",
+	"cancel": "Cancelar",
+	"delete": "Eliminar"
 }
