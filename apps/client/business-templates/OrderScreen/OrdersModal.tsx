@@ -18,7 +18,7 @@ type OrdersModalProps = {
 }
 
 export const OrdersModal = ({ isOpen, setIsOpen, checkoutId }: OrdersModalProps) => {
-  const { t } = useTranslation("businessOrders")
+  const { t } = useTranslation("businessPayments")
 
   const { data, loading, error } = useGetOrdersByCheckoutQuery({
     skip: !checkoutId,
