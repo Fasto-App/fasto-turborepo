@@ -314,6 +314,12 @@ export type DeleteEmployee = {
   _id: Scalars['ID'];
 };
 
+export type DeleteResult = {
+  __typename?: 'DeleteResult';
+  acknowledged: Scalars['Boolean'];
+  deletedCount: Scalars['Int'];
+};
+
 export type DeleteSpaceInput = {
   space: Scalars['ID'];
 };
@@ -496,6 +502,7 @@ export type Mutation = {
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
   deleteBusinessEmployee: Scalars['ID'];
   deleteCategory?: Maybe<RequestResponseOk>;
+  deleteCheckoutData: DeleteResult;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
   deleteOrderDetail: OrderDetail;
@@ -674,6 +681,11 @@ export type MutationDeleteBusinessEmployeeArgs = {
 
 export type MutationDeleteCategoryArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeleteCheckoutDataArgs = {
+  ids: Array<Scalars['ID']>;
 };
 
 
@@ -1523,6 +1535,13 @@ export type CustomerRequestSplitMutationVariables = Exact<{
 
 export type CustomerRequestSplitMutation = { __typename?: 'Mutation', customerRequestSplit: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string } };
 
+export type DeleteCheckoutDataMutationVariables = Exact<{
+  ids: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type DeleteCheckoutDataMutation = { __typename?: 'Mutation', deleteCheckoutData: { __typename?: 'DeleteResult', acknowledged: boolean, deletedCount: number } };
+
 export type MakeCheckoutFullPaymentMutationVariables = Exact<{
   input: MakeCheckoutFullPaymentInput;
 }>;
@@ -1557,7 +1576,7 @@ export type GetCheckoutsByBusinessQueryVariables = Exact<{
 }>;
 
 
-export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, serviceFee: number, serviceFeeValue: number, tip?: number | null, tipValue?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, splitType?: SplitType | null, created_date: string }> };
+export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string }> };
 
 export type GetOrdersByCheckoutQueryVariables = Exact<{
   input: GetById;
@@ -2828,6 +2847,40 @@ export function useCustomerRequestSplitMutation(baseOptions?: Apollo.MutationHoo
 export type CustomerRequestSplitMutationHookResult = ReturnType<typeof useCustomerRequestSplitMutation>;
 export type CustomerRequestSplitMutationResult = Apollo.MutationResult<CustomerRequestSplitMutation>;
 export type CustomerRequestSplitMutationOptions = Apollo.BaseMutationOptions<CustomerRequestSplitMutation, CustomerRequestSplitMutationVariables>;
+export const DeleteCheckoutDataDocument = gql`
+    mutation DeleteCheckoutData($ids: [ID!]!) {
+  deleteCheckoutData(ids: $ids) {
+    acknowledged
+    deletedCount
+  }
+}
+    `;
+export type DeleteCheckoutDataMutationFn = Apollo.MutationFunction<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>;
+
+/**
+ * __useDeleteCheckoutDataMutation__
+ *
+ * To run a mutation, you first call `useDeleteCheckoutDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCheckoutDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCheckoutDataMutation, { data, loading, error }] = useDeleteCheckoutDataMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeleteCheckoutDataMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>(DeleteCheckoutDataDocument, options);
+      }
+export type DeleteCheckoutDataMutationHookResult = ReturnType<typeof useDeleteCheckoutDataMutation>;
+export type DeleteCheckoutDataMutationResult = Apollo.MutationResult<DeleteCheckoutDataMutation>;
+export type DeleteCheckoutDataMutationOptions = Apollo.BaseMutationOptions<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>;
 export const MakeCheckoutFullPaymentDocument = gql`
     mutation MakeCheckoutFullPayment($input: MakeCheckoutFullPaymentInput!) {
   makeCheckoutFullPayment(input: $input) {
@@ -3030,15 +3083,11 @@ export const GetCheckoutsByBusinessDocument = gql`
     status
     paid
     subTotal
-    serviceFee
-    serviceFeeValue
     tip
-    tipValue
     discount
     tax
     total
     totalPaid
-    splitType
     created_date
   }
 }

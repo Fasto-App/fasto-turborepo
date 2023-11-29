@@ -22,5 +22,7 @@
 	"title": "Eliminar Pagos",
 	"body": "Esta acción eliminará de forma permanente varios pagos. ¿Está seguro de que desea continuar?",
 	"cancel": "Cancelar",
-	"delete": "Eliminar"
+	"delete": "Eliminar",
+	"deleteCheckoutSuccess": "Datos de checkout eliminados correctamente.",
+	"deleteCheckoutError": "Error al eliminar datos de checkout."
 }

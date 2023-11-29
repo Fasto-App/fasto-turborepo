@@ -24,5 +24,7 @@
 	"title": "Excluir Pagamentos",
 	"body": "Esta ação irá excluir permanentemente vários pagamentos. Tem certeza de que deseja continuar?",
 	"cancel": "Cancelar",
-	"delete": "Excluir"
+	"delete": "Excluir",
+	"deleteCheckoutSuccess": "Checkout data deleted successfully.",
+	"deleteCheckoutError": "Error deleting checkout data."
 }

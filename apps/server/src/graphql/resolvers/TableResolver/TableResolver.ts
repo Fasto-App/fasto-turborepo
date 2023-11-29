@@ -16,17 +16,16 @@ const createTable = async (
   },
   { db, business }: { db: Connection, business: string },
 ) => {
-  console.log("Creating Table")
 
   const Table = TableModel(db);
   const businessByID = await BusinessModel(db).findById(business)
   const spaceByID = await SpaceModel(db).findById(input.space)
   const allTables = await Table.find({ space: spaceByID?._id })
 
-  if (!businessByID) throw ApolloError('NotFound')
+  if (!businessByID) throw ApolloError(new Error("No Business"), 'NotFound')
 
   if (!spaceByID) {
-    throw ApolloError('BadRequest', "Space not found.")
+    throw ApolloError(new Error("Space not found."), 'BadRequest')
   }
 
   const table = new Table({
@@ -50,7 +49,7 @@ export const resolveTablesFromSpace = async (
 const deleteTable = async (parent: any, args: any, { db, business }: Context) => {
   // make sure the business exists and I woun it
   const businessByID = await BusinessModel(db).findById(business)
-  if (!businessByID) throw ApolloError('NotFound')
+  if (!businessByID) throw ApolloError(new Error("No business"), 'NotFound')
 
   // get the table by id and delete it
   // id will be passed as args.id

@@ -66,10 +66,10 @@ const getOrdersBySession: QueryResolvers["getOrdersBySession"] = async (_parent,
   const Tab = TabModel(db);
 
   const foundRequest = await Request.findOne({ _id: client?.request });
-  if (!foundRequest) throw ApolloError("NotFound");
+  if (!foundRequest) throw ApolloError(new Error("No found request"), "NotFound");
 
   const foundTab = await Tab.findOne({ _id: foundRequest?.tab });
-  if (!foundTab) throw ApolloError("NotFound");
+  if (!foundTab) throw ApolloError(new Error("No found Tab"), "NotFound");
 
   return await OrderDetail.find({ tab: foundTab._id });
 }

@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { DateType, QueryResolvers } from "../../../generated/graphql";
 import { CheckoutModel } from "../../../models/checkout";
-import { ApolloError, ApolloErrorTest } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { getDaysAgo } from "../utils";
 
@@ -9,17 +9,17 @@ import { getDaysAgo } from "../utils";
 export const getCheckoutByID: QueryResolvers["getCheckoutByID"] = async (parent, { input }, { db, client, user }) => {
   const Checkout = CheckoutModel(db);
 
-  if (!client && !user) throw ApolloError("Unauthorized", "You must be logged in to perform this action")
+  if (!client && !user) throw ApolloError(new Error("You must be logged in to perform this action"), "Unauthorized",)
 
   const checkout = await Checkout.findOne({ _id: input._id, business: client?.business || user?.business });
-  if (!checkout) throw ApolloError("NotFound", "Checkout not found");
+  if (!checkout) throw ApolloError(new Error("Checkout not found"), "NotFound",);
   return checkout
 }
 
 // @ts-ignore
 export const getCheckoutsByBusiness: QueryResolvers["getCheckoutsByBusiness"] = async (_parent, { page = 1, pageSize = 10 }, { db, business }) => {
   if (!business) {
-    throw ApolloErrorTest(new Error("Unauthorized"), "Unauthorized")
+    throw ApolloError(new Error("no business"), "Unauthorized")
   }
   const skip = (page - 1) * pageSize;
 
@@ -32,7 +32,7 @@ export const getOrdersByCheckout: QueryResolvers["getOrdersByCheckout"] = async 
   const Checkout = CheckoutModel(db);
   const checkout = await Checkout.findById(input._id);
 
-  if (!checkout) throw ApolloError("NotFound", "Checkout not found");
+  if (!checkout) throw ApolloError(new Error("Checkout not found"), "NotFound",);
 
   return checkout
 }

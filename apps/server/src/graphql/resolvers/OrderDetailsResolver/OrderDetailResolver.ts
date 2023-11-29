@@ -27,7 +27,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
     const Product = ProductModel(db);
     const User = UserModel(db);
 
-    if (!businessUser?._id) throw ApolloError("Unauthorized", "Business user is not logged in");
+    if (!businessUser?._id) throw ApolloError(new Error("Business user is not logged in"), "Unauthorized");
 
     try {
         const parsedInputArray = CreateMultipleOrdersDetail.parse(input);
@@ -35,7 +35,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
 
         const newUser = await User.create({})
 
-        if (!newUser?._id) throw ApolloError("InternalServerError", "Error creating user");
+        if (!newUser?._id) throw ApolloError(new Error("Error creating user"), "InternalServerError",);
 
         const newTab = await Tab.create({
             admin: newUser?._id,
@@ -47,7 +47,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
         const orderDetails = await Promise.all(parsedInputArray.map(async (parsedInput) => {
             const product = await Product.findOne({ _id: parsedInput.product });
 
-            if (!product) throw ApolloError("NotFound");
+            if (!product) throw ApolloError(new Error("Product not found"), "NotFound");
 
             const orderDetails = await OrderDetail.create({
                 ...parsedInput,
@@ -76,7 +76,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
     } catch (error) {
 
         console.log("Error: ", error)
-        throw ApolloError("BadRequest", `Error creating order ${error}`);
+        throw ApolloError(error as Error, "BadRequest");
     }
 }
 
@@ -97,16 +97,16 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
         const parsedInputArray = CreateMultipleOrdersDetail.parse(input);
 
         const tab = await Tab.findOne({ _id: parsedInputArray[0].tab });
-        if (!tab) throw ApolloError("NotFound");
-        if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
+        if (!tab) throw ApolloError(new Error("No tab"), "NotFound");
+        if (tab.status !== 'Open') throw ApolloError(new Error("Tab is not open"), "BadRequest",);
 
         const orderDetails = await Promise.all(parsedInputArray.map(async (parsedInput) => {
             const user = await User.findOne({ _id: parsedInput.user });
             const product = await Product.findOne({ _id: parsedInput.product });
 
-            if (!product) throw ApolloError("NotFound");
+            if (!product) throw ApolloError(new Error("No product"), "NotFound");
 
-            if (!businessUser?._id) throw ApolloError("Unauthorized", "Business user is not logged in");
+            if (!businessUser?._id) throw ApolloError(new Error("Business user is not logged in"), "Unauthorized",);
 
             const orderDetails = await OrderDetail.create({
                 ...parsedInput,
@@ -127,7 +127,7 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
         return orderDetails;
 
     } catch (err) {
-        throw ApolloError("BadRequest", `Error creating OrderDetail ${err}`);
+        throw ApolloError(err as Error, "BadRequest");
     }
 }
 
@@ -146,12 +146,12 @@ const clientCreateMultipleOrderDetails:
         const CartItem = CartItemModel(db);
         const foundRequest = await Request.findOne({ _id: client?.request });
 
-        if (!foundRequest) throw ApolloError("NotFound");
+        if (!foundRequest) throw ApolloError(new Error("No found request"), "NotFound");
 
         const tab = await Tab.findOne({ _id: foundRequest?.tab });
 
-        if (!tab) throw ApolloError("NotFound");
-        if (tab.status !== 'Open') throw ApolloError("BadRequest", "Tab is not open");
+        if (!tab) throw ApolloError(new Error("No Tab"), "NotFound");
+        if (tab.status !== 'Open') throw ApolloError(new Error("Tab is not open"), "BadRequest");
 
         const foundCartItems = await Promise.all(input.map(async (item) => {
             const foundCartItem = await CartItem.findOne({
@@ -160,7 +160,7 @@ const clientCreateMultipleOrderDetails:
                 quantity: item.quantity,
             });
 
-            if (!foundCartItem) throw ApolloError("BadRequest", "Cart item is not valid");
+            if (!foundCartItem) throw ApolloError(new Error("Cart item is not valid"), "BadRequest",);
 
             return foundCartItem;
         }))
@@ -169,7 +169,7 @@ const clientCreateMultipleOrderDetails:
             const user = await User.findOne({ _id: parsedInput.user });
             const product = await Product.findOne({ _id: parsedInput.product });
 
-            if (!product) throw ApolloError("NotFound");
+            if (!product) throw ApolloError(new Error("No product"), "NotFound");
 
             const orderDetails = await OrderDetail.create({
                 quantity: parsedInput.quantity,
@@ -203,10 +203,10 @@ const updateOrderDetail = async (_parent: any,
 
     try {
         const orderDetail = await OrderDetail.findOne({ _id: input._id });
-        if (!orderDetail) throw ApolloError("NotFound");
+        if (!orderDetail) throw ApolloError(new Error("No Order detail"), "NotFound");
 
         const product = await Product.findOne({ _id: orderDetail.product });
-        if (!product) throw ApolloError('NotFound');
+        if (!product) throw ApolloError(new Error("No product"), 'NotFound');
 
         const subTotalUpdated = input.quantity ? (product?.price || 0) * input.quantity : orderDetail.subTotal
 
@@ -216,7 +216,7 @@ const updateOrderDetail = async (_parent: any,
         }, { new: true });
 
     } catch (err) {
-        throw ApolloError("InternalServerError", `Error updating OrderDetail ${err}`);
+        throw ApolloError(err as Error, "InternalServerError",);
     }
 }
 
@@ -225,11 +225,11 @@ const deleteOrderDetail = async (_parent: any, { input }: { input: any }, { db }
 
     try {
         const orderDetail = await OrderDetail.findOne({ _id: input._id });
-        if (!orderDetail) throw ApolloError("NotFound");
+        if (!orderDetail) throw ApolloError(new Error("No order detail"), "NotFound");
 
         return await OrderDetail.findOneAndDelete({ _id: input._id });
     } catch (err) {
-        throw ApolloError("BadRequest", `Error deleting OrderDetail ${err}`);
+        throw ApolloError(err as Error, "BadRequest",);
     }
 }
 

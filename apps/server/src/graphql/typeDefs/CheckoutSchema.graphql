@@ -10,6 +10,12 @@ extend type Mutation {
 	makeCheckoutPayment(input: MakeCheckoutPaymentInput!): Checkout!
 	customerRequestSplit(input: CustomerRequestSplitInput!): Checkout!
 	customerRequestPayFull(input: CustomerRequestPayFullInput!): Checkout!
+	deleteCheckoutData(ids: [ID!]!): DeleteResult!
+}
+
+type DeleteResult {
+	acknowledged: Boolean!
+	deletedCount: Int!
 }
 
 type Checkout {

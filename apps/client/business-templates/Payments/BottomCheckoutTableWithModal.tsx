@@ -10,11 +10,12 @@ import { BottomSection } from "../../components/BottomSection"
 import { CustomModal } from "../../components/CustomModal/CustomModal"
 import { LoadingCartItems } from "../../customer-templates/CartScreen/LoadingTiles"
 import { PastOrdersTile } from "../../customer-templates/CartScreen/PastOrdersModal"
-import { useGetCheckoutsByBusinessQuery, CheckoutStatusKeys, useGetOrdersByCheckoutQuery } from "../../gen/generated"
+import { useGetCheckoutsByBusinessQuery, CheckoutStatusKeys, useGetOrdersByCheckoutQuery, useDeleteCheckoutDataMutation, GetCheckoutsByBusinessDocument } from "../../gen/generated"
 import { LoadingItems } from "../OrderScreen/LoadingItems"
 import { ColorSchemeType } from "native-base/lib/typescript/components/types"
 import { Icon } from '../../components/atoms/NavigationButton'
 import { Alert } from "../../components/DeleteAlert"
+import { showToast } from "../../components/showToast"
 
 type CheckoutState = {
   isOpen: boolean;
@@ -27,10 +28,18 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
   const router = useRouter()
   const { t } = useTranslation("businessPayments")
 
-
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 })
 
+  const { data, loading, error, fetchMore } = useGetCheckoutsByBusinessQuery({
+    variables: { page: pagination.page, pageSize: pagination.pageSize },
+  })
+
   const onNextPage = () => {
+    // if this page has less items than page size, it means there's no next
+    if ((data?.getCheckoutsByBusiness.length || 0) < pagination.pageSize) {
+      return false
+    }
+
     const nextPage = pagination.page + 1;
     setPagination({ ...pagination, page: nextPage });
     fetchMore({ variables: { page: nextPage, pageSize: pagination.pageSize } });
@@ -42,14 +51,10 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
     fetchMore({ variables: { page: previousPage, pageSize: pagination.pageSize } });
   };
 
-  const { data, loading, error, fetchMore } = useGetCheckoutsByBusinessQuery({
-    variables: { page: pagination.page, pageSize: pagination.pageSize },
-  })
-
   const [checkoutObj, setCheckoutObj] = useState<{ [key: string]: boolean }>({})
 
   const checkIfItemsSelected = useMemo(() => {
-    const allKeys = typedKeys(checkoutObj)
+    const allKeys = typedKeys(checkoutObj) as string[]
 
     if (allKeys.length > 0 && !loading) {
       const selectedKeys = allKeys.filter(id => checkoutObj[id])
@@ -66,9 +71,38 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
     //("Nothing to do!")
   }
 
+  const [deleteCheckout, { loading: deleteloading }] = useDeleteCheckoutDataMutation({
+    refetchQueries: [{
+      query: GetCheckoutsByBusinessDocument,
+      variables: {
+        page: pagination.page, pageSize: pagination.pageSize
+      }
+    }],
+    onCompleted() {
+      setAlertIsOpen(false)
+
+      showToast({
+        message: t("deleteCheckoutSuccess"),
+      })
+    },
+    onError() {
+      setAlertIsOpen(false)
+
+      showToast({
+        message: t("deleteCheckoutError"),
+        status: "error",
+      })
+    },
+  })
+
   const deleteSelectedCheckouts = () => {
-    console.log("API CAll goes here")
-    console.log({ checkIfItemsSelected })
+    if (checkIfItemsSelected) {
+      deleteCheckout({
+        variables: {
+          ids: checkIfItemsSelected
+        }
+      })
+    }
   }
 
 
@@ -100,6 +134,7 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
           <FlatList
             contentContainerStyle={{ paddingRight: 4 }}
             ListHeaderComponent={<TableHeader
+              loading={deleteloading || loading}
               onPress={onDeletePressed} // only if any are selected
               deselectedAll={() => setCheckoutObj({})}
               selectAll={selectAll}
@@ -158,7 +193,7 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
                 accessibilityLabel="Choose page size"
                 placeholder="Page size"
                 onValueChange={itemValue => setPagination({
-                  ...pagination,
+                  page: 1,
                   pageSize: Number(itemValue)
                 })}>
                 {[10, 20, 30, 50].map(pageSize => (
@@ -175,12 +210,13 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
   </BottomSection>
 }
 
-const Header: FC = ({ children }) => <Heading textAlign={"center"} flex="1" size={"md"}>{children}</Heading>
+const Header: FC<{ loading: boolean }> = ({ children, loading }) => <Heading color={loading ? "coolGray.300" : "black˝"} textAlign={"center"} flex="1" size={"md"}>{children}</Heading>
 
-const TableHeader = ({ onPress, selectAll, deselectedAll }: {
+const TableHeader = ({ onPress, selectAll, deselectedAll, loading }: {
   onPress: () => void,
   selectAll: () => void,
-  deselectedAll: () => void
+  deselectedAll: () => void,
+  loading: boolean
 }) => {
   const { t } = useTranslation("businessPayments")
 
@@ -198,15 +234,15 @@ const TableHeader = ({ onPress, selectAll, deselectedAll }: {
       <HStack bgColor={"white"} width={"100%"}>
         <HStack p="2" space={4}>
           <Checkbox value='All' accessibilityLabel={"All"} onChange={onCheckboxChange} />
-          <Pressable onPress={onPress}>
+          <Pressable onPress={onPress} isDisabled={loading}>
             <Icon type='TrashCan' size={"1.5em"} />
           </Pressable>
         </HStack>
         <HStack justifyContent={"space-between"} pb="2" bgColor={"white"} flex={1}>
-          <Header>{t("check")}</Header>
-          <Header> {t("date")}</Header>
-          <Header>{t("amount")}</Header>
-          <Header>{t("status")}</Header>
+          <Header loading={loading}>{t("check")}</Header>
+          <Header loading={loading}> {t("date")}</Header>
+          <Header loading={loading}>{t("amount")}</Header>
+          <Header loading={loading}>{t("status")}</Header>
         </HStack>
       </HStack>
       <Divider />
@@ -234,9 +270,7 @@ const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress,
     <HStack alignItems={"center"} >
       <HStack p="2" space={4}>
         <Checkbox value={_id} accessibilityLabel={total} onChange={onDelete} isChecked={selected} />
-        <Pressable onPress={() => console.log("delete everything")}>
-          <Icon type='TrashCan' size={"1.5em"} />
-        </Pressable>
+        <Icon type='TrashCan' size={"1.5em"} color={"white"} />
       </HStack>
 
       <Pressable _hover={{ backgroundColor: "secondary.100" }} onPress={onPress} flex={1}>

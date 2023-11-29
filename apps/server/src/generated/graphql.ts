@@ -314,6 +314,12 @@ export type DeleteEmployee = {
   _id: Scalars['ID'];
 };
 
+export type DeleteResult = {
+  __typename?: 'DeleteResult';
+  acknowledged: Scalars['Boolean'];
+  deletedCount: Scalars['Int'];
+};
+
 export type DeleteSpaceInput = {
   space: Scalars['ID'];
 };
@@ -496,6 +502,7 @@ export type Mutation = {
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
   deleteBusinessEmployee: Scalars['ID'];
   deleteCategory?: Maybe<RequestResponseOk>;
+  deleteCheckoutData: DeleteResult;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
   deleteOrderDetail: OrderDetail;
@@ -674,6 +681,11 @@ export type MutationDeleteBusinessEmployeeArgs = {
 
 export type MutationDeleteCategoryArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeleteCheckoutDataArgs = {
+  ids: Array<Scalars['ID']>;
 };
 
 
@@ -1495,6 +1507,7 @@ export type ResolversTypes = {
   DefaultPaymentMethod: ResolverTypeWrapper<DefaultPaymentMethod>;
   DeleteBusinessPayload: ResolverTypeWrapper<DeleteBusinessPayload>;
   DeleteEmployee: DeleteEmployee;
+  DeleteResult: ResolverTypeWrapper<DeleteResult>;
   DeleteSpaceInput: DeleteSpaceInput;
   DeleteSubInput: DeleteSubInput;
   DeleteTableInput: DeleteTableInput;
@@ -1621,6 +1634,7 @@ export type ResolversParentTypes = {
   DefaultPaymentMethod: DefaultPaymentMethod;
   DeleteBusinessPayload: DeleteBusinessPayload;
   DeleteEmployee: DeleteEmployee;
+  DeleteResult: DeleteResult;
   DeleteSpaceInput: DeleteSpaceInput;
   DeleteSubInput: DeleteSubInput;
   DeleteTableInput: DeleteTableInput;
@@ -1843,6 +1857,12 @@ export type DeleteBusinessPayloadResolvers<ContextType = Context, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type DeleteResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeleteResult'] = ResolversParentTypes['DeleteResult']> = {
+  acknowledged?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  deletedCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type EmployeeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Employee'] = ResolversParentTypes['Employee']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1921,6 +1941,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteBusiness?: Resolver<Maybe<ResolversTypes['DeleteBusinessPayload']>, ParentType, ContextType, RequireFields<MutationDeleteBusinessArgs, 'businessID'>>;
   deleteBusinessEmployee?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteBusinessEmployeeArgs, 'input'>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes['RequestResponseOK']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
+  deleteCheckoutData?: Resolver<ResolversTypes['DeleteResult'], ParentType, ContextType, RequireFields<MutationDeleteCheckoutDataArgs, 'ids'>>;
   deleteItemFromCart?: Resolver<ResolversTypes['CartItem'], ParentType, ContextType, RequireFields<MutationDeleteItemFromCartArgs, 'input'>>;
   deleteMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<MutationDeleteMenuArgs, 'id'>>;
   deleteOrderDetail?: Resolver<ResolversTypes['OrderDetail'], ParentType, ContextType, RequireFields<MutationDeleteOrderDetailArgs, 'input'>>;
@@ -2202,6 +2223,7 @@ export type Resolvers<ContextType = Context> = {
   CreateSubResponse?: CreateSubResponseResolvers<ContextType>;
   DefaultPaymentMethod?: DefaultPaymentMethodResolvers<ContextType>;
   DeleteBusinessPayload?: DeleteBusinessPayloadResolvers<ContextType>;
+  DeleteResult?: DeleteResultResolvers<ContextType>;
   Employee?: EmployeeResolvers<ContextType>;
   Employees?: EmployeesResolvers<ContextType>;
   Geo?: GeoResolvers<ContextType>;
