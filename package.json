@@ -6,6 +6,11 @@
 		"apps/*",
 		"packages/*"
 	],
+	"husky": {
+		"hooks": {
+			"pre-commit": "sh husky/pre-commit"
+		}
+	},
 	"scripts": {
 		"postinstall": "husky install",
 		"dev": "turbo run dev --parallel",
