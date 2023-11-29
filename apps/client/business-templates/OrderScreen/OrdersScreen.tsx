@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { OrangeBox } from '../../components/OrangeBox'
 import { Box, Divider, HStack, Heading, Text, VStack, Pressable, Badge, FlatList, Checkbox, ChevronRightIcon, ChevronLeftIcon, Select } from 'native-base'
 import { UpperSection } from '../../components/UpperSection'
@@ -7,7 +7,7 @@ import { BottomSection } from '../../components/BottomSection'
 import { useTranslation } from 'next-i18next'
 import { CheckoutStatusKeys, useGetCheckoutsByBusinessQuery } from '../../gen/generated'
 import { LoadingItems } from './LoadingItems'
-import { parseToCurrency } from 'app-helpers'
+import { parseToCurrency, typedKeys } from 'app-helpers'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { getLocale } from '../../authUtilities/utils'
@@ -19,16 +19,33 @@ const TableHeader: FC = ({ children }) => <Heading textAlign={"center"} flex="1"
 
 const TableData: FC = ({ children }) => <Text textAlign={"center"} flex="1" fontSize={"md"}>{children}</Text>
 
-const Header = () => {
-  const { t } = useTranslation("businessOrders")
+const Header = ({ onPress, selectAll, deselectedAll }: {
+  onPress: () => void,
+  selectAll: () => void,
+  deselectedAll: () => void
+}) => {
+  const { t } = useTranslation("businessPayments")
+
   return (
     <>
-      <HStack bgColor={"white"}>
-        <Box p="2">
-          <Icon type='TrashCan' size={"1.5em"} color='white' />
-        </Box>
+      <HStack bgColor={"white"} width={"100%"}>
+        <HStack p="2" space={4}>
+          <Checkbox value='All' accessibilityLabel={"All"} onChange={(selected) => {
+            console.log("change state", selected)
+            if (selected) {
+              selectAll()
+              return
+            }
+
+            deselectedAll()
+
+          }} />
+          <Pressable onPress={onPress}>
+            <Icon type='TrashCan' size={"1.5em"} />
+          </Pressable>
+        </HStack>
         <HStack justifyContent={"space-between"} pb="2" bgColor={"white"} flex={1}>
-          <TableHeader>{t("orders")}</TableHeader>
+          <TableHeader>{t("check")}</TableHeader>
           <TableHeader> {t("date")}</TableHeader>
           <TableHeader>{t("amount")}</TableHeader>
           <TableHeader>{t("status")}</TableHeader>
@@ -47,20 +64,19 @@ type OrderDetailsProps = {
   colorScheme: ColorSchemeType;
   onPress: () => void;
   onDelete: () => void;
+  selected: boolean
 }
 
-const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress, onDelete }: OrderDetailsProps) => {
-  console.log("Order Re-render")
+const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress, onDelete, selected }: OrderDetailsProps) => {
   return (
     <HStack alignItems={"center"} >
-      {/* <Pressable p={2}
-        borderRadius={"md"}
-        _hover={{ backgroundColor: "danger.100" }}
-        onPress={onDelete}
-      >
-        <Icon type='TrashCan' size={"1.5em"} />
-      </Pressable> */}
-      <Checkbox value={_id} accessibilityLabel={total} onChange={onDelete} />
+      <HStack p="2" space={4}>
+        <Checkbox value={_id} accessibilityLabel={total} onChange={onDelete} isChecked={selected} />
+        <Pressable onPress={() => console.log("delete everything")}>
+          <Icon type='TrashCan' size={"1.5em"} />
+        </Pressable>
+      </HStack>
+
       <Pressable _hover={{ backgroundColor: "secondary.100" }} onPress={onPress} flex={1}>
         <HStack justifyContent={"space-between"} py={2}>
           <TableData>{_id}</TableData>
@@ -74,8 +90,6 @@ const OrderDetails = ({ _id, date, total, status, colorScheme = "info", onPress,
     </HStack>
   )
 }
-
-//  create new array with 10 elements
 
 export const OrdersScreen = () => {
   const { t } = useTranslation("businessOrders")
@@ -93,7 +107,7 @@ export const OrdersScreen = () => {
               <FDSSelect
                 w={"100px"}
                 h={"8"}
-                placeholder={t("date")}
+                placeholder={("date")}
                 setSelectedValue={function (value: string): void {
                   throw new Error('Function not implemented.')
                 }} array={[]}
@@ -102,7 +116,7 @@ export const OrdersScreen = () => {
               <FDSSelect
                 w={"100px"}
                 h={"8"}
-                placeholder={t("status")}
+                placeholder={("status")}
                 setSelectedValue={function (value: string): void {
                   throw new Error('Function not implemented.')
                 }} array={[]}
@@ -129,7 +143,7 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
   setModalData: React.Dispatch<React.SetStateAction<CheckoutState>>
 }) => {
   const router = useRouter()
-  const { t } = useTranslation("businessOrders")
+  const { t } = useTranslation("businessPayments")
 
 
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 })
@@ -152,9 +166,29 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
 
   const [checkoutObj, setCheckoutObj] = useState<{ [key: string]: boolean }>({})
 
-  useEffect(() => {
-    console.log(data?.getCheckoutsByBusiness)
-  }, [data?.getCheckoutsByBusiness])
+  const onDelete = () => {
+    if (Object.keys(checkoutObj).length > 0 && !loading) {
+      const arrayKeys = typedKeys(checkoutObj).filter(id => checkoutObj[id])
+      console.log("delete everything")
+      console.log({ arrayKeys })
+      return
+    }
+
+    console.log("Nothing to do!")
+  }
+
+
+  const selectAll = () => {
+    const allSelected = data?.getCheckoutsByBusiness.reduce((accumulator, checkout) => {
+      accumulator[checkout._id] = true
+      return accumulator
+    }, {} as { [key: string]: boolean })
+
+    if (!allSelected) return
+
+    console.log(allSelected)
+    setCheckoutObj(allSelected)
+  }
 
 
 
@@ -164,7 +198,11 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
         <>
           <FlatList
             contentContainerStyle={{ paddingRight: 4 }}
-            ListHeaderComponent={<Header />}
+            ListHeaderComponent={<Header
+              onPress={onDelete}
+              deselectedAll={() => setCheckoutObj({})}
+              selectAll={selectAll}
+            />}
             data={data?.getCheckoutsByBusiness}
             stickyHeaderIndices={[0]}
             keyExtractor={(checkout) => `${checkout._id}`}
@@ -176,10 +214,11 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
                 total={parseToCurrency(checkout.total)}
                 status={t(CheckoutStatusKeys[checkout.status])}
                 colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
+                selected={!!checkoutObj[checkout._id]}
                 onDelete={() => {
                   setCheckoutObj({
                     ...checkoutObj,
-                    [checkout._id]: Boolean(!(checkoutObj?.[checkout._id]))
+                    [checkout._id]: !checkoutObj[checkout._id]
                   })
                 }}
                 onPress={() => {
