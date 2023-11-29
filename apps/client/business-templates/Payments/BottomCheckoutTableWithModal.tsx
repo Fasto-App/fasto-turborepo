@@ -78,11 +78,12 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
         page: pagination.page, pageSize: pagination.pageSize
       }
     }],
-    onCompleted() {
+    onCompleted(data) {
       setAlertIsOpen(false)
 
       showToast({
         message: t("deleteCheckoutSuccess"),
+        subMessage: t("itemsWereDeleted", { count: data.deleteCheckoutData.deletedCount })
       })
     },
     onError() {

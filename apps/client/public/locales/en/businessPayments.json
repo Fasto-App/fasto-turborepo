@@ -26,5 +26,7 @@
 	"cancel": "Cancelar",
 	"delete": "Excluir",
 	"deleteCheckoutSuccess": "Checkout data deleted successfully.",
+	"itemsWereDeleted_one": "{{count}} item was deleted.",
+	"itemsWereDeleted_other": "{{count}} items were deleted.",
 	"deleteCheckoutError": "Error deleting checkout data."
 }
