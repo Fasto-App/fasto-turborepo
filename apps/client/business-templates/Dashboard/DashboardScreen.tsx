@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, HStack, Heading, ScrollView, Text, VStack, Spinner } from "native-base";
 import { AreaChart } from "./Graphs/AreaChart";
 import { PieChart } from "./Graphs/PieChart";
@@ -12,7 +12,6 @@ import {
   useGetUserInformationQuery,
 } from "../../gen/generated";
 import { parseToCurrency } from "app-helpers";
-import { fieldNameFromStoreName } from "@apollo/client/cache";
 
 export const DashboardScreen = () => {
   const [selectedCheckoutFilter, setSelectedCheckoutFilter] = useState(
@@ -29,7 +28,6 @@ export const DashboardScreen = () => {
       },
     },
   });
-  const { t } = useTranslation("businessDashboard");
 
   const { data } = useGetMostSellingProductsQuery()
 
@@ -46,11 +44,8 @@ export const DashboardScreen = () => {
               <AreaChart
                 selectedCheckoutFilter={selectedCheckoutFilter}
                 setSelectedCheckoutFilter={setSelectedCheckoutFilter}
-                allTime={t("allTime")}
-                days30={t("30Days")}
-                days7={t("7Days")}
               />
-              <VerticalBar/>
+              <VerticalBar />
             </VStack>
           </ScrollView>
           <PieChart data={data} />
@@ -87,12 +82,13 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
         >
           <Text fontSize={"md"}>{t("totalRevenue")}</Text>
           <Text fontSize={"md"} bold>
-            {loading 
-            ? <>
+            {loading
+              ? <>
+                {/* TODO: accessibility should be translated as well */}
                 <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
-                </Heading> 
+                </Heading>
               </>
-            : revenue}
+              : revenue}
           </Text>
         </Box>
 
@@ -105,10 +101,11 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
         >
           <Text fontSize={"md"}>{t("mostSellingItem")}</Text>
           <Text fontSize={"md"} bold>
-            {loading? <>
-                <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
-                </Heading> 
-              </>:mostSellingItem}
+            {loading ? <>
+              {/* TODO: accessibility should be translated as well */}
+              <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
+              </Heading>
+            </> : mostSellingItem}
           </Text>
         </Box>
         <Box
