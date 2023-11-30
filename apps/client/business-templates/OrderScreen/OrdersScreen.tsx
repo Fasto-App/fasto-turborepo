@@ -124,9 +124,6 @@ const OrderDetails = ({
           onChange={onDelete}
           isChecked={selected}
         />
-        {/* <Pressable onPress={() => console.log("delete everything")}>
-          <Icon type='TrashCan' size={"1.5em"} />
-        </Pressable> */}
       </HStack>
 
       <Pressable
