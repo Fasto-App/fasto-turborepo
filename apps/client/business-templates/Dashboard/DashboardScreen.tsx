@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, HStack, Heading, ScrollView, Text, VStack } from "native-base";
+import { Box, HStack, Heading, ScrollView, Text, VStack, Spinner } from "native-base";
 import { AreaChart } from "./Graphs/AreaChart";
 import { PieChart } from "./Graphs/PieChart";
 import { VerticalBar } from "./Graphs/VerticalBar";
@@ -7,6 +7,7 @@ import { OrangeBox } from "../../components/OrangeBox";
 import { useTranslation } from "next-i18next";
 import {
   DateType,
+  useGetMostSellingProductsQuery,
   useGetPaidCheckoutByDateQuery,
   useGetUserInformationQuery,
 } from "../../gen/generated";
@@ -29,11 +30,16 @@ export const DashboardScreen = () => {
     },
   });
   const { t } = useTranslation("businessDashboard");
+
+  const { data } = useGetMostSellingProductsQuery()
+
   return (
     <Box flex={1} shadow={"2"} backgroundColor={"gray.100"}>
       <OrangeBox />
       <VStack space={4} p={4} flex={1}>
-        <Panel loading={loading} revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)} />
+        <Panel
+          mostSellingItem={data?.getMostSellingProducts?.[0]?.name}
+          loading={loading} revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)} />
         <HStack space={3} flex={1}>
           <ScrollView pr={2} pb={2} borderRadius={"md"}>
             <VStack space={8} flex={1}>
@@ -44,26 +50,19 @@ export const DashboardScreen = () => {
                 days30={t("30Days")}
                 days7={t("7Days")}
               />
-              <VerticalBar />
+              <VerticalBar/>
             </VStack>
           </ScrollView>
-          <PieChart 
-            mostSellingItems={t("mostSellingItems")}
-            nomberOfOrders={t("numberOfOrders")}
-          />
+          <PieChart data={data} />
         </HStack>
       </VStack>
     </Box>
   );
 };
-type PanelRevenue = {
-  loading: boolean;
-  revenue: string
-}
-
-const Panel = ({ loading, revenue }: PanelRevenue) => {
+const Panel = ({ loading, revenue, mostSellingItem }: any) => {
   const userData = useGetUserInformationQuery();
   const { t } = useTranslation("businessDashboard");
+
   return (
     <VStack
       p={4}
@@ -88,7 +87,12 @@ const Panel = ({ loading, revenue }: PanelRevenue) => {
         >
           <Text fontSize={"md"}>{t("totalRevenue")}</Text>
           <Text fontSize={"md"} bold>
-            {loading ? "Carregando" : revenue}
+            {loading 
+            ? <>
+                <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
+                </Heading> 
+              </>
+            : revenue}
           </Text>
         </Box>
 
@@ -101,7 +105,10 @@ const Panel = ({ loading, revenue }: PanelRevenue) => {
         >
           <Text fontSize={"md"}>{t("mostSellingItem")}</Text>
           <Text fontSize={"md"} bold>
-            {"Burbon"}
+            {loading? <>
+                <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
+                </Heading> 
+              </>:mostSellingItem}
           </Text>
         </Box>
         <Box

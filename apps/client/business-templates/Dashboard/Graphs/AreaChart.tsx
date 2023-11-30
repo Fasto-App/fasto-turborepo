@@ -19,6 +19,7 @@ import {
 } from "../../../gen/generated";
 import { useRouter } from "next/router";
 import { parseToCurrency } from "app-helpers";
+import { useTranslation } from "next-i18next";
 // 
 ChartJS.register(
   CategoryScale,
@@ -61,6 +62,7 @@ type AreaChartProps = {
 
 
 export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, allTime, days30, days7 }: AreaChartProps) {
+  const { t } = useTranslation("businessDashboard");
   const router = useRouter();
   const {
     loading,
@@ -95,7 +97,7 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, a
     datasets: [
       {
         fill: true,
-        label: "Rendimento Bruto R$",
+        label: t("grossIncome"),
         data: values,
         borderColor: "rgb(31, 178, 80)",
         backgroundColor: "rgba(53, 235, 117, 0.5)",
