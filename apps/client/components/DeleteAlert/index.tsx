@@ -43,7 +43,7 @@ type AlertProps = {
 	onPress: () => void;
 }
 
-const Alert = (props: AlertProps) => {
+export const Alert = (props: AlertProps) => {
 	const { body, isOpen, onClose, title, cancel, onPress } = props
 	const cancelRef = React.useRef(null);
 
@@ -57,7 +57,11 @@ const Alert = (props: AlertProps) => {
 				</AlertDialog.Body>
 				<AlertDialog.Footer>
 					<Button.Group space={2} flex={1}>
-						<Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef} flex={1}>
+						<Button
+							variant="outline"
+							colorScheme="error"
+							onPress={onClose}
+							ref={cancelRef} flex={1}>
 							{cancel}
 						</Button>
 						<Button colorScheme="error" onPress={onPress} flex={1}>

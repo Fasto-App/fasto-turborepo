@@ -22,8 +22,8 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
             business
         }))
 
-    } catch {
-        throw ApolloError('InternalServerError');
+    } catch (err) {
+        throw ApolloError(err as Error, 'InternalServerError');
     }
 }
 
@@ -34,13 +34,13 @@ const getMenuByID: QueryResolvers["getMenuByID"] = async (_parent, args, { db, b
     let menu;
     if (args.input?.id) {
         menu = await Menu.findOne({ _id: args.input?.id });
-        if (!menu) throw ApolloError('NotFound', 'Menu not found');
+        if (!menu) throw ApolloError(new Error('Menu not found'), 'NotFound',);
     } else {
         menu = await Menu.findOne({ business, isFavorite: true });
 
         if (!menu) {
             menu = await Menu.findOne({ business });
-            if (!menu) throw ApolloError('NotFound', 'Menu not found');
+            if (!menu) throw ApolloError(new Error('Menu not found'), 'NotFound',);
         };
     }
 
@@ -69,8 +69,8 @@ const updateMenuInfo = async (_parent: any, args: { input: UpdateMenuInfo }, { d
         menu.save();
 
         return menu
-    } catch {
-        throw ApolloError('InternalServerError');
+    } catch (err) {
+        throw ApolloError(err as Error, 'InternalServerError');
     }
 }
 
@@ -113,13 +113,13 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
         if (!section.category) throw Error('Section category is required');
         // find if category exists
         const category = await Category.findOne({ _id: section.category });
-        if (!category?._id) throw ApolloError('BadRequest', "BAD USER DATA: Category not found when updating menu");
+        if (!category?._id) throw ApolloError(new Error("BAD USER DATA: Category not found when updating menu"), 'BadRequest',);
 
         // looks for an array of products and see if they all exist
         if (section.products?.length) {
             const products = await Product.find({ _id: { $in: section.products } })
             if (products.length !== section.products.length) {
-                throw ApolloError("BadRequest", 'BAD USER DATA: Product not found when updating menu')
+                throw ApolloError(new Error('BAD USER DATA: Product not found when updating menu'), "BadRequest")
             };
 
             return ({
@@ -153,13 +153,13 @@ const deleteMenu = async (_parent: any, args: { id: string }, { db, user, busine
     try {
         const menu = await Menu.findOne({ _id: args.id });
         if (!menu) {
-            throw ApolloError('BadRequest', "Menu not found. Make sure the id is correct.")
+            throw ApolloError(new Error("Menu not found. Make sure the id is correct."), 'BadRequest',)
         };
 
         await menu.remove();
         return menu;
-    } catch {
-        throw ApolloError("BadRequest", "Menu not found. Make sure the id is correct.")
+    } catch (err) {
+        throw ApolloError(err as Error, "BadRequest")
     }
 }
 
@@ -190,9 +190,7 @@ const getClientMenu = async (_parent: any, args: {
     }
 
     const menu = await Menu.findOne({ _id: args.input._id });
-    if (!menu) throw ApolloError('BadRequest', 'Menu not found');
-
-    console.log("retuning menu")
+    if (!menu) throw ApolloError(new Error('Menu not found'), 'BadRequest');
 
     return menu
 }

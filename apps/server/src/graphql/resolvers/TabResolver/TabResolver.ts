@@ -44,7 +44,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             return tab
 
         } catch (err) {
-            throw ApolloError("BadRequest", "User not found, Please add a valid user");
+            throw ApolloError(new Error("User not found, Please add a valid user"), "BadRequest",);
         }
     }
 
@@ -59,7 +59,7 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
             type: TabType.DineIn
         });
 
-        if (!tab) throw ApolloError("InternalServerError", "Error creating Tab")
+        if (!tab) throw ApolloError(new Error("Error creating Tab"), "InternalServerError",)
 
         table.status = TableStatus.Occupied;
         table.tab = tab._id;
@@ -68,13 +68,13 @@ const createTab = async (_parent: any, { input }: createTabInput, { db, business
         return tab
 
     } catch (error) {
-        throw ApolloError("InternalServerError", "Error creating Tab");
+        throw ApolloError(error as Error, "InternalServerError");
     }
 }
 
 // @ts-ignore
 const updateCustomerUpdateTabType: MutationResolvers["updateCustomerUpdateTabType"] = async (_parent, { input: { type, tab } }, { db, client }) => {
-    if (!client) throw ApolloError("Unauthorized")
+    if (!client) throw ApolloError(new Error(""), "Unauthorized")
 
     return await TabModel(db).findByIdAndUpdate(tab, {
         type
@@ -110,15 +110,15 @@ const updateTab = async (_parent: any, { input }: updateTabInput, { db, business
         const parsedInput = updateTabObject.parse(input);
         const tab = await Tab.findById(parsedInput._id);
 
-        if (!tab) throw ApolloError('NotFound')
+        if (!tab) throw ApolloError(new Error("No Tab"), 'NotFound')
         if (!parsedInput.status) {
-            throw ApolloError('NotFound')
+            throw ApolloError(new Error("No Status"), 'NotFound')
         }
 
         return await Tab.findByIdAndUpdate(parsedInput._id, parsedInput, { new: true });
 
     } catch (err) {
-        throw ApolloError("InternalServerError", 'Error updating tab: ' + err);
+        throw ApolloError(new Error(""), "InternalServerError",);
     }
 }
 
@@ -130,7 +130,7 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
     try {
         const tab = await Tab.findByIdAndDelete(input._id);
 
-        if (!tab) throw ApolloError('NotFound')
+        if (!tab) throw ApolloError(new Error("No tab"), 'NotFound')
 
         // if the tab has open orders, we need to close them
         // if (tab.orders.length > 0) {
@@ -150,7 +150,7 @@ const deleteTab = async (_parent: any, { input }: { input: any }, { db, business
 
         return tab;
     } catch (err) {
-        throw ApolloError("InternalServerError", 'Error deleting tab: ' + err);
+        throw ApolloError(err as Error, "InternalServerError");
     }
 }
 
@@ -159,7 +159,7 @@ const getUsersByTabID = async (parent: any, _args: any, { db }: Context) => {
     const User = UserModel(db);
     const tab = await Tab.findById(parent._id);
 
-    if (!tab) throw ApolloError('NotFound')
+    if (!tab) throw ApolloError(new Error("No Tab"), 'NotFound')
 
     return await User.find({ _id: { $in: tab.users } });
 }
@@ -179,18 +179,18 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
     const foundBusiness = await BusinessModel(db).findById(business || client?.business);
     let tabId;
 
-    if (!foundBusiness) throw ApolloError('NotFound', "Business not found")
+    if (!foundBusiness) throw ApolloError(new Error("No Business"), 'NotFound')
 
     if (client?.request) {
         const foundRequest = await RequestModel(db).findById(client.request);
-        if (!foundRequest) throw ApolloError('NotFound')
+        if (!foundRequest) throw ApolloError(new Error("no Request"), 'NotFound')
         tabId = foundRequest.tab;
     }
 
     //todo: Hacky, why not just ask for the tabId or have that on the context
     const foundTab = await Tab.findById(tabId || args.input?._id);
 
-    if (!foundTab) throw ApolloError('NotFound')
+    if (!foundTab) throw ApolloError(new Error(""), 'NotFound')
 
     if (foundTab.status === TabStatus.Closed ||
         foundTab.status === TabStatus.Pendent) {
@@ -222,7 +222,7 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
         if (foundTab.type === TakeoutDeliveryDineIn.Delivery) {
             const foundUser = await UserModel(db).findById(foundTab?.admin)
 
-            if (!foundUser || !foundUser.address) throw ApolloError("BadGateway", "No Address for Delivery");
+            if (!foundUser || !foundUser.address) throw ApolloError(new Error("No Address for Delivery"), "BadGateway");
 
             foundTab.address = foundUser.address
         }

@@ -35,9 +35,9 @@ type GLocation = {
 }
 
 const getGoogleAutoComplete: QueryResolvers["getGoogleAutoComplete"] = async (parent, { input: { text } }, { client, locale }) => {
-    if (!client) throw ApolloError("Unauthorized")
+    if (!client) throw ApolloError(new Error("No customer"), "Unauthorized")
 
-    if (text.length < 4) throw ApolloError("BadRequest", "Provide 5 chars or more")
+    if (text.length < 4) throw ApolloError(new Error("Provide 5 chars or more"), "BadRequest")
 
     try {
         const { data } = await axios.get(
@@ -59,15 +59,15 @@ const getGoogleAutoComplete: QueryResolvers["getGoogleAutoComplete"] = async (pa
                 description: local.description
             }
         })
-    } catch {
-        throw ApolloError("InternalServerError")
+    } catch (e) {
+        throw ApolloError(e as Error, "InternalServerError")
     }
 }
 
 const createCustomerAddress: MutationResolvers["createCustomerAddress"] = async (parent,
     { input: { streetAddress, complement } }, { db, client }) => {
 
-    if (!client) throw ApolloError("Unauthorized", "No customer")
+    if (!client) throw ApolloError(new Error("No customer"), "Unauthorized")
 
     const { data } = await axios.post(validateGoogle, {
         address: {
