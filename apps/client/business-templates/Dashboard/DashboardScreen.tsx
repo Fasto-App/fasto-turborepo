@@ -28,6 +28,7 @@ export const DashboardScreen = () => {
       },
     },
   });
+  const { t } = useTranslation("businessDashboard");
   return (
     <Box flex={1} shadow={"2"} backgroundColor={"gray.100"}>
       <OrangeBox />
@@ -39,17 +40,28 @@ export const DashboardScreen = () => {
               <AreaChart
                 selectedCheckoutFilter={selectedCheckoutFilter}
                 setSelectedCheckoutFilter={setSelectedCheckoutFilter}
+                allTime={t("allTime")}
+                days30={t("30Days")}
+                days7={t("7Days")}
               />
               <VerticalBar />
             </VStack>
           </ScrollView>
-          <PieChart />
+          <PieChart 
+            mostSellingItems={t("mostSellingItems")}
+            nomberOfOrders={t("numberOfOrders")}
+          />
         </HStack>
       </VStack>
     </Box>
   );
 };
-const Panel = ({ loading, revenue }: any) => {
+type PanelRevenue = {
+  loading: boolean;
+  revenue: string
+}
+
+const Panel = ({ loading, revenue }: PanelRevenue) => {
   const userData = useGetUserInformationQuery();
   const { t } = useTranslation("businessDashboard");
   return (
@@ -87,7 +99,7 @@ const Panel = ({ loading, revenue }: any) => {
           borderColor={"coolGray.200"}
           w={"48"}
         >
-          <Text fontSize={"md"}>{t("MostSellingItem")}</Text>
+          <Text fontSize={"md"}>{t("mostSellingItem")}</Text>
           <Text fontSize={"md"} bold>
             {"Burbon"}
           </Text>
@@ -99,7 +111,7 @@ const Panel = ({ loading, revenue }: any) => {
           borderColor={"coolGray.200"}
           w={"48"}
         >
-          <Text fontSize={"md"}>{t("NumberOfOrders")}</Text>
+          <Text fontSize={"md"}>{t("numberOfOrders")}</Text>
           <Text fontSize={"md"} bold>
             +132
           </Text>

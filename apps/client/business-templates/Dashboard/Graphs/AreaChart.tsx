@@ -53,11 +53,15 @@ export const options = {
 type AreaChartProps = {
   selectedCheckoutFilter: DateType;
   setSelectedCheckoutFilter: React.Dispatch<React.SetStateAction<DateType>>;
+  allTime: string;
+  days30: string;
+  days7: string;
 };
 
-export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter }: AreaChartProps) {
-  const router = useRouter();
 
+
+export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, allTime, days30, days7 }: AreaChartProps) {
+  const router = useRouter();
   const {
     loading,
     data: checkoutData,
@@ -126,7 +130,7 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter }:
           size="sm"
           variant="ghost"
         >
-          All Time
+          {allTime}
         </Button>
         <Button
           onPress={triggerShallowNav(DateType.ThirtyDays)}
@@ -134,7 +138,7 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter }:
           size="sm"
           variant="ghost"
         >
-          30 Days
+          {days30}
         </Button>
         <Button
           size="sm"
@@ -142,7 +146,7 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter }:
           isPressed={selectedCheckoutFilter === DateType.SevenDays}
           onPress={triggerShallowNav(DateType.SevenDays)}
         >
-          7 Days
+          {days7}
         </Button>
       </Stack>
       <Line options={options} data={data} />

@@ -5,6 +5,7 @@ import { Box, Button, Center, HStack, VStack, Text, Image, Heading, ScrollView }
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from 'app-helpers';
 import { PriceTag } from '../../../components/molecules/PriceTag';
 import { useGetMostSellingProductsQuery } from '../../../gen/generated';
+import { useTranslation } from "next-i18next";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -43,9 +44,13 @@ const OrdersRow = ({
     <Text fontSize={"lg"} fontWeight={"500"}>{number}</Text>
   </HStack>)
 
-export function PieChart() {
-  const { data } = useGetMostSellingProductsQuery()
+type typePieCharts = {
+  mostSellingItems: string;
+  nomberOfOrders: string;
+}
 
+export function PieChart({mostSellingItems,nomberOfOrders}:typePieCharts) {
+  const { data } = useGetMostSellingProductsQuery()
   return <ScrollView pr={2} pb={2}>
     <VStack mt={2} p={2} space={2}
       borderWidth={0.5}
@@ -54,11 +59,11 @@ export function PieChart() {
       borderRadius={"md"}
       bgColor={"white"}
     >
-      <Heading textAlign={"center"} size={"sm"}>{"Most Selling Items"}</Heading>
+      <Heading textAlign={"center"} size={"sm"}>{mostSellingItems}</Heading>
       {data?.getMostSellingProducts?.map((product, i) => <ProductItem
         key={product?._id}
         {...product}
-        quantity={(20 - i)}
+        quantity={i}
       />)}
     </VStack>
     <Box
@@ -69,7 +74,7 @@ export function PieChart() {
       bgColor={"white"}
       mt={4}
     >
-      <Heading pb={4} textAlign={"center"} size={"sm"}>{"Number Of Orders"}</Heading>
+      <Heading pb={4} textAlign={"center"} size={"sm"}>{nomberOfOrders}</Heading>
       <OrdersRow orderType={"Dine-in"} number={20} />
       <OrdersRow orderType={"Take-out"} number={13} />
       <OrdersRow orderType={"Delivery"} number={5} />

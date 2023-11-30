@@ -2,6 +2,11 @@
 	"hello": "Hello, ",
 	"welcomeDashBoard": "Welcome Back",
 	"totalRevenue": "Total Revenue",
-	"MostSellingItem": "Most Selling Item",
-	"NumberOfOrders": "Number of NumberOfOrders"
+	"mostSellingItem": "Most Selling Item",
+	"numberOfOrders": "Number of Orders",
+	"mostSellingItems": "Most Selling Items",
+	"allTime": "All Time",
+	"30Days": "30 Days",
+	"7Days": "7 Days",
+	"grossIncome": "Gross Income"
 }

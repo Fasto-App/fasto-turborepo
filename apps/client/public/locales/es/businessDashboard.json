@@ -1,7 +1,13 @@
 {
 	"hello": "Hola, ",
 	"welcomeDashBoard": "Bienvenido de nuevo",
-	"totalRevenue": "Ingresos Totales",
-	"MostSellingItem": "Producto Más Vendido",
-	"NumberOfOrders": "Número de Pedidos"
+	"totalRevenue": "Ingresos totales",
+	"mostSellingItem": "Artículo más vendido",
+	"numberOfOrders": "Número de pedidos",
+	"mostSellingItems": "Artículos más vendidos",
+	"allTime": "Todo el tiempo",
+	"30Days": "30 días",
+	"7Days": "7 días",
+	"grossIncome": "Ingresos brutos"
 }
+
