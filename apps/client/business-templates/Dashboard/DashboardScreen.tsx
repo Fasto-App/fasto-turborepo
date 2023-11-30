@@ -7,6 +7,7 @@ import { OrangeBox } from "../../components/OrangeBox";
 import { useTranslation } from "next-i18next";
 import {
   DateType,
+  useGetMostSellingProductsQuery,
   useGetPaidCheckoutByDateQuery,
   useGetUserInformationQuery,
 } from "../../gen/generated";
@@ -28,11 +29,16 @@ export const DashboardScreen = () => {
       },
     },
   });
+
+  const { data } = useGetMostSellingProductsQuery()
+
   return (
     <Box flex={1} shadow={"2"} backgroundColor={"gray.100"}>
       <OrangeBox />
       <VStack space={4} p={4} flex={1}>
-        <Panel loading={loading} revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)} />
+        <Panel
+          mostSellingItem={data?.getMostSellingProducts?.[0]?.name}
+          loading={loading} revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)} />
         <HStack space={3} flex={1}>
           <ScrollView pr={2} pb={2} borderRadius={"md"}>
             <VStack space={8} flex={1}>
@@ -43,15 +49,16 @@ export const DashboardScreen = () => {
               <VerticalBar />
             </VStack>
           </ScrollView>
-          <PieChart />
+          <PieChart data={data} />
         </HStack>
       </VStack>
     </Box>
   );
 };
-const Panel = ({ loading, revenue }: any) => {
+const Panel = ({ loading, revenue, mostSellingItem }: any) => {
   const userData = useGetUserInformationQuery();
   const { t } = useTranslation("businessDashboard");
+
   return (
     <VStack
       p={4}
@@ -75,6 +82,7 @@ const Panel = ({ loading, revenue }: any) => {
           w={"48"}
         >
           <Text fontSize={"md"}>{t("totalRevenue")}</Text>
+          {/*  todo: if loading <native base spinner> :  */}
           <Text fontSize={"md"} bold>
             {loading ? "Carregando" : revenue}
           </Text>
@@ -89,7 +97,7 @@ const Panel = ({ loading, revenue }: any) => {
         >
           <Text fontSize={"md"}>{t("MostSellingItem")}</Text>
           <Text fontSize={"md"} bold>
-            {"Burbon"}
+            {mostSellingItem}
           </Text>
         </Box>
         <Box

@@ -4,7 +4,7 @@ import { Pie } from 'react-chartjs-2';
 import { Box, Button, Center, HStack, VStack, Text, Image, Heading, ScrollView } from 'native-base';
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from 'app-helpers';
 import { PriceTag } from '../../../components/molecules/PriceTag';
-import { useGetMostSellingProductsQuery } from '../../../gen/generated';
+import { GetMostSellingProductsQuery, useGetMostSellingProductsQuery } from '../../../gen/generated';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -43,8 +43,7 @@ const OrdersRow = ({
     <Text fontSize={"lg"} fontWeight={"500"}>{number}</Text>
   </HStack>)
 
-export function PieChart() {
-  const { data } = useGetMostSellingProductsQuery()
+export function PieChart({ data }: { data: GetMostSellingProductsQuery | undefined }) {
 
   return <ScrollView pr={2} pb={2}>
     <VStack mt={2} p={2} space={2}
