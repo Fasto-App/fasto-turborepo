@@ -34,5 +34,7 @@
 	"Open": "Open",
 	"Pendent": "Pendent",
 	"checkout": "Checkout",
-	"errorGettingTabData": "Error getting tab data. Please try again."
+	"errorGettingTabData": "Error getting tab data. Please try again.",
+	"requestToCloseTabSuccessfully": "Request to close tab successfully",
+	"closeTab": "Close Tab"
 }

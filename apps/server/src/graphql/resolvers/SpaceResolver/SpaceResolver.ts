@@ -20,7 +20,7 @@ export const getSpacesFromBusiness = async (
 ) => {
   // from the business we will populate the address field and return the address object
   const businessByID = await BusinessModel(db).findById(business)
-  if (!businessByID) throw ApolloError('NotFound', "Business not found.")
+  if (!businessByID) throw ApolloError(new Error("Business not found."), 'NotFound',)
 
   return await SpaceModel(db).find({ business: businessByID?._id })
 }
@@ -33,11 +33,11 @@ export const createSpace = async (
 ) => {
   const Space = SpaceModel(db);
   const businessByID = await BusinessModel(db).findById(business)
-  if (!businessByID) throw ApolloError('Unauthorized')
+  if (!businessByID) throw ApolloError(new Error("No Business"), 'Unauthorized')
 
   const spaceByName = await Space.findOne({ name: input.name, business: businessByID?._id })
   if (spaceByName) {
-    throw ApolloError('BadRequest', "Space with this name already exists.")
+    throw ApolloError(new Error("Space with this name already exists."), 'BadRequest',)
   }
 
   const space = new Space({
@@ -57,11 +57,11 @@ export const updateSpace = async (
 ) => {
   const Space = SpaceModel(db);
   const businessByID = await BusinessModel(db).findById(business)
-  if (!businessByID) throw ApolloError('NotFound', 'Business not found.')
+  if (!businessByID) throw ApolloError(new Error('Business not found.'), 'NotFound')
 
   const spaceByID = await Space.findById(input._id)
   if (!spaceByID) {
-    throw ApolloError('NotFound', 'Space not found.')
+    throw ApolloError(new Error('Space not found.'), 'NotFound')
   }
 
   spaceByID.name = input.name
@@ -74,7 +74,7 @@ export const deleteSpace = async (parent: any, args: any, context: any) => {
 
   // if no business is found, throw error
   const businessByID = await BusinessModel(db).findById(business)
-  if (!businessByID) throw ApolloError('NotFound', 'Business not found.')
+  if (!businessByID) throw ApolloError(new Error('Business not found.'), 'NotFound')
 
   // get the space by id and delete it
   // id will be passed as args.id

@@ -9,7 +9,7 @@ import { OrangeBox } from "../../components/OrangeBox"
 import { z } from "zod"
 import { parseToCurrency, typedKeys } from "app-helpers"
 import { useTranslation } from "next-i18next"
-import { BottomCheckoutTableWithModal } from "../OrderScreen"
+import { BottomCheckoutTableWithModal } from "./BottomCheckoutTableWithModal"
 import { UpperSection } from "../../components/UpperSection"
 
 const usePaymentFormHook = () => {
@@ -114,7 +114,6 @@ export const PaymentsScreen = () => {
                 name={data.getIsConnected.name}
                 url={data.getIsConnected.url}
               />
-
               <BottomCheckoutTableWithModal
                 setModalData={setModalData}
                 modalData={modalData}

@@ -214,9 +214,7 @@ main();
 type ProccessContext = { headersAPIKey?: string, businessToken?: string, clientToken?: string, locale: Locale }
 async function proccessContext({ businessToken, clientToken, headersAPIKey, locale }: ProccessContext) {
   if (!process.env.API_KEY || headersAPIKey !== process.env.API_KEY) {
-    console.log("NOT AUTHORIZED: invalid API key 🔑")
-    console.log({ headersAPIKey })
-    throw ApolloError('Unauthorized');
+    throw ApolloError(new Error("NOT AUTHORIZED: invalid API key 🔑"), 'Unauthorized');
   }
 
   const userFromToken = await getUserFromToken(businessToken?.split(' ')[1]);

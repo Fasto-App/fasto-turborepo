@@ -9,17 +9,21 @@ import { getDaysAgo } from "../utils";
 export const getCheckoutByID: QueryResolvers["getCheckoutByID"] = async (parent, { input }, { db, client, user }) => {
   const Checkout = CheckoutModel(db);
 
-  if (!client && !user) throw ApolloError("Unauthorized", "You must be logged in to perform this action")
+  if (!client && !user) throw ApolloError(new Error("You must be logged in to perform this action"), "Unauthorized",)
 
   const checkout = await Checkout.findOne({ _id: input._id, business: client?.business || user?.business });
-  if (!checkout) throw ApolloError("NotFound", "Checkout not found");
+  if (!checkout) throw ApolloError(new Error("Checkout not found"), "NotFound",);
   return checkout
 }
 
 // @ts-ignore
-export const getCheckoutsByBusiness: QueryResolvers["getCheckoutsByBusiness"] = async (_parent, args, { db, business }) => {
-  const Checkout = CheckoutModel(db);
-  const checkouts = await Checkout.find({ business: business }).sort({ _id: -1 });
+export const getCheckoutsByBusiness: QueryResolvers["getCheckoutsByBusiness"] = async (_parent, { page = 1, pageSize = 10 }, { db, business }) => {
+  if (!business) {
+    throw ApolloError(new Error("no business"), "Unauthorized")
+  }
+  const skip = (page - 1) * pageSize;
+
+  const checkouts = await CheckoutModel(db).find({ business }).skip(skip).limit(pageSize).sort({ _id: -1 });
   return checkouts
 }
 
@@ -28,7 +32,7 @@ export const getOrdersByCheckout: QueryResolvers["getOrdersByCheckout"] = async 
   const Checkout = CheckoutModel(db);
   const checkout = await Checkout.findById(input._id);
 
-  if (!checkout) throw ApolloError("NotFound", "Checkout not found");
+  if (!checkout) throw ApolloError(new Error("Checkout not found"), "NotFound",);
 
   return checkout
 }

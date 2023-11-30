@@ -13,7 +13,7 @@
 	"splitBy": "Dividir por",
 	"paymentBy": "Pagamento por",
 	"sessionEnded": "Sessão encerrada com sucesso. ",
-	"backToManageTables": "Voltar para gerenciar mesas",
+	"goBack": "Voltar",
 	"leftText": "Obrigado pelo seu pedido! \nVocê está quase lá. Por favor, revise seus itens abaixo e prossiga para finalizar a compra quando estiver pronto.",
 	"table": "Mesa {{number}}",
 	"viewSummary": "Ver resumo",

@@ -314,6 +314,12 @@ export type DeleteEmployee = {
   _id: Scalars['ID'];
 };
 
+export type DeleteResult = {
+  __typename?: 'DeleteResult';
+  acknowledged: Scalars['Boolean'];
+  deletedCount: Scalars['Int'];
+};
+
 export type DeleteSpaceInput = {
   space: Scalars['ID'];
 };
@@ -496,6 +502,7 @@ export type Mutation = {
   deleteBusiness?: Maybe<DeleteBusinessPayload>;
   deleteBusinessEmployee: Scalars['ID'];
   deleteCategory?: Maybe<RequestResponseOk>;
+  deleteCheckoutData: DeleteResult;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
   deleteOrderDetail: OrderDetail;
@@ -674,6 +681,11 @@ export type MutationDeleteBusinessEmployeeArgs = {
 
 export type MutationDeleteCategoryArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeleteCheckoutDataArgs = {
+  ids: Array<Scalars['ID']>;
 };
 
 
@@ -1015,6 +1027,12 @@ export type QueryGetCategoryByIdArgs = {
 
 export type QueryGetCheckoutByIdArgs = {
   input: GetById;
+};
+
+
+export type QueryGetCheckoutsByBusinessArgs = {
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
@@ -1517,6 +1535,13 @@ export type CustomerRequestSplitMutationVariables = Exact<{
 
 export type CustomerRequestSplitMutation = { __typename?: 'Mutation', customerRequestSplit: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string } };
 
+export type DeleteCheckoutDataMutationVariables = Exact<{
+  ids: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type DeleteCheckoutDataMutation = { __typename?: 'Mutation', deleteCheckoutData: { __typename?: 'DeleteResult', acknowledged: boolean, deletedCount: number } };
+
 export type MakeCheckoutFullPaymentMutationVariables = Exact<{
   input: MakeCheckoutFullPaymentInput;
 }>;
@@ -1545,7 +1570,10 @@ export type GetCheckoutByIdQueryVariables = Exact<{
 
 export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, serviceFee: number, serviceFeeValue: number, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tipValue?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null, paid: boolean } | null> } };
 
-export type GetCheckoutsByBusinessQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCheckoutsByBusinessQueryVariables = Exact<{
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+}>;
 
 
 export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string }> };
@@ -2819,6 +2847,40 @@ export function useCustomerRequestSplitMutation(baseOptions?: Apollo.MutationHoo
 export type CustomerRequestSplitMutationHookResult = ReturnType<typeof useCustomerRequestSplitMutation>;
 export type CustomerRequestSplitMutationResult = Apollo.MutationResult<CustomerRequestSplitMutation>;
 export type CustomerRequestSplitMutationOptions = Apollo.BaseMutationOptions<CustomerRequestSplitMutation, CustomerRequestSplitMutationVariables>;
+export const DeleteCheckoutDataDocument = gql`
+    mutation DeleteCheckoutData($ids: [ID!]!) {
+  deleteCheckoutData(ids: $ids) {
+    acknowledged
+    deletedCount
+  }
+}
+    `;
+export type DeleteCheckoutDataMutationFn = Apollo.MutationFunction<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>;
+
+/**
+ * __useDeleteCheckoutDataMutation__
+ *
+ * To run a mutation, you first call `useDeleteCheckoutDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCheckoutDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCheckoutDataMutation, { data, loading, error }] = useDeleteCheckoutDataMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeleteCheckoutDataMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>(DeleteCheckoutDataDocument, options);
+      }
+export type DeleteCheckoutDataMutationHookResult = ReturnType<typeof useDeleteCheckoutDataMutation>;
+export type DeleteCheckoutDataMutationResult = Apollo.MutationResult<DeleteCheckoutDataMutation>;
+export type DeleteCheckoutDataMutationOptions = Apollo.BaseMutationOptions<DeleteCheckoutDataMutation, DeleteCheckoutDataMutationVariables>;
 export const MakeCheckoutFullPaymentDocument = gql`
     mutation MakeCheckoutFullPayment($input: MakeCheckoutFullPaymentInput!) {
   makeCheckoutFullPayment(input: $input) {
@@ -3013,8 +3075,8 @@ export type GetCheckoutByIdQueryHookResult = ReturnType<typeof useGetCheckoutByI
 export type GetCheckoutByIdLazyQueryHookResult = ReturnType<typeof useGetCheckoutByIdLazyQuery>;
 export type GetCheckoutByIdQueryResult = Apollo.QueryResult<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>;
 export const GetCheckoutsByBusinessDocument = gql`
-    query GetCheckoutsByBusiness {
-  getCheckoutsByBusiness {
+    query GetCheckoutsByBusiness($page: Int!, $pageSize: Int!) {
+  getCheckoutsByBusiness(page: $page, pageSize: $pageSize) {
     _id
     business
     tab
@@ -3043,10 +3105,12 @@ export const GetCheckoutsByBusinessDocument = gql`
  * @example
  * const { data, loading, error } = useGetCheckoutsByBusinessQuery({
  *   variables: {
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
  *   },
  * });
  */
-export function useGetCheckoutsByBusinessQuery(baseOptions?: Apollo.QueryHookOptions<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>) {
+export function useGetCheckoutsByBusinessQuery(baseOptions: Apollo.QueryHookOptions<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetCheckoutsByBusinessQuery, GetCheckoutsByBusinessQueryVariables>(GetCheckoutsByBusinessDocument, options);
       }

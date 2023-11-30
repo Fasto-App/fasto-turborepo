@@ -16,25 +16,24 @@ const createProduct: MutationResolvers["createProduct"] = async (_parent, { inpu
     const businessByID = await BusinessModel(db).findById(business)
     const categoryByID = await Category.findById(input.category)
 
-    if (!businessByID) throw ApolloError("NotFound", 'Business not found.')
-    if (!categoryByID) throw ApolloError("NotFound", 'Category not found.')
+    if (!businessByID) throw ApolloError(new Error('Business not found.'), "NotFound")
+    if (!categoryByID) throw ApolloError(new Error('Category not found.'), "NotFound",)
 
 
     if (categoryByID?.subCategories?.length) {
-        throw ApolloError('BadRequest',
-            "Category already has subcategories, and should not be linked to a product")
+        throw ApolloError(new Error("Category already has subcategories, and should not be linked to a product"), 'BadRequest')
     }
 
     const productByName = await Product.findOne({ name: input.name, business: business })
 
 
     if (productByName) {
-        throw ApolloError('BadRequest', "Product already exists.")
+        throw ApolloError(new Error("Product already exists."), 'BadRequest',)
     }
 
 
     if (input.price < 0 || !Number.isInteger(input.price)) {
-        throw ApolloError('BadRequest', "Price must be an integer and greater than 0")
+        throw ApolloError(new Error("Price must be an integer and greater than 0"), 'BadRequest',)
     }
 
     try {
@@ -120,7 +119,7 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
     const Product = ProductModel(db);
     const product = await Product.findById(input._id);
 
-    if (!product) throw ApolloError('BadRequest', "Product not found. Please try it again.")
+    if (!product) throw ApolloError(new Error("Product not found. Please try it again."), 'BadRequest',)
 
     // if the input has a photo, upload it to the s3 bucket
     if (input.file) {
@@ -135,7 +134,7 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
 
 
         if (productByName && productByName._id.toString() !== input._id) {
-            throw ApolloError('BadRequest', "Product name already exists. Please try it again.")
+            throw ApolloError(new Error("Product name already exists. Please try it again."), 'BadRequest',)
         }
 
         product.name = input.name;
@@ -144,7 +143,7 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
     // if theres a price, see if the price is valid
     if (input.price) {
         if (input.price < 0) {
-            throw ApolloError('BadRequest', "Price must be greater than 0. Please try it again")
+            throw ApolloError(new Error("Price must be greater than 0. Please try it again"), 'BadRequest',)
         }
 
 
@@ -153,8 +152,8 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
 
     // if theres a description, see if the description is valid
     if (input.description) {
-        if (input.description.length > 500) throw ApolloError('BadRequest',
-            "Description must be less than 500 characters. Please try it again.")
+        if (input.description.length > 500) throw ApolloError(new Error("Description must be less than 500 characters. Please try it again."), 'BadRequest',
+        )
 
         product.description = input.description;
     }
@@ -163,7 +162,7 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
     if (input.category) {
         const Category = CategoryModel(db);
         const category = await Category.findById(input.category)
-        if (!category) throw ApolloError('BadRequest', "Category not found. Please try it again.")
+        if (!category) throw ApolloError(new Error("Category not found. Please try it again."), 'BadRequest',)
 
         product.category = category._id
     }
@@ -174,7 +173,7 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
     // if theres a addons, see if the addons are valid
     // if (input.addons) {
     //     if (input.addons.length > 10)
-    //         throw ApolloError('BadRequest', "Addons must be less than 10. Please try it again.")
+    //         throw ApolloError(new Error(), 'BadRequest', "Addons must be less than 10. Please try it again.")
     // }
 
     return await product.save()
@@ -182,12 +181,12 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
 
 // delete category
 const deleteProduct = async (_parent: any, args: { id: string }, { db, user, business }: Context) => {
-    if (!business) throw ApolloError('Unauthorized', "Business not found. Please login again.")
+    if (!business) throw ApolloError(new Error("Business not found. Please login again."), 'Unauthorized',)
 
     const Product = ProductModel(db);
     const product = await Product.findById(args.id);
 
-    if (!product) throw ApolloError('BadRequest', "Product not found. Please try it again.")
+    if (!product) throw ApolloError(new Error("Product not found. Please try it again."), 'BadRequest',)
 
     await MenuModel(db).updateMany({}, { $pull: { "sections.$[].products": args.id } })
     await product.remove();

@@ -77,7 +77,7 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
     const Business = BusinessModel(db)
     const findSession = await Session.findOne({ email: validInput.email })
 
-    if (!findSession) throw ApolloError('NotFound', 'Session not found. Check you email again or request a new access token.');
+    if (!findSession) throw ApolloError(new Error("Session not found. Check you email again or request a new access token."), 'NotFound');
 
     const hashedPassword = hashPassword(validInput.password)
     const User = UserModel(db)
@@ -234,19 +234,19 @@ export const updateUserInformation = async (_parent: any,
 export const recoverPassword: MutationResolvers["recoverPassword"] = async (_parent, { input }, { db, locale }) => {
 
   if (!validateEmail(input)) {
-    throw ApolloError('BadRequest')
+    throw ApolloError(new Error("Invalid input"), 'BadRequest')
   }
 
   const User = UserModel(db)
   const user = await User.findOne({ email: input })
 
-  if (!user || !user.email || !user.name) throw ApolloError('NotFound')
+  if (!user || !user.email || !user.name) throw ApolloError(new Error("Not an user"), 'NotFound')
 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] as string : undefined;
   const token = await tokenSigning(user._id, user.email, businessId);
 
-  if (!token) throw ApolloError('InternalServerError')
+  if (!token) throw ApolloError(new Error("No signing token"), 'InternalServerError')
 
   try {
 
@@ -268,13 +268,13 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
   try {
     const validInput = createEmployeeAccountSchema.parse(input)
     const { token, password, email, name } = validInput
-    if (!email || !token) throw ApolloError("BadRequest", "Invalid Input")
+    if (!email || !token) throw ApolloError(new Error("Invalid input"), "BadRequest")
     // the token will be used to know what business the user is creating the account for
     const Session = SessionModel(db)
     const foundSession = await Session.findOne({ email: email, token: token })
     // with the session we can try to get the job role
 
-    if (!foundSession) throw ApolloError("BadRequest", "Invalid Token. Request a new one")
+    if (!foundSession) throw ApolloError(new Error("Invalid input"), "BadRequest")
 
     const {
       _id,
@@ -283,7 +283,7 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
     } = await getUserFromToken(token) || {}
 
     if (!business || !emailFromToken) {
-      throw ApolloError("BadRequest", "Invalid Token. Request a new one")
+      throw ApolloError(new Error("Invalid Token. Request a new one"), "BadRequest")
     }
 
     const User = UserModel(db)
@@ -295,7 +295,7 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
     const jobTitle = foundSession?.business?.jobTitle
 
     if (!businessFound || !privilege || !jobTitle) {
-      throw ApolloError("BadRequest", "Invalid Business or Privileges")
+      throw ApolloError(new Error("Invalid Business or Privileges"), "BadRequest",)
     }
 
     const user = await User.create({
@@ -327,8 +327,8 @@ const createEmployeeAccount = async (_parent: any, { input }: { input: CreateEmp
       token: newToken,
     }
 
-  } catch (err: any) {
-    throw ApolloError("BadRequest", `${err}`)
+  } catch (err) {
+    throw ApolloError(err as Error, "BadRequest")
   }
 
 }
@@ -352,17 +352,12 @@ const passwordReset = async (_parent: any,
   { input: { password, token } }: { input: ResetPasswordSchemaInput },
   { db }: Context) => {
 
-  console.log("RESET PASSWORD", password, token)
-
-  if (!token) throw ApolloError('BadRequest')
+  if (!token) throw ApolloError(new Error("No token"), 'BadRequest')
 
   try {
     const decodedToken = await getUserFromToken(token)
 
-    console.log("decodedToken", decodedToken)
-
-
-    if (!decodedToken) throw ApolloError("BadRequest", "Token Invalid");
+    if (!decodedToken) throw ApolloError(new Error("Token Invalid"), "BadRequest");
 
     const User = UserModel(db)
     const user = await User.findOne({ email: decodedToken.email })
@@ -381,7 +376,7 @@ const passwordReset = async (_parent: any,
       token,
     })
   } catch (error) {
-    throw ApolloError('BadRequest', "somehting with the token was not right")
+    throw ApolloError(error as Error, 'BadRequest')
   }
 
 }
@@ -390,7 +385,7 @@ const getClientInformation = async (_parent: any, { input }: { input: string }, 
   const User = UserModel(db)
   const foundClient = await User.findById(client?._id)
 
-  if (!foundClient) throw ApolloError('BadRequest', 'Client not found')
+  if (!foundClient) throw ApolloError(new Error('Client not found'), 'BadRequest')
 
   return foundClient
 }

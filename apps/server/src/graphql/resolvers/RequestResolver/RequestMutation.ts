@@ -23,7 +23,7 @@ const openTabRequest: MutationResolvers["openTabRequest"] = async (
   const foundBusiness = await Business.findById(business)
 
   if (!foundBusiness) {
-    throw ApolloError('BadRequest', "Business Not Found")
+    throw ApolloError(new Error("Business Not Found"), 'BadRequest')
   }
 
   const foundUserByPhone = await User.findOne({ phoneNumber })
@@ -101,16 +101,16 @@ const acceptTabRequest: MutationResolvers["acceptTabRequest"] = async (
   })
 
   if (!foundRequest) {
-    throw ApolloError('BadRequest', "Request Not Found or Not Pending")
+    throw ApolloError(new Error("Request Not Found or Not Pending"), 'BadRequest',)
   }
 
   const foundAdmin = await User.findOne({ _id: foundRequest.admin })
-  if (!foundAdmin) throw ApolloError('BadRequest', "Admin Not Found")
+  if (!foundAdmin) throw ApolloError(new Error("Admin Not Found"), 'BadRequest',)
 
   const table = await Table.findOne({ _id: input.table, business });
 
-  if (!table) throw ApolloError('BadRequest', "Table Not Found")
-  if (table.status !== 'Available') throw ApolloError('BadRequest', "Table Not Available")
+  if (!table) throw ApolloError(new Error("Table Not Found"), 'BadRequest',)
+  if (table.status !== 'Available') throw ApolloError(new Error("Table Not Available"), 'BadRequest',)
 
   // create all the other users. total guests - 1
   const numGuests = (foundRequest.totalGuests || 1) - 1;
@@ -131,7 +131,7 @@ const acceptTabRequest: MutationResolvers["acceptTabRequest"] = async (
     type: 'DineIn',
   });
 
-  if (!tab) throw ApolloError('BadRequest', "Tab Not Created")
+  if (!tab) throw ApolloError(new Error("Tab Not Created"), 'BadRequest',)
 
   foundRequest.status = 'Accepted';
   foundRequest.tab = tab._id;
@@ -160,16 +160,16 @@ const declineTabRequest = async (
   const Request = RequestModel(db)
   const foundRequest = await Request.findOne({ _id: input._id })
 
-  if (!foundRequest) throw ApolloError('BadRequest', "Request Not Found")
+  if (!foundRequest) throw ApolloError(new Error("Request Not Found"), 'BadRequest',)
 
   // check if the request belongs to the business
   if (foundRequest.business?.toString() !== business) {
-    throw ApolloError('BadRequest', "Request Not Found")
+    throw ApolloError(new Error("Not allowed"), 'BadRequest')
   }
 
   // check if the request is pending
   if (foundRequest.status !== 'Pending') {
-    throw ApolloError('BadRequest', "Request Not Pending")
+    throw ApolloError(new Error("Request Not Pending"), 'BadRequest')
   }
 
   foundRequest.status = 'Rejected';
@@ -193,11 +193,11 @@ const requestJoinTab: MutationResolvers["requestJoinTab"] = async (
   const foundTab = await Tab.findOne({ _id: input.tab })
   const tabAdmin = await User.findOne({ _id: input.admin })
 
-  if (!tabAdmin) throw ApolloError('BadRequest', "Tab Admin Not Found")
-  if (!foundTab) throw ApolloError('BadRequest', "Request Not Found")
+  if (!tabAdmin) throw ApolloError(new Error("Tab Admin Not Found"), 'BadRequest',)
+  if (!foundTab) throw ApolloError(new Error("Request Not Found"), 'BadRequest',)
 
   if (foundTab.status !== 'Open') {
-    throw ApolloError('BadRequest', "Tab Not Open")
+    throw ApolloError(new Error("Tab Not Open"), 'BadRequest',)
   }
 
   const foundUser = await User.findOne({ phoneNumber: input.phoneNumber })
@@ -267,13 +267,11 @@ const declineInvitation = async (
   const Request = RequestModel(db)
   const foundRequest = await Request.findOne({ _id: input._id })
 
-  console.log("request id", input._id)
-
-  if (!foundRequest) throw ApolloError('BadRequest', "Request Not Found")
+  if (!foundRequest) throw ApolloError(new Error("Request Not Found"), 'BadRequest',)
 
   // check if the request is pending
   if (foundRequest.status !== 'Pending') {
-    throw ApolloError('BadRequest', "Request Not Pending")
+    throw ApolloError(new Error("Request Not Pending"), 'BadRequest',)
   }
 
   foundRequest.status = 'Rejected';
@@ -291,7 +289,7 @@ const acceptInvitation = async (
   { db, client }: Context
 ) => {
   if (!client) {
-    throw ApolloError('Unauthorized', "Client Not Found", "client")
+    throw ApolloError(new Error("Client Not Found"), 'Unauthorized')
   }
 
   const Tab = TabModel(db);
@@ -299,19 +297,19 @@ const acceptInvitation = async (
   const pendingRequest = await Request.findOne({ _id: input._id })
 
   if (!pendingRequest) {
-    throw ApolloError('BadRequest', "Request Not Found")
+    throw ApolloError(new Error("Request Not Found"), 'BadRequest',)
   }
 
   const adminRequest = await Request.findById(client?.request)
 
   if (!adminRequest) {
-    throw ApolloError('BadRequest', "Request Not Found")
+    throw ApolloError(new Error("Request Not Found"), 'BadRequest',)
   }
 
   const foundTab = await Tab.findOne({ _id: adminRequest?.tab })
 
   if (!foundTab) {
-    throw ApolloError('BadRequest', "Tab Not Found")
+    throw ApolloError(new Error("Tab Not Found"), 'BadRequest',)
   }
 
   // change Request status to accepted
@@ -376,9 +374,6 @@ const createNewTakeoutOrDelivery: MutationResolvers['createNewTakeoutOrDelivery'
     status: { $in: ['Pending', 'Accepted'] }, // Include requests with status 'Pending' or 'Accepted'
   });
 
-  console.log('foundRequest', foundRequest)
-  console.log('foundRequest', foundRequest)
-
   if (foundRequest) {
 
     return await tokenClient({
@@ -439,9 +434,6 @@ export const RequestSubscription = {
   numberIncremented: {
     subscribe: withFilter(() => pubsub.asyncIterator(['NUMBER_INCREMENTED']),
       (payload, _, { client, }: Context) => {
-
-        console.log('client', client)
-        console.log('payload', payload)
 
         // if (client) {
         //   return payload.onTabRequestResponse.requestor?.toString() === client._id ||
