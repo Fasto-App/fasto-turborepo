@@ -2,5 +2,12 @@
 	"orders": "Pedidos",
 	"hereIsYourList": "Aqui está sua lista de pedidos",
 	"date": "Data",
-	"close": "Fechar"
+	"close": "Fechar",
+	"title": "Excluir Pedidos",
+	"cancel": "Cancelar",
+	"body": "Esta ação irá excluir permanentemente vários pedidos. Tem certeza de que deseja continuar?",
+	"deleteCheckoutSuccess": "Dados do pedido excluídos com sucesso.",
+	"itemsWereDeleted_one": "{{count}} item foi excluído.",
+	"itemsWereDeleted_other": "{{count}} itens foram excluídos.",
+	"deleteCheckoutError": "Erro ao excluir dados de pedidos."
 }

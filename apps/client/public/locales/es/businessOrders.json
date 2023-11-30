@@ -1,5 +1,13 @@
 {
 	"orders": "Pedidos",
 	"hereIsYourList": "Aquí está tu lista de pedidos",
-	"payoutNow": "Pagar ahora"
+	"payoutNow": "Pagar ahora",
+	"title": "Eliminar Órdenes",
+	"cancel": "Cancelar",
+	"body": "Esta acción eliminará permanentemente varias órdenes. ¿Estás seguro/a de que quieres continuar?",
+	"deleteCheckoutSuccess": "Datos de la orden eliminados con éxito.",
+	"itemsWereDeleted_one": "{{count}} elemento fue eliminado.",
+	"itemsWereDeleted_other": "{{count}} elementos fueron eliminados.",
+	"deleteCheckoutError": "Error al eliminar datos de pedidos."
+
 }

@@ -1,5 +1,12 @@
 {
 	"orders": "Orders",
 	"hereIsYourList": "Here is your list of orders",
-	"close": "Close"
+	"close": "Close",
+	"title": "Delete Orders",
+	"cancel": "Cancel",
+	"body": "This action will permanently delete multiple orders. Are you sure you want to continue?",
+	"deleteCheckoutSuccess": "Order data deleted successfully.",
+	"itemsWereDeleted_one": "{{count}} item was deleted.",
+	"itemsWereDeleted_other": "{{count}} items were deleted.",
+	"deleteCheckoutError": "Error deleting checkout data."
 }
