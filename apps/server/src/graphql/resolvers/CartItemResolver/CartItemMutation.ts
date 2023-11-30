@@ -1,18 +1,13 @@
 
 
+import { MutationResolvers } from "../../../generated/graphql";
 import { TabModel, ProductModel, RequestModel } from "../../../models";
 import { CartItemModel } from "../../../models/cartItem";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 
-type addItemToCartInput = {
-  product: string,
-  quantity: number,
-  notes: string,
-  options: string[],
-}
-
-const addItemToCart = async (_parent: any, { input }: { input: addItemToCartInput }, { db, client }: Context) => {
+//@ts-ignore
+const addItemToCart: MutationResolvers["addItemToCart"] = async (_parent, { input }, { db, client }) => {
   if (!client) throw ApolloError(new Error("Invalid token"), 'Unauthorized',)
 
   const Tab = TabModel(db);
