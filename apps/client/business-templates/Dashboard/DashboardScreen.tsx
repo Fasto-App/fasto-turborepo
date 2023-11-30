@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, HStack, Heading, ScrollView, Text, VStack } from "native-base";
+import { Box, HStack, Heading, ScrollView, Text, VStack, Spinner } from "native-base";
 import { AreaChart } from "./Graphs/AreaChart";
 import { PieChart } from "./Graphs/PieChart";
 import { VerticalBar } from "./Graphs/VerticalBar";
@@ -29,6 +29,7 @@ export const DashboardScreen = () => {
       },
     },
   });
+  const { t } = useTranslation("businessDashboard");
 
   const { data } = useGetMostSellingProductsQuery()
 
@@ -45,8 +46,11 @@ export const DashboardScreen = () => {
               <AreaChart
                 selectedCheckoutFilter={selectedCheckoutFilter}
                 setSelectedCheckoutFilter={setSelectedCheckoutFilter}
+                allTime={t("allTime")}
+                days30={t("30Days")}
+                days7={t("7Days")}
               />
-              <VerticalBar />
+              <VerticalBar/>
             </VStack>
           </ScrollView>
           <PieChart data={data} />
@@ -82,9 +86,13 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
           w={"48"}
         >
           <Text fontSize={"md"}>{t("totalRevenue")}</Text>
-          {/*  todo: if loading <native base spinner> :  */}
           <Text fontSize={"md"} bold>
-            {loading ? "Carregando" : revenue}
+            {loading 
+            ? <>
+                <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
+                </Heading> 
+              </>
+            : revenue}
           </Text>
         </Box>
 
@@ -95,9 +103,12 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
           borderColor={"coolGray.200"}
           w={"48"}
         >
-          <Text fontSize={"md"}>{t("MostSellingItem")}</Text>
+          <Text fontSize={"md"}>{t("mostSellingItem")}</Text>
           <Text fontSize={"md"} bold>
-            {mostSellingItem}
+            {loading? <>
+                <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
+                </Heading> 
+              </>:mostSellingItem}
           </Text>
         </Box>
         <Box
@@ -107,7 +118,7 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
           borderColor={"coolGray.200"}
           w={"48"}
         >
-          <Text fontSize={"md"}>{t("NumberOfOrders")}</Text>
+          <Text fontSize={"md"}>{t("numberOfOrders")}</Text>
           <Text fontSize={"md"} bold>
             +132
           </Text>
