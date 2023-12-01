@@ -1,42 +1,22 @@
-# Merge Request Template
-## Remember to update the ticket title
-
-Remove everything above
-_____________
+# Name the Task
 
 ## Link To The Notion Ticket
-<link.com/> 
+
+[Notion Link](https://link-url-here.org)
 
 ## Description
 
 Please provide a brief overview of the changes that have been made and the purpose of the merge request.
+E.g: Update the layout for the top container on Orders Screen
 
 ## Changes Made
 
-- List the specific changes that have been made in bullet point format
-- Provide any relevant details or context for each change
+-   List the specific changes that have been made in bullet point format
+-   Provide any relevant details or context for each change
 
-## Testing
+    E.g: - Added a dropdown to filter the data by type
 
-- Explain how the changes were tested
-- Provide any test results or screenshots if applicable
+## Checklist for REVIEWERS
 
-## Impact
-
-- Explain how this merge request will impact the overall project
-- Provide any relevant information on how this merge request affects other parts of the code
-
-## Checklist
-
-- [ ] Code has been reviewed and approved by at least one other member of the team
-- [ ] Changes have been properly tested and pass all tests
-- [ ] Any necessary documentation has been updated
-
-## Additional Information
-
-- Provide any additional information or context that may be relevant for this merge request
-
-
-
-
-
+-   [ ] Code has been reviewed and approved by at least one other member of the team
+-   [ ] Any necessary documentation has been updated
