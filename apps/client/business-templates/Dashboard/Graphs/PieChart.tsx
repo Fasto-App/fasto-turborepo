@@ -4,7 +4,8 @@ import { Pie } from 'react-chartjs-2';
 import { Box, Button, Center, HStack, VStack, Text, Image, Heading, ScrollView } from 'native-base';
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from 'app-helpers';
 import { PriceTag } from '../../../components/molecules/PriceTag';
-import { useGetMostSellingProductsQuery } from '../../../gen/generated';
+import { useTranslation } from "next-i18next";
+import { GetMostSellingProductsQuery, useGetMostSellingProductsQuery } from '../../../gen/generated';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -43,9 +44,8 @@ const OrdersRow = ({
     <Text fontSize={"lg"} fontWeight={"500"}>{number}</Text>
   </HStack>)
 
-export function PieChart() {
-  const { data } = useGetMostSellingProductsQuery()
-
+export function PieChart({ data }: { data: GetMostSellingProductsQuery | undefined }) {
+  const { t } = useTranslation("businessDashboard");
   return <ScrollView pr={2} pb={2}>
     <VStack mt={2} p={2} space={2}
       borderWidth={0.5}
@@ -54,11 +54,11 @@ export function PieChart() {
       borderRadius={"md"}
       bgColor={"white"}
     >
-      <Heading textAlign={"center"} size={"sm"}>{"Most Selling Items"}</Heading>
+      <Heading textAlign={"center"} size={"sm"}>{t("mostSellingItems")}</Heading>
       {data?.getMostSellingProducts?.map((product, i) => <ProductItem
         key={product?._id}
         {...product}
-        quantity={(20 - i)}
+        quantity={product?.totalOrdered}
       />)}
     </VStack>
     <Box
@@ -69,10 +69,10 @@ export function PieChart() {
       bgColor={"white"}
       mt={4}
     >
-      <Heading pb={4} textAlign={"center"} size={"sm"}>{"Number Of Orders"}</Heading>
-      <OrdersRow orderType={"Dine-in"} number={20} />
-      <OrdersRow orderType={"Take-out"} number={13} />
-      <OrdersRow orderType={"Delivery"} number={5} />
+      <Heading pb={4} textAlign={"center"} size={"sm"}>{t("numberOfOrders")}</Heading>
+      <OrdersRow orderType={t("dineIn")} number={20} />
+      <OrdersRow orderType={t("takeOut")} number={13} />
+      <OrdersRow orderType={t("delivery")} number={5} />
     </Box>
   </ScrollView>
 }

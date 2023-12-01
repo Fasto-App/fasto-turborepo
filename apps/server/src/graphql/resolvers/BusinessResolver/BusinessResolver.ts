@@ -48,7 +48,7 @@ const getAllBusiness = async (_parent: any, _args: any, { db }: { db: Connection
 // @ts-ignore
 const getBusinessById: QueryResolvers["getBusinessById"] = async (_parent, { input }, { db }) => {
   const foundBusiness = BusinessModel(db).findById(input._id)
-  if (!foundBusiness) throw ApolloError("NotFound", 'Business not found')
+  if (!foundBusiness) throw ApolloError(new Error("Business not found"), "NotFound")
 
   const foundAddress = await AddressModel(db).findById(foundBusiness.address)
   if (foundAddress) foundBusiness.address = foundAddress
@@ -63,7 +63,7 @@ const getBusinessInformation: QueryResolvers["getBusinessInformation"] = async (
   { db, business },
 ) => {
   const foundBusiness = await BusinessModel(db).findById(business)
-  if (!foundBusiness) throw ApolloError("BadRequest", "Error Findind Business Info")
+  if (!foundBusiness) throw ApolloError(new Error("Error Findind Business Info"), "BadRequest")
 
   return foundBusiness
 };
@@ -134,7 +134,7 @@ const createBusiness = async (_parent: any,
     // based on the users information, create a new token
     return ({ business: savedBusiness, token: newToken })
   } catch (error) {
-    throw ApolloError("BadRequest", `${error}`)
+    throw ApolloError(error as Error, "BadRequest")
   }
 };
 
@@ -168,7 +168,7 @@ const updateBusinessInformation = async (
     return await foundBusines.save()
 
   } catch {
-    throw ApolloError("BadRequest");
+    throw ApolloError(new Error(""), "BadRequest");
   }
 }
 
@@ -261,7 +261,7 @@ const getBusinessLocation = async (parent: null, args: null, { business, db }: C
 }
 
 const getAllEmployees = async (parent: any, args: any, { business, db }: Context) => {
-  if (!business) throw ApolloError("Unauthorized")
+  if (!business) throw ApolloError(new Error("no business"), "Unauthorized")
 
   const User = UserModel(db)
   const Business = BusinessModel(db)
@@ -302,7 +302,7 @@ const getAllEmployees = async (parent: any, args: any, { business, db }: Context
 
 // @ts-ignore
 const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = async (parent, args, { business, db, locale }) => {
-  if (!business) throw ApolloError("Unauthorized")
+  if (!business) throw ApolloError(new Error("no business"), "Unauthorized")
   const { email, privilege, _id, name, jobTitle, isPending } = args.input
 
   const User = UserModel(db)
@@ -311,13 +311,13 @@ const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = as
 
   const foundBusiness = await Business.findById(business)
   const foundAsUser = await User.findOne({ email })
-  if (!foundBusiness) throw ApolloError("BadRequest")
+  if (!foundBusiness) throw ApolloError(new Error(""), "BadRequest")
 
   if (_id) {
     if (isPending) {
       const foundSession = await Session.findById(_id)
-      if (!foundSession) throw ApolloError("BadRequest")
-      if (!foundSession.name || !foundSession.email) throw ApolloError("BadRequest")
+      if (!foundSession) throw ApolloError(new Error(""), "BadRequest")
+      if (!foundSession.name || !foundSession.email) throw ApolloError(new Error(""), "BadRequest")
 
       foundSession.business = {
         privilege,
@@ -338,7 +338,7 @@ const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = as
 
     const foundUser = await User.findById(_id)
 
-    if (!foundUser) throw ApolloError("BadRequest")
+    if (!foundUser) throw ApolloError(new Error("no business"), "BadRequest")
 
     foundUser.businesses = {
       ...foundUser.businesses,
@@ -364,7 +364,7 @@ const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = as
 
   if (foundAsUser) {
     if (foundBusiness.employees?.includes(foundAsUser._id)) {
-      throw ApolloError("BadRequest", "This user is already an employee")
+      throw ApolloError(new Error("This user is already an employee"), "BadRequest")
     }
 
     foundBusiness.employees?.push(foundAsUser._id)
@@ -442,7 +442,7 @@ const manageBusinessEmployees: MutationResolvers["manageBusinessEmployees"] = as
 }
 
 const deleteBusinessEmployee = async (parent: any, args: { input: any }, { business, db }: Context) => {
-  if (!business) throw ApolloError("Unauthorized")
+  if (!business) throw ApolloError(new Error("no business"), "Unauthorized")
   const { _id } = args.input
   console.log("Delete Employee", args.input)
 
@@ -478,12 +478,12 @@ const deleteBusinessEmployee = async (parent: any, args: { input: any }, { busin
     }
   }
 
-  throw ApolloError("BadRequest", "Employee not found or there was an error deleting the them.")
+  throw ApolloError(new Error("Employee not found or there was an error deleting the them."), "BadRequest",)
 }
 
 const shareQRCode: MutationResolvers["shareQRCode"] = async (_parent, { input: { email, file } },
   { business, db, locale }) => {
-  if (!business) throw ApolloError("Unauthorized")
+  if (!business) throw ApolloError(new Error("no business"), "Unauthorized")
 
   const { createReadStream } = await file;
   const stream: Stream = createReadStream();

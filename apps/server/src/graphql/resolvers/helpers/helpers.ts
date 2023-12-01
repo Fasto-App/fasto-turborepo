@@ -30,7 +30,7 @@ export const getCountry = async ({
   const foundBusiness = await BusinessModel(db).findById(business)
 
   if (!foundBusiness || !foundBusiness?.country) {
-    throw ApolloError("Unauthorized", "you need a country")
+    throw ApolloError(new Error("you need a country"), "Unauthorized")
   }
 
   return foundBusiness.country

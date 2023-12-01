@@ -13,7 +13,7 @@
 	"splitBy": "Split by",
 	"paymentBy": "Payment by",
 	"sessionEnded": "Session ended successfully. ",
-	"backToManageTables": "Back to manage Tables",
+	"goBack": "Go back",
 	"leftText": "Thank you for your order!\n You're almost there. Please review your items below and proceed to checkout when you're ready.",
 	"table": "Table {{number}}",
 	"viewSummary": "View Summary",

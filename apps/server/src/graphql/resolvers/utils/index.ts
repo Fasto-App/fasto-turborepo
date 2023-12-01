@@ -5,7 +5,7 @@ import { ClientContext, UserContext } from "../types"
 import { DateType } from "../../../generated/graphql"
 
 export async function tokenSigning(id: string, email: string, business?: string) {
-  if (!process.env.TOKEN_SECRET) throw ApolloError('InternalServerError')
+  if (!process.env.TOKEN_SECRET) throw ApolloError(new Error("No token"), 'InternalServerError')
 
   return await new jose.SignJWT({ _id: id, email, business })
     .setProtectedHeader({ alg: 'HS256' })
@@ -15,7 +15,7 @@ export async function tokenSigning(id: string, email: string, business?: string)
 }
 
 export async function tokenClient({ _id, business, request }: ClientContext) {
-  if (!process.env.TOKEN_SECRET) throw ApolloError('InternalServerError')
+  if (!process.env.TOKEN_SECRET) throw ApolloError(new Error("No token"), 'InternalServerError')
 
   return await new jose.SignJWT({ _id, business, request })
     .setProtectedHeader({ alg: 'HS256' })
@@ -49,7 +49,7 @@ export const getUserFromToken = async (token?: string): Promise<UserContext | un
   } catch (error) {
 
     console.log("🚯 invalid User Token");
-    throw ApolloError("Unauthorized");
+    throw ApolloError(error as Error, "Unauthorized");
   }
 }
 

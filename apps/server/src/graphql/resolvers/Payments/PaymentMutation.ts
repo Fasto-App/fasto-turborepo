@@ -9,12 +9,12 @@ import { getCountry, updateProductQuantity } from "../helpers/helpers";
 const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async (parent, { input },
   { db, user, locale, client }) => {
 
-  if (!client) throw ApolloError('Unauthorized', "Not Authorized. Please login again.")
+  if (!client) throw ApolloError(new Error("Not Authorized. Please login again."), 'Unauthorized',)
 
   const foundBusiness = await BusinessModel(db).findOne({ _id: client?.business });
 
   if (!foundBusiness || !foundBusiness.stripeAccountId) {
-    throw ApolloError('BadRequest', "Business is not Configured to accept payments.")
+    throw ApolloError(new Error("Business is not Configured to accept payments."), 'BadRequest',)
   }
 
   // from the business, get the address
@@ -23,17 +23,17 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
   // if no country, throw an error asking to set the address first
   // TODO: Delete all the addresses and make country standard
   if (!foundAddress?.country) {
-    throw ApolloError('BadRequest', "Please set the address first.")
+    throw ApolloError(new Error("Please set the address first."), 'BadRequest',)
   }
 
   const foundPayment = await PaymentModel(db).findOne({ _id: input.payment })
   if (!foundPayment) {
-    throw ApolloError('BadRequest', "Payment not found.")
+    throw ApolloError(new Error("Payment not found."), 'BadRequest',)
   }
 
   const foundCheckout = await CheckoutModel(db).findOne({ _id: foundPayment.checkout })
   if (!foundCheckout) {
-    throw ApolloError('BadRequest', "Checkout not found.")
+    throw ApolloError(new Error("Checkout not found."), 'BadRequest',)
   }
 
   // create a description for the payment intent
@@ -58,8 +58,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
       amount: paymentIntent.amount,
     });
   } catch (err) {
-    console.log("generatePaymentIntent error", err)
-    throw ApolloError('BadRequest', `Error creating paymentIntent: ${err}`);
+    throw ApolloError(err as Error, 'BadRequest');
   }
 }
 
@@ -73,11 +72,11 @@ const connectExpressPayment: MutationResolvers["connectExpressPayment"] = async 
   const foundUser = await User.findOne({ _id: user?._id })
 
   if (!foundBusiness || !foundUser) {
-    throw ApolloError('Unauthorized', "Not Authorized. Please login again.")
+    throw ApolloError(new Error("Not Authorized. Please login again."), 'Unauthorized',)
   }
 
   const country = await getCountry({ db, business: foundBusiness._id })
-  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
+  if (!country) throw ApolloError(new Error("You Need a Country"), "Unauthorized",)
 
   let accountId = foundBusiness.stripeAccountId;
 
@@ -108,10 +107,10 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
 
   const foundBusiness = await BusinessModel(db).findOne({ _id: user?.business });
 
-  if (!foundBusiness?.stripeAccountId) throw ApolloError('BadRequest', "Stripe Account not found")
+  if (!foundBusiness?.stripeAccountId) throw ApolloError(new Error("Stripe Account not found"), 'BadRequest',)
 
   const country = await getCountry({ db, business: foundBusiness._id })
-  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
+  if (!country) throw ApolloError(new Error("You Need a Country"), "Unauthorized",)
   // Fetch the account balance to determine the available funds
   const balance = await stripe(country).balance.retrieve({
     stripeAccount: foundBusiness?.stripeAccountId,
@@ -122,7 +121,7 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
   const { amount, currency } = balance.available[0];
 
   if (amount <= 0) {
-    throw ApolloError('BadRequest', "Not enough funds to payout.")
+    throw ApolloError(new Error("Not enough funds to payout."), 'BadRequest',)
   }
 
   await stripe(country).payouts.create({
@@ -137,26 +136,24 @@ const generateStripePayout: MutationResolvers["generateStripePayout"] = async (p
 const confirmPayment: MutationResolvers['confirmPayment'] = async (
   _parent, { input }, { db }) => {
   const foundPayment = await PaymentModel(db).findById(input.payment)
-  if (!foundPayment) throw ApolloError('BadRequest', "Payment not found.")
+  if (!foundPayment) throw ApolloError(new Error("Payment not found."), 'BadRequest',)
 
   const foundCheckout = await CheckoutModel(db).findById(foundPayment?.checkout)
-  if (!foundCheckout) throw ApolloError('BadRequest', "Payment not found.")
+  if (!foundCheckout) throw ApolloError(new Error("Checkout not found."), 'BadRequest',)
 
   const foundTab = await TabModel(db).findById(foundCheckout.tab)
-  if (!foundTab) throw ApolloError('BadRequest', 'Tab not found')
+  if (!foundTab) throw ApolloError(new Error('Tab not found'), 'BadRequest',)
 
   foundPayment.paid = true;
   await foundPayment.save()
 
   foundCheckout.totalPaid += foundPayment.amount
-  console.log("foundCheckout.totalPaid", foundCheckout.totalPaid)
-  console.log("foundCheckout.total", foundCheckout.total)
 
   if (foundCheckout.totalPaid >= foundCheckout.total) {
 
     if (foundTab?.table) {
       const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table)
-      if (!foundTable) throw ApolloError('BadRequest', 'Table not found')
+      if (!foundTable) throw ApolloError(new Error('Table not found'), 'BadRequest',)
 
       foundTable.status = "Available"
       foundTable.tab = undefined
@@ -180,8 +177,6 @@ const confirmPayment: MutationResolvers['confirmPayment'] = async (
       });
 
       await Promise.all(savePromises);
-
-      console.log("savePromises", savePromises)
     }
   }
 

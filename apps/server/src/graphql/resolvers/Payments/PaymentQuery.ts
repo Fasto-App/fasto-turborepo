@@ -14,7 +14,7 @@ const getIsConnected: QueryResolvers["getIsConnected"] = async (_, _args, { busi
   if (!foundBusiness?.stripeAccountId) return null
 
   const country = await getCountry({ db, business: foundBusiness._id })
-  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
+  if (!country) throw ApolloError(new Error("You Need a Country"), "Unauthorized",)
 
   const account = await stripe(country).accounts.retrieve(foundBusiness?.stripeAccountId);
 
@@ -39,7 +39,7 @@ const createStripeAccessLink: QueryResolvers["createStripeAccessLink"] = async (
   if (!foundBusiness?.stripeAccountId) return null
 
   const country = await getCountry({ db, business: foundBusiness._id })
-  if (!country) throw ApolloError("Unauthorized", "You Need a Country")
+  if (!country) throw ApolloError(new Error("You Need a Country"), "Unauthorized",)
 
   const loginLink = await stripe(country).accounts.createLoginLink(
     foundBusiness?.stripeAccountId

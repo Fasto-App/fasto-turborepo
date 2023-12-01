@@ -33,5 +33,8 @@
 	"Delivered": "Entregado",
 	"Open": "Abierto",
 	"Pendent": "Pendiente",
-	"checkout": "Cuenta"
+	"checkout": "Cuenta",
+	"errorGettingTabData": "Error al obtener los datos de la pestaña",
+	"requestToCloseTabSuccessfully": "Solicitud de cierre de cuenta enviada",
+	"closeTab": "Cerrar Cuenta"
 }

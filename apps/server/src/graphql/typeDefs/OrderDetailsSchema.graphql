@@ -10,7 +10,6 @@ extend type Mutation {
 	createMultipleOrderDetails(input: [CreateOrderInput!]!): [OrderDetail!]!
 	clientCreateMultipleOrderDetails(input: [ClientCreateOrderInput!]!): [OrderDetail!]!
 	updateOrderDetail(input: UpdateOrderDetailInput!): OrderDetail!
-	deleteOrderDetail(input: GetById!): OrderDetail!
 }
 
 type OrderDetailsByDate {
