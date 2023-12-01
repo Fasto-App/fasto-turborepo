@@ -1,9 +1,10 @@
 {
 	"name": "server",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"main": "dist/index.js",
 	"license": "MIT",
 	"scripts": {
+		"release": "release-it --ci",
 		"start": "ts-node --transpile-only src/index.ts",
 		"dev": "doppler run -- nodemon --ext ts,graphql src/index.ts",
 		"build": "rm -rf dist && tsc",
@@ -39,6 +40,7 @@
 		"ws": "^8.13.0"
 	},
 	"devDependencies": {
+		"@mono/config-release-it": "*",
 		"@babel/preset-typescript": "^7.18.6",
 		"@graphql-codegen/cli": "3.3.0",
 		"@graphql-codegen/typescript": "3.0.3",

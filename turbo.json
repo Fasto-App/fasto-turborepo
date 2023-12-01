@@ -5,6 +5,10 @@
 			"dependsOn": ["^build"],
 			"outputs": ["dist/**", ".next/**"]
 		},
+		"release": {
+			"dependsOn": ["^release"],
+			"outputMode": "new-only"
+		},
 		"start": {
 			"dependsOn": ["^build"]
 		},

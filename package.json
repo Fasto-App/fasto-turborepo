@@ -4,7 +4,8 @@
 	"private": true,
 	"workspaces": [
 		"apps/*",
-		"packages/*"
+		"packages/*",
+		"config/*"
 	],
 	"husky": {
 		"hooks": {
@@ -13,6 +14,8 @@
 	},
 	"scripts": {
 		"postinstall": "husky install",
+		"prepare": "husky install",
+		"release": "turbo release --concurrency=1",
 		"dev": "turbo run dev --parallel",
 		"lint": "turbo run lint",
 		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -30,6 +33,8 @@
 		"storybook": "cd apps/client && yarn run storybook"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^18.4.3",
+		"@commitlint/config-conventional": "^18.4.3",
 		"eslint-config-custom": "*",
 		"husky": "^8.0.3",
 		"prettier": "latest",

@@ -1,7 +1,8 @@
 {
 	"name": "client",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"scripts": {
+		"release": "release-it --ci",
 		"build": "export NODE_OPTIONS=--openssl-legacy-provider;  next build",
 		"dev": "export NODE_OPTIONS=--openssl-legacy-provider; doppler run -- next dev",
 		"start": "doppler run -- next start",
@@ -59,6 +60,7 @@
 		"zustand": "^4.3.1"
 	},
 	"devDependencies": {
+		"@mono/config-release-it": "*",
 		"@babel/core": "^7.18.0",
 		"@expo/next-adapter": "4.0.6",
 		"@graphql-codegen/cli": "^2.13.0",
