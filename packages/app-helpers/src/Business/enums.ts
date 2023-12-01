@@ -13,7 +13,8 @@ export const OrderStatus = {
   Open: 'Open',
   Pendent: 'Pendent',
   Delivered: 'Delivered',
-  Closed: 'Closed'
+  Closed: 'Closed',
+  Ready: "Ready"
 } as const;
 
 export type OrderStatusType = typeof OrderStatus[keyof typeof OrderStatus];

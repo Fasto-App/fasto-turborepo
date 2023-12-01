@@ -216,6 +216,7 @@ export const Checkout = () => {
                       flex={1}
                       p={0}
                       textDecoration={"underline"}
+                      textDecorationColor={"info.500"}
                       variant="link"
                       size="med"
                       colorScheme="info"

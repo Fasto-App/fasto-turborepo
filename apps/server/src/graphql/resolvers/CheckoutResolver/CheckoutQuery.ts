@@ -23,8 +23,11 @@ export const getCheckoutsByBusiness: QueryResolvers["getCheckoutsByBusiness"] = 
   }
   const skip = (page - 1) * pageSize;
 
-  const checkouts = await CheckoutModel(db).find({ business }).skip(skip).limit(pageSize).sort({ _id: -1 });
-  return checkouts
+  return await CheckoutModel(db)
+    .find({ business })
+    .skip(skip)
+    .limit(pageSize)
+    .sort({ _id: -1 })
 }
 
 // @ts-ignore

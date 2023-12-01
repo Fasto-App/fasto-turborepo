@@ -58,7 +58,7 @@ export function PieChart({ data }: { data: GetMostSellingProductsQuery | undefin
       {data?.getMostSellingProducts?.map((product, i) => <ProductItem
         key={product?._id}
         {...product}
-        quantity={20 - i} // this info will come from the product, right now we are faking the data 
+        quantity={product?.totalOrdered}
       />)}
     </VStack>
     <Box

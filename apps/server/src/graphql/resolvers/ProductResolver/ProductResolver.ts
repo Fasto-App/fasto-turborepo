@@ -206,7 +206,10 @@ const getProductByOrderDetails = async (parent: any, args: any, { db }: Context)
 }
 
 const getMostSellingProducts = async (par: any, args: any, { db, business }: any) => {
-    const foundProducts = await ProductModel(db).find({ business }).limit(5)
+    const foundProducts = await ProductModel(db)
+        .find({ business })
+        .sort({ totalOrdered: -1 }) // Sorting in descending order based on totalOrdered
+        .limit(5); // Limiting the result to one product
 
     return foundProducts
 }
