@@ -21,7 +21,7 @@
 	"PartiallyPaid": "Pago parcialmente",
 	"Pending": "Pendente",
 	"checkout": "Conta",
-	"title": "Excluir Pagamentos",
+	"title": "Excluir Conta",
 	"body": "Esta ação irá excluir permanentemente vários pagamentos. Tem certeza de que deseja continuar?",
 	"cancel": "Cancelar",
 	"delete": "Excluir",
