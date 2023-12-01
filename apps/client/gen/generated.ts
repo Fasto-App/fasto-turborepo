@@ -505,7 +505,6 @@ export type Mutation = {
   deleteCheckoutData: DeleteResult;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
-  deleteOrderDetail: OrderDetail;
   deleteProduct?: Maybe<RequestResponseOk>;
   deleteSpace: Space;
   deleteTab?: Maybe<Tab>;
@@ -696,11 +695,6 @@ export type MutationDeleteItemFromCartArgs = {
 
 export type MutationDeleteMenuArgs = {
   id: Scalars['ID'];
-};
-
-
-export type MutationDeleteOrderDetailArgs = {
-  input: GetById;
 };
 
 
@@ -952,6 +946,7 @@ export type Product = {
   name: Scalars['String'];
   price: Scalars['Int'];
   quantity?: Maybe<Scalars['Int']>;
+  totalOrdered?: Maybe<Scalars['Int']>;
 };
 
 export type Query = {
@@ -1725,7 +1720,7 @@ export type DeleteProductMutation = { __typename?: 'Mutation', deleteProduct?: {
 export type GetMostSellingProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSellingProducts?: Array<{ __typename?: 'Product', _id: string, price: number, imageUrl?: string | null, name: string, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> | null };
+export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSellingProducts?: Array<{ __typename?: 'Product', _id: string, price: number, imageUrl?: string | null, name: string, totalOrdered?: number | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> | null };
 
 export type GetAllProductsByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4008,6 +4003,7 @@ export const GetMostSellingProductsDocument = gql`
     price
     imageUrl
     name
+    totalOrdered
     category {
       name
       _id

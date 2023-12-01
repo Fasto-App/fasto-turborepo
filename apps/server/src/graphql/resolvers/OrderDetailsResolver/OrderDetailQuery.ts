@@ -4,6 +4,7 @@ import { OrderDetailModel, ProductModel, RequestModel, TabModel } from "../../..
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { getDaysAgo } from "../utils";
+import { OrdersGroupModel } from "../../../models/ordersGroup";
 
 // @ts-ignore
 const getOrderDetailByID: QueryResolvers["getOrderDetailByID"] = async (_parent: any, { orderDetailID }, { db }) => {
@@ -74,12 +75,44 @@ const getOrdersBySession: QueryResolvers["getOrdersBySession"] = async (_parent,
   return await OrderDetail.find({ tab: foundTab._id });
 }
 
+// @ts-ignore
+const getOrdersGroup: QueryResolvers["getOrdersGroup"] = async (paren, { input }, { db, business }) => {
+  if (!business) throw ApolloError(new Error(""), "Unauthorized")
+
+  const skip = (input.page - 1) * input.pageSize;
+
+  let query: any = { business };
+  // Include the type in the query if it's provided
+  if (input.type) {
+    query.type = input.type;
+  }
+
+  return await OrdersGroupModel(db)
+    .find(query)
+    .skip(skip)
+    .limit(input.pageSize)
+    .sort({ _id: -1 })
+}
+
+//@ts-ignore
+const getOrderGroupById: QueryResolvers["getOrdersGroupById"] = async (paren, { id }, { db, business }) => {
+  if (!business) throw ApolloError(new Error(""), "Unauthorized")
+
+  const foundOrderGroup = await OrdersGroupModel(db).findById(id).populate("orders")
+
+  if (!foundOrderGroup) throw ApolloError(new Error("OrderGroup not found"), "Unauthorized")
+  foundOrderGroup.orders = await OrderDetailModel(db).find({ _id: { $in: foundOrderGroup.orders } })
+
+  return foundOrderGroup
+}
 
 export const OrderDetailsResolverQuery = {
   getOrderDetailByID,
   getAllOrderDetailsByOrderID,
   getOrdersBySession,
-  getAllOrderDetailsByDate
+  getAllOrderDetailsByDate,
+  getOrdersGroup,
+  getOrderGroupById
 }
 export const OrderDetailsResolver = {
   getOrdersByTabID

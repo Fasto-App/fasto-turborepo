@@ -28,6 +28,9 @@ export class Product {
   @prop()
   public imageUrl?: string;
 
+  @prop({ default: 0 })
+  public totalOrdered!: number;
+
   @prop({ default: Date.now() })
   public created_date!: Date;
 }

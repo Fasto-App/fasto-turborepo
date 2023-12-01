@@ -368,6 +368,13 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type GetOrdersGroup = {
+  dateType: DateType;
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  type?: InputMaybe<TakeoutDeliveryDineIn>;
+};
+
 export type GetPaidCheckout = {
   type: DateType;
 };
@@ -505,7 +512,6 @@ export type Mutation = {
   deleteCheckoutData: DeleteResult;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
-  deleteOrderDetail: OrderDetail;
   deleteProduct?: Maybe<RequestResponseOk>;
   deleteSpace: Space;
   deleteTab?: Maybe<Tab>;
@@ -696,11 +702,6 @@ export type MutationDeleteItemFromCartArgs = {
 
 export type MutationDeleteMenuArgs = {
   id: Scalars['ID'];
-};
-
-
-export type MutationDeleteOrderDetailArgs = {
-  input: GetById;
 };
 
 
@@ -906,6 +907,16 @@ export enum OrderStatus {
   Pendent = 'Pendent'
 }
 
+export type OrdersGroup = {
+  __typename?: 'OrdersGroup';
+  business: Scalars['ID'];
+  createdByUser: Scalars['ID'];
+  id: Scalars['ID'];
+  orders: Array<OrderDetail>;
+  status: OrderStatus;
+  type: TakeoutDeliveryDineIn;
+};
+
 export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
@@ -952,6 +963,7 @@ export type Product = {
   name: Scalars['String'];
   price: Scalars['Int'];
   quantity?: Maybe<Scalars['Int']>;
+  totalOrdered?: Maybe<Scalars['Int']>;
 };
 
 export type Query = {
@@ -988,6 +1000,8 @@ export type Query = {
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
+  getOrdersGroup?: Maybe<Array<OrdersGroup>>;
+  getOrdersGroupById: OrdersGroup;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
@@ -1058,6 +1072,16 @@ export type QueryGetOrderDetailByIdArgs = {
 
 export type QueryGetOrdersByCheckoutArgs = {
   input: GetById;
+};
+
+
+export type QueryGetOrdersGroupArgs = {
+  input: GetOrdersGroup;
+};
+
+
+export type QueryGetOrdersGroupByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1518,6 +1542,7 @@ export type ResolversTypes = {
   GetById: GetById;
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
+  GetOrdersGroup: GetOrdersGroup;
   GetPaidCheckout: GetPaidCheckout;
   GetPayment: GetPayment;
   GetSubsInput: GetSubsInput;
@@ -1542,6 +1567,7 @@ export type ResolversTypes = {
   OrderDetailInput: OrderDetailInput;
   OrderDetailsByDate: ResolverTypeWrapper<OrderDetailsByDate>;
   OrderStatus: OrderStatus;
+  OrdersGroup: ResolverTypeWrapper<OrdersGroup>;
   PaidCheckoutRes: ResolverTypeWrapper<PaidCheckoutRes>;
   Payment: ResolverTypeWrapper<Payment>;
   PaymentIntent: ResolverTypeWrapper<PaymentIntent>;
@@ -1645,6 +1671,7 @@ export type ResolversParentTypes = {
   GetById: GetById;
   GetMenu: GetMenu;
   GetMenuById: GetMenuById;
+  GetOrdersGroup: GetOrdersGroup;
   GetPaidCheckout: GetPaidCheckout;
   GetPayment: GetPayment;
   GetSubsInput: GetSubsInput;
@@ -1667,6 +1694,7 @@ export type ResolversParentTypes = {
   OrderDetail: OrderDetail;
   OrderDetailInput: OrderDetailInput;
   OrderDetailsByDate: OrderDetailsByDate;
+  OrdersGroup: OrdersGroup;
   PaidCheckoutRes: PaidCheckoutRes;
   Payment: Payment;
   PaymentIntent: PaymentIntent;
@@ -1944,7 +1972,6 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteCheckoutData?: Resolver<ResolversTypes['DeleteResult'], ParentType, ContextType, RequireFields<MutationDeleteCheckoutDataArgs, 'ids'>>;
   deleteItemFromCart?: Resolver<ResolversTypes['CartItem'], ParentType, ContextType, RequireFields<MutationDeleteItemFromCartArgs, 'input'>>;
   deleteMenu?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, RequireFields<MutationDeleteMenuArgs, 'id'>>;
-  deleteOrderDetail?: Resolver<ResolversTypes['OrderDetail'], ParentType, ContextType, RequireFields<MutationDeleteOrderDetailArgs, 'input'>>;
   deleteProduct?: Resolver<Maybe<ResolversTypes['RequestResponseOK']>, ParentType, ContextType, RequireFields<MutationDeleteProductArgs, 'id'>>;
   deleteSpace?: Resolver<ResolversTypes['Space'], ParentType, ContextType, RequireFields<MutationDeleteSpaceArgs, 'input'>>;
   deleteTab?: Resolver<Maybe<ResolversTypes['Tab']>, ParentType, ContextType, RequireFields<MutationDeleteTabArgs, 'input'>>;
@@ -1999,6 +2026,16 @@ export type OrderDetailsByDateResolvers<ContextType = Context, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type OrdersGroupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OrdersGroup'] = ResolversParentTypes['OrdersGroup']> = {
+  business?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdByUser?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  orders?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['TakeoutDeliveryDineIn'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PaidCheckoutResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaidCheckoutRes'] = ResolversParentTypes['PaidCheckoutRes']> = {
   data?: Resolver<Array<Maybe<ResolversTypes['AveragePerDay']>>, ParentType, ContextType>;
   sortBy?: Resolver<ResolversTypes['DateType'], ParentType, ContextType>;
@@ -2044,6 +2081,7 @@ export type ProductResolvers<ContextType = Context, ParentType extends Resolvers
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   quantity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  totalOrdered?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2080,6 +2118,8 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
   getOrdersByCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;
   getOrdersBySession?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
+  getOrdersGroup?: Resolver<Maybe<Array<ResolversTypes['OrdersGroup']>>, ParentType, ContextType, RequireFields<QueryGetOrdersGroupArgs, 'input'>>;
+  getOrdersGroupById?: Resolver<ResolversTypes['OrdersGroup'], ParentType, ContextType, RequireFields<QueryGetOrdersGroupByIdArgs, 'id'>>;
   getPaidCheckoutByDate?: Resolver<Maybe<ResolversTypes['PaidCheckoutRes']>, ParentType, ContextType, RequireFields<QueryGetPaidCheckoutByDateArgs, 'input'>>;
   getPaymentInformation?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<QueryGetPaymentInformationArgs, 'input'>>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
@@ -2233,6 +2273,7 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>;
   OrderDetail?: OrderDetailResolvers<ContextType>;
   OrderDetailsByDate?: OrderDetailsByDateResolvers<ContextType>;
+  OrdersGroup?: OrdersGroupResolvers<ContextType>;
   PaidCheckoutRes?: PaidCheckoutResResolvers<ContextType>;
   Payment?: PaymentResolvers<ContextType>;
   PaymentIntent?: PaymentIntentResolvers<ContextType>;
