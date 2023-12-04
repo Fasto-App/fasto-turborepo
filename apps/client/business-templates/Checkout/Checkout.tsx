@@ -1,36 +1,59 @@
-import { Box, Flex, Heading, VStack, Text, HStack, Button, Center, Divider, ScrollView, Image } from 'native-base'
-import { Link } from '../../components/atoms/Link';
-import { useRouter } from 'next/router'
-import React from 'react'
-import { LeftSideBar } from '../../components'
-import { BottomSection } from '../../components/BottomSection'
-import { OrangeBox } from '../../components/OrangeBox'
-import { SuccessAnimation } from '../../components/SuccessAnimation'
-import { TileButton } from '../../components/TileButton'
-import { UpperSection } from '../../components/UpperSection'
-import { GetCheckoutByIdDocument, useGetCheckoutByIdQuery, useGetTabCheckoutByIdQuery, useMakeCheckoutPaymentMutation } from '../../gen/generated'
-import { PayInFull } from './PayInFull'
-import { Split } from './Split'
-import { businessRoute } from 'fasto-route';
-import { useCheckoutStore } from './checkoutStore';
-import { useTranslation } from 'next-i18next';
-import { formatAsPercentage, getPercentageOfValue, parseToCurrency, parseToFixedPoint } from 'app-helpers';
-import { PaymentTile } from './TableComponents';
-import { showToast } from '../../components/showToast';
-import { OrdersModal } from '../OrderScreen/OrdersModal';
-import { Pressable } from 'react-native';
+import {
+  Box,
+  Flex,
+  Heading,
+  VStack,
+  Text,
+  HStack,
+  Button,
+  Center,
+  Divider,
+  ScrollView,
+  Image,
+} from "native-base";
+import { Link } from "../../components/atoms/Link";
+import { useRouter } from "next/router";
+import React from "react";
+import { LeftSideBar } from "../../components";
+import { BottomSection } from "../../components/BottomSection";
+import { OrangeBox } from "../../components/OrangeBox";
+import { SuccessAnimation } from "../../components/SuccessAnimation";
+import { TileButton } from "../../components/TileButton";
+import { UpperSection } from "../../components/UpperSection";
+import {
+  GetCheckoutByIdDocument,
+  useGetCheckoutByIdQuery,
+  useGetTabCheckoutByIdQuery,
+  useMakeCheckoutPaymentMutation,
+} from "../../gen/generated";
+import { PayInFull } from "./PayInFull";
+import { Split } from "./Split";
+import { businessRoute } from "fasto-route";
+import { useCheckoutStore } from "./checkoutStore";
+import { useTranslation } from "next-i18next";
+import {
+  formatAsPercentage,
+  getPercentageOfValue,
+  parseToCurrency,
+  parseToFixedPoint,
+} from "app-helpers";
+import { PaymentTile } from "./TableComponents";
+import { showToast } from "../../components/showToast";
+import { OrdersModal } from "../OrderScreen/OrdersModal";
+import { Pressable } from "react-native";
+import { BiUnderline } from "react-icons/bi";
 
-const checkoutOptions = ["payFull", "splitBill", "success"] as const
+const checkoutOptions = ["payFull", "splitBill", "success"] as const;
 
 export const Checkout = () => {
+  const [showOrdersModal, setShowOrdersModal] = React.useState(false);
+  const [selectedOption, setSelectedOption] =
+    React.useState<typeof checkoutOptions[number]>("payFull");
+  const route = useRouter();
+  const { checkoutId, tabId } = route.query;
 
-  const [showOrdersModal, setShowOrdersModal] = React.useState(false)
-  const [selectedOption, setSelectedOption] = React.useState<typeof checkoutOptions[number]>("payFull")
-  const route = useRouter()
-  const { checkoutId, tabId } = route.query
-
-  const setTotal = useCheckoutStore(state => state.setTotal)
-  const { t } = useTranslation("businessCheckout")
+  const setTotal = useCheckoutStore((state) => state.setTotal);
+  const { t } = useTranslation("businessCheckout");
 
   const [makeCheckoutPayment, { loading }] = useMakeCheckoutPaymentMutation({
     refetchQueries: [
@@ -38,55 +61,54 @@ export const Checkout = () => {
         query: GetCheckoutByIdDocument,
         variables: {
           input: {
-            _id: checkoutId as string
-          }
-        }
-      }
+            _id: checkoutId as string,
+          },
+        },
+      },
     ],
-  })
+  });
 
   const { data: tabData } = useGetTabCheckoutByIdQuery({
     skip: !tabId,
     variables: {
       input: {
-        _id: tabId as string
-      }
+        _id: tabId as string,
+      },
     },
-  })
+  });
 
   // TODO: get the table number from either the Checkout or the Tab
   const { data } = useGetCheckoutByIdQuery({
     skip: !checkoutId,
     variables: {
       input: {
-        _id: checkoutId as string
-      }
+        _id: checkoutId as string,
+      },
     },
     onCompleted: (data) => {
-      const { status, paid, splitType, subTotal } = data?.getCheckoutByID || {}
+      const { status, paid, splitType, subTotal } = data?.getCheckoutByID || {};
 
       switch (splitType) {
         case "Full":
-          console.log("Full")
-          setSelectedOption("payFull")
+          console.log("Full");
+          setSelectedOption("payFull");
           break;
         case "Equally":
         case "Custom":
         case "ByPatron":
-          setSelectedOption("splitBill")
+          setSelectedOption("splitBill");
           break;
       }
 
       if (subTotal) {
-        setTotal(subTotal)
+        setTotal(subTotal);
       }
 
       if (status === "Paid" && paid) {
-        console.log("success")
-        setSelectedOption("success")
+        console.log("success");
+        setSelectedOption("success");
       }
     },
-
   });
 
   const {
@@ -100,45 +122,45 @@ export const Checkout = () => {
     payments,
     // serviceFee,
     serviceFeeValue,
-    total } = data?.getCheckoutByID || {}
+    total,
+  } = data?.getCheckoutByID || {};
 
   // if the cehckout has a split type that is not "Full", change the selected option
   // show some different UI that will allow to make the payments
 
-  if (!subTotal) return null
+  if (!subTotal) return null;
   return (
     <>
       <OrdersModal
         setIsOpen={setShowOrdersModal}
         checkoutId={checkoutId as string}
-        isOpen={showOrdersModal} />
+        isOpen={showOrdersModal}
+      />
 
       <Flex flexDirection={"row"} flex={1}>
         <LeftSideBar>
-          <Pressable onPress={() => {
-            route.push({
-              pathname: businessRoute.dashboard,
-            })
-          }}>
-
+          <Pressable
+            onPress={() => {
+              route.push({
+                pathname: businessRoute.dashboard,
+              });
+            }}
+          >
             <Center>
-              <Image src="/images/fasto-logo.svg"
+              <Image
+                src="/images/fasto-logo.svg"
                 alt="Fasto Logo"
-                height={36} width={180} />
+                height={36}
+                width={180}
+              />
             </Center>
           </Pressable>
           <Box flex={1} justifyContent={"center"}>
-            <Text textAlign={"center"}>
-              {t("leftText")}
-            </Text>
+            <Text textAlign={"center"}>{t("leftText")}</Text>
           </Box>
 
-          <Button.Group flexDirection={"column"} >
-            <Button
-              w={"full"}
-              onPress={() => setShowOrdersModal(true)}
-              mb={6}
-            >
+          <Button.Group flexDirection={"column"}>
+            <Button w={"full"} onPress={() => setShowOrdersModal(true)} mb={6}>
               {t("viewSummary")}
             </Button>
             <Button
@@ -158,26 +180,31 @@ export const Checkout = () => {
           <OrangeBox />
           <VStack flex={1} p={2} space={4}>
             <UpperSection>
-              <Heading>
-                {t("checkout")}
-              </Heading>
+              <Heading>{t("checkout")}</Heading>
               <HStack space={"4"}>
-                {checkoutOptions.filter((option) => option !== "success").map((option) => (
-                  <TileButton
-                    isDisabled={!!data?.getCheckoutByID?.splitType ||
-                      option === "splitBill" && !!tabData?.getTabByID?.users?.length &&
-                      tabData?.getTabByID?.users?.length < 2}
-                    key={option}
-                    onPress={() => selectedOption !== "success" && setSelectedOption(option)}
-                    selected={selectedOption === option}
-                  >
-                    {option === "payFull" ? t("payInFull") : t("splitBill")}
-                  </TileButton>
-                ))}
+                {checkoutOptions
+                  .filter((option) => option !== "success")
+                  .map((option) => (
+                    <TileButton
+                      isDisabled={
+                        !!data?.getCheckoutByID?.splitType ||
+                        (option === "splitBill" &&
+                          !!tabData?.getTabByID?.users?.length &&
+                          tabData?.getTabByID?.users?.length < 2)
+                      }
+                      key={option}
+                      onPress={() =>
+                        selectedOption !== "success" &&
+                        setSelectedOption(option)
+                      }
+                      selected={selectedOption === option}
+                    >
+                      {option === "payFull" ? t("payInFull") : t("splitBill")}
+                    </TileButton>
+                  ))}
               </HStack>
             </UpperSection>
             <BottomSection>
-
               {selectedOption === "success" ? (
                 <Center h={"full"}>
                   <Box size={"32"} mb={12}>
@@ -185,36 +212,50 @@ export const Checkout = () => {
                   </Box>
                   <Text fontSize={"2xl"} textAlign={"center"}>
                     {t("sessionEnded")}
-                    <Link fontSize={"2xl"} href={businessRoute.orders}>
-                      {t("backToManageTables")}
-                    </Link>
+                    <Button
+                      flex={1}
+                      p={0}
+                      textDecoration={"underline"}
+                      textDecorationColor={"info.500"}
+                      variant="link"
+                      size="med"
+                      colorScheme="info"
+                      onPress={() => route.back()}
+                      justifyContent={"end"}
+                    >
+                      {t("goBack")}
+                    </Button>
                   </Text>
                 </Center>
-              ) : !!splitType ?
+              ) : !!splitType ? (
                 <Center flex={1}>
                   {/* Pegar os dados da conta e mostrar para o business */}
                   <ScrollView w={"full"} flex={1}>
                     <VStack width={"full"} space={4}>
-                      <SummaryRow
-                        label={t("splitType")}
-                        value={t(splitType)} />
+                      <SummaryRow label={t("splitType")} value={t(splitType)} />
                       <SummaryRow
                         label={t("subtotal")}
-                        value={parseToCurrency(subTotal)} />
+                        value={parseToCurrency(subTotal)}
+                      />
                       <SummaryRow
                         label={t("serviceFee")}
-                        value={parseToCurrency(serviceFeeValue)} />
+                        value={parseToCurrency(serviceFeeValue)}
+                      />
                       <SummaryRow
                         label={t("tip")}
-                        value={parseToCurrency(parseToFixedPoint(tip ?? 0) * (subTotal ?? 0))} />
+                        value={parseToCurrency(
+                          parseToFixedPoint(tip ?? 0) * (subTotal ?? 0)
+                        )}
+                      />
                       <SummaryRow
                         label={t("feesAndTax")}
-                        value={parseToCurrency(tax)} />
+                        value={parseToCurrency(tax)}
+                      />
                       <Divider my={2} />
                       <SummaryRow
                         label={t("total")}
-                        value={parseToCurrency(total)} />
-
+                        value={parseToCurrency(total)}
+                      />
                     </VStack>
                     <Box height={"12"} />
                     <Text fontSize={"2xl"} textAlign={"center"} pb={4} bold>
@@ -230,7 +271,7 @@ export const Checkout = () => {
                         cta={t("pay")}
                         disable={!!payment?.paid}
                         onPress={async () => {
-                          if (!payment) return
+                          if (!payment) return;
 
                           // each of the payments will be made individually
                           // this will be a diferent function that will take the payment id, checkout id and user id
@@ -240,41 +281,49 @@ export const Checkout = () => {
                               input: {
                                 checkout: checkoutId as string,
                                 payment: payment._id,
-                              }
-                            }
-                          })
+                              },
+                            },
+                          });
                         }}
                       />
                     ))}
                   </ScrollView>
                 </Center>
-                : selectedOption === "payFull" ? (
-                  <PayInFull
-                    totalPaid={totalPaid}
-                    status={status}
-                    paid={paid}
-                    tax={tax}
-                    subTotal={subTotal}
-                    tip={tip}
-                    total={total}
-                    setSelectedOption={setSelectedOption}
-                  />) : selectedOption === "splitBill" ? (
-                    <Split
-                      tax={tax}
-                      subTotal={subTotal}
-                      payments={data?.getCheckoutByID?.payments || []}
-                    />
-                  ) : null}
+              ) : selectedOption === "payFull" ? (
+                <PayInFull
+                  totalPaid={totalPaid}
+                  status={status}
+                  paid={paid}
+                  tax={tax}
+                  subTotal={subTotal}
+                  tip={tip}
+                  total={total}
+                  setSelectedOption={setSelectedOption}
+                />
+              ) : selectedOption === "splitBill" ? (
+                <Split
+                  tax={tax}
+                  subTotal={subTotal}
+                  payments={data?.getCheckoutByID?.payments || []}
+                />
+              ) : null}
             </BottomSection>
           </VStack>
         </Box>
       </Flex>
     </>
-  )
-}
+  );
+};
 
-export const SummaryRow = ({ label, value }: { label: string, value: string }) => (
+export const SummaryRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) => (
   <HStack justifyContent={"space-between"} px={12}>
     <Text fontSize={"xl"}>{label}</Text>
     <Text fontSize={"lg"}>{value}</Text>
-  </HStack>)
+  </HStack>
+);

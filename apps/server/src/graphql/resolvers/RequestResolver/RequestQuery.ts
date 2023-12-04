@@ -10,7 +10,7 @@ const getClientSession = async (
   { db, client }: Context
 ) => {
   if (!client) {
-    throw ApolloError('Unauthorized', "invalid client token", "client")
+    throw ApolloError(new Error("No client session"), 'Unauthorized', "customer")
   }
 
   const User = UserModel(db)
@@ -26,7 +26,7 @@ const getClientSession = async (
   if (foundUser?.address) {
     const foundAddress = await AddressModel(db).findById(foundUser.address)
 
-    if (!foundAddress) throw ApolloError("NotFound", "Address not found, but not empty");
+    if (!foundAddress) throw ApolloError(new Error("Address not found, but not empty"), "NotFound",);
     foundUser.address = foundAddress
   }
 
@@ -45,10 +45,8 @@ const getTabRequest = async (
   args: any,
   { db, client }: Context
 ) => {
-  console.log('client', client)
-
   if (!client) {
-    throw ApolloError('Unauthorized', "invalid client token", "client")
+    throw ApolloError(new Error("invalid client token"), 'Unauthorized', "customer")
   }
 
   const Request = RequestModel(db)
@@ -81,7 +79,7 @@ const getPendingInvitations = async (
   _args: any,
   { db, client }: Context
 ) => {
-  if (!client) throw ApolloError("Unauthorized", "You're no one", "client");
+  if (!client) throw ApolloError(new Error("You're no one"), "Unauthorized", "customer");
 
   const Request = RequestModel(db)
   return await Request.find({

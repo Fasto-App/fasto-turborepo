@@ -10,9 +10,11 @@ The environment setup requires that your versions for node and other environment
 
 -   Once installed NVM will help us use the correct node version. Use these commands to configure the node version that is needed.
 
--   Run install node version with this command: `nvm install 18.17.1`
+-   Actually to Run the project in Windows is necessary to use node version 16.20.2
 
--   Then run to use this node version: `nvm use 18.17.1`
+-   Run install node version with this command: `nvm install 16.20.2`
+
+-   Then run to use this node version: `nvm use 16.20.2`
 
 -   Then try to run: `yarn install` again. It will take some time because of all of the packages.
 

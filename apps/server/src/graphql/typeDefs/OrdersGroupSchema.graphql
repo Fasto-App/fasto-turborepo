@@ -1,0 +1,20 @@
+extend type Query {
+	getOrdersGroup(input: GetOrdersGroup!): [OrdersGroup!]
+	getOrderGroupById(id: ID!): OrdersGroup!
+}
+
+type OrdersGroup {
+	_id: ID!
+	orders: [OrderDetail!]!
+	business: ID!
+	createdByUser: ID!
+	status: OrderStatus!
+	type: TakeoutDeliveryDineIn!
+}
+
+input GetOrdersGroup {
+	page: Int!
+	pageSize: Int!
+	dateType: DateType!
+	type: TakeoutDeliveryDineIn
+}

@@ -17,8 +17,7 @@ import { ApolloError } from "./graphql/ApolloErrorExtended/ApolloErrorExtended";
 import { dbConnection } from "./dbConnection";
 import { Context } from "./graphql/resolvers/types";
 import { Locale, locales } from "app-helpers";
-import { Metada, confirmPaymentWebHook, stripe } from "./stripe";
-import { AddressModel, BusinessModel } from "./models";
+import { confirmPaymentWebHook, stripe } from "./stripe";
 
 const middleware = Bugsnag.getPlugin('express');
 const PORT = process.env.PORT || 4000
@@ -70,10 +69,6 @@ const serverCleanup = useServer({
     const bearerToken = ctx?.connectionParams?.["Authorization"] as string | undefined;
     const clientBearerToken = ctx?.connectionParams?.clientauthorization as string | undefined;
     const headersAPIKey = ctx?.connectionParams?.["x-api-key"] as string | undefined;
-
-    console.log("ctx?.connectionParams", ctx?.connectionParams)
-    console.log("🔐 User clientBearerToken: ")
-    console.log("clientFromToken", clientBearerToken)
     const locale = ctx?.connectionParams?.["accept-language"] as string | undefined;
 
     return await proccessContext({
@@ -83,12 +78,9 @@ const serverCleanup = useServer({
       locale: locales.find(l => l === locale) ? locale as Locale : "en",
     });
   },
-  onError: (err) => console.log("Error: ", err),
-  onDisconnect: () => console.log("Disconnected"),
-  onConnect: async () => {
-    console.log("Connected");
-    return true;
-  },
+  onError: (err) => { },
+  onDisconnect: () => { },
+  onConnect: async () => true,
 },
   wsServer);
 
@@ -205,18 +197,16 @@ async function main() {
   httpServer.listen(PORT, () => {
     console.log(`[🚀 GraphQL SERVER] ready at http://localhost:${PORT}/graphql`);
     console.log(`[📬 Subscription ENDPOINT] ready at ws://localhost:${PORT}/graphql`);
+    console.log(`[🧨 VOYAGER URL] ready at http://localhost:${PORT}/voyager`);
   });
 }
 
 main();
 
-
 type ProccessContext = { headersAPIKey?: string, businessToken?: string, clientToken?: string, locale: Locale }
 async function proccessContext({ businessToken, clientToken, headersAPIKey, locale }: ProccessContext) {
   if (!process.env.API_KEY || headersAPIKey !== process.env.API_KEY) {
-    console.log("NOT AUTHORIZED: invalid API key 🔑")
-    console.log({ headersAPIKey })
-    throw ApolloError('Unauthorized');
+    throw ApolloError(new Error("NOT AUTHORIZED: invalid API key 🔑"), 'Unauthorized');
   }
 
   const userFromToken = await getUserFromToken(businessToken?.split(' ')[1]);
