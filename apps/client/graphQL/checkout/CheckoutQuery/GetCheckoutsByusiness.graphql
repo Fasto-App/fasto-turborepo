@@ -1,5 +1,5 @@
-query GetCheckoutsByBusiness {
-	getCheckoutsByBusiness {
+query GetCheckoutsByBusiness($page: Int!, $pageSize: Int!) {
+	getCheckoutsByBusiness(page: $page, pageSize: $pageSize) {
 		_id
 		business
 		tab

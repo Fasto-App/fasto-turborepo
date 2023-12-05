@@ -102,8 +102,6 @@ export const resolvers = {
   },
   Payment: {
     checkout: async (parent: any, _args: any, { db }: any) => {
-      console.log(parent)
-      console.log(parent._id)
       return await CheckoutModel(db).findById(parent.checkout);
     }
   },

@@ -24,7 +24,7 @@ const getSubscriptionPrices: QueryResolvers["getSubscriptionPrices"] = async (_,
     return pricesResponse.data.reverse()
   }
 
-  if (!input?.country) throw ApolloError("BadRequest", "No country")
+  if (!input?.country) throw ApolloError(new Error("No country"), "BadRequest",)
 
   const pricesResponse = await stripe(input?.country).prices.list({
     limit: 3,
@@ -37,7 +37,7 @@ const getSubscriptionPrices: QueryResolvers["getSubscriptionPrices"] = async (_,
 //@ts-ignore
 const getSignUpSubscription: QueryResolvers["getSignUpSubscription"] = async (parent, args, { db, user, business }) => {
   const country = await getCountry({ db, business, })
-  if (!country) throw ApolloError("Unauthorized", "you need a country")
+  if (!country) throw ApolloError(new Error("you need a country"), "Unauthorized",)
 
   // Todo: achar o stripe ID do business logado, nao do usuario.
   // Todo: O business que eh o customer, nao o Usuario.
@@ -56,7 +56,7 @@ const getSignUpSubscription: QueryResolvers["getSignUpSubscription"] = async (pa
 const getTier: StripeSubscriptionResolvers["tier"] = async (parent, args, { db, business, user }) => {
 
   const country = await getCountry({ db, business, })
-  if (!country) throw ApolloError("Unauthorized", "you need a country")
+  if (!country) throw ApolloError(new Error("you need a country"), "Unauthorized",)
 
   const pricesResponse = await stripe(country).prices.list({
     limit: 3,

@@ -19,6 +19,7 @@ type Product {
 	addonsID: [ID]
 	category: Category
 	quantity: Int
+	totalOrdered: Int
 }
 
 input CreateProductInput {

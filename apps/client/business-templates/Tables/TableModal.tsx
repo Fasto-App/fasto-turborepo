@@ -4,7 +4,7 @@ import { Badge, Button, Text } from "native-base";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { ControlledForm, RegularInputConfig } from "../../components/ControlledForm/ControlledForm";
-import { GetSpacesFromBusinessDocument, useCreateTabMutation, useGetTabByIdQuery, useGetTableByIdQuery } from "../../gen/generated";
+import { GetSpacesFromBusinessDocument, useCreateTabMutation, useGetTabByIdQuery, useGetTableByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
 import { businessRoute } from "fasto-route";
 import { badgeScheme } from "./config";
 import { OccupiedModal } from "./OccupiedModal";
@@ -180,7 +180,47 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
 
   }, [data?.getTabByID._id, data?.getTabByID.checkout, data?.getTabByID?.status, router])
 
+  const [requestCloseTabMutation, { loading: loadingCloseTab }] = useRequestCloseTabMutation({
+    refetchQueries: ["GetSpacesFromBusiness"],
+    onCompleted: (data) => {
+      showToast({
+        message: t("requestToCloseTabSuccessfully"),
+      })
+
+      switch (data?.requestCloseTab?.status) {
+        case "Pendent":
+          if (!data?.requestCloseTab?.checkout) throw new Error("Checkout id is missing")
+
+          router.push({
+            pathname: businessRoute["checkout/[checkoutId]"],
+            query: {
+              checkoutId: data?.requestCloseTab?.checkout,
+              tabId,
+            }
+          })
+
+          setIsModalOpen()
+          break;
+        default:
+          router.back()
+          break;
+      }
+    },
+  })
+
+  const requestCloseTab = useCallback(() => {
+    requestCloseTabMutation({
+      variables: {
+        input: {
+          _id: tabId as string,
+        }
+      }
+    })
+  }, [requestCloseTabMutation, tabId])
+
   if (!tabId) return null
+
+
 
   return (
     <CustomModal
@@ -188,15 +228,31 @@ export const OccupiedTabModal = ({ tabId, setIsModalOpen }:
       isOpen={!!tabId}
       HeaderComponent={
         <>
+
           <Text fontSize={"20"}>
             {`${t("table")} ${1}`}
           </Text>
+
           <Badge
             mt={2}
             width={'20'}
             colorScheme={badgeScheme(data?.getTabByID?.status)}>
             {!!data?.getTabByID?.status && t(data?.getTabByID?.status)}
+
           </Badge>
+          {tabId ?
+            <Button
+              alignSelf="end"
+              mt={-12}
+              colorScheme={"primary"}
+              width={"100px"}
+              onPress={requestCloseTab}
+
+              isLoading={loadingCloseTab}
+            >
+              {t("closeTab")}
+            </Button>
+            : null}
         </>}
       ModalBody={
         <OccupiedModal

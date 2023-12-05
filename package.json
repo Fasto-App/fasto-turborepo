@@ -1,12 +1,18 @@
 {
-	"name": "my-turborepo",
+	"name": "fastoapp",
 	"version": "0.0.0",
 	"private": true,
 	"workspaces": [
 		"apps/*",
 		"packages/*"
 	],
+	"husky": {
+		"hooks": {
+			"pre-commit": "sh husky/pre-commit"
+		}
+	},
 	"scripts": {
+		"postinstall": "husky install",
 		"dev": "turbo run dev --parallel",
 		"lint": "turbo run lint",
 		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -25,6 +31,7 @@
 	},
 	"devDependencies": {
 		"eslint-config-custom": "*",
+		"husky": "^8.0.3",
 		"prettier": "latest",
 		"turbo": "latest"
 	},

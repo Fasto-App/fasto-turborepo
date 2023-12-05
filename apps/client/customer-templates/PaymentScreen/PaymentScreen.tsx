@@ -29,13 +29,6 @@ const CheckoutForm = () => {
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  // get more than just this. 
-  // provide a breakdown
-
-  console.log({
-    paymentId,
-    checkoutId
-  })
 
   const { data, loading, error } = useGetPaymentInformationQuery({
     skip: !paymentId,
@@ -43,10 +36,10 @@ const CheckoutForm = () => {
       input: { payment: paymentId as string }
     },
     onError: (error) => {
-      console.log("Handle Error", error)
+      // todo
     },
     onCompleted(data) {
-      console.log(data.getPaymentInformation)
+      // todo
     },
   })
 
@@ -59,7 +52,6 @@ const CheckoutForm = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePayment = async () => {
-    console.log('handlePayment')
     const RETURN_URL = `${process.env.FRONTEND_URL}${customerRoute["/customer/[businessId]/success"].
       replace("[businessId]", businessId as string)}`
 
