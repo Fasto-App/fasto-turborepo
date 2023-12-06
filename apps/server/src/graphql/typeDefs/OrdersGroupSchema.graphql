@@ -3,6 +3,11 @@ extend type Query {
 	getOrderGroupById(id: ID!): OrdersGroup!
 }
 
+extend type Mutation {
+	deleteOrdersGroupData(ids: [ID!]!): DeleteResult!
+	updateOrderGroupData(input: UpdateOrdersGroupInput!): OrdersGroup!
+}
+
 type OrdersGroup {
 	_id: ID!
 	orders: [OrderDetail!]!
@@ -17,4 +22,9 @@ input GetOrdersGroup {
 	pageSize: Int!
 	dateType: DateType!
 	type: TakeoutDeliveryDineIn
+}
+
+input UpdateOrdersGroupInput {
+	_id: ID!
+	status: OrderStatus!
 }
