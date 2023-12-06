@@ -11,7 +11,6 @@ import {
   ScrollView,
   Image,
 } from "native-base";
-import { Link } from "../../components/atoms/Link";
 import { useRouter } from "next/router";
 import React from "react";
 import { LeftSideBar } from "../../components";
@@ -32,16 +31,12 @@ import { businessRoute } from "fasto-route";
 import { useCheckoutStore } from "./checkoutStore";
 import { useTranslation } from "next-i18next";
 import {
-  formatAsPercentage,
-  getPercentageOfValue,
   parseToCurrency,
   parseToFixedPoint,
 } from "app-helpers";
 import { PaymentTile } from "./TableComponents";
-import { showToast } from "../../components/showToast";
 import { OrdersModal } from "../OrderScreen/OrdersModal";
 import { Pressable } from "react-native";
-import { BiUnderline } from "react-icons/bi";
 
 const checkoutOptions = ["payFull", "splitBill", "success"] as const;
 
@@ -133,7 +128,7 @@ export const Checkout = () => {
     <>
       <OrdersModal
         setIsOpen={setShowOrdersModal}
-        checkoutId={checkoutId as string}
+        orderId={checkoutId as string}
         isOpen={showOrdersModal}
       />
 

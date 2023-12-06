@@ -372,6 +372,7 @@ export type GetOrdersGroup = {
   dateType: DateType;
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
+  status?: InputMaybe<OrderStatus>;
   type?: InputMaybe<TakeoutDeliveryDineIn>;
 };
 

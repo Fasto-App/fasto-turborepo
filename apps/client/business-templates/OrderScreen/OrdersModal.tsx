@@ -14,17 +14,17 @@ import { useTranslation } from 'next-i18next'
 type OrdersModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  checkoutId: string;
+  orderId: string;
 }
 
-export const OrdersModal = ({ isOpen, setIsOpen, checkoutId }: OrdersModalProps) => {
+export const OrdersModal = ({ isOpen, setIsOpen, orderId }: OrdersModalProps) => {
   const { t } = useTranslation("businessPayments")
 
   const { data, loading, error } = useGetOrdersByCheckoutQuery({
-    skip: !checkoutId,
+    skip: !orderId,
     variables: {
       input: {
-        _id: checkoutId
+        _id: orderId
       }
     }
   })
