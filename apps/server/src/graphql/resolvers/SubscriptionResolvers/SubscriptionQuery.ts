@@ -36,17 +36,20 @@ const getSubscriptionPrices: QueryResolvers["getSubscriptionPrices"] = async (_,
 
 //@ts-ignore
 const getSignUpSubscription: QueryResolvers["getSignUpSubscription"] = async (parent, args, { db, user, business }) => {
-  const country = await getCountry({ db, business, })
-  if (!country) throw ApolloError(new Error("you need a country"), "Unauthorized",)
+  const foundBusiness = await BusinessModel(db).findById(business)
+
+  if (!foundBusiness || !foundBusiness?.country) {
+    throw ApolloError(new Error("you need a country"), "Unauthorized")
+  }
 
   // Todo: achar o stripe ID do business logado, nao do usuario.
   // Todo: O business que eh o customer, nao o Usuario.
   const foundUser = await UserModel(db).findById(user?._id)
   if (!foundUser?.stripeCustomer) return null
 
-  const subscriptions = await stripe(country).subscriptions.list({
+  const subscriptions = await stripe(foundBusiness?.country).subscriptions.list({
     customer: foundUser?.stripeCustomer,
-    status: 'active',
+    status: 'active', // todo: we should see all subscriptions, not just the active ones
     expand: ['data.default_payment_method'],
   });
 
