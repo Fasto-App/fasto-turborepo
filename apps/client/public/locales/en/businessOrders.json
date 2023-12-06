@@ -1,5 +1,14 @@
 {
-	"orders": "Orders",
-	"hereIsYourList": "Here is your list of orders",
-	"close": "Close"
+  "orders": "Orders",
+  "hereIsYourList": "Here is your list of orders",
+  "close": "Close",
+  "Closed": "Closed",
+  "Delivered": "Delivered",
+  "Open": "Open",
+  "Pendent": "Pendent",
+  "orderNumber": "Order #",
+  "Ready": "Ready",
+  "AllOrders": "All Orders",
+  "date": "Date",
+  "status": "Status"
 }

@@ -368,6 +368,13 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type GetOrdersGroup = {
+  dateType: DateType;
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  type?: InputMaybe<TakeoutDeliveryDineIn>;
+};
+
 export type GetPaidCheckout = {
   type: DateType;
 };
@@ -900,6 +907,16 @@ export enum OrderStatus {
   Pendent = 'Pendent'
 }
 
+export type OrdersGroup = {
+  __typename?: 'OrdersGroup';
+  _id: Scalars['ID'];
+  business: Scalars['ID'];
+  createdByUser: Scalars['ID'];
+  orders: Array<OrderDetail>;
+  status: OrderStatus;
+  type: TakeoutDeliveryDineIn;
+};
+
 export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
@@ -981,8 +998,10 @@ export type Query = {
   getMenuByID: Menu;
   getMostSellingProducts?: Maybe<Array<Maybe<Product>>>;
   getOrderDetailByID?: Maybe<OrderDetail>;
+  getOrderGroupById: OrdersGroup;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
+  getOrdersGroup?: Maybe<Array<OrdersGroup>>;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
@@ -1051,8 +1070,18 @@ export type QueryGetOrderDetailByIdArgs = {
 };
 
 
+export type QueryGetOrderGroupByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryGetOrdersByCheckoutArgs = {
   input: GetById;
+};
+
+
+export type QueryGetOrdersGroupArgs = {
+  input: GetOrdersGroup;
 };
 
 
@@ -1653,6 +1682,13 @@ export type GetOrdersBySessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetOrdersBySessionQuery = { __typename?: 'Query', getOrdersBySession: Array<{ __typename?: 'OrderDetail', _id: string, quantity: number, status: OrderStatus, subTotal: number, user?: string | null, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> };
 
+export type GetOrdersGroupQueryVariables = Exact<{
+  input: GetOrdersGroup;
+}>;
+
+
+export type GetOrdersGroupQuery = { __typename?: 'Query', getOrdersGroup?: Array<{ __typename?: 'OrdersGroup', _id: string, business: string, status: OrderStatus, createdByUser: string, type: TakeoutDeliveryDineIn, orders: Array<{ __typename?: 'OrderDetail', _id: string }> }> | null };
+
 export type ConfirmPaymentMutationVariables = Exact<{
   input: ConfirmPaymentInput;
 }>;
@@ -1776,19 +1812,19 @@ export type DeclineTabRequestMutationVariables = Exact<{
 
 export type DeclineTabRequestMutation = { __typename?: 'Mutation', declineTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null } };
 
-export type OpenTabRequestMutationVariables = Exact<{
-  input: OpenTabRequestInput;
-}>;
-
-
-export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
-
 export type RequestJoinTabMutationVariables = Exact<{
   input: JoinTabForm;
 }>;
 
 
 export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
+
+export type OpenTabRequestMutationVariables = Exact<{
+  input: OpenTabRequestInput;
+}>;
+
+
+export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
 
 export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3642,6 +3678,48 @@ export function useGetOrdersBySessionLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetOrdersBySessionQueryHookResult = ReturnType<typeof useGetOrdersBySessionQuery>;
 export type GetOrdersBySessionLazyQueryHookResult = ReturnType<typeof useGetOrdersBySessionLazyQuery>;
 export type GetOrdersBySessionQueryResult = Apollo.QueryResult<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>;
+export const GetOrdersGroupDocument = gql`
+    query GetOrdersGroup($input: GetOrdersGroup!) {
+  getOrdersGroup(input: $input) {
+    _id
+    business
+    status
+    createdByUser
+    type
+    orders {
+      _id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrdersGroupQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersGroupQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetOrdersGroupQuery(baseOptions: Apollo.QueryHookOptions<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>(GetOrdersGroupDocument, options);
+      }
+export function useGetOrdersGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>(GetOrdersGroupDocument, options);
+        }
+export type GetOrdersGroupQueryHookResult = ReturnType<typeof useGetOrdersGroupQuery>;
+export type GetOrdersGroupLazyQueryHookResult = ReturnType<typeof useGetOrdersGroupLazyQuery>;
+export type GetOrdersGroupQueryResult = Apollo.QueryResult<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>;
 export const ConfirmPaymentDocument = gql`
     mutation ConfirmPayment($input: ConfirmPaymentInput!) {
   confirmPayment(input: $input)
@@ -4324,37 +4402,6 @@ export function useDeclineTabRequestMutation(baseOptions?: Apollo.MutationHookOp
 export type DeclineTabRequestMutationHookResult = ReturnType<typeof useDeclineTabRequestMutation>;
 export type DeclineTabRequestMutationResult = Apollo.MutationResult<DeclineTabRequestMutation>;
 export type DeclineTabRequestMutationOptions = Apollo.BaseMutationOptions<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>;
-export const OpenTabRequestDocument = gql`
-    mutation OpenTabRequest($input: OpenTabRequestInput!) {
-  openTabRequest(input: $input)
-}
-    `;
-export type OpenTabRequestMutationFn = Apollo.MutationFunction<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
-
-/**
- * __useOpenTabRequestMutation__
- *
- * To run a mutation, you first call `useOpenTabRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOpenTabRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [openTabRequestMutation, { data, loading, error }] = useOpenTabRequestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OpenTabRequestMutation, OpenTabRequestMutationVariables>(OpenTabRequestDocument, options);
-      }
-export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
-export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
-export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
 export const RequestJoinTabDocument = gql`
     mutation RequestJoinTab($input: JoinTabForm!) {
   requestJoinTab(input: $input)
@@ -4386,6 +4433,37 @@ export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptio
 export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
 export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
 export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
+export const OpenTabRequestDocument = gql`
+    mutation OpenTabRequest($input: OpenTabRequestInput!) {
+  openTabRequest(input: $input)
+}
+    `;
+export type OpenTabRequestMutationFn = Apollo.MutationFunction<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
+
+/**
+ * __useOpenTabRequestMutation__
+ *
+ * To run a mutation, you first call `useOpenTabRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOpenTabRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [openTabRequestMutation, { data, loading, error }] = useOpenTabRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OpenTabRequestMutation, OpenTabRequestMutationVariables>(OpenTabRequestDocument, options);
+      }
+export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
+export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
+export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
 export const GetClientSessionDocument = gql`
     query GetClientSession {
   getClientSession {

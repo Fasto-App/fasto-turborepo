@@ -1,5 +1,12 @@
 {
-	"orders": "Pedidos",
-	"hereIsYourList": "Aquí está tu lista de pedidos",
-	"payoutNow": "Pagar ahora"
+  "orders": "Pedidos",
+  "hereIsYourList": "Aquí está tu lista de pedidos",
+  "payoutNow": "Pagar ahora",
+  "Open": "Abierto",
+  "Pendent": "Pendiente",
+  "orderNumber": "Orden #",
+  "Ready": "Listo",
+  "AllOrders": "Todos los Pedidos",
+  "date": "Fecha",
+  "status": "Estado"
 }

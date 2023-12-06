@@ -1,0 +1,12 @@
+query GetOrdersGroup($input: GetOrdersGroup!) {
+  getOrdersGroup(input: $input) {
+    _id
+    business
+    status
+    createdByUser
+    type
+    orders {
+      _id
+    }
+  }
+}

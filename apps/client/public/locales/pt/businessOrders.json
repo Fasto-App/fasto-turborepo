@@ -1,6 +1,12 @@
 {
-	"orders": "Pedidos",
-	"hereIsYourList": "Aqui está sua lista de pedidos",
-	"date": "Data",
-	"close": "Fechar"
+  "orders": "Pedidos",
+  "hereIsYourList": "Aqui está sua lista de pedidos",
+  "date": "Data",
+  "close": "Fechar",
+  "Open": "Aberto",
+  "Pendent": "Pendente",
+  "orderNumber": "Pedido #",
+  "Ready": "Pronto",
+  "AllOrders": "Todos os Pedidos",
+  "status": "Status"
 }
