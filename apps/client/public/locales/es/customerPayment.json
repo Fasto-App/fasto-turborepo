@@ -1,3 +1,6 @@
 {
-	"payNow": "Pagar Ahora"
+	"payNow": "Pagar Ahora",
+	"placedOrders": "Ver pedidos realizados {{number}}",
+	"paymentError": "Se produjo un error inesperado al obtener los datos de pago",
+	"paymentSucceeded": "Pagamento efetuado com sucesso"
 }

@@ -39,7 +39,7 @@ import {
 } from "app-helpers";
 import { PaymentTile } from "./TableComponents";
 import { showToast } from "../../components/showToast";
-import { OrdersModal } from "../OrderScreen/OrdersModal";
+import { CheckoutModal } from "./CheckoutModal";
 import { Pressable } from "react-native";
 import { BiUnderline } from "react-icons/bi";
 
@@ -131,7 +131,7 @@ export const Checkout = () => {
   if (!subTotal) return null;
   return (
     <>
-      <OrdersModal
+      <CheckoutModal
         setIsOpen={setShowOrdersModal}
         checkoutId={checkoutId as string}
         isOpen={showOrdersModal}
