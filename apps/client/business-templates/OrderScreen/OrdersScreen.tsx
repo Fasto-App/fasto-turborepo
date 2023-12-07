@@ -112,6 +112,7 @@ const OrderDetails = ({
   onDelete,
   selected,
 }: OrderDetailsProps) => {
+  
   return (
     <HStack alignItems={"center"}>
       <HStack p="2" space={4}>
@@ -148,27 +149,59 @@ export const OrdersScreen = () => {
   const [modalData, setModalData] = useState({ isOpen: false, orderId: "" });
   const [selectedTab, setSelectedTab] = useState<OrderStatus>();
 
-  const renderCategories = ({ item }: { item: OrderStatus }) => {
+  const renderCategories = ({
+    item,
+    index,
+  }: {
+    item: OrderStatus;
+    index: number;
+  }) => {
     const selected = selectedTab === item;
+    console.log(selectedTab);
+    return (
+      <>
+        <Button
+          px={4}
+          m={0}
+          minW={"100px"}
+          borderColor={selected ? "primary.500" : "gray.300"}
+          disabled={selected}
+          variant={selected ? "outline" : "outline"}
+          colorScheme={selected ? "primary" : "black"}
+          onPress={() => {
+            setSelectedTab(item);
+            // fetchMore()
+          }}
+        >
+          {t(OrderStatus[item])}
+        </Button>
+        {index === tabs.length - 1 && renderAllButton()}
+      </>
+    );
+  };
+
+  const renderAllButton = () => {
+    const selected = selectedTab === undefined;
     return (
       <Button
         px={4}
         m={0}
+        ml={4}
+        marginRight={30}
         minW={"100px"}
         borderColor={selected ? "primary.500" : "gray.300"}
         disabled={selected}
         variant={selected ? "outline" : "outline"}
         colorScheme={selected ? "primary" : "black"}
         onPress={() => {
-          setSelectedTab(item)
-          // fetchMore()
+          setSelectedTab(undefined);
         }}
       >
-        {t(OrderStatus[item])}
+        {t("AllOrders")}
       </Button>
     );
   };
-
+  
   return (
     <Box flex="1">
       <OrangeBox height={"78"} />
@@ -183,7 +216,6 @@ export const OrdersScreen = () => {
               ItemSeparatorComponent={() => <Box w={4} />}
               keyExtractor={(item) => item}
             />
-            {/* TODO: Add Selected Button */}
             <HStack space={"2"}>
               <FDSSelect
                 w={"100px"}
@@ -228,11 +260,9 @@ type BottomOrdersTableWithModalProps = {
   selectedTab?: OrderStatus;
 };
 
-export const BottomOrdersTableWithModal: React.FC<BottomOrdersTableWithModalProps> = ({
-  setModalData,
-  modalData,
-  selectedTab,
-}) => {
+export const BottomOrdersTableWithModal: React.FC<
+  BottomOrdersTableWithModalProps
+> = ({ setModalData, modalData, selectedTab }) => {
   const router = useRouter();
   const { t } = useTranslation("businessOrders");
 
@@ -245,11 +275,11 @@ export const BottomOrdersTableWithModal: React.FC<BottomOrdersTableWithModalProp
         dateType: DateType.NinetyDays,
         page: pagination.page,
         pageSize: pagination.pageSize,
-        status: selectedTab
+        status: selectedTab,
       },
     },
   });
-
+console.log(data?.getOrdersGroup?.[0])
   const onNextPage = () => {
     const nextPage = pagination.page + 1;
     setPagination({ ...pagination, page: nextPage });
@@ -271,6 +301,7 @@ export const BottomOrdersTableWithModal: React.FC<BottomOrdersTableWithModalProp
       const arrayKeys = typedKeys(orderObj).filter((id) => orderObj[id]);
       console.log("delete everything");
       console.log({ arrayKeys });
+      
       return;
     }
 
@@ -288,22 +319,7 @@ export const BottomOrdersTableWithModal: React.FC<BottomOrdersTableWithModalProp
     console.log(allSelected);
     setOrderObj(allSelected);
   };
-
-
-  // const filteredOrders = data?.getOrdersGroup.filter(order => {
-  //   switch (selectedTab) {
-  //     case "Open":
-  //       return order.status === "Open";
-  //     case "Pendent":
-  //       return order.status === "Pendent";
-  //     case "Delivered":
-  //       return order.status === "Delivered";
-  //     case "Closed":
-  //       return order.status === "Closed";
-  //     default:
-  //       return true;
-  //   }
-  // });
+  
   return (
     <BottomSection>
       {loading ? (

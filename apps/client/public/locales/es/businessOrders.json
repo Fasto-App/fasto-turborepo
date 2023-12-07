@@ -2,6 +2,8 @@
   "orders": "Pedidos",
   "hereIsYourList": "Aquí está tu lista de pedidos",
   "payoutNow": "Pagar ahora",
+  "Closed": "Cerrado",
+  "Delivered": "Entregado",
   "Open": "Abierto",
   "Pendent": "Pendiente",
   "orderNumber": "Orden #",
