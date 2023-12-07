@@ -1,4 +1,6 @@
 {
 	"payNow": "Pay Now",
-	"placedOrders": "See Placed Orders {{number}}"
+	"placedOrders": "See Placed Orders {{number}}",
+	"paymentError": "An unexpected error occurred while getting payment data",
+	"paymentSucceeded": "Payment succeeded"
 }
