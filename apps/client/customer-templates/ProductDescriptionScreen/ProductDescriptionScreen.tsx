@@ -167,7 +167,7 @@ export const ProductDescriptionScreen = () => {
                 <Badge
                   colorScheme={"error"}
                   variant={"solid"}
-                >{`Low stock: ${quantity}`}</Badge>
+                >{`${t("lowStock")}: ${quantity}`}</Badge>
               </Text>
             ) : null}
 

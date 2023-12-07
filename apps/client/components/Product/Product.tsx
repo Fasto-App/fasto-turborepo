@@ -97,15 +97,15 @@ const ProductCard = ({
               <Badge
                 colorScheme={"error"}
                 variant={"solid"}
-              >{`Low stock: ${quantity}`}</Badge>
+              >{`${t("lowStock")}: ${quantity}`}</Badge>
             ) : (
               <Badge
                 colorScheme={"success"}
                 variant={"outline"}
-              >{`In stock: ${quantity}`}</Badge>
+              >{`${t("inStock")}: ${quantity}`}</Badge>
             )
           ) : (
-            <Badge colorScheme={"orange"} variant={"solid"}>{`No stock`}</Badge>
+            <Badge colorScheme={"orange"} variant={"solid"}>{`${t("noStock")}`}</Badge>
           )}
         </Text>
         <Text fontWeight="400" textAlign={"center"} flex={1}>
@@ -159,18 +159,18 @@ const ProductTile = ({
                 <Badge
                   colorScheme={"error"}
                   variant={"solid"}
-                >{`Low stock: ${quantity}`}</Badge>
+                >{`${t("lowStock")}: ${quantity}`}</Badge>
               ) : (
                 <Badge
                   colorScheme={"success"}
                   variant={"outline"}
-                >{`In stock: ${quantity}`}</Badge>
+                >{`${t("inStock")}: ${quantity}`}</Badge>
               )
             ) : (
               <Badge
                 colorScheme={"orange"}
                 variant={"solid"}
-              >{`No stock`}</Badge>
+              >{`${t("noStock")}`}</Badge>
             )}
           </Text>
           {formattedDescriptions ? (
