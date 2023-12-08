@@ -25,7 +25,7 @@ type ProductTileProps = {
   name: string;
   imageUrl?: string;
   description?: string | null;
-  quantity?: number | undefined;
+  quantity?: number | null;
 };
 
 type ProductCardProps = ProductTileProps & {

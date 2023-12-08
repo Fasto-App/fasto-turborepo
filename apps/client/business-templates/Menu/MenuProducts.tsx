@@ -160,6 +160,7 @@ function MenuProducts() {
         ctaTitle={"Edit Item"}
         imageUrl={item.imageUrl ?? ""}
         name={item.name}
+        quantity={item.quantity}
       />)
   }, [])
 

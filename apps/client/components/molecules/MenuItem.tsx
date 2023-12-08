@@ -21,7 +21,7 @@ const MenuItem = ({
   description,
   quantity,
 }: MenuItemProps) => {
-  if (quantity === 0) null;
+  if (quantity === 0) return null;
   return (
     <Pressable
       onPress={onPress}

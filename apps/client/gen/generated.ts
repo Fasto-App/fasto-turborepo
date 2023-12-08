@@ -368,6 +368,13 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type GetOrdersGroup = {
+  dateType: DateType;
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  type?: InputMaybe<TakeoutDeliveryDineIn>;
+};
+
 export type GetPaidCheckout = {
   type: DateType;
 };
@@ -505,6 +512,7 @@ export type Mutation = {
   deleteCheckoutData: DeleteResult;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
+  deleteOrdersGroupData: DeleteResult;
   deleteProduct?: Maybe<RequestResponseOk>;
   deleteSpace: Space;
   deleteTab?: Maybe<Tab>;
@@ -534,6 +542,7 @@ export type Mutation = {
   updateMenu?: Maybe<Menu>;
   updateMenuInfo: Menu;
   updateOrderDetail: OrderDetail;
+  updateOrderGroupData: OrdersGroup;
   updateProductByID: Product;
   updateSpace: Space;
   updateSubscription: StripeSubscription;
@@ -698,6 +707,11 @@ export type MutationDeleteMenuArgs = {
 };
 
 
+export type MutationDeleteOrdersGroupDataArgs = {
+  ids: Array<Scalars['ID']>;
+};
+
+
 export type MutationDeleteProductArgs = {
   id: Scalars['ID'];
 };
@@ -833,6 +847,11 @@ export type MutationUpdateOrderDetailArgs = {
 };
 
 
+export type MutationUpdateOrderGroupDataArgs = {
+  input: UpdateOrdersGroupInput;
+};
+
+
 export type MutationUpdateProductByIdArgs = {
   input: UpdateProductInput;
 };
@@ -899,6 +918,16 @@ export enum OrderStatus {
   Open = 'Open',
   Pendent = 'Pendent'
 }
+
+export type OrdersGroup = {
+  __typename?: 'OrdersGroup';
+  _id: Scalars['ID'];
+  business: Scalars['ID'];
+  createdByUser: Scalars['ID'];
+  orders: Array<OrderDetail>;
+  status: OrderStatus;
+  type: TakeoutDeliveryDineIn;
+};
 
 export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
@@ -981,8 +1010,10 @@ export type Query = {
   getMenuByID: Menu;
   getMostSellingProducts?: Maybe<Array<Maybe<Product>>>;
   getOrderDetailByID?: Maybe<OrderDetail>;
+  getOrderGroupById: OrdersGroup;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
+  getOrdersGroup?: Maybe<Array<OrdersGroup>>;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
@@ -1051,8 +1082,18 @@ export type QueryGetOrderDetailByIdArgs = {
 };
 
 
+export type QueryGetOrderGroupByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryGetOrdersByCheckoutArgs = {
   input: GetById;
+};
+
+
+export type QueryGetOrdersGroupArgs = {
+  input: GetOrdersGroup;
 };
 
 
@@ -1285,6 +1326,11 @@ export type UpdateOrderDetailInput = {
   message?: InputMaybe<Scalars['String']>;
   quantity?: InputMaybe<Scalars['Int']>;
   status?: InputMaybe<OrderStatus>;
+};
+
+export type UpdateOrdersGroupInput = {
+  _id: Scalars['ID'];
+  status: OrderStatus;
 };
 
 export type UpdateProductInput = {
@@ -1611,7 +1657,7 @@ export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typ
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> }> | null }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null }> }> | null }> };
 
 export type GetClientMenuQueryVariables = Exact<{
   input: GetMenu;
@@ -3342,6 +3388,7 @@ export const GetAllMenusByBusinessIdDocument = gql`
         description
         imageUrl
         price
+        quantity
       }
     }
   }
