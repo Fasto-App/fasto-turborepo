@@ -16,6 +16,7 @@ import {
 } from "native-base";
 import { BorderTile } from "../BorderTile";
 import { useTranslation } from "next-i18next";
+import { MINIMUM_ITEMS_QUANTITY } from "app-helpers";
 
 type ProductTileProps = {
   _id?: string;
@@ -92,8 +93,8 @@ const ProductCard = ({
           {name}
         </Heading>
         <Text fontSize={"xs"} fontWeight={"500"} textAlign={"center"}>
-          {quantity && quantity ? (
-            quantity <= 3 ? (
+          {quantity ? (
+            quantity <= MINIMUM_ITEMS_QUANTITY ? (
               <Badge
                 colorScheme={"error"}
                 variant={"solid"}
@@ -135,7 +136,6 @@ const ProductTile = ({
 }: ProductTileProps) => {
   const { t } = useTranslation("common");
 
-  console.log("quantidade: " + quantity);
   const formattedDescriptions =
     description && description.length > maxLength
       ? description.substring(0, maxLength) + "..."
@@ -154,8 +154,8 @@ const ProductTile = ({
             {name}
           </Text>
           <Text fontSize={"xs"} fontWeight={"500"} textAlign={"left"}>
-            {quantity && quantity ? (
-              quantity <= 3 ? (
+            {quantity ? (
+              quantity <= MINIMUM_ITEMS_QUANTITY ? (
                 <Badge
                   colorScheme={"error"}
                   variant={"solid"}

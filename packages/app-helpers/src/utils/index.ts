@@ -7,6 +7,8 @@ const FIXED_POINT_FACTOR_CURRENCY = 100;
 
 export const SERVICE_FEE = 201
 
+export const MINIMUM_ITEMS_QUANTITY = 3
+
 const getCurrency = (str?: string | null): "BRL" | "USD" => {
   if (str?.toUpperCase().startsWith("B")) return "BRL"
   return "USD"

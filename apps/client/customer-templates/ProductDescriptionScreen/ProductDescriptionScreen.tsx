@@ -20,7 +20,7 @@ import {
 import { useSpring, animated } from "react-spring";
 import { PriceTag } from "../../components/molecules/PriceTag";
 import { IncrementButtons } from "../../components/OrderSummary/IncrementButtons";
-import { parseToCurrency } from "app-helpers";
+import { MINIMUM_ITEMS_QUANTITY, parseToCurrency } from "app-helpers";
 import {
   useAddItemToCartMutation,
   useCreateCustomerAddressMutation,
@@ -162,26 +162,15 @@ export const ProductDescriptionScreen = () => {
             <Text fontWeight={"semibold"} fontSize={"25"}>
               {data?.getProductByID?.name}
             </Text>
-            {data?.getProductByID?.quantity && data?.getProductByID?.quantity <= 3?(
+            {data?.getProductByID?.quantity &&
+              data?.getProductByID?.quantity <= MINIMUM_ITEMS_QUANTITY ? (
               <Text alignItems={"left"}>
                 <Badge
                   colorScheme={"error"}
                   variant={"solid"}
-                >{`${t("lowStock")}: ${quantity}`}</Badge>
+                >{`${t("lowStock")}: ${data?.getProductByID?.quantity}`}</Badge>
               </Text>
             ) : null}
-
-            {/* <Text>
-              <Text fontWeight={"semibold"} fontSize={"25"}>{data?.getProductByID?.name}</Text>
-              {data?.getProductByID?.quantity ?
-                <Text fontSize={"xs"} fontWeight={"500"}>
-                {quantity && quantity ? (
-                  quantity <= 3 ? (
-                    <Badge backgroundColor={"primary.400"} variant={"solid"}>{`Low stock: ${quantity}`}</Badge>
-                  ) : null
-                ) : null}
-              </Text> : null}
-            </Text> */}
             <Text pt={"2"}>{data?.getProductByID?.description}</Text>
           </Box>
           <Box pt={"4"}>

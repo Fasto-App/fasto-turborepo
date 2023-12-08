@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-	Box, Heading, Link, Text, FlatList, HStack, Badge 
+	Box, Heading, Link, Text, FlatList, HStack, Badge
 } from 'native-base';
 import { ProductCard, ProductTile } from '../../components/Product/Product';
 import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
@@ -79,7 +79,6 @@ const ProductList = (
 			quantity={item?.quantity || undefined}
 		/>
 	}, [setProductValues, t])
-	const MINIMUM_ITEMS_QUANTITY = 3
 
 	return (<>
 		<ProductModal
