@@ -4,5 +4,6 @@
 	"addToCart": "Adicionar ao carrinho",
 	"errorAddingToCart": "Erro ao adicionar ao carrinho",
 	"addedToCart": "Adicionado ao carrinho",
-	"startOrdering": "Comece a Pedir"
+	"startOrdering": "Comece a Pedir",
+	"lowStock": "Baixo estoque"
 }
