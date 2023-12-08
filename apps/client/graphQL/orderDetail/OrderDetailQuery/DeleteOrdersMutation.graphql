@@ -1,0 +1,6 @@
+mutation DeleteOrdersGroupData($ids: [ID!]!) {
+  deleteOrdersGroupData(ids: $ids) {
+    acknowledged
+    deletedCount
+  }
+}

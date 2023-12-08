@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { OrangeBox } from "../../components/OrangeBox";
 import {
   Box,
@@ -15,7 +15,9 @@ import {
   ChevronLeftIcon,
   Select,
   Button,
+ 
 } from "native-base";
+import { Alert } from "../../components/DeleteAlert"
 import { UpperSection } from "../../components/UpperSection";
 import { FDSSelect } from "../../components/FDSSelect";
 import { BottomSection } from "../../components/BottomSection";
@@ -296,6 +298,15 @@ console.log(data?.getOrdersGroup?.[0])
 
   const [orderObj, setOrderObj] = useState<{ [key: string]: boolean }>({});
 
+  const checkIfItemsSelected = useMemo(() => {
+    const allKeys = typedKeys(orderObj) as string[]
+
+    if (allKeys.length > 0 && !loading) {
+      const selectedKeys = allKeys.filter(id => orderObj[id])
+      return selectedKeys
+    }
+  }, [orderObj, loading])
+
   const onDelete = () => {
     if (Object.keys(orderObj).length > 0 && !loading) {
       const arrayKeys = typedKeys(orderObj).filter((id) => orderObj[id]);
@@ -319,17 +330,32 @@ console.log(data?.getOrdersGroup?.[0])
     console.log(allSelected);
     setOrderObj(allSelected);
   };
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  function setAlertIsOpen(arg0: boolean) {
+    throw new Error("Function not implemented.");
+  }
   
   return (
     <BottomSection>
+      <Alert
+            body={t("body")}
+            cancel={t("cancel")}
+            isOpen={isOpen} 
+            onClose={() => setIsOpen(false)}
+            onPress={() => console.log("deleted item", checkIfItemsSelected)}
+            title={t("title")}
+          />
       {loading ? (
         <LoadingItems />
       ) : error || !data?.getOrdersGroup ? null : (
+        
         <FlatList
           contentContainerStyle={{ paddingRight: 4 }}
           ListHeaderComponent={
             <Header
-              onPress={onDelete}
+              onPress={() => setIsOpen(true)}
               deselectedAll={() => setOrderObj({})}
               selectAll={selectAll}
             />
