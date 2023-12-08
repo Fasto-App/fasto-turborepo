@@ -24,8 +24,10 @@ import { BottomSection } from "../../components/BottomSection";
 import { useTranslation } from "next-i18next";
 import {
   DateType,
+  GetOrdersGroupDocument,
   OrderStatus,
   TakeoutDeliveryDineIn,
+  useDeleteOrdersGroupDataMutation,
   useGetOrdersGroupQuery,
 } from "../../gen/generated";
 import { LoadingItems } from "./LoadingItems";
@@ -34,6 +36,7 @@ import { useRouter } from "next/router";
 import { ColorSchemeType } from "native-base/lib/typescript/components/types";
 import { OrdersModal } from "./OrdersModal";
 import { Icon } from "../../components/atoms/NavigationButton";
+import { showToast } from "../../components/showToast";
 
 const TableHeader: FC = ({ children }) => (
   <Heading textAlign={"center"} flex="1" size={"md"}>
@@ -281,8 +284,11 @@ export const BottomOrdersTableWithModal: React.FC<
       },
     },
   });
-console.log(data?.getOrdersGroup?.[0])
+
   const onNextPage = () => {
+    if ((data?.getOrdersGroup?.length || 0) < pagination.pageSize) {
+      return false
+    }
     const nextPage = pagination.page + 1;
     setPagination({ ...pagination, page: nextPage });
     fetchMore({ variables: { page: nextPage, pageSize: pagination.pageSize } });
@@ -307,17 +313,61 @@ console.log(data?.getOrdersGroup?.[0])
     }
   }, [orderObj, loading])
 
-  const onDelete = () => {
-    if (Object.keys(orderObj).length > 0 && !loading) {
-      const arrayKeys = typedKeys(orderObj).filter((id) => orderObj[id]);
-      console.log("delete everything");
-      console.log({ arrayKeys });
+  // const onDelete = () => {
+  //   if (Object.keys(orderObj).length > 0 && !loading) {
+  //     const arrayKeys = typedKeys(orderObj).filter((id) => orderObj[id]);
+  //     console.log("delete everything");
+  //     console.log({ arrayKeys });
       
-      return;
+  //     return;
+  //   }
+
+  //   console.log("Nothing to do!");
+  // };
+
+  const onDeletePressed = () => {
+    if (checkIfItemsSelected) {
+      setAlertIsOpen(true)
+      return
     }
 
-    console.log("Nothing to do!");
-  };
+    //("Nothing to do!")
+  }
+
+  const [deleteOrder, { loading: deleteloading }] = useDeleteOrdersGroupDataMutation({
+    refetchQueries: [{
+      query: GetOrdersGroupDocument,
+      variables: {
+        page: pagination.page, pageSize: pagination.pageSize
+      }
+    }],
+    onCompleted(data) {
+      setAlertIsOpen(false)
+
+      showToast({
+        message: t("deleteOrderSuccess"),
+        subMessage: t("itemsWereDeleted", { count: data.deleteOrdersGroupData.deletedCount })
+      })
+    },
+    onError() {
+      setAlertIsOpen(false)
+
+      showToast({
+        message: t("deleteOrderError"),
+        status: "error",
+      })
+    },
+  })
+
+  const deleteSelectedOrders = () => {
+    if (checkIfItemsSelected) {
+      deleteOrder({
+        variables: {
+          ids: checkIfItemsSelected
+        }
+      })
+    }
+  }
 
   const selectAll = () => {
     const allSelected = data?.getOrdersGroup?.reduce((accumulator, order) => {
@@ -331,20 +381,16 @@ console.log(data?.getOrdersGroup?.[0])
     setOrderObj(allSelected);
   };
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  function setAlertIsOpen(arg0: boolean) {
-    throw new Error("Function not implemented.");
-  }
+  const [isAlertOpen, setAlertIsOpen] = React.useState(false);
   
   return (
     <BottomSection>
       <Alert
             body={t("body")}
             cancel={t("cancel")}
-            isOpen={isOpen} 
-            onClose={() => setIsOpen(false)}
-            onPress={() => console.log("deleted item", checkIfItemsSelected)}
+            isOpen={isAlertOpen} 
+            onClose={() => setAlertIsOpen(false)}
+            onPress={deleteSelectedOrders}
             title={t("title")}
           />
       {loading ? (
@@ -355,7 +401,7 @@ console.log(data?.getOrdersGroup?.[0])
           contentContainerStyle={{ paddingRight: 4 }}
           ListHeaderComponent={
             <Header
-              onPress={() => setIsOpen(true)}
+              onPress={onDeletePressed}
               deselectedAll={() => setOrderObj({})}
               selectAll={selectAll}
             />
