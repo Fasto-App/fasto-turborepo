@@ -54,10 +54,12 @@ const Header = ({
   onPress,
   selectAll,
   deselectedAll,
+  loading
 }: {
   onPress: () => void;
   selectAll: () => void;
   deselectedAll: () => void;
+  loading: boolean
 }) => {
   const { t } = useTranslation("businessOrders");
 
@@ -401,6 +403,7 @@ export const BottomOrdersTableWithModal: React.FC<
           contentContainerStyle={{ paddingRight: 4 }}
           ListHeaderComponent={
             <Header
+              loading={deleteloading || loading}
               onPress={onDeletePressed}
               deselectedAll={() => setOrderObj({})}
               selectAll={selectAll}
