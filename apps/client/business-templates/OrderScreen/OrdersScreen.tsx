@@ -125,11 +125,7 @@ const OrderDetails = ({
       <HStack p="2" space={4}>
         <Checkbox value={_id} onChange={onDelete} isChecked={selected} />
         <Box width="1.5em" />
-        {/* <Pressable onPress={() => console.log("delete everything")}>
-          <Icon type='TrashCan' size={"1.5em"} />
-        </Pressable> */}
       </HStack>
-
       <Pressable
         _hover={{ backgroundColor: "secondary.100" }}
         onPress={onPress}
@@ -164,7 +160,7 @@ export const OrdersScreen = () => {
     index: number;
   }) => {
     const selected = selectedTab === item;
-    console.log(selectedTab);
+
     return (
       <>
         <Button
@@ -275,7 +271,6 @@ export const BottomOrdersTableWithModal: React.FC<
 
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
-  //TODO: fetch more orders based on selected Status
   const { data, loading, error, fetchMore } = useGetOrdersGroupQuery({
     variables: {
       input: {
@@ -315,17 +310,7 @@ export const BottomOrdersTableWithModal: React.FC<
     }
   }, [orderObj, loading])
 
-  // const onDelete = () => {
-  //   if (Object.keys(orderObj).length > 0 && !loading) {
-  //     const arrayKeys = typedKeys(orderObj).filter((id) => orderObj[id]);
-  //     console.log("delete everything");
-  //     console.log({ arrayKeys });
-      
-  //     return;
-  //   }
-
-  //   console.log("Nothing to do!");
-  // };
+ 
 
   const onDeletePressed = () => {
     if (checkIfItemsSelected) {
@@ -340,7 +325,12 @@ export const BottomOrdersTableWithModal: React.FC<
     refetchQueries: [{
       query: GetOrdersGroupDocument,
       variables: {
-        page: pagination.page, pageSize: pagination.pageSize
+        input: {
+          dateType: DateType.NinetyDays,
+          page: pagination.page,
+          pageSize: pagination.pageSize,
+          status: selectedTab,
+        }
       }
     }],
     onCompleted(data) {
@@ -379,7 +369,7 @@ export const BottomOrdersTableWithModal: React.FC<
 
     if (!allSelected) return;
 
-    console.log(allSelected);
+    
     setOrderObj(allSelected);
   };
 
