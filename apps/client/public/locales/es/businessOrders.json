@@ -10,5 +10,12 @@
   "Ready": "Listo",
   "AllOrders": "Todos los Pedidos",
   "date": "Fecha",
-  "status": "Estado"
+  "status": "Estado",
+  "title": "Eliminar Órdenes",
+  "body": "Esta acción eliminará órdenes permanentemente. ¿Desea continuar?",
+  "cancel": "Cancelar",
+  "delete": "Eliminar Órdenes",
+  "deleteOrderSuccess": "Datos de la orden eliminados con éxito.",
+  "itemsWereDeleted": "{{count}} elementos fueron eliminados.",
+  "deleteOrderError": "Error al eliminar datos de la orden."
 }

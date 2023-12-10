@@ -10,5 +10,12 @@
   "orderNumber": "Pedido #",
   "Ready": "Pronto",
   "AllOrders": "Todos os Pedidos",
-  "status": "Status"
+  "status": "Status",
+  "title": "Excluir Pedidos",
+  "body": "Esta ação irá excluir pedidos permanentemente. Deseja continuar?",
+  "cancel": "Cancelar",
+  "delete": "Excluir Pedidos",
+  "deleteOrderSuccess": "Dados do pedido excluídos com sucesso.",
+  "itemsWereDeleted": "{{count}} itens foram excluídos.",
+  "deleteOrderError": "Erro ao excluir dados do pedido."
 }
