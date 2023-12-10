@@ -62,7 +62,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
 
             newTab.orders.push(orderDetails._id);
 
-            product.totalOrdered += product.totalOrdered + parsedInput.quantity
+            product.totalOrdered = product.totalOrdered + parsedInput.quantity
             productsToUpdate.push(product)
 
             return orderDetails

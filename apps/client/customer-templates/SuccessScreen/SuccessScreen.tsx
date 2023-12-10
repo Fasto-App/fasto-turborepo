@@ -104,10 +104,12 @@ export const SuccessScreen = () => {
           <Button
             flex={1}
             onPress={endSession}
+            _text={{ bold: true }}
           >
             {t("common:logout")}
           </Button>
           <Button
+            _text={{ bold: true }}
             flex={1}
             colorScheme={"tertiary"}
             onPress={() => setIsModalOpen(true)}>

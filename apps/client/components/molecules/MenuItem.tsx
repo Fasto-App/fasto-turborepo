@@ -1,7 +1,8 @@
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from "app-helpers";
-import { Box, HStack, Text, Image, Pressable } from "native-base";
+import { Box, HStack, Text, Image, Pressable, Badge } from "native-base";
 import React from "react";
 import { PriceTag } from "./PriceTag";
+import { convertAbsoluteToRem } from "native-base/lib/typescript/theme/tools";
 
 type MenuItemProps = {
   name: string;
@@ -9,10 +10,18 @@ type MenuItemProps = {
   uri?: string | null;
   description?: string | null;
   onPress: () => void;
-  quantity?: number | null
+  quantity?: number | null;
 };
 
-const MenuItem = ({ onPress, name, price, uri, description, quantity }: MenuItemProps) => {
+const MenuItem = ({
+  onPress,
+  name,
+  price,
+  uri,
+  description,
+  quantity,
+}: MenuItemProps) => {
+  if (quantity === 0) return null;
   return (
     <Pressable
       onPress={onPress}
@@ -20,13 +29,18 @@ const MenuItem = ({ onPress, name, price, uri, description, quantity }: MenuItem
     >
       <HStack justifyContent={"space-between"} p={2.5} space={2}>
         <Box flex={1}>
-          <Text fontSize={"18"} fontWeight={"500"}>{quantity ? `${name} (${quantity})` : name}</Text>
+          <Text fontSize={"18"} fontWeight={"500"}>
+            {name}
+          </Text>
           <Text
             fontSize={"15"}
             pt={"1"}
             fontStyle={"italic"}
             color={"gray.500"}
-            textAlign={"justify"}>{description}</Text>
+            textAlign={"justify"}
+          >
+            {description}
+          </Text>
         </Box>
         <Box>
           <Image

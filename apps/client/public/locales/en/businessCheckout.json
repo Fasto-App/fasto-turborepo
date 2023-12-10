@@ -28,5 +28,6 @@
 	"splitType": "Split Type",
 	"splitNow": "Split Now",
 	"customer": "Customer",
-	"serviceFee": "Service Fee"
+	"serviceFee": "Service Fee",
+	"person": "Person"
 }

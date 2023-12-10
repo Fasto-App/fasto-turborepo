@@ -35,7 +35,8 @@ import {
   parseToFixedPoint,
 } from "app-helpers";
 import { PaymentTile } from "./TableComponents";
-import { OrdersModal } from "../OrderScreen/OrdersModal";
+import { showToast } from "../../components/showToast";
+import { CheckoutModal } from "./CheckoutModal";
 import { Pressable } from "react-native";
 
 const checkoutOptions = ["payFull", "splitBill", "success"] as const;
@@ -126,9 +127,9 @@ export const Checkout = () => {
   if (!subTotal) return null;
   return (
     <>
-      <OrdersModal
+      <CheckoutModal
         setIsOpen={setShowOrdersModal}
-        orderId={checkoutId as string}
+        checkoutId={checkoutId as string}
         isOpen={showOrdersModal}
       />
 
