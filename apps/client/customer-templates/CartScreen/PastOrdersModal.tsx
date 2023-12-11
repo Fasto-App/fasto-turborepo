@@ -173,6 +173,9 @@ type PastOrdersTileProps = {
   orderStatus: OrderStatus;
 }
 
+// type without image  
+type PastOrdersTileNoImageProps = Omit<PastOrdersTileProps, "url">
+
 export const PastOrdersTile = (props: PastOrdersTileProps) => {
   const { name, index, price, url, quantity, orderStatus } = props;
 
@@ -198,6 +201,29 @@ export const PastOrdersTile = (props: PastOrdersTileProps) => {
       <Text>{price}</Text>
       <Text fontSize={"18"}>
         {orderStatus === "Pendent" ? states[1] : states[0]}
+      </Text>
+    </HStack>
+
+  );
+};
+
+export const PastOrdersTileWithoutImage = (props: PastOrdersTileNoImageProps) => {
+  const { name, index, price, quantity, orderStatus } = props;
+
+  return (
+    <HStack
+      p={2}
+      borderRadius={"sm"}
+      backgroundColor={index % 2 === 0 ? "primary.100" : "white"}
+      justifyContent={"space-between"}
+      alignItems={"center"}>
+      <HStack space={2}>
+        <Text alignSelf={"center"} fontSize={"lg"} w={70}>{name}</Text>
+      </HStack>
+      <Text fontSize={"lg"}>{`x${quantity}`}</Text>
+      <Text>{price}</Text>
+      <Text fontSize={"lg"}>
+        {orderStatus}
       </Text>
     </HStack>
 

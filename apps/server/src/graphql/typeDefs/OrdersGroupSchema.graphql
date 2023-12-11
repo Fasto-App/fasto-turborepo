@@ -15,6 +15,7 @@ type OrdersGroup {
 	createdByUser: ID!
 	status: OrderStatus!
 	type: TakeoutDeliveryDineIn!
+	created_date: String!
 }
 
 input GetOrdersGroup {

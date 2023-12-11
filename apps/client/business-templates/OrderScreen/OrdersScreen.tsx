@@ -15,7 +15,7 @@ import {
   ChevronLeftIcon,
   Select,
   Button,
- 
+
 } from "native-base";
 import { Alert } from "../../components/DeleteAlert"
 import { UpperSection } from "../../components/UpperSection";
@@ -32,11 +32,17 @@ import {
 } from "../../gen/generated";
 import { LoadingItems } from "./LoadingItems";
 import { typedKeys, typedValues } from "app-helpers";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { ColorSchemeType } from "native-base/lib/typescript/components/types";
 import { OrdersModal } from "./OrdersModal";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { showToast } from "../../components/showToast";
+import { format } from "date-fns";
+import { getLocale } from "../../authUtilities/utils";
+import { getOrderColor } from "./utils";
+
+const formatDateFNS = (date?: string) => format(Number(date || 0),
+  "PPp", getLocale(router.locale))
 
 const TableHeader: FC = ({ children }) => (
   <Heading textAlign={"center"} flex="1" size={"md"}>
@@ -53,14 +59,12 @@ const TableData: FC = ({ children }) => (
 const Header = ({
   onPress,
   selectAll,
-  deselectedAll,
-  loading
-}: {
-  onPress: () => void;
-  selectAll: () => void;
-  deselectedAll: () => void;
-  loading: boolean
-}) => {
+  deselectedAll }: {
+    onPress: () => void;
+    selectAll: () => void;
+    deselectedAll: () => void;
+    loading: boolean
+  }) => {
   const { t } = useTranslation("businessOrders");
 
   return (
@@ -119,7 +123,7 @@ const OrderDetails = ({
   onDelete,
   selected,
 }: OrderDetailsProps) => {
-  
+
   return (
     <HStack alignItems={"center"}>
       <HStack p="2" space={4}>
@@ -131,7 +135,7 @@ const OrderDetails = ({
         onPress={onPress}
         flex={1}
       >
-        <HStack justifyContent={"space-between"} py={2}>
+        <HStack justifyContent={"space-between"} py={2} space={4}>
           <TableData>{_id}</TableData>
           <TableData>{date}</TableData>
           <TableData>
@@ -146,11 +150,16 @@ const OrderDetails = ({
 };
 
 const tabs = typedValues(OrderStatus);
+const types = typedValues(TakeoutDeliveryDineIn).map(type => ({
+  _id: type,
+  value: type
+}))
 
 export const OrdersScreen = () => {
   const { t } = useTranslation("businessOrders");
   const [modalData, setModalData] = useState({ isOpen: false, orderId: "" });
   const [selectedTab, setSelectedTab] = useState<OrderStatus>();
+  const [selectedType, setSelectedType] = useState<TakeoutDeliveryDineIn>()
 
   const renderCategories = ({
     item,
@@ -204,7 +213,7 @@ export const OrdersScreen = () => {
       </Button>
     );
   };
-  
+
   return (
     <Box flex="1">
       <OrangeBox height={"78"} />
@@ -219,27 +228,16 @@ export const OrdersScreen = () => {
               ItemSeparatorComponent={() => <Box w={4} />}
               keyExtractor={(item) => item}
             />
-            <HStack space={"2"}>
+            {process.env.ENVIRONMENT !== 'production' && <HStack space={"2"}>
               <FDSSelect
                 w={"100px"}
                 h={"8"}
-                placeholder={"date"}
-                setSelectedValue={function (value: string): void {
-                  throw new Error("Function not implemented.");
-                }}
-                array={[]}
+                placeholder={"Type"}
+                selectedValue={selectedType}
+                setSelectedValue={setSelectedType}
+                array={types}
               />
-
-              <FDSSelect
-                w={"100px"}
-                h={"8"}
-                placeholder={"status"}
-                setSelectedValue={function (value: string): void {
-                  throw new Error("Function not implemented.");
-                }}
-                array={[]}
-              />
-            </HStack>
+            </HStack>}
           </HStack>
         </UpperSection>
         <BottomOrdersTableWithModal
@@ -261,12 +259,12 @@ type BottomOrdersTableWithModalProps = {
   modalData: OrderState;
   setModalData: React.Dispatch<React.SetStateAction<OrderState>>;
   selectedTab?: OrderStatus;
+  selectedType?: TakeoutDeliveryDineIn;
 };
 
 export const BottomOrdersTableWithModal: React.FC<
   BottomOrdersTableWithModalProps
-> = ({ setModalData, modalData, selectedTab }) => {
-  const router = useRouter();
+> = ({ setModalData, modalData, selectedTab, selectedType }) => {
   const { t } = useTranslation("businessOrders");
 
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
@@ -278,6 +276,7 @@ export const BottomOrdersTableWithModal: React.FC<
         page: pagination.page,
         pageSize: pagination.pageSize,
         status: selectedTab,
+        type: selectedType
       },
     },
   });
@@ -310,7 +309,7 @@ export const BottomOrdersTableWithModal: React.FC<
     }
   }, [orderObj, loading])
 
- 
+
 
   const onDeletePressed = () => {
     if (checkIfItemsSelected) {
@@ -369,26 +368,26 @@ export const BottomOrdersTableWithModal: React.FC<
 
     if (!allSelected) return;
 
-    
+
     setOrderObj(allSelected);
   };
 
   const [isAlertOpen, setAlertIsOpen] = React.useState(false);
-  
+
   return (
     <BottomSection>
       <Alert
-            body={t("body")}
-            cancel={t("cancel")}
-            isOpen={isAlertOpen} 
-            onClose={() => setAlertIsOpen(false)}
-            onPress={deleteSelectedOrders}
-            title={t("title")}
-          />
+        body={t("body")}
+        cancel={t("cancel")}
+        isOpen={isAlertOpen}
+        onClose={() => setAlertIsOpen(false)}
+        onPress={deleteSelectedOrders}
+        title={t("title")}
+      />
       {loading ? (
         <LoadingItems />
       ) : error || !data?.getOrdersGroup ? null : (
-        
+
         <FlatList
           contentContainerStyle={{ paddingRight: 4 }}
           ListHeaderComponent={
@@ -406,9 +405,9 @@ export const BottomOrdersTableWithModal: React.FC<
             <OrderDetails
               key={order._id}
               _id={`#${order._id.slice(-6)}`}
-              date={order.createdByUser}
+              date={formatDateFNS(order.created_date)}
               status={t(OrderStatus[order.status])}
-              colorScheme={order.status === "Open" ? "success" : "yellow"}
+              colorScheme={getOrderColor(order.status)}
               selected={!!orderObj[order._id]}
               onDelete={() => {
                 setOrderObj({

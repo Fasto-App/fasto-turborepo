@@ -216,7 +216,7 @@ export const Checkout = () => {
                       variant="link"
                       size="med"
                       colorScheme="info"
-                      onPress={() => route.back()}
+                      onPress={() => route.push({ pathname: businessRoute.payments })}
                       justifyContent={"end"}
                     >
                       {t("goBack")}

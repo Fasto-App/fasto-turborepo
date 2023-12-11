@@ -1,6 +1,6 @@
 #section-to-print {
 	visibility: hidden;
-	position: absolute;
+	position: fixed;
 	width: 100%;
 	height: 100vh;
 	left: 0;
@@ -13,6 +13,9 @@
 @media print {
 	#section-to-print {
 		visibility: visible;
+	}
+	html {
+		background-color: white;
 	}
 	body {
 		visibility: hidden;

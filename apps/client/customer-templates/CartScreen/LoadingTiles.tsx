@@ -4,7 +4,7 @@ import { Box, Skeleton } from "native-base"
 export const LoadingCartItems = () => {
   return (
     <Box>
-      {new Array(10).fill({}).map((_, i) => (
+      {new Array(5).fill({}).map((_, i) => (
         <Skeleton
           key={i}
           p={1}
