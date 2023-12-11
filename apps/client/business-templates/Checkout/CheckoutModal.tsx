@@ -43,8 +43,9 @@ export const CheckoutModal = ({ isOpen, setIsOpen, checkoutId }: CheckoutModalPr
         </Text>
 
         <Text fontSize={"lg"}>
-          {`${t("date")}: ${format(Number(data?.getOrdersByCheckout.created_date || 0),
-            "PPpp", getLocale(router.locale))}`}
+          {/* TODO: Make this a reusable function */}
+          {`${format(Number(data?.getOrdersByCheckout.created_date || 0),
+            "PPp", getLocale(router.locale))}`}
         </Text>
       </VStack>}
       ModalBody={<>

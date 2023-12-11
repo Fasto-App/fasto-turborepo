@@ -372,6 +372,7 @@ export type GetOrdersGroup = {
   dateType: DateType;
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
+  status?: InputMaybe<OrderStatus>;
   type?: InputMaybe<TakeoutDeliveryDineIn>;
 };
 
@@ -924,6 +925,7 @@ export type OrdersGroup = {
   _id: Scalars['ID'];
   business: Scalars['ID'];
   createdByUser: Scalars['ID'];
+  created_date: Scalars['String'];
   orders: Array<OrderDetail>;
   status: OrderStatus;
   type: TakeoutDeliveryDineIn;
@@ -2051,6 +2053,7 @@ export type OrdersGroupResolvers<ContextType = Context, ParentType extends Resol
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   business?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdByUser?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  created_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   orders?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['TakeoutDeliveryDineIn'], ParentType, ContextType>;

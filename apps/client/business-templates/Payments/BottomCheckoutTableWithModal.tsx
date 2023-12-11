@@ -106,7 +106,6 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
     }
   }
 
-
   const selectAll = () => {
     const allSelected = data?.getCheckoutsByBusiness.reduce((accumulator, checkout) => {
       accumulator[checkout._id] = true

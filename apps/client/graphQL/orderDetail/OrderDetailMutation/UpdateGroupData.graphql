@@ -1,0 +1,6 @@
+mutation UpdateOrderGroupData($input: UpdateOrdersGroupInput!) {
+	updateOrderGroupData(input: $input) {
+		status
+		_id
+	}
+}

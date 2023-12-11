@@ -15,6 +15,7 @@ type OrdersGroup {
 	createdByUser: ID!
 	status: OrderStatus!
 	type: TakeoutDeliveryDineIn!
+	created_date: String!
 }
 
 input GetOrdersGroup {
@@ -22,6 +23,7 @@ input GetOrdersGroup {
 	pageSize: Int!
 	dateType: DateType!
 	type: TakeoutDeliveryDineIn
+	status: OrderStatus
 }
 
 input UpdateOrdersGroupInput {

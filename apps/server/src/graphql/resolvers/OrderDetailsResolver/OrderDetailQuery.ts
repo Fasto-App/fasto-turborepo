@@ -87,6 +87,10 @@ const getOrdersGroup: QueryResolvers["getOrdersGroup"] = async (paren, { input }
     query.type = input.type;
   }
 
+  if (input.status) {
+    query.status = input.status;
+  }
+
   return await OrdersGroupModel(db)
     .find(query)
     .skip(skip)
