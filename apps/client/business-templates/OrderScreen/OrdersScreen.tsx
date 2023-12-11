@@ -228,7 +228,7 @@ export const OrdersScreen = () => {
               ItemSeparatorComponent={() => <Box w={4} />}
               keyExtractor={(item) => item}
             />
-            {process.env.ENVIRONMENT !== 'production' && <HStack space={"2"}>
+            {process.env.NEXT_PUBLIC_ENVIRONMENT === 'development' && <HStack space={"2"}>
               <FDSSelect
                 w={"100px"}
                 h={"8"}
