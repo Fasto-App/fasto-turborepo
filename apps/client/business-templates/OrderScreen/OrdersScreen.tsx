@@ -75,7 +75,6 @@ const Header = ({
             value="All"
             accessibilityLabel={"All"}
             onChange={(selected) => {
-              console.log("change state", selected);
               if (selected) {
                 selectAll();
                 return;
@@ -388,8 +387,6 @@ export const BottomOrdersTableWithModal: React.FC<
   };
 
   const [isAlertOpen, setAlertIsOpen] = React.useState(false);
-
-  console.log({ previousPage })
 
   return (
     <BottomSection>
