@@ -1,21 +1,23 @@
 import React from 'react'
 import { CustomModal } from '../../components/CustomModal/CustomModal'
 import { Badge, Box, Button, FlatList, HStack, Text } from 'native-base'
-import { OrderStatus, useGetOrderGroupByIdQuery, useUpdateOrderGroupDataMutation } from '../../gen/generated'
+import { DateType, GetOrdersGroupDocument, OrderStatus, useGetOrderGroupByIdQuery, useUpdateOrderGroupDataMutation } from '../../gen/generated'
 import { LoadingCartItems } from '../../customer-templates/CartScreen/LoadingTiles'
 import { PastOrdersTile, PastOrdersTileWithoutImage } from '../../customer-templates/CartScreen/PastOrdersModal'
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency, typedValues } from 'app-helpers'
 import { useTranslation } from 'next-i18next'
 import { FDSSelect } from '../../components/FDSSelect'
 import { formatDateFNS, getOrderColor } from './utils'
+import { showToast } from '../../components/showToast'
 
 type OrdersModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   orderId: string;
+  input?: any
 }
 
-export const OrdersModal = ({ isOpen, setIsOpen, orderId }: OrdersModalProps) => {
+export const OrdersModal = ({ isOpen, setIsOpen, orderId, input }: OrdersModalProps) => {
   const { t } = useTranslation("businessOrders")
 
   const orderStatus = typedValues(OrderStatus).map(status => ({
@@ -31,11 +33,20 @@ export const OrdersModal = ({ isOpen, setIsOpen, orderId }: OrdersModalProps) =>
   })
 
   const [updateGroupOrder, { loading: updatLoading }] = useUpdateOrderGroupDataMutation({
+    refetchQueries: [{
+      query: GetOrdersGroupDocument,
+      variables: {
+        input
+      }
+    }],
     onCompleted(data, clientOptions) {
-      console.log({ data })
+      setIsOpen(false)
     },
     onError(error, clientOptions) {
-      console.log(error)
+      showToast({
+        message: t("errorUpdatingOrder"),
+        status: "error"
+      })
     },
   })
 

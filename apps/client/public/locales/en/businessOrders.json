@@ -12,7 +12,7 @@
 	"date": "Date",
 	"status": "Status",
 	"title": "Delete Orders",
-	"body": "This action will delete ordrers permanently. Do you wish to continue?",
+	"body": "This action will delete orders permanently. Do you wish to continue?",
 	"cancel": "Cancel",
 	"delete": "Delete Orders",
 	"deleteOrderSuccess": "Order data deleted successfully.",
@@ -20,5 +20,6 @@
 	"deleteOrderError": "Error deleting order data.",
 	"print": "Print",
 	"sorryCouldNotLoadOrders": "Sorry, we were unable to load orders",
-	"orderDetails": "Order Details"
+	"orderDetails": "Order Details",
+	"errorUpdatingOrder": "Error Updating Order Group!"
 }

@@ -269,32 +269,49 @@ export const BottomOrdersTableWithModal: React.FC<
 
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
+  const queryInput = {
+    dateType: DateType.NinetyDays,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+    status: selectedTab,
+    type: selectedType
+  }
+
   const { data, loading, error, fetchMore } = useGetOrdersGroupQuery({
+    fetchPolicy: "cache-and-network",
     variables: {
-      input: {
-        dateType: DateType.NinetyDays,
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-        status: selectedTab,
-        type: selectedType
-      },
+      input: queryInput
     },
   });
 
+  const isThereNextPage = (data?.getOrdersGroup?.length || 0) < pagination.pageSize
+
   const onNextPage = () => {
-    if ((data?.getOrdersGroup?.length || 0) < pagination.pageSize) {
-      return false
-    }
+    if (isThereNextPage) return
+
     const nextPage = pagination.page + 1;
     setPagination({ ...pagination, page: nextPage });
-    fetchMore({ variables: { page: nextPage, pageSize: pagination.pageSize } });
+    fetchMore({
+      variables: {
+        input: {
+          ...queryInput,
+          page: nextPage, pageSize: pagination.pageSize
+        }
+      }
+    });
   };
 
+  const previousPage = Math.max(pagination.page - 1, 1);
+
   const onPreviousPage = () => {
-    const previousPage = Math.max(pagination.page - 1, 1);
     setPagination({ ...pagination, page: previousPage });
     fetchMore({
-      variables: { page: previousPage, pageSize: pagination.pageSize },
+      variables: {
+        input: {
+          ...queryInput,
+          page: previousPage, pageSize: pagination.pageSize
+        }
+      },
     });
   };
 
@@ -316,11 +333,9 @@ export const BottomOrdersTableWithModal: React.FC<
       setAlertIsOpen(true)
       return
     }
-
-    //("Nothing to do!")
   }
 
-  const [deleteOrder, { loading: deleteloading }] = useDeleteOrdersGroupDataMutation({
+  const [deleteOrder, { loading: deleteLoading }] = useDeleteOrdersGroupDataMutation({
     refetchQueries: [{
       query: GetOrdersGroupDocument,
       variables: {
@@ -374,6 +389,8 @@ export const BottomOrdersTableWithModal: React.FC<
 
   const [isAlertOpen, setAlertIsOpen] = React.useState(false);
 
+  console.log({ previousPage })
+
   return (
     <BottomSection>
       <Alert
@@ -392,7 +409,7 @@ export const BottomOrdersTableWithModal: React.FC<
           contentContainerStyle={{ paddingRight: 4 }}
           ListHeaderComponent={
             <Header
-              loading={deleteloading || loading}
+              loading={deleteLoading || loading}
               onPress={onDeletePressed}
               deselectedAll={() => setOrderObj({})}
               selectAll={selectAll}
@@ -430,6 +447,7 @@ export const BottomOrdersTableWithModal: React.FC<
         orderId={modalData.orderId}
         isOpen={modalData.isOpen}
         setIsOpen={(isOpen) => setModalData({ orderId: "", isOpen })}
+        input={queryInput}
       />
       <HStack w={"100%"}>
         <HStack
@@ -438,11 +456,15 @@ export const BottomOrdersTableWithModal: React.FC<
           space={4}
           alignItems={"center"}
         >
-          <Pressable onPress={onPreviousPage}>
+          <Pressable
+            isDisabled={pagination.page === 1} _disabled={{ opacity: 0.3 }}
+            onPress={onPreviousPage}>
             <ChevronLeftIcon size="5" color="blue.500" />
           </Pressable>
           <Text>{pagination.page}</Text>
-          <Pressable onPress={onNextPage}>
+          <Pressable
+            isDisabled={isThereNextPage} _disabled={{ opacity: 0.3 }}
+            onPress={onNextPage}>
             <ChevronRightIcon size="5" color="blue.500" />
           </Pressable>
         </HStack>

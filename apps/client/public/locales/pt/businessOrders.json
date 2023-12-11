@@ -20,5 +20,6 @@
 	"deleteOrderError": "Erro ao excluir dados do pedido.",
 	"print": "Imprimir",
 	"sorryCouldNotLoadOrders": "Desculpe, não foi possível carregar os pedidos",
-	"orderDetails": "Detalhes do Pedido"
+	"orderDetails": "Detalhes do Pedido",
+	"errorUpdatingOrder": "Error al Actualizar Grupo de Pedidos"
 }
