@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   Button,
   Box,
@@ -44,7 +44,6 @@ export const AddToOrder = () => {
   const [orderItems, setOrderItems] = React.useState<NewOrder[]>([]);
   const [selectedUser, setSelectedUser] = React.useState<string>();
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
-
 
   const { t } = useTranslation("businessAddToOrder");
 
@@ -105,8 +104,9 @@ export const AddToOrder = () => {
   const { data: menuData } = useGetMenuByIdQuery({
     onError: (data) => {
       showToast({
-        message: "", status: "error" 
-      })
+        message: "",
+        status: "error",
+      });
     },
   });
 
@@ -192,14 +192,14 @@ export const AddToOrder = () => {
   const sections = menuData?.getMenuByID?.sections || [];
   const filteredSection = sections.find(
     (section) => section.category._id === selectedCategory
-    );
-    const products = filteredSection?.products || [];
-    const total = orderItems.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-      );
+  );
+  const products = filteredSection?.products || [];
+  const total = orderItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
-  const allProducts = ([] as typeof sections[number]["products"]).concat(
+  const allProducts = ([] as (typeof sections)[number]["products"]).concat(
     ...sections.map((section) => section.products || [])
   );
   const allCategory = {
@@ -211,7 +211,36 @@ export const AddToOrder = () => {
   };
   const sectionsWithAll = [allCategory, ...sections];
 
-  const [search, setSearch] = React.useState<string | any>("");
+  const [searchString, setSearchString] = React.useState<string | any>("");
+  const [searchResult, setSearchResult] = React.useState<Product[]>([]);
+
+  const searchProductsByName = (
+    searchString: string,
+    products: Product[]
+  ): Product[] => {
+    if (!searchString) {
+      return products;
+    }
+    const pattern = new RegExp(searchString, "gi");
+  
+    return products.filter((product) => pattern.test(product.name));
+  };
+
+  const filteredSections = useMemo(() => {
+    return sectionsWithAll
+      .filter((section) => {
+        return (
+          selectedCategory === "all" || 
+          selectedCategory === section.category._id
+        );
+      })
+      .map((section) => {
+        return {
+          ...section,
+          products: searchProductsByName(searchString, section.products),
+        };
+      });
+  }, [sectionsWithAll, selectedCategory, searchString]);
 
   return (
     <Flex flexDirection={"row"} flex={1}>
@@ -439,16 +468,23 @@ export const AddToOrder = () => {
                 variant="rounded"
                 borderRadius="10"
                 size="sm"
-                value={search}
-                onChangeText={(text) => setSearch(text)}
-                InputLeftElement={
-                  <CiSearch/>
-                }
+                value={searchString}
+                onChangeText={(text) => {
+                  setSearchString(text);
+                  const filteredProducts = searchProductsByName(
+                    text,
+                    sections.flatMap((section) => section.products)
+                  );
+                  setSearchResult(filteredProducts);
+                  console.log("Texto: " + text);
+                  console.log("Produtos filtrados: " + filteredProducts);
+                }}
+                InputLeftElement={<CiSearch />}
               />
             </VStack>
             <ScrollView pt={2}>
               <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-                {sectionsWithAll.map((section) => (
+                {filteredSections.map((section) => (
                   <React.Fragment key={section.category._id}>
                     {selectedCategory === section.category._id &&
                       section.products.map((product) => (
@@ -491,6 +527,46 @@ export const AddToOrder = () => {
                 ))}
               </VStack>
             </ScrollView>
+            {/* <ScrollView pt={2}>
+              <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
+                {searchResult.map((product) => (
+                  <ProductTile
+                    ctaTitle={t("add")}
+                    key={product._id}
+                    name={product.name}
+                    imageUrl={product.imageUrl ?? ""}
+                    description={product.description}
+                    quantity={product.quantity}
+                    onPress={() => {
+                      const findIndex = orderItems.findIndex(
+                        (order) =>
+                          order._id === product._id &&
+                          order?.selectedUser === selectedUser
+                      );
+
+                      if (findIndex >= 0) {
+                        const newOrder = {
+                          ...orderItems[findIndex],
+                          quantity: orderItems[findIndex].quantity + 1,
+                          selectedUser,
+                        };
+
+                        const newArray = orderItems.map((order, index) =>
+                          index === findIndex ? newOrder : order
+                        );
+
+                        return setOrderItems(newArray);
+                      }
+
+                      setOrderItems([
+                        ...orderItems,
+                        { ...product, quantity: 1, selectedUser },
+                      ]);
+                    }}
+                  />
+                ))}
+              </VStack>
+            </ScrollView> */}
           </BottomSection>
         </VStack>
       </Box>
