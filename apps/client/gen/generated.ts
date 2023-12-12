@@ -368,6 +368,14 @@ export type GetMenuById = {
   id: Scalars['ID'];
 };
 
+export type GetOrdersGroup = {
+  dateType: DateType;
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  status?: InputMaybe<OrderStatus>;
+  type?: InputMaybe<TakeoutDeliveryDineIn>;
+};
+
 export type GetPaidCheckout = {
   type: DateType;
 };
@@ -505,6 +513,7 @@ export type Mutation = {
   deleteCheckoutData: DeleteResult;
   deleteItemFromCart: CartItem;
   deleteMenu: Menu;
+  deleteOrdersGroupData: DeleteResult;
   deleteProduct?: Maybe<RequestResponseOk>;
   deleteSpace: Space;
   deleteTab?: Maybe<Tab>;
@@ -534,6 +543,7 @@ export type Mutation = {
   updateMenu?: Maybe<Menu>;
   updateMenuInfo: Menu;
   updateOrderDetail: OrderDetail;
+  updateOrderGroupData: OrdersGroup;
   updateProductByID: Product;
   updateSpace: Space;
   updateSubscription: StripeSubscription;
@@ -698,6 +708,11 @@ export type MutationDeleteMenuArgs = {
 };
 
 
+export type MutationDeleteOrdersGroupDataArgs = {
+  ids: Array<Scalars['ID']>;
+};
+
+
 export type MutationDeleteProductArgs = {
   id: Scalars['ID'];
 };
@@ -833,6 +848,11 @@ export type MutationUpdateOrderDetailArgs = {
 };
 
 
+export type MutationUpdateOrderGroupDataArgs = {
+  input: UpdateOrdersGroupInput;
+};
+
+
 export type MutationUpdateProductByIdArgs = {
   input: UpdateProductInput;
 };
@@ -899,6 +919,17 @@ export enum OrderStatus {
   Open = 'Open',
   Pendent = 'Pendent'
 }
+
+export type OrdersGroup = {
+  __typename?: 'OrdersGroup';
+  _id: Scalars['ID'];
+  business: Scalars['ID'];
+  createdByUser: Scalars['ID'];
+  created_date: Scalars['String'];
+  orders: Array<OrderDetail>;
+  status: OrderStatus;
+  type: TakeoutDeliveryDineIn;
+};
 
 export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
@@ -981,8 +1012,10 @@ export type Query = {
   getMenuByID: Menu;
   getMostSellingProducts?: Maybe<Array<Maybe<Product>>>;
   getOrderDetailByID?: Maybe<OrderDetail>;
+  getOrderGroupById: OrdersGroup;
   getOrdersByCheckout: Checkout;
   getOrdersBySession: Array<OrderDetail>;
+  getOrdersGroup?: Maybe<Array<OrdersGroup>>;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
@@ -1051,8 +1084,18 @@ export type QueryGetOrderDetailByIdArgs = {
 };
 
 
+export type QueryGetOrderGroupByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryGetOrdersByCheckoutArgs = {
   input: GetById;
+};
+
+
+export type QueryGetOrdersGroupArgs = {
+  input: GetOrdersGroup;
 };
 
 
@@ -1285,6 +1328,11 @@ export type UpdateOrderDetailInput = {
   message?: InputMaybe<Scalars['String']>;
   quantity?: InputMaybe<Scalars['Int']>;
   status?: InputMaybe<OrderStatus>;
+};
+
+export type UpdateOrdersGroupInput = {
+  _id: Scalars['ID'];
+  status: OrderStatus;
 };
 
 export type UpdateProductInput = {
@@ -1611,7 +1659,7 @@ export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typ
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number }> }> | null }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null }> }> | null }> };
 
 export type GetClientMenuQueryVariables = Exact<{
   input: GetMenu;
@@ -1641,6 +1689,13 @@ export type CreateOrdersCheckoutMutationVariables = Exact<{
 
 export type CreateOrdersCheckoutMutation = { __typename?: 'Mutation', createOrdersCheckout: { __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, splitType?: SplitType | null, created_date: string } };
 
+export type UpdateOrderGroupDataMutationVariables = Exact<{
+  input: UpdateOrdersGroupInput;
+}>;
+
+
+export type UpdateOrderGroupDataMutation = { __typename?: 'Mutation', updateOrderGroupData: { __typename?: 'OrdersGroup', status: OrderStatus, _id: string } };
+
 export type CreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<CreateOrderInput> | CreateOrderInput;
 }>;
@@ -1648,10 +1703,31 @@ export type CreateMultipleOrderDetailsMutationVariables = Exact<{
 
 export type CreateMultipleOrderDetailsMutation = { __typename?: 'Mutation', createMultipleOrderDetails: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, user?: string | null, product: { __typename?: 'Product', imageUrl?: string | null } }> };
 
+export type DeleteOrdersGroupDataMutationVariables = Exact<{
+  ids: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type DeleteOrdersGroupDataMutation = { __typename?: 'Mutation', deleteOrdersGroupData: { __typename?: 'DeleteResult', acknowledged: boolean, deletedCount: number } };
+
+export type GetOrderGroupByIdQueryVariables = Exact<{
+  getOrderGroupByIdId: Scalars['ID'];
+}>;
+
+
+export type GetOrderGroupByIdQuery = { __typename?: 'Query', getOrderGroupById: { __typename?: 'OrdersGroup', _id: string, created_date: string, business: string, createdByUser: string, status: OrderStatus, type: TakeoutDeliveryDineIn, orders: Array<{ __typename?: 'OrderDetail', _id: string, message?: string | null, quantity: number, status: OrderStatus, subTotal: number, user?: string | null, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> } };
+
 export type GetOrdersBySessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetOrdersBySessionQuery = { __typename?: 'Query', getOrdersBySession: Array<{ __typename?: 'OrderDetail', _id: string, quantity: number, status: OrderStatus, subTotal: number, user?: string | null, product: { __typename?: 'Product', name: string, imageUrl?: string | null } }> };
+
+export type GetOrdersGroupQueryVariables = Exact<{
+  input: GetOrdersGroup;
+}>;
+
+
+export type GetOrdersGroupQuery = { __typename?: 'Query', getOrdersGroup?: Array<{ __typename?: 'OrdersGroup', created_date: string, _id: string, business: string, status: OrderStatus, createdByUser: string, type: TakeoutDeliveryDineIn, orders: Array<{ __typename?: 'OrderDetail', _id: string }> }> | null };
 
 export type ConfirmPaymentMutationVariables = Exact<{
   input: ConfirmPaymentInput;
@@ -3342,6 +3418,7 @@ export const GetAllMenusByBusinessIdDocument = gql`
         description
         imageUrl
         price
+        quantity
       }
     }
   }
@@ -3560,6 +3637,40 @@ export function useCreateOrdersCheckoutMutation(baseOptions?: Apollo.MutationHoo
 export type CreateOrdersCheckoutMutationHookResult = ReturnType<typeof useCreateOrdersCheckoutMutation>;
 export type CreateOrdersCheckoutMutationResult = Apollo.MutationResult<CreateOrdersCheckoutMutation>;
 export type CreateOrdersCheckoutMutationOptions = Apollo.BaseMutationOptions<CreateOrdersCheckoutMutation, CreateOrdersCheckoutMutationVariables>;
+export const UpdateOrderGroupDataDocument = gql`
+    mutation UpdateOrderGroupData($input: UpdateOrdersGroupInput!) {
+  updateOrderGroupData(input: $input) {
+    status
+    _id
+  }
+}
+    `;
+export type UpdateOrderGroupDataMutationFn = Apollo.MutationFunction<UpdateOrderGroupDataMutation, UpdateOrderGroupDataMutationVariables>;
+
+/**
+ * __useUpdateOrderGroupDataMutation__
+ *
+ * To run a mutation, you first call `useUpdateOrderGroupDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOrderGroupDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOrderGroupDataMutation, { data, loading, error }] = useUpdateOrderGroupDataMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateOrderGroupDataMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOrderGroupDataMutation, UpdateOrderGroupDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOrderGroupDataMutation, UpdateOrderGroupDataMutationVariables>(UpdateOrderGroupDataDocument, options);
+      }
+export type UpdateOrderGroupDataMutationHookResult = ReturnType<typeof useUpdateOrderGroupDataMutation>;
+export type UpdateOrderGroupDataMutationResult = Apollo.MutationResult<UpdateOrderGroupDataMutation>;
+export type UpdateOrderGroupDataMutationOptions = Apollo.BaseMutationOptions<UpdateOrderGroupDataMutation, UpdateOrderGroupDataMutationVariables>;
 export const CreateMultipleOrderDetailsDocument = gql`
     mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
   createMultipleOrderDetails(input: $input) {
@@ -3600,6 +3711,92 @@ export function useCreateMultipleOrderDetailsMutation(baseOptions?: Apollo.Mutat
 export type CreateMultipleOrderDetailsMutationHookResult = ReturnType<typeof useCreateMultipleOrderDetailsMutation>;
 export type CreateMultipleOrderDetailsMutationResult = Apollo.MutationResult<CreateMultipleOrderDetailsMutation>;
 export type CreateMultipleOrderDetailsMutationOptions = Apollo.BaseMutationOptions<CreateMultipleOrderDetailsMutation, CreateMultipleOrderDetailsMutationVariables>;
+export const DeleteOrdersGroupDataDocument = gql`
+    mutation DeleteOrdersGroupData($ids: [ID!]!) {
+  deleteOrdersGroupData(ids: $ids) {
+    acknowledged
+    deletedCount
+  }
+}
+    `;
+export type DeleteOrdersGroupDataMutationFn = Apollo.MutationFunction<DeleteOrdersGroupDataMutation, DeleteOrdersGroupDataMutationVariables>;
+
+/**
+ * __useDeleteOrdersGroupDataMutation__
+ *
+ * To run a mutation, you first call `useDeleteOrdersGroupDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOrdersGroupDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOrdersGroupDataMutation, { data, loading, error }] = useDeleteOrdersGroupDataMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeleteOrdersGroupDataMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOrdersGroupDataMutation, DeleteOrdersGroupDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteOrdersGroupDataMutation, DeleteOrdersGroupDataMutationVariables>(DeleteOrdersGroupDataDocument, options);
+      }
+export type DeleteOrdersGroupDataMutationHookResult = ReturnType<typeof useDeleteOrdersGroupDataMutation>;
+export type DeleteOrdersGroupDataMutationResult = Apollo.MutationResult<DeleteOrdersGroupDataMutation>;
+export type DeleteOrdersGroupDataMutationOptions = Apollo.BaseMutationOptions<DeleteOrdersGroupDataMutation, DeleteOrdersGroupDataMutationVariables>;
+export const GetOrderGroupByIdDocument = gql`
+    query GetOrderGroupById($getOrderGroupByIdId: ID!) {
+  getOrderGroupById(id: $getOrderGroupByIdId) {
+    _id
+    created_date
+    business
+    createdByUser
+    status
+    type
+    orders {
+      _id
+      message
+      product {
+        name
+        imageUrl
+      }
+      quantity
+      status
+      subTotal
+      user
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrderGroupByIdQuery__
+ *
+ * To run a query within a React component, call `useGetOrderGroupByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderGroupByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderGroupByIdQuery({
+ *   variables: {
+ *      getOrderGroupByIdId: // value for 'getOrderGroupByIdId'
+ *   },
+ * });
+ */
+export function useGetOrderGroupByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOrderGroupByIdQuery, GetOrderGroupByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrderGroupByIdQuery, GetOrderGroupByIdQueryVariables>(GetOrderGroupByIdDocument, options);
+      }
+export function useGetOrderGroupByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrderGroupByIdQuery, GetOrderGroupByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrderGroupByIdQuery, GetOrderGroupByIdQueryVariables>(GetOrderGroupByIdDocument, options);
+        }
+export type GetOrderGroupByIdQueryHookResult = ReturnType<typeof useGetOrderGroupByIdQuery>;
+export type GetOrderGroupByIdLazyQueryHookResult = ReturnType<typeof useGetOrderGroupByIdLazyQuery>;
+export type GetOrderGroupByIdQueryResult = Apollo.QueryResult<GetOrderGroupByIdQuery, GetOrderGroupByIdQueryVariables>;
 export const GetOrdersBySessionDocument = gql`
     query GetOrdersBySession {
   getOrdersBySession {
@@ -3642,6 +3839,49 @@ export function useGetOrdersBySessionLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetOrdersBySessionQueryHookResult = ReturnType<typeof useGetOrdersBySessionQuery>;
 export type GetOrdersBySessionLazyQueryHookResult = ReturnType<typeof useGetOrdersBySessionLazyQuery>;
 export type GetOrdersBySessionQueryResult = Apollo.QueryResult<GetOrdersBySessionQuery, GetOrdersBySessionQueryVariables>;
+export const GetOrdersGroupDocument = gql`
+    query GetOrdersGroup($input: GetOrdersGroup!) {
+  getOrdersGroup(input: $input) {
+    created_date
+    _id
+    business
+    status
+    createdByUser
+    type
+    orders {
+      _id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrdersGroupQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersGroupQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetOrdersGroupQuery(baseOptions: Apollo.QueryHookOptions<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>(GetOrdersGroupDocument, options);
+      }
+export function useGetOrdersGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>(GetOrdersGroupDocument, options);
+        }
+export type GetOrdersGroupQueryHookResult = ReturnType<typeof useGetOrdersGroupQuery>;
+export type GetOrdersGroupLazyQueryHookResult = ReturnType<typeof useGetOrdersGroupLazyQuery>;
+export type GetOrdersGroupQueryResult = Apollo.QueryResult<GetOrdersGroupQuery, GetOrdersGroupQueryVariables>;
 export const ConfirmPaymentDocument = gql`
     mutation ConfirmPayment($input: ConfirmPaymentInput!) {
   confirmPayment(input: $input)

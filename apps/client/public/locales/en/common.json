@@ -77,5 +77,8 @@
 		"tabError": "Please, provide a number of guests",
 		"spaceError": "Please, enter a Space Name. Min 2 chars",
 		"required": "This field is required"
-	}
+	},
+	"lowStock": "Low stock",
+	"inStock": "In stock",
+	"noStock": "No stock"
 }

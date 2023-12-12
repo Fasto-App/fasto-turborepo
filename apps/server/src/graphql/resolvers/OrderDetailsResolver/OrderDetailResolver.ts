@@ -14,6 +14,7 @@ import { CartItemModel } from '../../../models/cartItem';
 import { TabStatus, TabType, getPercentageOfValue } from 'app-helpers';
 import { CheckoutModel } from '../../../models/checkout';
 import { OrdersGroupModel } from '../../../models/ordersGroup';
+import { ObjectId } from 'mongodb';
 
 // Quick Sale
 // @ts-ignore
@@ -61,7 +62,7 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
 
             newTab.orders.push(orderDetails._id);
 
-            product.totalOrdered += product.totalOrdered + parsedInput.quantity
+            product.totalOrdered = product.totalOrdered + parsedInput.quantity
             productsToUpdate.push(product)
 
             return orderDetails
@@ -243,8 +244,36 @@ const updateOrderDetail = async (_parent: any,
     }
 }
 
+// @ts-ignore
+const deleteOrdersGroupData: MutationResolvers["deleteOrdersGroupData"] = async (_paren, args, { db, business, }) => {
+    // is user allow to do the following?
+    if (!business) throw ApolloError(new Error("No Business"), "Unauthorized")
+
+    // find the array and delete them in batch
+    try {
+        const objectIds = args.ids.map((id) => new ObjectId(id));
+        const result = await OrdersGroupModel(db).deleteMany({ _id: { $in: objectIds }, business })
+        return result
+    } catch (err) {
+        ApolloError(err as Error, "InternalServerError")
+    }
+}
+
+//@ts-ignore
+const updateOrderGroupData: MutationResolvers["updateOrderGroupData"] = async (_par, { input }, { db }) => {
+    // find the order group and update
+    const foundOrderGroup = await OrdersGroupModel(db).findByIdAndUpdate(input._id,
+        { status: input.status }, { new: true })
+
+    if (!foundOrderGroup) throw ApolloError(new Error('Order Group Not Found'), 'NotFound')
+
+    return foundOrderGroup
+}
+
 export const OrderDetailsResolverMutation = {
     updateOrderDetail,
+    deleteOrdersGroupData,
+    updateOrderGroupData,
     createMultipleOrderDetails,
     clientCreateMultipleOrderDetails,
     createOrdersCheckout,

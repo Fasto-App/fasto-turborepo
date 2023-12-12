@@ -9,13 +9,14 @@ import { stripePromise } from '../../stripe/stripe';
 import { useGetPaymentInformationQuery } from '../../gen/generated';
 import { PastOrdersModal } from '../CartScreen/PastOrdersModal';
 import { useGetClientSession } from '../../hooks';
+import { showToast } from '../../components/showToast';
 
-const Row = ({ title, value }: { title: string, value: string }) =>
+const Row = ({ title, value, bold }: { title: string, value: string, bold?: boolean }) =>
   <HStack justifyContent={"space-between"}>
-    <Text fontSize={"md"}>
+    <Text fontSize={"lg"} bold={bold}>
       {title}
     </Text>
-    <Text fontSize={"md"}>
+    <Text fontSize={"lg"} bold={bold}>
       {value}
     </Text>
   </HStack>
@@ -25,21 +26,22 @@ const CheckoutForm = () => {
   const { data: clientSession } = useGetClientSession()
 
   const router = useRouter()
-  const { businessId, amount, checkoutId, paymentId } = router.query
+  const { businessId, paymentId } = router.query
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
 
-  const { data, loading, error } = useGetPaymentInformationQuery({
+  const { data, loading } = useGetPaymentInformationQuery({
     skip: !paymentId,
     variables: {
       input: { payment: paymentId as string }
     },
     onError: (error) => {
-      // todo
-    },
-    onCompleted(data) {
-      // todo
+      showToast({
+        message: t("paymentError"),
+        subMessage: error.cause,
+        status: "error"
+      })
     },
   })
 
@@ -76,6 +78,7 @@ const CheckoutForm = () => {
     setIsProcessing(false);
 
     if (paymentIntent?.status === "succeeded") {
+      showToast({ message: t("paymentSucceeded") })
       router.push(RETURN_URL)
     }
   }
@@ -83,27 +86,27 @@ const CheckoutForm = () => {
   return (
     <>
       <Box alignItems={"flex-end"} px={2}>
-        {!clientSession?.getClientSession.tab?.orders?.length ? null : <Button
-          size="sm"
-          variant="link"
-          colorScheme={"info"}
-          _text={{ fontSize: "lg" }}
-          onPress={() => setIsModalOpen(true)}>
-          {t("placedOrders", { number: clientSession?.getClientSession.tab?.orders?.length })}
-        </Button>}
+        {!clientSession?.getClientSession.tab?.orders?.length ? null :
+          <Button
+            size="sm"
+            variant="link"
+            colorScheme={"info"}
+            _text={{ fontSize: "lg" }}
+            onPress={() => setIsModalOpen(true)}>
+            {t("placedOrders", { number: clientSession?.getClientSession.tab?.orders?.length })}
+          </Button>}
       </Box>
       <ScrollView padding={6} flex={1}>
-        <VStack pt={2} pb={8} space={2}>
-          <Row title='Subtotal' value={parseToCurrency(data?.getPaymentInformation.checkout.subTotal)} />
-          <Row title='Taxes' value={parseToCurrency(0)} />
-          <Row title='Service Fee' value={parseToCurrency(data?.getPaymentInformation.serviceFee)} />
-          <Row title='Tip' value={parseToCurrency(data?.getPaymentInformation.tip)} />
-        </VStack>
-        <Box>
-          <PaymentElement id="payment-element" />
-          {message && <Text color={"error.500"} fontSize={"lg"}>{message}</Text>}
-        </Box>
+        <PaymentElement id="payment-element" />
+        {message && <Text color={"error.500"} fontSize={"lg"}>{message}</Text>}
       </ScrollView>
+      <VStack padding={6} space={2}>
+        <Row title='Subtotal' value={parseToCurrency(data?.getPaymentInformation.checkout.subTotal)} />
+        <Row title='Taxes' value={parseToCurrency(0)} />
+        <Row title='Service Fee' value={parseToCurrency(data?.getPaymentInformation.serviceFee)} />
+        <Row title='Tip' value={parseToCurrency(data?.getPaymentInformation.tip)} />
+        <Row title='Total' value={parseToCurrency(data?.getPaymentInformation.amount)} bold />
+      </VStack>
       <Center p={"6"}>
         <Button
           w={"75%"}
@@ -113,9 +116,7 @@ const CheckoutForm = () => {
           _text={{ bold: true }}
           fontSize={"lg"}
         >
-          {
-            `${t("payNow")} ${isNaN(Number(amount)) ?
-              "" : parseToCurrency(Number(amount))}`}
+          {t("payNow")}
         </Button>
       </Center>
       <PastOrdersModal

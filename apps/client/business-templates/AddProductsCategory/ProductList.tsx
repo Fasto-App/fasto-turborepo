@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-	Box, Heading, Link, Text, FlatList, HStack
+	Box, Heading, Link, Text, FlatList, HStack, Badge
 } from 'native-base';
 import { ProductCard, ProductTile } from '../../components/Product/Product';
 import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
@@ -76,6 +76,7 @@ const ProductList = (
 			onPress={() => setProductValues(item)}
 			description={item.description}
 			ctaTitle={t("editItem")}
+			quantity={item?.quantity || undefined}
 		/>
 	}, [setProductValues, t])
 
