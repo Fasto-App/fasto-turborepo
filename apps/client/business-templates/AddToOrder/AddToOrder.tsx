@@ -10,7 +10,6 @@ import {
   VStack,
   ScrollView,
   Input,
-  Icon,
 } from "native-base";
 import { useRouter } from "next/router";
 import { SummaryComponent } from "../../components/OrderSummary";
@@ -33,7 +32,21 @@ import { businessRoute } from "fasto-route";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 import { OrangeBox } from "../../components/OrangeBox";
-import { CiSearch } from "react-icons/ci";
+import { Icon } from "../../components/atoms/NavigationButton";
+
+// Helper can be outside of component
+// specially if we want to reuse this
+const searchProductsByName = (
+  searchString: string,
+  products: Product[]
+): Product[] => {
+  if (!searchString) {
+    return products;
+  }
+  const pattern = new RegExp(searchString, "gi");
+
+  return products.filter((product) => pattern.test(product.name));
+};
 
 type NewOrder = Product & { quantity: number; selectedUser?: string };
 
@@ -104,7 +117,7 @@ export const AddToOrder = () => {
   const { data: menuData } = useGetMenuByIdQuery({
     onError: (data) => {
       showToast({
-        message: "",
+        message: "", // TODO: translate
         status: "error",
       });
     },
@@ -122,7 +135,6 @@ export const AddToOrder = () => {
       // if (data?.getTabByID?. === "pending") {
       // }
     },
-    // TODO: translate
     onError: () => {
       showToast({
         status: "error",
@@ -202,35 +214,24 @@ export const AddToOrder = () => {
   const allProducts = ([] as (typeof sections)[number]["products"]).concat(
     ...sections.map((section) => section.products || [])
   );
-  const allCategory = {
+  const allCategory = useMemo(() => ({
     category: {
       _id: "all",
       name: t("all"),
     },
     products: allProducts,
-  };
-  const sectionsWithAll = [allCategory, ...sections];
+  }), [allProducts, t]);
+
+  const sectionsWithAll = useMemo(() => [allCategory, ...sections], [allCategory, sections]);
 
   const [searchString, setSearchString] = React.useState<string | any>("");
   const [searchResult, setSearchResult] = React.useState<Product[]>([]);
-
-  const searchProductsByName = (
-    searchString: string,
-    products: Product[]
-  ): Product[] => {
-    if (!searchString) {
-      return products;
-    }
-    const pattern = new RegExp(searchString, "gi");
-  
-    return products.filter((product) => pattern.test(product.name));
-  };
 
   const filteredSections = useMemo(() => {
     return sectionsWithAll
       .filter((section) => {
         return (
-          selectedCategory === "all" || 
+          selectedCategory === "all" ||
           selectedCategory === section.category._id
         );
       })
@@ -255,7 +256,7 @@ export const AddToOrder = () => {
               </Text>
             ) : null}
             {tabData?.getTabByID?.table?.tableNumber &&
-            (tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
+              (tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
               <Divider orientation="vertical" mx="3" />
             ) : null}
             {(tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
@@ -400,15 +401,6 @@ export const AddToOrder = () => {
               <Heading pr={10}>{t("menu")}</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {/* {sections.map((section) => (
-                    <Tile
-                      key={section.category._id}
-                      selected={section.category._id === selectedCategory}
-                      onPress={() => setSelectedCategory(section.category._id)}
-                    >
-                      {section.category.name}
-                    </Tile>
-                  ))} */}
                   {sectionsWithAll.map((section) => (
                     <Tile
                       key={section.category._id}
@@ -462,12 +454,12 @@ export const AddToOrder = () => {
                 ))}
               </VStack>
             </ScrollView> */}
-            <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
+            <VStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>
               <Input
                 placeholder={t("search")}
                 variant="rounded"
                 borderRadius="10"
-                size="sm"
+                size="md"
                 value={searchString}
                 onChangeText={(text) => {
                   setSearchString(text);
@@ -476,10 +468,8 @@ export const AddToOrder = () => {
                     sections.flatMap((section) => section.products)
                   );
                   setSearchResult(filteredProducts);
-                  console.log("Texto: " + text);
-                  console.log("Produtos filtrados: " + filteredProducts);
                 }}
-                InputLeftElement={<CiSearch />}
+                InputLeftElement={<Box p="1"><Icon type="Search" /></Box>}
               />
             </VStack>
             <ScrollView pt={2}>
