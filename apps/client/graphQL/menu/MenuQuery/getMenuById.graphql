@@ -13,6 +13,7 @@ query GetMenuByID($input: GetMenuById) {
 				imageUrl
 				price
 				description
+				quantity
 			}
 		}
 	}

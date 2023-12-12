@@ -340,6 +340,7 @@ export const AddToOrder = () => {
                     name={product.name}
                     imageUrl={product.imageUrl ?? ""}
                     description={product.description}
+                    quantity={product.quantity}
                     onPress={() => {
                       // if the product was already selected for a given user
                       // find the index
