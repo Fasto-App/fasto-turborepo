@@ -12,5 +12,7 @@
 	"ordersCreatedSuccessfully": "Órdenes creadas exitosamente",
 	"errorCreatingOrders": "Error al crear las órdenes",
 	"add": "Agregar",
-	"closeTab": "Cerrar Cuenta"
+	"closeTab": "Cerrar Cuenta",
+	"all": "Todos los elementos",
+	"search": "Buscar"
 }

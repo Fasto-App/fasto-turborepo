@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useEffect } from "react";
 import {
   Button,
   Box,
@@ -8,100 +8,114 @@ import {
   Text,
   HStack,
   VStack,
-  ScrollView
+  ScrollView,
+  Input,
+  Icon,
 } from "native-base";
-import { useRouter } from "next/router"
+import { useRouter } from "next/router";
 import { SummaryComponent } from "../../components/OrderSummary";
 import { LeftSideBar } from "../../components";
-import { parseToCurrency } from 'app-helpers';
+import { parseToCurrency } from "app-helpers";
 import { UpperSection } from "../../components/UpperSection";
 import { Tile } from "../../components/Tile";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
 import { ProductTile } from "../../components/Product/Product";
-import { GetTableByIdDocument, Product, useCreateMultipleOrderDetailsMutation, useCreateOrdersCheckoutMutation, useGetMenuByIdQuery, useGetTabByIdQuery, useRequestCloseTabMutation } from "../../gen/generated";
+import {
+  GetTableByIdDocument,
+  Product,
+  useCreateMultipleOrderDetailsMutation,
+  useCreateOrdersCheckoutMutation,
+  useGetMenuByIdQuery,
+  useGetTabByIdQuery,
+  useRequestCloseTabMutation,
+} from "../../gen/generated";
 import { businessRoute } from "fasto-route";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 import { OrangeBox } from "../../components/OrangeBox";
+import { CiSearch } from "react-icons/ci";
 
-type NewOrder = Product & { quantity: number, selectedUser?: string }
+type NewOrder = Product & { quantity: number; selectedUser?: string };
 
 export const AddToOrder = () => {
-  const route = useRouter()
-  const { tabId } = route.query
+  const route = useRouter();
+  const { tabId } = route.query;
 
-  const [orderItems, setOrderItems] = React.useState<NewOrder[]>([])
-  const [selectedUser, setSelectedUser] = React.useState<string>()
-  const [selectedCategory, setSelectedCategory] = React.useState<string>()
+  const [orderItems, setOrderItems] = React.useState<NewOrder[]>([]);
+  const [selectedUser, setSelectedUser] = React.useState<string>();
+  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
 
-  const { t } = useTranslation("businessAddToOrder")
 
-  const [createOrderCheckout, { loading: createOrderCheckoutLoading }] = useCreateOrdersCheckoutMutation({
-    onCompleted: (data) => {
-      const checkoutId = data?.createOrdersCheckout?._id
-      if (!checkoutId) throw new Error("Checkout id is missing")
+  const { t } = useTranslation("businessAddToOrder");
 
-      showToast({ message: t("ordersCreatedSuccessfully"), })
+  const [createOrderCheckout, { loading: createOrderCheckoutLoading }] =
+    useCreateOrdersCheckoutMutation({
+      onCompleted: (data) => {
+        const checkoutId = data?.createOrdersCheckout?._id;
+        if (!checkoutId) throw new Error("Checkout id is missing");
 
-      route.push({
-        pathname: businessRoute["checkout/[checkoutId]"],
-        query: {
-          checkoutId,
-          tabId: data?.createOrdersCheckout.tab
+        showToast({ message: t("ordersCreatedSuccessfully") });
+
+        route.push({
+          pathname: businessRoute["checkout/[checkoutId]"],
+          query: {
+            checkoutId,
+            tabId: data?.createOrdersCheckout.tab,
+          },
+        });
+      },
+      onError: () => {
+        showToast({
+          status: "error",
+          message: t("errorCreatingOrders"),
+        });
+      },
+    });
+
+  const [requestCloseTabMutation, { loading: loadingCloseTab }] =
+    useRequestCloseTabMutation({
+      refetchQueries: ["GetSpacesFromBusiness"],
+      onCompleted: (data) => {
+        showToast({
+          message: t("requestToCloseTabSuccessfully"),
+        });
+
+        const status = data?.requestCloseTab?.status;
+        const checkoutId = data?.requestCloseTab?.checkout;
+
+        switch (status) {
+          case "Pendent":
+            if (!checkoutId) throw new Error("Checkout id is missing");
+
+            route.push({
+              pathname: businessRoute["checkout/[checkoutId]"],
+              query: {
+                checkoutId,
+                tabId,
+              },
+            });
+            break;
+          default:
+            route.back();
+            break;
         }
-      })
-    },
-    onError: () => {
-      showToast({
-        status: "error",
-        message: t("errorCreatingOrders")
-      })
-    }
-  })
-
-  const [requestCloseTabMutation, { loading: loadingCloseTab }] = useRequestCloseTabMutation({
-    refetchQueries: ["GetSpacesFromBusiness"],
-    onCompleted: (data) => {
-      showToast({
-        message: t("requestToCloseTabSuccessfully"),
-      })
-
-      const status = data?.requestCloseTab?.status
-      const checkoutId = data?.requestCloseTab?.checkout
-
-      switch (status) {
-        case "Pendent":
-          if (!checkoutId) throw new Error("Checkout id is missing")
-
-          route.push({
-            pathname: businessRoute["checkout/[checkoutId]"],
-            query: {
-              checkoutId,
-              tabId,
-            }
-          })
-          break;
-        default:
-          route.back()
-          break;
-      }
-    },
-  })
+      },
+    });
 
   const { data: menuData } = useGetMenuByIdQuery({
-    onCompleted: (data) => {
-      if (data?.getMenuByID?.sections?.[0].category._id) {
-        setSelectedCategory(data?.getMenuByID?.sections?.[0].category._id)
-      }
+    onError: (data) => {
+      showToast({
+        message: "", status: "error" 
+      })
     },
-  })
+  });
 
   const { data: tabData } = useGetTabByIdQuery({
     skip: !tabId,
     variables: {
       input: {
         _id: tabId as string,
-      }
+      },
     },
     onCompleted: (data) => {
       // if data has status of pending, send to checkout
@@ -112,139 +126,175 @@ export const AddToOrder = () => {
     onError: () => {
       showToast({
         status: "error",
-        message: t("errorGettingTabData")
-      })
-    }
-  })
+        message: t("errorGettingTabData"),
+      });
+    },
+  });
 
   const [createOrders, { loading }] = useCreateMultipleOrderDetailsMutation({
-    refetchQueries: [{
-      query: GetTableByIdDocument, variables: {
-        input: {
-          _id: tabData?.getTabByID?.table?._id,
+    refetchQueries: [
+      {
+        query: GetTableByIdDocument,
+        variables: {
+          input: {
+            _id: tabData?.getTabByID?.table?._id,
+          },
         },
       },
-    }],
+    ],
     onCompleted: () => {
-      showToast({ message: t("ordersCreatedSuccessfully") })
+      showToast({ message: t("ordersCreatedSuccessfully") });
 
-      route.back()
+      route.back();
     },
     onError: () => {
       showToast({
         status: "error",
-        message: t("errorCreatingOrders")
-      })
-    }
-  })
+        message: t("errorCreatingOrders"),
+      });
+    },
+  });
 
   const onSendToKitchen = useCallback(async () => {
-
     if (tabId) {
       return await createOrders({
         variables: {
-          input: orderItems.map(order => ({
+          input: orderItems.map((order) => ({
             ...(order?.selectedUser && { user: order?.selectedUser }),
             tab: Array.isArray(tabId) ? tabId[0] : tabId,
             product: order._id,
             quantity: order.quantity,
           })),
-        }
-      })
+        },
+      });
     }
 
     return await createOrderCheckout({
       variables: {
-        input: orderItems.map(order => ({
+        input: orderItems.map((order) => ({
           product: order._id,
           quantity: order.quantity,
-        }))
-      }
-    })
-
-  }, [createOrderCheckout, createOrders, orderItems, tabId])
+        })),
+      },
+    });
+  }, [createOrderCheckout, createOrders, orderItems, tabId]);
 
   const requestCloseTab = useCallback(() => {
     requestCloseTabMutation({
       variables: {
         input: {
           _id: tabId as string,
-        }
-      }
-    })
-  }, [requestCloseTabMutation, tabId])
+        },
+      },
+    });
+  }, [requestCloseTabMutation, tabId]);
 
+  const sections = menuData?.getMenuByID?.sections || [];
+  const filteredSection = sections.find(
+    (section) => section.category._id === selectedCategory
+    );
+    const products = filteredSection?.products || [];
+    const total = orderItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+      );
 
-  const sections = menuData?.getMenuByID?.sections || []
-  const filteredSection = sections.find(section => section.category._id === selectedCategory)
-  const products = filteredSection?.products || []
-  const total = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+  const allProducts = ([] as typeof sections[number]["products"]).concat(
+    ...sections.map((section) => section.products || [])
+  );
+  const allCategory = {
+    category: {
+      _id: "all",
+      name: t("all"),
+    },
+    products: allProducts,
+  };
+  const sectionsWithAll = [allCategory, ...sections];
+
+  const [search, setSearch] = React.useState<string | any>("");
 
   return (
     <Flex flexDirection={"row"} flex={1}>
       <LeftSideBar>
         <Flex flex={1} pt={2} pb={4}>
           <Flex direction="row" justify="space-evenly" mb={4}>
-            {tabData?.getTabByID?.table?.tableNumber ?
-              <Text py="2">{t("tableNumber", { number: tabData?.getTabByID?.table?.tableNumber })}</Text> : null}
-            {tabData?.getTabByID?.table?.tableNumber && (tabData?.getTabByID?.users?.length ?? 0) > 1 ?
-              <Divider orientation="vertical" mx="3" /> : null
-            }
-            {(tabData?.getTabByID?.users?.length ?? 0) > 1 ?
-              <Text py="2">{t("people", { number: tabData?.getTabByID?.users?.length })}</Text> : null}
+            {tabData?.getTabByID?.table?.tableNumber ? (
+              <Text py="2">
+                {t("tableNumber", {
+                  number: tabData?.getTabByID?.table?.tableNumber,
+                })}
+              </Text>
+            ) : null}
+            {tabData?.getTabByID?.table?.tableNumber &&
+            (tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
+              <Divider orientation="vertical" mx="3" />
+            ) : null}
+            {(tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
+              <Text py="2">
+                {t("people", { number: tabData?.getTabByID?.users?.length })}
+              </Text>
+            ) : null}
           </Flex>
           <ScrollView flex={1}>
             {orderItems?.map((order, index) => {
-              const personIndex = tabData?.getTabByID?.users?.findIndex(user => user._id === order.selectedUser)
+              const personIndex = tabData?.getTabByID?.users?.findIndex(
+                (user) => user._id === order.selectedUser
+              );
               let selectedUserIndex;
 
               if (personIndex !== undefined && personIndex !== -1) {
-                selectedUserIndex = personIndex + 1
+                selectedUserIndex = personIndex + 1;
               }
 
-              return <SummaryComponent
-                key={order._id + selectedUserIndex}
-                lastItem={index === orderItems.length - 1}
-                assignedToPersonIndex={selectedUserIndex}
-                name={order.name}
-                price={order.price}
-                quantity={order.quantity}
-                onEditPress={() => console.log("EDIT")}
-                onRemovePress={() => {
-                  const newOrderItems = orderItems.filter((_, orderIndex) => index !== orderIndex)
-                  setOrderItems(newOrderItems)
-                }}
-                onPlusPress={() => {
-                  const newOrderItems = orderItems.map((item, orderIndex) => {
-                    if (index === orderIndex) {
-                      return {
-                        ...item,
-                        quantity: item.quantity + 1
+              return (
+                <SummaryComponent
+                  key={order._id + selectedUserIndex}
+                  lastItem={index === orderItems.length - 1}
+                  assignedToPersonIndex={selectedUserIndex}
+                  name={order.name}
+                  price={order.price}
+                  quantity={order.quantity}
+                  onEditPress={() => console.log("EDIT")}
+                  onRemovePress={() => {
+                    const newOrderItems = orderItems.filter(
+                      (_, orderIndex) => index !== orderIndex
+                    );
+                    setOrderItems(newOrderItems);
+                  }}
+                  onPlusPress={() => {
+                    const newOrderItems = orderItems.map((item, orderIndex) => {
+                      if (index === orderIndex) {
+                        return {
+                          ...item,
+                          quantity: item.quantity + 1,
+                        };
                       }
+                      return item;
+                    });
+                    setOrderItems(newOrderItems);
+                  }}
+                  onMinusPress={() => {
+                    if (order.quantity === 1) {
+                      const newOrderItems = orderItems.filter(
+                        (_, orderIndex) => index !== orderIndex
+                      );
+                      setOrderItems(newOrderItems);
+                      return;
                     }
-                    return item
-                  })
-                  setOrderItems(newOrderItems)
-                }}
-                onMinusPress={() => {
-                  if (order.quantity === 1) {
-                    const newOrderItems = orderItems.filter((_, orderIndex) => index !== orderIndex)
-                    setOrderItems(newOrderItems)
-                    return
-                  }
 
-                  const newOrderItems = orderItems.map((item, orderIndex) => {
-                    if (index === orderIndex && item.quantity > 1) {
-                      return {
-                        ...item,
-                        quantity: item.quantity - 1
+                    const newOrderItems = orderItems.map((item, orderIndex) => {
+                      if (index === orderIndex && item.quantity > 1) {
+                        return {
+                          ...item,
+                          quantity: item.quantity - 1,
+                        };
                       }
-                    }
-                    return item
-                  })
-                  setOrderItems(newOrderItems)
-                }}
-              />
+                      return item;
+                    });
+                    setOrderItems(newOrderItems);
+                  }}
+                />
+              );
             })}
           </ScrollView>
           <Box w={"100%"} justifyContent={"end"} pt={2}>
@@ -305,7 +355,7 @@ export const AddToOrder = () => {
                 </HStack>
               </ScrollView>
             </HStack>
-            {tabId ?
+            {tabId ? (
               <Button
                 colorScheme={"primary"}
                 width={"100px"}
@@ -314,24 +364,35 @@ export const AddToOrder = () => {
               >
                 {t("closeTab")}
               </Button>
-              : null}
+            ) : null}
           </UpperSection>
           <BottomSection>
             <HStack space={2}>
               <Heading pr={10}>{t("menu")}</Heading>
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
-                  {sections.map((section) => (
+                  {/* {sections.map((section) => (
                     <Tile
                       key={section.category._id}
                       selected={section.category._id === selectedCategory}
-                      onPress={() => setSelectedCategory(section.category._id)}>
+                      onPress={() => setSelectedCategory(section.category._id)}
+                    >
                       {section.category.name}
-                    </Tile>))}
+                    </Tile>
+                  ))} */}
+                  {sectionsWithAll.map((section) => (
+                    <Tile
+                      key={section.category._id}
+                      selected={section.category._id === selectedCategory}
+                      onPress={() => setSelectedCategory(section.category._id)}
+                    >
+                      {section.category.name}
+                    </Tile>
+                  ))}
                 </HStack>
               </ScrollView>
             </HStack>
-            <ScrollView pt={2}>
+            {/* <ScrollView pt={2}>
               <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
                 {products.map((product) => (
                   <ProductTile
@@ -343,25 +404,90 @@ export const AddToOrder = () => {
                     onPress={() => {
                       // if the product was already selected for a given user
                       // find the index
-                      const findIndex = orderItems.findIndex(order => (
-                        order._id === product._id && order?.selectedUser === selectedUser)
-                      )
+                      const findIndex = orderItems.findIndex(
+                        (order) =>
+                          order._id === product._id &&
+                          order?.selectedUser === selectedUser
+                      );
 
                       if (findIndex >= 0) {
                         const newOrder = {
                           ...orderItems[findIndex],
                           quantity: orderItems[findIndex].quantity + 1,
-                          selectedUser
-                        }
+                          selectedUser,
+                        };
 
-                        const newArray = orderItems.map((order, index) => index === findIndex ? newOrder : order)
+                        const newArray = orderItems.map((order, index) =>
+                          index === findIndex ? newOrder : order
+                        );
 
-                        return setOrderItems(newArray)
+                        return setOrderItems(newArray);
                       }
 
-                      setOrderItems([...orderItems, { ...product, quantity: 1, selectedUser }])
+                      setOrderItems([
+                        ...orderItems,
+                        { ...product, quantity: 1, selectedUser },
+                      ]);
                     }}
                   />
+                ))}
+              </VStack>
+            </ScrollView> */}
+            <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
+              <Input
+                placeholder={t("search")}
+                variant="rounded"
+                borderRadius="10"
+                size="sm"
+                value={search}
+                onChangeText={(text) => setSearch(text)}
+                InputLeftElement={
+                  <CiSearch/>
+                }
+              />
+            </VStack>
+            <ScrollView pt={2}>
+              <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
+                {sectionsWithAll.map((section) => (
+                  <React.Fragment key={section.category._id}>
+                    {selectedCategory === section.category._id &&
+                      section.products.map((product) => (
+                        <ProductTile
+                          ctaTitle={t("add")}
+                          key={product._id}
+                          name={product.name}
+                          imageUrl={product.imageUrl ?? ""}
+                          description={product.description}
+                          quantity={product.quantity}
+                          onPress={() => {
+                            const findIndex = orderItems.findIndex(
+                              (order) =>
+                                order._id === product._id &&
+                                order?.selectedUser === selectedUser
+                            );
+
+                            if (findIndex >= 0) {
+                              const newOrder = {
+                                ...orderItems[findIndex],
+                                quantity: orderItems[findIndex].quantity + 1,
+                                selectedUser,
+                              };
+
+                              const newArray = orderItems.map((order, index) =>
+                                index === findIndex ? newOrder : order
+                              );
+
+                              return setOrderItems(newArray);
+                            }
+
+                            setOrderItems([
+                              ...orderItems,
+                              { ...product, quantity: 1, selectedUser },
+                            ]);
+                          }}
+                        />
+                      ))}
+                  </React.Fragment>
                 ))}
               </VStack>
             </ScrollView>
@@ -369,6 +495,5 @@ export const AddToOrder = () => {
         </VStack>
       </Box>
     </Flex>
-  )
-}
-
+  );
+};

@@ -12,5 +12,7 @@
 	"ordersCreatedSuccessfully": "Pedidos criados com sucesso",
 	"errorCreatingOrders": "Erro ao criar pedidos",
 	"add": "Adicionar",
-	"closeTab": "Fechar Conta"
+	"closeTab": "Fechar Conta",
+	"all": "Todos os itens",
+	"search": "Buscar"
 }

@@ -12,5 +12,7 @@
 	"ordersCreatedSuccessfully": "Orders created successfully",
 	"errorCreatingOrders": "Error creating orders",
 	"add": "Add",
-	"closeTab": "Close Tab"
+	"closeTab": "Close Tab",
+	"all": "All items",
+	"search": "Search"
 }
