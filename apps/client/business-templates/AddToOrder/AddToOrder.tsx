@@ -225,8 +225,6 @@ export const AddToOrder = () => {
   const sectionsWithAll = useMemo(() => [allCategory, ...sections], [allCategory, sections]);
 
   const [searchString, setSearchString] = React.useState<string | any>("");
-  const [searchResult, setSearchResult] = React.useState<Product[]>([]);
-
   const filteredSections = useMemo(() => {
     return sectionsWithAll
       .filter((section) => {
@@ -357,14 +355,12 @@ export const AddToOrder = () => {
           </Box>
         </Flex>
       </LeftSideBar>
-
       <Box flex={1}>
         <OrangeBox />
         <VStack flex={1} p={4} space={4}>
           <UpperSection>
             <Heading>{t("patrons")}</Heading>
             <HStack space={2}>
-              {/* <SmallAddMoreButton onPress={() => console.log("Hello")} /> */}
               <ScrollView horizontal={true} pb={2}>
                 <HStack space={2}>
                   <Tile
@@ -412,48 +408,7 @@ export const AddToOrder = () => {
                   ))}
                 </HStack>
               </ScrollView>
-            </HStack>
-            {/* <ScrollView pt={2}>
-              <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-                {products.map((product) => (
-                  <ProductTile
-                    ctaTitle={t("add")}
-                    key={product._id}
-                    name={product.name}
-                    imageUrl={product.imageUrl ?? ""}
-                    description={product.description}
-                    onPress={() => {
-                      // if the product was already selected for a given user
-                      // find the index
-                      const findIndex = orderItems.findIndex(
-                        (order) =>
-                          order._id === product._id &&
-                          order?.selectedUser === selectedUser
-                      );
-
-                      if (findIndex >= 0) {
-                        const newOrder = {
-                          ...orderItems[findIndex],
-                          quantity: orderItems[findIndex].quantity + 1,
-                          selectedUser,
-                        };
-
-                        const newArray = orderItems.map((order, index) =>
-                          index === findIndex ? newOrder : order
-                        );
-
-                        return setOrderItems(newArray);
-                      }
-
-                      setOrderItems([
-                        ...orderItems,
-                        { ...product, quantity: 1, selectedUser },
-                      ]);
-                    }}
-                  />
-                ))}
-              </VStack>
-            </ScrollView> */}
+            </HStack>            
             <VStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>
               <Input
                 placeholder={t("search")}
@@ -512,46 +467,6 @@ export const AddToOrder = () => {
                 ))}
               </VStack>
             </ScrollView>
-            {/* <ScrollView pt={2}>
-              <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
-                {searchResult.map((product) => (
-                  <ProductTile
-                    ctaTitle={t("add")}
-                    key={product._id}
-                    name={product.name}
-                    imageUrl={product.imageUrl ?? ""}
-                    description={product.description}
-                    quantity={product.quantity}
-                    onPress={() => {
-                      const findIndex = orderItems.findIndex(
-                        (order) =>
-                          order._id === product._id &&
-                          order?.selectedUser === selectedUser
-                      );
-
-                      if (findIndex >= 0) {
-                        const newOrder = {
-                          ...orderItems[findIndex],
-                          quantity: orderItems[findIndex].quantity + 1,
-                          selectedUser,
-                        };
-
-                        const newArray = orderItems.map((order, index) =>
-                          index === findIndex ? newOrder : order
-                        );
-
-                        return setOrderItems(newArray);
-                      }
-
-                      setOrderItems([
-                        ...orderItems,
-                        { ...product, quantity: 1, selectedUser },
-                      ]);
-                    }}
-                  />
-                ))}
-              </VStack>
-            </ScrollView> */}
           </BottomSection>
         </VStack>
       </Box>
