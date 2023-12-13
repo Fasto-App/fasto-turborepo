@@ -212,7 +212,6 @@ export const AddToOrder = () => {
   const sectionsWithAll = [allCategory, ...sections];
 
   const [searchString, setSearchString] = React.useState<string | any>("");
-  const [searchResult, setSearchResult] = React.useState<Product[]>([]);
 
   const searchProductsByName = (
     searchString: string,
@@ -471,13 +470,6 @@ export const AddToOrder = () => {
                 value={searchString}
                 onChangeText={(text) => {
                   setSearchString(text);
-                  const filteredProducts = searchProductsByName(
-                    text,
-                    sections.flatMap((section) => section.products)
-                  );
-                  setSearchResult(filteredProducts);
-                  console.log("Texto: " + text);
-                  console.log("Produtos filtrados: " + filteredProducts);
                 }}
                 InputLeftElement={<CiSearch />}
               />
