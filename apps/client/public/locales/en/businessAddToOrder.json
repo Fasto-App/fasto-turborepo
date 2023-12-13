@@ -14,5 +14,6 @@
 	"add": "Add",
 	"closeTab": "Close Tab",
 	"all": "All items",
-	"search": "Search"
+	"search": "Search",
+	"errorGettingMenu": "Error getting menu information"
 }

@@ -14,5 +14,6 @@
 	"add": "Adicionar",
 	"closeTab": "Fechar Conta",
 	"all": "Todos os itens",
-	"search": "Buscar"
+	"search": "Buscar",
+	"errorGettingMenu": "Erro ao obter informações do menu"
 }

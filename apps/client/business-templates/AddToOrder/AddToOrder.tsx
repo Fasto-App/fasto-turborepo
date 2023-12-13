@@ -115,9 +115,9 @@ export const AddToOrder = () => {
     });
 
   const { data: menuData } = useGetMenuByIdQuery({
-    onError: (data) => {
+    onError: () => {
       showToast({
-        message: "", // TODO: translate
+        message: t("errorGettingMenu"),
         status: "error",
       });
     },
@@ -130,7 +130,7 @@ export const AddToOrder = () => {
         _id: tabId as string,
       },
     },
-    onCompleted: (data) => {
+    onCompleted: () => {
       // if data has status of pending, send to checkout
       // if (data?.getTabByID?. === "pending") {
       // }
@@ -202,10 +202,6 @@ export const AddToOrder = () => {
   }, [requestCloseTabMutation, tabId]);
 
   const sections = menuData?.getMenuByID?.sections || [];
-  const filteredSection = sections.find(
-    (section) => section.category._id === selectedCategory
-  );
-  const products = filteredSection?.products || [];
   const total = orderItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
@@ -408,7 +404,7 @@ export const AddToOrder = () => {
                   ))}
                 </HStack>
               </ScrollView>
-            </HStack>            
+            </HStack>
             <VStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>
               <Input
                 placeholder={t("search")}
