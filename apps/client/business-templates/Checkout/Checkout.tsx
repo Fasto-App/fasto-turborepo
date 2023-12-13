@@ -11,7 +11,6 @@ import {
   ScrollView,
   Image,
 } from "native-base";
-import { Link } from "../../components/atoms/Link";
 import { useRouter } from "next/router";
 import React from "react";
 import { LeftSideBar } from "../../components";
@@ -32,8 +31,6 @@ import { businessRoute } from "fasto-route";
 import { useCheckoutStore } from "./checkoutStore";
 import { useTranslation } from "next-i18next";
 import {
-  formatAsPercentage,
-  getPercentageOfValue,
   parseToCurrency,
   parseToFixedPoint,
 } from "app-helpers";
@@ -41,7 +38,6 @@ import { PaymentTile } from "./TableComponents";
 import { showToast } from "../../components/showToast";
 import { CheckoutModal } from "./CheckoutModal";
 import { Pressable } from "react-native";
-import { BiUnderline } from "react-icons/bi";
 
 const checkoutOptions = ["payFull", "splitBill", "success"] as const;
 
@@ -220,7 +216,7 @@ export const Checkout = () => {
                       variant="link"
                       size="med"
                       colorScheme="info"
-                      onPress={() => route.back()}
+                      onPress={() => route.push({ pathname: businessRoute.payments })}
                       justifyContent={"end"}
                     >
                       {t("goBack")}
