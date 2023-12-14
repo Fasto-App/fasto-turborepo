@@ -1,0 +1,32 @@
+extend type Query {
+	getOrdersGroup(input: GetOrdersGroup!): [OrdersGroup!]
+	getOrderGroupById(id: ID!): OrdersGroup!
+}
+
+extend type Mutation {
+	deleteOrdersGroupData(ids: [ID!]!): DeleteResult!
+	updateOrderGroupData(input: UpdateOrdersGroupInput!): OrdersGroup!
+}
+
+type OrdersGroup {
+	_id: ID!
+	orders: [OrderDetail!]!
+	business: ID!
+	createdByUser: ID!
+	status: OrderStatus!
+	type: TakeoutDeliveryDineIn!
+	created_date: String!
+}
+
+input GetOrdersGroup {
+	page: Int!
+	pageSize: Int!
+	dateType: DateType!
+	type: TakeoutDeliveryDineIn
+	status: OrderStatus
+}
+
+input UpdateOrdersGroupInput {
+	_id: ID!
+	status: OrderStatus!
+}

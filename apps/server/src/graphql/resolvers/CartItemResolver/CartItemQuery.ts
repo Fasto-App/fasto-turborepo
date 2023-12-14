@@ -6,19 +6,19 @@ import { Context } from "../types";
 const getCartItemsPerTab = async (_parent: any, args: any, { db, client }: Context) => {
 
   if (!client) {
-    throw ApolloError('Unauthorized', "invalid client token", "client")
+    throw ApolloError(new Error("invalid client token"), 'Unauthorized')
   }
 
   const Request = RequestModel(db);
 
   const foundRequest = await Request.findById(client.request);
-  if (!foundRequest) throw ApolloError('NotFound')
+  if (!foundRequest) throw ApolloError(new Error("no request"), 'NotFound')
 
   const CartItem = CartItemModel(db);
   const Tab = TabModel(db);
 
   const foundTab = await Tab.findById(foundRequest.tab);
-  if (!foundTab) throw ApolloError('NotFound')
+  if (!foundTab) throw ApolloError(new Error("no tab"), 'NotFound')
 
   const cartItems = await CartItem.find({ tab: foundTab._id });
 

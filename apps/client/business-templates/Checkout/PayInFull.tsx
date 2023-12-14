@@ -35,10 +35,10 @@ export const PayInFull = ({
     },
   })
 
-  const allUsersFromTab = useMemo(() => data?.getTabByID?.users?.map(user => ({
+  const allUsersFromTab = useMemo(() => data?.getTabByID?.users?.map((user, i) => ({
     _id: user._id,
-    value: user._id
-  })) ?? [], [data?.getTabByID?.users])
+    value: `${t("person")} ${++i}`
+  })) ?? [], [data?.getTabByID?.users, t])
 
 
   const { total, tip, discount, setSelectedTip, setSelectedDiscount, selectedDiscount, selectedTip, customTip, setCustomTip, setCustomDiscount, customDiscount } = useCheckoutStore(state => ({
@@ -178,7 +178,7 @@ export const PayInFull = ({
           <FDSSelect
             array={allUsersFromTab}
             selectedValue={selectedUser}
-            setSelectedValue={(string) => setSelectedTip(string as Percentages)}
+            setSelectedValue={(string) => setSelectedUser(string)}
           />
         </HStack>
         <Divider marginY={6} />

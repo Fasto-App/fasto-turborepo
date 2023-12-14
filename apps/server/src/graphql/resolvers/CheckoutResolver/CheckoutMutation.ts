@@ -1,4 +1,3 @@
-
 import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
 import { BusinessModel, OrderDetailModel, ProductModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
 import { CheckoutModel } from "../../../models/checkout";
@@ -6,10 +5,10 @@ import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { MutationResolvers } from "../../../generated/graphql";
 import { updateProductQuantity } from "../helpers/helpers";
+import { ObjectId } from "mongodb";
 
 // @ts-ignore
 const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (parent, { input }, { db }) => {
-  console.log("makeCheckoutPayment", input)
   // make the payment, set the payment to true and update the checkout
   const Checkout = CheckoutModel(db);
   const Payment = PaymentModel(db);
@@ -20,7 +19,7 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
   const foundPayment = await Payment.findById(input.payment)
   const foundCheckout = await Checkout.findById(input.checkout)
 
-  if (!foundPayment || !foundCheckout) throw ApolloError('BadRequest')
+  if (!foundPayment || !foundCheckout) throw ApolloError(new Error("No payment os checkout"), 'BadRequest')
 
   foundPayment.paid = true
 
@@ -29,11 +28,11 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
   // If the check is ready to be closed, update the value of: Table, Tab, Checkout, and Requests
   if (foundCheckout.totalPaid >= foundCheckout.total) {
     const foundTab = await Tab.findById(foundCheckout.tab)
-    if (!foundTab) throw ApolloError('BadRequest', 'Tab not found')
+    if (!foundTab) throw ApolloError(new Error('Tab not found'), 'BadRequest',)
 
     if (foundTab?.table) {
       const foundTable = await Table.findByIdAndUpdate(foundTab.table)
-      if (!foundTable) throw ApolloError('BadRequest', 'Table not found')
+      if (!foundTable) throw ApolloError(new Error('Table not found'), 'BadRequest',)
 
       foundTable.status = "Available"
       foundTable.tab = undefined
@@ -81,9 +80,9 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
 
   const foundCheckout = await Checkout.findById(checkout);
 
-  if (!foundCheckout) throw ApolloError('BadRequest', 'Checkout not found')
-  if (!foundCheckout?.tab) throw ApolloError('BadRequest', 'Tab not found')
-  if (foundCheckout.splitType) throw ApolloError('BadRequest', 'Split type is already set')
+  if (!foundCheckout) throw ApolloError(new Error('Checkout not found'), 'BadRequest',)
+  if (!foundCheckout?.tab) throw ApolloError(new Error('Tab not found'), 'BadRequest',)
+  if (foundCheckout.splitType) throw ApolloError(new Error('Split type is already set'), 'BadRequest',)
 
   if (foundCheckout?.discount === undefined && discount) {
     foundCheckout.discount = discount
@@ -100,7 +99,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
   async function verifiePatron(patron: string) {
     const foundUser = await User.findById(patron);
 
-    if (!foundUser) throw ApolloError('BadRequest', 'User not found')
+    if (!foundUser) throw ApolloError(new Error('User not found'), 'BadRequest',)
     return foundUser
   }
 
@@ -111,7 +110,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
 
     if (foundTab?.table) {
       const foundTable = await Table.findByIdAndUpdate(foundTab.table)
-      if (!foundTable) throw ApolloError('BadRequest', 'Table not found')
+      if (!foundTable) throw ApolloError(new Error('Table not found'), 'BadRequest',)
 
       foundTable.status = "Available"
       foundTable.tab = undefined
@@ -165,7 +164,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
       return foundCheckout
 
     default:
-      throw ApolloError('BadRequest')
+      throw ApolloError(new Error('No Status'), 'BadRequest')
   }
 };
 
@@ -180,9 +179,8 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
   const foundUser = await User.findById(input.patron)
   const foundBusiness = await Business.findById(client?.business)
 
-  if (!foundCheckout || !foundUser || !foundBusiness?.stripeAccountId) throw ApolloError('BadRequest')
-  if (!foundCheckout || !foundUser) throw ApolloError('BadRequest')
-  if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
+  if (!foundCheckout || !foundUser || !foundBusiness?.stripeAccountId) throw ApolloError(new Error("Not enough data to perfom the action"), 'BadRequest')
+  if (foundCheckout?.splitType) throw ApolloError(new Error('Checkout is already splited'), 'BadRequest')
 
   // before creating the payment, we get the total of service fee
   // tipe and taxes, and then add all of the to update the total value
@@ -209,152 +207,174 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
 }
 
 // @ts-ignore
-const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db, client, locale }) => {
-  const Checkout = CheckoutModel(db);
-  const Order = OrderDetailModel(db);
-  const Payment = PaymentModel(db);
-  const User = UserModel(db);
-  const Business = BusinessModel(db);
+const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (parent, { input }, { db, client, locale, user }) => {
+  try {
+    const Checkout = CheckoutModel(db);
+    const Order = OrderDetailModel(db);
+    const Payment = PaymentModel(db);
+    const User = UserModel(db);
+    const Business = BusinessModel(db);
 
-  const foundCheckout = await Checkout.findById(input.checkout)
-  const foundUsers = await User.find({ _id: { $in: input.selectedUsers } })
-  const foundBusiness = await Business.findById(client?.business)
+    const foundCheckout = await Checkout.findById(input.checkout)
+    const foundUsers = await User.find({ _id: { $in: input.selectedUsers } })
 
-  // TODO: this function is being used for both business and customer
-  if (!foundBusiness?.stripeAccountId) throw ApolloError('Unauthorized', 'Business not configured to accept payments')
-  if (!foundCheckout) throw ApolloError('BadRequest')
-  if (foundCheckout?.splitType) throw ApolloError('BadRequest', 'Checkout is already splited')
-  if (foundUsers.length < 1) throw ApolloError('BadRequest', 'No users selected')
+    // TODO: this is probably not the best approach
+    // the problem: using this function on business and customer
+    if (!client?.business && !user?.business) throw ApolloError(new Error('No user, nor client'), 'Unauthorized',)
+    const foundBusiness = await Business.findById(client?.business || user?.business)
 
-  const tipValue = getPercentageOfValue(foundCheckout.subTotal, input.tip)
-  const serviceFeeValue = getPercentageOfValue(foundCheckout.subTotal, foundCheckout.serviceFee ?? 0)
-  const absoluteTotal = foundCheckout.subTotal + tipValue + serviceFeeValue
+    // TODO: this function is being used for both business and customer
+    if (!foundBusiness?.stripeAccountId) throw ApolloError(new Error('Business not configured to accept payments'), 'Unauthorized',)
+    if (!foundCheckout) throw ApolloError(new Error(), 'BadRequest')
+    if (foundCheckout?.splitType) throw ApolloError(new Error('Checkout is already splited'), 'BadRequest',)
+    if (foundUsers.length < 1) throw ApolloError(new Error('No users selected'), 'BadRequest',)
 
-  function updateCheckout() {
-    if (!foundCheckout) throw ApolloError('BadRequest', "No checkout found")
+    const tipValue = getPercentageOfValue(foundCheckout.subTotal, input.tip)
+    const serviceFeeValue = getPercentageOfValue(foundCheckout.subTotal, foundCheckout.serviceFee ?? 0)
+    const absoluteTotal = foundCheckout.subTotal + tipValue + serviceFeeValue
 
-    foundCheckout.splitType = input.splitType
-    foundCheckout.tip = input.tip
-    foundCheckout.total = absoluteTotal
-  }
+    function updateCheckout() {
+      if (!foundCheckout) throw ApolloError(new Error("No checkout found"), 'BadRequest',)
 
-  switch (input.splitType) {
-    case "Equally":
-      const totalEqually = absoluteTotal / foundUsers.length
-      // for each user, create a payment
-      for (const user of foundUsers) {
-        const payment = await Payment.create({
-          patron: user._id,
-          amount: totalEqually,
-          tip: getPercentageOfValue(totalEqually, input.tip),
-          serviceFee: getPercentageOfValue(totalEqually, foundCheckout.serviceFee ?? 0),
-          splitType: input.splitType,
-          checkout: foundCheckout._id
-        })
+      foundCheckout.splitType = input.splitType
+      foundCheckout.tip = input.tip
+      foundCheckout.total = absoluteTotal
+    }
 
-        foundCheckout.payments?.push(payment._id)
-      }
+    switch (input.splitType) {
+      case "Equally":
+        const totalEqually = absoluteTotal / foundUsers.length
+        // for each user, create a payment
+        for (const user of foundUsers) {
+          const payment = await Payment.create({
+            patron: user._id,
+            amount: totalEqually,
+            tip: getPercentageOfValue(totalEqually, input.tip),
+            serviceFee: getPercentageOfValue(totalEqually, foundCheckout.serviceFee ?? 0),
+            splitType: input.splitType,
+            checkout: foundCheckout._id
+          })
 
-      updateCheckout()
-      await foundCheckout.save()
-
-      break;
-    case "ByPatron":
-      const orders = await Order.find({ _id: { $in: foundCheckout.orders } })
-
-      // create an object with the key and a subtotal of zero
-      const selectedUsers = foundUsers.reduce((acc, user) => {
-        return {
-          ...acc,
-          [user._id.toString()]: {
-            subTotal: 0,
-          }
+          foundCheckout.payments?.push(payment._id)
         }
-      }, {} as { [key: string]: { subTotal: number } })
 
-      const ordersByPatron = orders.reduce((acc, order) => {
-        const patron = order.user?.toString()
-        const orderTotal = order.subTotal
+        updateCheckout()
+        await foundCheckout.save()
 
-        // or if the the patron was not selected
-        if (!patron || !acc[patron]) {
+        break;
+      case "ByPatron":
+        const orders = await Order.find({ _id: { $in: foundCheckout.orders } })
+
+        // create an object with the key and a subtotal of zero
+        const selectedUsers = foundUsers.reduce((acc, user) => {
           return {
             ...acc,
-            tab: {
-              subTotal: acc.tab?.subTotal + orderTotal,
+            [user._id.toString()]: {
+              subTotal: 0,
             }
           }
-        }
+        }, {} as { [key: string]: { subTotal: number } })
 
-        return {
-          ...acc,
-          [patron]: {
-            subTotal: (acc[patron]?.subTotal ?? 0) + orderTotal,
+        const ordersByPatron = orders.reduce((acc, order) => {
+          const patron = order.user?.toString()
+          const orderTotal = order.subTotal
+
+          // or if the the patron was not selected
+          if (!patron || !acc[patron]) {
+            return {
+              ...acc,
+              tab: {
+                subTotal: acc.tab?.subTotal + orderTotal,
+              }
+            }
           }
+
+          return {
+            ...acc,
+            [patron]: {
+              subTotal: (acc[patron]?.subTotal ?? 0) + orderTotal,
+            }
+          }
+        }, { tab: { subTotal: 0 }, ...selectedUsers } as {
+          [key: string]: { subTotal: number }, tab: { subTotal: number }
+        })
+
+        // take the total from tab and split it equally among the selected users
+        // const tipSplited = tipValue / foundUsers.length
+        const tabSplited = ordersByPatron.tab.subTotal / foundUsers.length
+
+        // for each user, create a payment
+        for (const user of foundUsers) {
+          const individualTotal = ordersByPatron[user._id.toString()].subTotal ?? 0
+
+          // if there's an individuototal then calculate the service fee, tip and the taxes
+          const tipSplited = getPercentageOfValue(individualTotal, foundCheckout.tip || 0)
+
+          if (individualTotal + tipSplited + tabSplited <= 0) return
+
+          const payment = await Payment.create({
+            checkout: foundCheckout._id,
+            patron: user._id,
+            amount: individualTotal + tipSplited + tabSplited,
+            splitType: input.splitType,
+
+            tip: tipSplited, // tip should be the total to be paid times the percentage
+          })
+
+          foundCheckout.payments?.push(payment._id)
         }
-      }, { tab: { subTotal: 0 }, ...selectedUsers } as {
-        [key: string]: { subTotal: number }, tab: { subTotal: number }
-      })
 
-      // take the total from tab and split it equally among the selected users
-      // const tipSplited = tipValue / foundUsers.length
-      const tabSplited = ordersByPatron.tab.subTotal / foundUsers.length
+        updateCheckout()
+        await foundCheckout.save()
 
-      // for each user, create a payment
-      for (const user of foundUsers) {
-        const individualTotal = ordersByPatron[user._id.toString()].subTotal ?? 0
+        break;
+      case "Custom":
+        if (!input?.customSplit || input?.customSplit?.length < 1) {
+          throw ApolloError(new Error('No users selected'), 'BadRequest',)
+        }
+        // make sure that all of them togheter are equal to the total
+        const total = input?.customSplit?.reduce((acc, split) => acc + (split?.amount ?? 0), 0)
+        if (total !== absoluteTotal) {
+          throw ApolloError(new Error('The total is not equal to the total of the checkout'), 'BadRequest',)
+        }
 
-        // if there's an individuototal then calculate the service fee, tip and the taxes
-        const tipSplited = getPercentageOfValue(individualTotal, foundCheckout.tip || 0)
+        // for each user, create a payment
+        for (const split of input.customSplit) {
+          const payment = await Payment.create({
+            checkout: foundCheckout._id,
+            patron: split.patron,
+            amount: split.amount,
+            splitType: input.splitType,
+            tip: input.tip,
+          })
 
-        if (individualTotal + tipSplited + tabSplited <= 0) return
+          foundCheckout.payments?.push(payment._id)
+        }
 
-        const payment = await Payment.create({
-          checkout: foundCheckout._id,
-          patron: user._id,
-          amount: individualTotal + tipSplited + tabSplited,
-          splitType: input.splitType,
+        updateCheckout()
+        return foundCheckout.save()
+      default:
+        throw ApolloError(new Error('Split type not supported'), 'BadRequest',)
+    }
 
-          tip: tipSplited, // tip should be the total to be paid times the percentage
-        })
-
-        foundCheckout.payments?.push(payment._id)
-      }
-
-      updateCheckout()
-      await foundCheckout.save()
-
-      break;
-    case "Custom":
-      if (!input?.customSplit || input?.customSplit?.length < 1) {
-        throw ApolloError('BadRequest', 'No users selected')
-      }
-      // make sure that all of them togheter are equal to the total
-      const total = input?.customSplit?.reduce((acc, split) => acc + (split?.amount ?? 0), 0)
-      if (total !== absoluteTotal) {
-        throw ApolloError('BadRequest', 'The total is not equal to the total of the checkout')
-      }
-
-      // for each user, create a payment
-      for (const split of input.customSplit) {
-        const payment = await Payment.create({
-          checkout: foundCheckout._id,
-          patron: split.patron,
-          amount: split.amount,
-          splitType: input.splitType,
-          tip: input.tip,
-        })
-
-        foundCheckout.payments?.push(payment._id)
-      }
-
-      updateCheckout()
-      return foundCheckout.save()
-    default:
-      throw ApolloError('BadRequest', 'Split type not supported')
+    return foundCheckout
+  } catch (err) {
+    throw ApolloError(err as Error, 'BadRequest',)
   }
+}
+// @ts-ignore
+const deleteCheckoutData: MutationResolvers["deleteCheckoutData"] = async (paren, args, { db, business, user }) => {
+  // is user allow to do the following?
+  if (!business) throw ApolloError(new Error("No Business"), "Unauthorized")
 
-  return foundCheckout
+  // find the array and delete them in batch
+  try {
+    const objectIds = args.ids.map((id) => new ObjectId(id));
+    const result = await CheckoutModel(db).deleteMany({ _id: { $in: objectIds }, business })
+    return result
+  } catch (err) {
+    ApolloError(err as Error, "InternalServerError")
+  }
 }
 
 export const CheckoutResolverMutation = {
@@ -362,4 +382,5 @@ export const CheckoutResolverMutation = {
   customerRequestSplit,
   customerRequestPayFull,
   makeCheckoutPayment,
+  deleteCheckoutData
 }

@@ -13,7 +13,7 @@
 	"splitBy": "Dividir por",
 	"paymentBy": "Pago por",
 	"sessionEnded": "Sesión finalizada correctamente. ",
-	"backToManageTables": "Volver a gestionar mesas",
+	"goBack": "Volver",
 	"leftText": "¡Gracias por su pedido! \nYa casi está. Por favor, revise sus elementos a continuación y proceda al pago cuando esté listo.",
 	"table": "Mesa {{number}}",
 	"viewSummary": "Ver resumen",
@@ -27,5 +27,6 @@
 	"back": "Atrás",
 	"splitType": "Tipo de división",
 	"splitNow": "Dividir ahora",
-	"customer": "Cliente"
+	"customer": "Cliente",
+	"person": "Persona"
 }

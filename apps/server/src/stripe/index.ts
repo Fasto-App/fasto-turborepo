@@ -9,10 +9,8 @@ import { RequestModel, TabModel, TableModel } from '../models';
 import { Connection } from 'mongoose';
 import { updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
 
-console.log(process.env.STRIPE_SECRET_KEY)
-
 if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
-  throw ApolloError('InternalServerError', 'Missing Stripe secret key env var');
+  throw ApolloError(new Error('Missing Stripe secret key env var'), 'InternalServerError');
 }
 
 const apiVersion = '2022-11-15'
@@ -86,7 +84,7 @@ export const stripeAuthorize = async (accountsParams: AccountParams) => {
 
     return accountId;
   } catch (err) {
-    throw ApolloError('BadRequest', `Error creating Express Account: ${err}`);
+    throw ApolloError(err as Error, 'BadRequest');
   }
 }
 
@@ -104,9 +102,10 @@ export const stripeOnboard = async (accountId: string, locale: Locale, country: 
     return accountLink;
 
   } catch (err) {
-    throw ApolloError('BadRequest', `Error creating Express accountLinks: ${err}`);
+
+    throw ApolloError(err as Error, 'BadRequest');
   }
-  // Create an account link for the user's Stripe account
+
 }
 
 type CreatePaymentIntentProps = {
@@ -157,7 +156,7 @@ export const createPaymentIntent = async ({
     return paymentIntent;
   } catch (err) {
 
-    throw ApolloError('BadRequest', `Error creating paymentIntent: ${err}`, "client");
+    throw ApolloError(err as Error, 'BadRequest', "customer");
   }
 }
 
@@ -172,13 +171,13 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
   const { payment_id } = metadata
 
   const foundPayment = await PaymentModel(db).findById(payment_id)
-  if (!foundPayment) throw ApolloError("BadRequest", "Payment not found.")
+  if (!foundPayment) throw ApolloError(new Error("Payment not found."), "BadRequest")
 
   const foundCheckout = await CheckoutModel(db).findById(foundPayment?.checkout)
-  if (!foundCheckout) throw ApolloError("BadRequest", "Payment not found.")
+  if (!foundCheckout) throw ApolloError(new Error("Check not found."), "BadRequest")
 
   const foundTab = await TabModel(db).findById(foundCheckout.tab)
-  if (!foundTab) throw ApolloError("BadRequest", 'Tab not found')
+  if (!foundTab) throw ApolloError(new Error("Tab not found"), "BadRequest")
 
   foundPayment.paid = true;
   await foundPayment.save()
@@ -189,7 +188,7 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
 
     if (foundTab?.table) {
       const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table)
-      if (!foundTable) throw ApolloError("BadRequest", 'Table not found')
+      if (!foundTable) throw ApolloError(new Error('Table not found'), "BadRequest")
 
       foundTable.status = "Available"
       foundTable.tab = undefined

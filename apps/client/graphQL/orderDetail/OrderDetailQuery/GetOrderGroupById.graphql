@@ -1,0 +1,22 @@
+query GetOrderGroupById($getOrderGroupByIdId: ID!) {
+	getOrderGroupById(id: $getOrderGroupByIdId) {
+		_id
+		created_date
+		business
+		createdByUser
+		status
+		type
+		orders {
+			_id
+			message
+			product {
+				name
+				imageUrl
+			}
+			quantity
+			status
+			subTotal
+			user
+		}
+	}
+}

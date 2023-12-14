@@ -195,10 +195,17 @@ export const AddToOrder = () => {
           </Flex>
           <ScrollView flex={1}>
             {orderItems?.map((order, index) => {
-              const personindex = tabData?.getTabByID?.users?.findIndex(user => user._id === order.selectedUser)
+              const personIndex = tabData?.getTabByID?.users?.findIndex(user => user._id === order.selectedUser)
+              let selectedUserIndex;
+
+              if (personIndex !== undefined && personIndex !== -1) {
+                selectedUserIndex = personIndex + 1
+              }
 
               return <SummaryComponent
-                key={order._id + personindex}
+                key={order._id + selectedUserIndex}
+                lastItem={index === orderItems.length - 1}
+                assignedToPersonIndex={selectedUserIndex}
                 name={order.name}
                 price={order.price}
                 quantity={order.quantity}
@@ -237,8 +244,6 @@ export const AddToOrder = () => {
                   })
                   setOrderItems(newOrderItems)
                 }}
-                lastItem={index === orderItems.length - 1}
-                assignedToPersonIndex={personindex && personindex !== -1 ? personindex + 1 : undefined}
               />
             })}
           </ScrollView>
@@ -335,7 +340,10 @@ export const AddToOrder = () => {
                     name={product.name}
                     imageUrl={product.imageUrl ?? ""}
                     description={product.description}
+                    quantity={product.quantity}
                     onPress={() => {
+                      // if the product was already selected for a given user
+                      // find the index
                       const findIndex = orderItems.findIndex(order => (
                         order._id === product._id && order?.selectedUser === selectedUser)
                       )

@@ -1,0 +1,6 @@
+mutation DeleteCheckoutData($ids: [ID!]!) {
+	deleteCheckoutData(ids: $ids) {
+		acknowledged
+		deletedCount
+	}
+}
