@@ -52,7 +52,7 @@ export function WelcomeEmail({ url = "https://fastoapp.com", locale = "en" }: { 
         <Container style={container}>
           <Section style={box}>
             <Img
-              src="https://fastoapp.com/images/fasto-logo.svg"
+              src="https://fastoapp.com/images/fasto-logo.png"
               height="21"
               alt="Fasto"
             />

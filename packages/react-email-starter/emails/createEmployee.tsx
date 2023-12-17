@@ -62,7 +62,7 @@ export function CreateEmployeeEmail({
         <Container style={container}>
           <Section style={box}>
             <Img
-              src="https://fastoapp.com/images/fasto-logo.svg"
+              src="https://fastoapp.com/images/fasto-logo.png"
               width="100"
               height="21"
               alt="Fasto"
