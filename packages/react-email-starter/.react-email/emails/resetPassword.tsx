@@ -9,6 +9,7 @@ import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import { Locale } from 'app-helpers';
 import * as React from 'react';
+import { FASTO_LOGO_PROPS } from './constants';
 
 export const texts = {
   en: {
@@ -46,10 +47,7 @@ export function ResetPasswordEmail({ url = "https://fastoapp.com", name = "Alex"
         <Container style={container}>
           <Section style={box}>
             <Img
-              src={`https://fastoapp.com/images/fasto-logo.png`}
-              width="100"
-              height="21"
-              alt="Fasto"
+              {...FASTO_LOGO_PROPS}
             />
             <Hr style={hr} />
             <Text style={paragraph}>
