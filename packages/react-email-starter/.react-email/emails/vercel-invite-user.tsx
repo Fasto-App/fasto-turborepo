@@ -9,7 +9,6 @@ import { Preview } from '@react-email/preview';
 import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
-import { FASTO_LOGO_PROPS } from "./constants"
 
 export function VercelEmail() {
   return (
@@ -20,7 +19,11 @@ export function VercelEmail() {
         <Container style={container}>
           <Section style={{ marginTop: '32px' }}>
             <Img
-              {...FASTO_LOGO_PROPS}
+              src={"/static/fasto-logo.png"}
+              alt="Fasto Logo"
+              width={112}
+              height={25}
+              style={{ margin: 0 }}
             />
           </Section>
           <Text style={h1}>

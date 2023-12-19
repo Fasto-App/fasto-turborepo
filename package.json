@@ -8,7 +8,8 @@
 	],
 	"husky": {
 		"hooks": {
-			"pre-commit": "sh husky/pre-commit"
+			"pre-commit": "sh husky/pre-commit",
+			"pre-push": "yarn test"
 		}
 	},
 	"scripts": {
@@ -19,6 +20,7 @@
 		"build:client": "turbo run build --filter=client",
 		"build:api": "turbo run build --filter=server",
 		"start:client": "turbo run start --filter=client",
+		"start:server": "turbo run dev --filter=server",
 		"prod-frontend": "yarn run build:client",
 		"prod-backend": "yarn run build:api",
 		"start": "cd apps/server && yarn run start",
@@ -27,7 +29,9 @@
 		"deploy:api": "heroku git:remote -a opentab-backend && yarn run deploy",
 		"generate:client": "cd apps/client && yarn run generate ",
 		"generate:server": "cd apps/server && yarn run generate",
-		"storybook": "cd apps/client && yarn run storybook"
+		"storybook": "cd apps/client && yarn run storybook",
+		"test:gui": "cd apps/client && yarn cypress:open",
+		"test": "cd apps/client && yarn cypress:run"
 	},
 	"devDependencies": {
 		"eslint-config-custom": "*",
