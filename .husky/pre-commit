@@ -8,4 +8,5 @@ if [ "$branch" = "main" ] || [ "$branch" = "development" ]; then
   exit 1
 fi
 
+yarn test
 echo "All Good, you can commit"

@@ -20,6 +20,7 @@
 		"build:client": "turbo run build --filter=client",
 		"build:api": "turbo run build --filter=server",
 		"start:client": "turbo run start --filter=client",
+		"start:server": "turbo run dev --filter=server",
 		"prod-frontend": "yarn run build:client",
 		"prod-backend": "yarn run build:api",
 		"start": "cd apps/server && yarn run start",
