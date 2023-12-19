@@ -8,7 +8,8 @@
 	],
 	"husky": {
 		"hooks": {
-			"pre-commit": "sh husky/pre-commit"
+			"pre-commit": "sh husky/pre-commit",
+			"pre-push": "yarn test"
 		}
 	},
 	"scripts": {
