@@ -1,12 +1,12 @@
 # Run Cypress Tests
 
-To run Cypress with the GUI the Root `fastoapp/` run:
+To run Cypress with the GUI and have access to E2E and Components Tests, from the Root `fastoapp/` run:
 
 ```
   yarn test:gui
 ```
 
-To run Cypress on terminal and run E2E Tests only from the Root `fastoapp/` run:
+To run Cypress on terminal and run E2E Tests only, from the Root `fastoapp/` run:
 
 ```
   yarn test
