@@ -28,7 +28,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
   }
 
   // create a description for the payment intent
-  const description = `Payment for ${foundBusiness.name} - Checkout ID: ${foundCheckout._id}; Payment ID: ${foundPayment._id}`;
+  const description = `Payment for ${foundBusiness.name} - Checkout ID: ${foundCheckout._id}; Payment ID: ${foundPayment._id}; stripeAccount: ${foundBusiness.stripeAccountId}`;
 
   try {
     const paymentIntent = await createPaymentIntent({
@@ -49,7 +49,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
       amount: paymentIntent.amount,
     });
   } catch (err) {
-    throw ApolloError(err as Error, 'BadRequest');
+    throw ApolloError(err as Error, 'InternalServerError');
   }
 }
 
