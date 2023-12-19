@@ -32,3 +32,5 @@ describe('Login tests', () => {
 		cy.contains('Something went wrong!', { matchCase: false });
 	});
 });
+
+export { }

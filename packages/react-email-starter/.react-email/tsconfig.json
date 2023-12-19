@@ -20,13 +20,6 @@
 			}
 		]
 	},
-	"include": [
-		"preview/next-env.d.ts",
-		"preview/.next/types/**/*.ts",
-		"**/*.ts",
-		"**/*.tsx",
-		".next/types/**/*.ts",
-		"../emails/constants.ts"
-	],
+	"include": ["preview/next-env.d.ts", "preview/.next/types/**/*.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
 	"exclude": ["node_modules"]
 }

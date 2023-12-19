@@ -27,7 +27,9 @@
 		"deploy:api": "heroku git:remote -a opentab-backend && yarn run deploy",
 		"generate:client": "cd apps/client && yarn run generate ",
 		"generate:server": "cd apps/server && yarn run generate",
-		"storybook": "cd apps/client && yarn run storybook"
+		"storybook": "cd apps/client && yarn run storybook",
+		"test:gui": "cd apps/client && yarn cypress:open",
+		"test": "cd apps/client && yarn cypress:run"
 	},
 	"devDependencies": {
 		"eslint-config-custom": "*",
