@@ -1,6 +1,5 @@
 import React from 'react'
 import { PaymentTile } from './TableComponents'
-import { ApplicationProvider } from '../../appProvider/ApplicationProvider'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 
 
