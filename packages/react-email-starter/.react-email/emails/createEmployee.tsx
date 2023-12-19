@@ -9,6 +9,7 @@ import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
 import { Locale } from "app-helpers"
+import { FASTO_LOGO_PROPS } from './constants';
 
 export const texts = {
   "en": {
@@ -62,10 +63,7 @@ export function CreateEmployeeEmail({
         <Container style={container}>
           <Section style={box}>
             <Img
-              src="https://fastoapp.com/images/fasto-logo.svg"
-              width="100"
-              height="21"
-              alt="Fasto"
+              {...FASTO_LOGO_PROPS}
             />
             <Hr style={hr} />
             <Text style={h1}>{texts[locale].dearEmployee(name)}</Text>

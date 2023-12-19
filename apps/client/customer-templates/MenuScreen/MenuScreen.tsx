@@ -39,9 +39,6 @@ export const MenuScreen = () => {
     }
   });
 
-  // if the user is vewing the menu, skip this
-  console.log("cookies", getClientCookies(businessId as string))
-
   const { data: clientData, loading: clientLoadingData } = useGetClientSessionQuery({
     skip: !getClientCookies(businessId as string)
   })

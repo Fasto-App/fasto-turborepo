@@ -51,6 +51,7 @@ const ClientNavBar = (props: { tableNumber?: string, status?: RequestStatus }) =
               }}
             />
             : <Avatar
+              backgroundColor={"white"}
               size="48px"
               source={{ uri: businessInfo?.getBusinessById.picture ?? plaholderImage }}
             />}

@@ -9,21 +9,18 @@ import { Preview } from '@react-email/preview';
 import { Section } from '@react-email/section';
 import { Text } from '@react-email/text';
 import * as React from 'react';
+import { FASTO_LOGO_PROPS } from "./constants"
 
 export function VercelEmail() {
   return (
     <Html>
       <Head />
-      <Preview>Join bukinoshita on Vercel</Preview>
+      <Preview>Join Alex on Vercel</Preview>
       <Section style={main}>
         <Container style={container}>
           <Section style={{ marginTop: '32px' }}>
             <Img
-              src="/static/vercel-logo.png"
-              width="40"
-              height="37"
-              alt="Vercel"
-              style={logo}
+              {...FASTO_LOGO_PROPS}
             />
           </Section>
           <Text style={h1}>

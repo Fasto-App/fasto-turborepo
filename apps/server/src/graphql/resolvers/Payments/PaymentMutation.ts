@@ -7,7 +7,7 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { getCountry, updateProductQuantity } from "../helpers/helpers";
 
 const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async (parent, { input },
-  { db, user, locale, client }) => {
+  { db, client }) => {
 
   if (!client) throw ApolloError(new Error("Not Authorized. Please login again."), 'Unauthorized',)
 
@@ -15,15 +15,6 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
 
   if (!foundBusiness || !foundBusiness.stripeAccountId) {
     throw ApolloError(new Error("Business is not Configured to accept payments."), 'BadRequest',)
-  }
-
-  // from the business, get the address
-  const foundAddress = await AddressModel(db).findOne({ _id: foundBusiness.address })
-
-  // if no country, throw an error asking to set the address first
-  // TODO: Delete all the addresses and make country standard
-  if (!foundAddress?.country) {
-    throw ApolloError(new Error("Please set the address first."), 'BadRequest',)
   }
 
   const foundPayment = await PaymentModel(db).findOne({ _id: input.payment })
@@ -37,7 +28,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
   }
 
   // create a description for the payment intent
-  const description = `Payment for ${foundBusiness.name} - Checkout ID: ${foundCheckout._id}; Payment ID: ${foundPayment._id}`;
+  const description = `Payment for ${foundBusiness.name} - Checkout ID: ${foundCheckout._id}; Payment ID: ${foundPayment._id}; stripeAccount: ${foundBusiness.stripeAccountId}`;
 
   try {
     const paymentIntent = await createPaymentIntent({
@@ -48,7 +39,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
       serviceFee: foundPayment.serviceFee,
       stripeAccount: foundBusiness.stripeAccountId,
       description,
-      country: foundAddress?.country,
+      country: foundBusiness?.country,
     })
 
     return ({
@@ -58,7 +49,7 @@ const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] = async 
       amount: paymentIntent.amount,
     });
   } catch (err) {
-    throw ApolloError(err as Error, 'BadRequest');
+    throw ApolloError(err as Error, 'InternalServerError');
   }
 }
 
