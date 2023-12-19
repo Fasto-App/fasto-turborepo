@@ -51,7 +51,7 @@ export const EmployeeTile = ({
         space={3}
         flex={1}
       >
-        <Avatar size="48px" source={{ uri: picture }} />
+        <Avatar backgroundColor={"white"} size="48px" source={{ uri: picture }} />
         <VStack flex={1}>
           <Box flexDirection={"row"}>
             <Text fontSize={"lg"} color="coolGray.800" overflow={"break-word"} bold >

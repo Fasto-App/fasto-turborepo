@@ -245,17 +245,11 @@ const getCategoriesByBusiness = async (parent: any, args: any, context: Context)
 
 const getBusinessLocation = async (parent: null, args: null, { business, db }: Context) => {
 
-  console.log("Business", business)
   if (business) {
-
-    const Business = BusinessModel(db)
-    const Address = AddressModel(db)
-    const foundBusiness = await Business.findById(business)
+    const foundBusiness = await BusinessModel(db).findById(business)
 
     if (foundBusiness?.address) {
-      const address = await Address.findById(foundBusiness.address)
-      console.log("Address", address)
-      return address
+      return await AddressModel(db).findById(foundBusiness.address)
     }
   }
 }

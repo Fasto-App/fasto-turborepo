@@ -167,7 +167,10 @@ const Payouts = (
       borderRadius={"md"}
     >
       <HStack space={4}>
-        <Avatar size={"xl"} source={{ uri: data?.getBusinessInformation.picture || "" }} borderWidth={2}
+        <Avatar backgroundColor={"white"}
+          size={"xl"}
+          borderWidth={2}
+          source={{ uri: data?.getBusinessInformation.picture || "" }}
           borderColor={"primary.500"}>
           <Avatar.Badge bg="green.500" />
         </Avatar>
