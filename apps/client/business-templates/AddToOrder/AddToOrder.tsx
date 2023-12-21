@@ -34,6 +34,7 @@ import { showToast } from "../../components/showToast";
 import { OrangeBox } from "../../components/OrangeBox";
 import { Icon } from "../../components/atoms/NavigationButton";
 
+
 // Helper can be outside of component
 // specially if we want to reuse this
 const searchProductsByName = (
