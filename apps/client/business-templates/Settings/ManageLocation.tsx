@@ -4,7 +4,7 @@ import { ControlledForm, SideBySideInputConfig } from "../../components/Controll
 import { ManageLocationConfig } from "./Config"
 import { useManageLocationFormHook, } from "./hooks"
 import { businessLocationSchemaInput } from "app-helpers";
-import { useGetBusinessLocationQuery, useUpdateBusinessLocationMutation } from "../../gen/generated";
+import { useGetBusinessInformationQuery, useGetBusinessLocationQuery, useUpdateBusinessLocationMutation } from "../../gen/generated";
 import { DevTool } from "@hookform/devtools";
 import { Loading } from "../../components/Loading";
 import { useAppStore } from "../UseAppStore";
@@ -14,6 +14,7 @@ import { Icon } from "../../components/atoms/NavigationButton";
 
 export const ManageBusinessLocation = () => {
   const { t } = useTranslation("businessSettings")
+  const { data: businessData } = useGetBusinessInformationQuery()
 
   const { data, loading: loadingQuery } = useGetBusinessLocationQuery({
     onCompleted: (data) => {
@@ -21,8 +22,9 @@ export const ManageBusinessLocation = () => {
       setValue("city", data.getBusinessLocation?.city || "")
       setValue("stateOrProvince", data.getBusinessLocation?.stateOrProvince || "")
       setValue("postalCode", data.getBusinessLocation?.postalCode || "")
-      setValue("country", data.getBusinessLocation?.country || "")
       setValue("complement", data.getBusinessLocation?.complement || "")
+      setValue("country", data.getBusinessLocation?.country ||
+        businessData?.getBusinessInformation.country || "")
     },
     onError: () => {
       showToast({
@@ -91,7 +93,8 @@ export const ManageBusinessLocation = () => {
       ...ManageLocationConfig.country,
       label: t("country"),
       placeholder: t("country"),
-      isDisabled: !!data?.getBusinessLocation?.country
+      isDisabled: !!data?.getBusinessLocation?.country ||
+        !!businessData?.getBusinessInformation.country
     },
   }
 

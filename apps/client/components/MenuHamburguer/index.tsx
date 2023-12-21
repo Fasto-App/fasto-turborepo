@@ -23,9 +23,10 @@ const AccountTile = ({ isActive = false, businessName, employeeName, uri }: Acco
         size="16"
         rounded="full" /> :
         <Avatar size={"lg"}
+          backgroundColor={"white"}
           source={{ uri }}
           borderWidth={2}
-          borderColor={isActive ? "primary.500" : "gray.400"}
+          borderColor={isActive ? "green.500" : "gray.400"}
         />
       }
       <VStack flex={1} justifyContent="center">
@@ -54,7 +55,7 @@ export function AccountMenu() {
           }}
           accessibilityLabel="More options menu" {...triggerProps}>
           <AccountTile
-            isActive
+            isActive={!!data?.getBusinessInformation.picture}
             employeeName={clientInfo?.getUserInformation?.name}
             businessName={data?.getBusinessInformation.name}
             uri={data?.getBusinessInformation.picture}

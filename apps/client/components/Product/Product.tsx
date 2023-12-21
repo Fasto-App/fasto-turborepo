@@ -144,6 +144,7 @@ const ProductTile = ({
     <BorderTile width={"96"}>
       <HStack alignItems="center" space={3} flex={1}>
         <Avatar
+          backgroundColor={"white"}
           size="48px"
           source={{
             uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER,

@@ -11,7 +11,8 @@ export const getCheckoutByID: QueryResolvers["getCheckoutByID"] = async (parent,
 
   if (!client && !user) throw ApolloError(new Error("You must be logged in to perform this action"), "Unauthorized",)
 
-  const checkout = await Checkout.findOne({ _id: input._id, business: client?.business || user?.business });
+  const checkout = await Checkout.findOne({ _id: input._id });
+  // TODO verify if user is authorized to see this data
   if (!checkout) throw ApolloError(new Error("Checkout not found"), "NotFound",);
   return checkout
 }

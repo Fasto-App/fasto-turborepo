@@ -14,16 +14,16 @@ export function VercelEmail() {
   return (
     <Html>
       <Head />
-      <Preview>Join bukinoshita on Vercel</Preview>
+      <Preview>Join Alex on Vercel</Preview>
       <Section style={main}>
         <Container style={container}>
           <Section style={{ marginTop: '32px' }}>
             <Img
-              src="/static/vercel-logo.png"
-              width="40"
-              height="37"
-              alt="Vercel"
-              style={logo}
+              src={"/static/fasto-logo.png"}
+              alt="Fasto Logo"
+              width={112}
+              height={25}
+              style={{ margin: 0 }}
             />
           </Section>
           <Text style={h1}>

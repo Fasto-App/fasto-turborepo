@@ -46,10 +46,11 @@ export function ResetPasswordEmail({ url = "https://fastoapp.com", name = "Alex"
         <Container style={container}>
           <Section style={box}>
             <Img
-              src={`https://fastoapp.com/images/fasto-logo.svg`}
-              width="100"
-              height="21"
-              alt="Fasto"
+              src={"/static/fasto-logo.png"}
+              alt="Fasto Logo"
+              width={112}
+              height={25}
+              style={{ margin: 0 }}
             />
             <Hr style={hr} />
             <Text style={paragraph}>
