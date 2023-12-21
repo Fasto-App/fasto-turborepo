@@ -212,6 +212,7 @@ const requestCloseTab: MutationResolvers["requestCloseTab"] = async (_parent, ar
             const foundTable = await Table.findById(foundTab.table);
             if (foundTable) {
                 foundTable.status = TableStatus.Available;
+                foundTable.tab = undefined;
                 await foundTable.save();
             }
         }
