@@ -1852,19 +1852,19 @@ export type DeclineTabRequestMutationVariables = Exact<{
 
 export type DeclineTabRequestMutation = { __typename?: 'Mutation', declineTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null } };
 
-export type RequestJoinTabMutationVariables = Exact<{
-  input: JoinTabForm;
-}>;
-
-
-export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
-
 export type OpenTabRequestMutationVariables = Exact<{
   input: OpenTabRequestInput;
 }>;
 
 
 export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
+
+export type RequestJoinTabMutationVariables = Exact<{
+  input: JoinTabForm;
+}>;
+
+
+export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
 
 export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4565,37 +4565,6 @@ export function useDeclineTabRequestMutation(baseOptions?: Apollo.MutationHookOp
 export type DeclineTabRequestMutationHookResult = ReturnType<typeof useDeclineTabRequestMutation>;
 export type DeclineTabRequestMutationResult = Apollo.MutationResult<DeclineTabRequestMutation>;
 export type DeclineTabRequestMutationOptions = Apollo.BaseMutationOptions<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>;
-export const RequestJoinTabDocument = gql`
-    mutation RequestJoinTab($input: JoinTabForm!) {
-  requestJoinTab(input: $input)
-}
-    `;
-export type RequestJoinTabMutationFn = Apollo.MutationFunction<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
-
-/**
- * __useRequestJoinTabMutation__
- *
- * To run a mutation, you first call `useRequestJoinTabMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRequestJoinTabMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [requestJoinTabMutation, { data, loading, error }] = useRequestJoinTabMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RequestJoinTabMutation, RequestJoinTabMutationVariables>(RequestJoinTabDocument, options);
-      }
-export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
-export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
-export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
 export const OpenTabRequestDocument = gql`
     mutation OpenTabRequest($input: OpenTabRequestInput!) {
   openTabRequest(input: $input)
@@ -4627,6 +4596,37 @@ export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptio
 export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
 export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
 export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
+export const RequestJoinTabDocument = gql`
+    mutation RequestJoinTab($input: JoinTabForm!) {
+  requestJoinTab(input: $input)
+}
+    `;
+export type RequestJoinTabMutationFn = Apollo.MutationFunction<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
+
+/**
+ * __useRequestJoinTabMutation__
+ *
+ * To run a mutation, you first call `useRequestJoinTabMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestJoinTabMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestJoinTabMutation, { data, loading, error }] = useRequestJoinTabMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RequestJoinTabMutation, RequestJoinTabMutationVariables>(RequestJoinTabDocument, options);
+      }
+export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
+export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
+export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
 export const GetClientSessionDocument = gql`
     query GetClientSession {
   getClientSession {
