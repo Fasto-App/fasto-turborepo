@@ -186,9 +186,11 @@ const ProductTile = ({
           justifyContent="space-between"
           py={4}
         >
-          <Button w={"100"} colorScheme="tertiary" onPress={onPress}>
+          {quantity && quantity > 0 ? <Button w={"100"} colorScheme="tertiary" onPress={onPress}>
             {ctaTitle}
-          </Button>
+          </Button> : <Button w={"100"} colorScheme="clear" >
+            {"No stock"}
+          </Button>}
         </HStack>
       </HStack>
     </BorderTile>
