@@ -16,6 +16,9 @@ import { useAppStore } from "../UseAppStore"
 import { useTranslation } from "next-i18next"
 import { showToast } from "../../components/showToast"
 
+const isNotProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "development"
+  || process.env.NEXT_PUBLIC_ENVIRONMENT === "staging"
+
 export const ManageBusiness = () => {
   const { daysOfTheWeek, setCloseHour, setOpenHour, toggleDay } = useScheduleStore(state => ({
     daysOfTheWeek: state.daysOfTheWeek,
@@ -132,7 +135,7 @@ export const ManageBusiness = () => {
         Config={ManageBusinessConfigNewConfig}
       />
       {/* Data should populate the component, but zustand should override locally */}
-      {false ? <WeeklySchedule /> : null}
+      {isNotProduction ? <WeeklySchedule /> : null}
       {scheduleError ? <Text color={"red.500"}>{scheduleError}</Text> : null}
       <HStack alignItems="center" space={2} justifyContent="end" p={4}>
         <Button
