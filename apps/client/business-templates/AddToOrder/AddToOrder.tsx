@@ -240,7 +240,6 @@ export const AddToOrder = () => {
 
   const stockCheck = (id: string) => {
     return orderItems.find((item) => item._id === id);
-    
   };
 
   return (
@@ -299,7 +298,6 @@ export const AddToOrder = () => {
                           quantity: item.quantity + 1,
                         };
                       }
-                      console.log(item.quantity)
                       return item;
                     });
                     setOrderItems(newOrderItems);
