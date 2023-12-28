@@ -238,6 +238,11 @@ export const AddToOrder = () => {
       });
   }, [sectionsWithAll, selectedCategory, searchString]);
 
+  const stockCheck = (id: string) => {
+    return orderItems.find((item) => item._id === id);
+    
+  };
+
   return (
     <Flex flexDirection={"row"} flex={1}>
       <LeftSideBar>
@@ -294,6 +299,7 @@ export const AddToOrder = () => {
                           quantity: item.quantity + 1,
                         };
                       }
+                      console.log(item.quantity)
                       return item;
                     });
                     setOrderItems(newOrderItems);
@@ -432,6 +438,11 @@ export const AddToOrder = () => {
                           imageUrl={product.imageUrl ?? ""}
                           description={product.description}
                           quantity={product.quantity}
+                          hideButton={
+                            !product.quantity ||
+                            (stockCheck(product._id) && 
+                              product.quantity - stockCheck(product._id)!.quantity < 1)
+                          }
                           onPress={() => {
                             const findIndex = orderItems.findIndex(
                               (order) =>
