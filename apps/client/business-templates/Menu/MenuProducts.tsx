@@ -141,7 +141,6 @@ function MenuProducts() {
     () => [allCategory, ...allCategories],
     [allCategory, allCategories]
   );
-  console.log(sectionsWithAll)
 
   const categoriesIdsOnMenu = useMemo(() => {
     const menuSections = selectedMenu?.sections ?? [];
@@ -194,7 +193,7 @@ function MenuProducts() {
       const newProductsMap = new Map();
       const newCategoriesMap = new Map();
       const allProducts = sectionMap.get(categoryId);
-
+      console.log(allProducts)
       // @ts-ignore
       for (const [categoryKey, productMap] of sectionMap.entries()) {
         newCategoriesMap.set(categoryKey, productMap);
@@ -233,7 +232,6 @@ function MenuProducts() {
   const renderProductTile = useCallback(
     ({ item, index }: { item?: Product | null; index: number }) => {
       if (!item) return null;
-
       let isSelected = false;
       if (sectionMap.get(categoryId)) {
         if (sectionMap.get(categoryId).get(item._id)) {
@@ -257,6 +255,7 @@ function MenuProducts() {
 
   const onEditMEnu = useCallback(() => {
     const sectionMap = new Map();
+    console.log(sectionMap)
     const selectedMenuSections =
       menusData?.getAllMenusByBusinessID.find((menu) => menu?._id === menuId)
         ?.sections ?? [];
@@ -272,7 +271,6 @@ function MenuProducts() {
     setSectionMap?.(sectionMap);
     seIsEditingMenu(true);
 
-    console.log("Edit Menu");
   }, [menuId, menusData, seIsEditingMenu, setSectionMap]);
 
   const icontype = useMemo(() => {
@@ -393,7 +391,7 @@ function MenuProducts() {
         {isEditingMenu ? (
           <FlatList
             key={numColumns}
-            data={filteredProducts}
+            data={productsFiltereByCategory}
             numColumns={numColumns}
             renderItem={renderProductTile}
             keyExtractor={(item) => `${item?._id}`}
@@ -442,7 +440,6 @@ function MenuProducts() {
               colorScheme="tertiary"
               isLoading={loadingDelete || loadingUpdate || loadingQuery}
               onPress={async () => {
-                console.log(sectionMap);
                 const newSections: { category: string; products: string[] }[] =
                   [];
 
