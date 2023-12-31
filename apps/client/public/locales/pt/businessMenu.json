@@ -13,7 +13,5 @@
 	"edit": "Editar",
 	"emptyProducts": "Para começar a adicionar produtos pressione 'Editar Menu'",
 	"deleteMenu": "Deletar Menu",
-	"deleteMenuBody": "Isso removerá todos os dados relacionados a este menu. Esta ação não pode ser revertida.",
-	"search": "Buscar",
-	"all" : "Todos"
+	"deleteMenuBody": "Isso removerá todos os dados relacionados a este menu. Esta ação não pode ser revertida."
 }
