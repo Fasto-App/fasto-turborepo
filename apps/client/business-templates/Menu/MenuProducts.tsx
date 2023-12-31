@@ -83,7 +83,7 @@ function MenuProducts() {
   });
 
   const [deleteMenu, { loading: loadingDelete }] = useDeleteMenuMutation({
-    onCompleted: (data) => {},
+    onCompleted: (data) => { },
     update: (cache, { data }) => {
       // @ts-ignore
       const { getAllMenusByBusinessID } = cache.readQuery({
@@ -155,19 +155,19 @@ function MenuProducts() {
   const productsOnMenu = useMemo(() => {
     const sections = selectedMenu?.sections;
     if (!sections || sections.length === 0) {
-        return [];
+      return [];
     }
 
     const allProducts = sections.flatMap((section) =>
-        section.products?.map((product) => product._id) ?? []
+      section.products?.map((product) => product._id) ?? []
     );
 
     return categoryId === "all" ? allProducts : sections
-        .filter((section) => section.category._id === categoryId)
-        .flatMap((section) =>
-            section.products?.map((product) => product._id) ?? []
-        );
-}, [categoryId, selectedMenu?.sections]);
+      .filter((section) => section.category._id === categoryId)
+      .flatMap((section) =>
+        section.products?.map((product) => product._id) ?? []
+      );
+  }, [categoryId, selectedMenu?.sections]);
 
 
   const selectedCategories = useMemo(() => {
@@ -178,8 +178,8 @@ function MenuProducts() {
     return categoryId === "all"
       ? allProducts
       : allProducts.filter((product) =>
-          categoryId ? product?.category?._id === categoryId : true
-        );
+        categoryId ? product?.category?._id === categoryId : true
+      );
   }, [allProducts, categoryId]);
 
   const productsFiltereOnMenu = useMemo(() => {
