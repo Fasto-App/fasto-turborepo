@@ -211,12 +211,12 @@ export const AddToOrder = () => {
     ...sections.map((section) => section.products || [])
   );
   const allCategory = useMemo(() => ({
-      category: {
-        _id: "all",
-        name: t("all"),
-      },
-      products: allProducts,
-    }), [allProducts, t]);
+    category: {
+      _id: "all",
+      name: t("all"),
+    },
+    products: allProducts,
+  }), [allProducts, t]);
 
   const sectionsWithAll = useMemo(() => [allCategory, ...sections], [allCategory, sections]);
 
@@ -237,11 +237,11 @@ export const AddToOrder = () => {
       });
   }, [sectionsWithAll, selectedCategory, searchString]);
 
-  const stockCheck = (id: string) => {
+  const getOrderById = (id: string) => {
     return orderItems.find((item) => item._id === id);
   };
 
-  const getOrderItemById = (orderId: string) => {
+  const getProductById = (orderId: string) => {
     return allProducts.find((item) => item._id === orderId);
   };
 
@@ -258,7 +258,7 @@ export const AddToOrder = () => {
               </Text>
             ) : null}
             {tabData?.getTabByID?.table?.tableNumber &&
-            (tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
+              (tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
               <Divider orientation="vertical" mx="3" />
             ) : null}
             {(tabData?.getTabByID?.users?.length ?? 0) > 1 ? (
@@ -294,13 +294,15 @@ export const AddToOrder = () => {
                     setOrderItems(newOrderItems);
                   }}
                   onPlusPress={() => {
+                    //TODO: we should update `orderItems` from an array state to an object
+                    // to avoid nested loops when updating the quantity
                     const newOrderItems = orderItems.map((item, orderIndex) => {
-                      const orderItemById = getOrderItemById(item._id);
+                      const product = getProductById(item._id);
 
                       if (
                         index === orderIndex &&
-                        orderItemById?.quantity &&
-                        orderItemById?.quantity - order.quantity > 0
+                        product?.quantity &&
+                        product?.quantity - order.quantity > 0
                       ) {
                         return {
                           ...item,
@@ -447,10 +449,10 @@ export const AddToOrder = () => {
                           quantity={product.quantity}
                           hideButton={
                             !product.quantity ||
-                            (stockCheck(product._id) &&
+                            (getOrderById(product._id) &&
                               product.quantity -
-                                stockCheck(product._id)!.quantity <
-                                1)
+                              getOrderById(product._id)!.quantity <
+                              1)
                           }
                           onPress={() => {
                             const findIndex = orderItems.findIndex(
