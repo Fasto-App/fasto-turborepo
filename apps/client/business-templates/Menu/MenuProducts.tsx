@@ -32,6 +32,19 @@ import { Pressable } from "react-native";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 
+// Todo: [repeated code] AddToToOrder has the same function
+const searchProductsByName = (
+  searchString: string,
+  products: Product[]
+): Product[] => {
+  if (!searchString) {
+    return products;
+  }
+  const pattern = new RegExp(searchString, "gi");
+
+  return products.filter((product) => pattern.test(product.name));
+};
+
 function MenuProducts() {
   const { favoriteMenus, setFavoriteMenus } = useAppStore((state) => ({
     favoriteMenus: state.favoriteMenus,
@@ -111,9 +124,8 @@ function MenuProducts() {
     (state) => state?.menu ?? menusData?.getAllMenusByBusinessID?.[0]?._id
   );
   const categoryId = useAppStore(
-    (state) => state.category ?? allCategories?.[0]?._id
+    (state) => state.category ?? "all"
   );
-  const setMenu = useAppStore((state) => state.setMenu);
   const setCategory = useAppStore((state) => state.setCategory);
   const setSectionMap = useAppStore((state) => state.setSectionMap);
   const seIsEditingMenu = useAppStore((state) => state.seIsEditingMenu);
@@ -193,7 +205,6 @@ function MenuProducts() {
       const newProductsMap = new Map();
       const newCategoriesMap = new Map();
       const allProducts = sectionMap.get(categoryId);
-      console.log(allProducts)
       // @ts-ignore
       for (const [categoryKey, productMap] of sectionMap.entries()) {
         newCategoriesMap.set(categoryKey, productMap);
@@ -255,7 +266,6 @@ function MenuProducts() {
 
   const onEditMEnu = useCallback(() => {
     const sectionMap = new Map();
-    console.log(sectionMap)
     const selectedMenuSections =
       menusData?.getAllMenusByBusinessID.find((menu) => menu?._id === menuId)
         ?.sections ?? [];
@@ -289,23 +299,8 @@ function MenuProducts() {
 
   const [searchString, setSearchString] = useState("");
 
-  const searchProductsByName = (
-    searchString: string,
-    products: Product[]
-  ): Product[] => {
-    if (!searchString) {
-      return products;
-    }
-    const pattern = new RegExp(searchString, "gi");
-
-    return products.filter((product) => pattern.test(product.name));
-  };
-
   const filteredProducts = useMemo(() => {
-    const nonNullProducts = productsFiltereOnMenu.filter(
-      (product): product is Product => product !== null
-    );
-    return searchProductsByName(searchString, nonNullProducts);
+    return searchProductsByName(searchString, productsFiltereOnMenu);
   }, [searchString, productsFiltereOnMenu]);
 
   return (
