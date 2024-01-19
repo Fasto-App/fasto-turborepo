@@ -83,9 +83,7 @@ function MenuProducts() {
   );
 
   const [updateMenu, { loading: loadingUpdate }] = useUpdateMenuMutation({
-    onCompleted: (data) => {
-      // console.log("Update Menu", data)
-    },
+    onCompleted: (data) => {},
     updateQueries: {
       getAllMenusByBusinessID: (prev, { mutationResult }) => {
         return Object.assign({}, prev, {
@@ -96,7 +94,7 @@ function MenuProducts() {
   });
 
   const [deleteMenu, { loading: loadingDelete }] = useDeleteMenuMutation({
-    onCompleted: (data) => { },
+    onCompleted: (data) => {},
     update: (cache, { data }) => {
       // @ts-ignore
       const { getAllMenusByBusinessID } = cache.readQuery({
@@ -123,9 +121,7 @@ function MenuProducts() {
   const menuId = useAppStore(
     (state) => state?.menu ?? menusData?.getAllMenusByBusinessID?.[0]?._id
   );
-  const categoryId = useAppStore(
-    (state) => state.category ?? "all"
-  );
+  const categoryId = useAppStore((state) => state.category ?? "all");
   const setCategory = useAppStore((state) => state.setCategory);
   const setSectionMap = useAppStore((state) => state.setSectionMap);
   const seIsEditingMenu = useAppStore((state) => state.seIsEditingMenu);
@@ -163,36 +159,36 @@ function MenuProducts() {
     return menuSections.map((section) => section.category._id);
   }, [selectedMenu?.sections]);
 
-
   const productsOnMenu = useMemo(() => {
     const sections = selectedMenu?.sections;
     if (!sections || sections.length === 0) {
       return [];
     }
-
-    const allProducts = sections.flatMap((section) =>
-      section.products?.map((product) => product._id) ?? []
+    const allProducts = sections.flatMap(
+      (section) => section.products?.map((product) => product._id) ?? []
     );
-
-    return categoryId === "all" ? allProducts : sections
-      .filter((section) => section.category._id === categoryId)
-      .flatMap((section) =>
-        section.products?.map((product) => product._id) ?? []
-      );
+    return categoryId === "all"
+      ? allProducts
+      : sections
+          .filter((section) => section.category._id === categoryId)
+          .flatMap(
+            (section) => section.products?.map((product) => product._id) ?? []
+          );
   }, [categoryId, selectedMenu?.sections]);
-
 
   const selectedCategories = useMemo(() => {
     return allCategories.filter((cat) => categoriesIdsOnMenu.includes(cat._id));
   }, [allCategories, categoriesIdsOnMenu]);
 
   const productsFiltereByCategory = useMemo(() => {
-    return categoryId === "all"
-      ? allProducts
-      : allProducts.filter((product) =>
-        categoryId ? product?.category?._id === categoryId : true
-      );
-  }, [allProducts, categoryId]);
+    return (
+      categoryId === "all" && !isEditingMenu
+        ? allProducts
+        : allProducts.filter((product): product is Product =>
+            categoryId ? product?.category?._id === categoryId : true
+          )
+    ).filter(Boolean);
+  }, [allProducts, categoryId, isEditingMenu]);
 
   const productsFiltereOnMenu = useMemo(() => {
     return productsFiltereByCategory.filter((product): product is Product =>
@@ -242,7 +238,10 @@ function MenuProducts() {
 
   const renderProductTile = useCallback(
     ({ item, index }: { item?: Product | null; index: number }) => {
-      if (!item) return null;
+      if (!item || (categoryId === "all" && isEditingMenu)) {
+        return null;
+      }
+
       let isSelected = false;
       if (sectionMap.get(categoryId)) {
         if (sectionMap.get(categoryId).get(item._id)) {
@@ -261,15 +260,17 @@ function MenuProducts() {
         />
       );
     },
-    [categoryId, sectionMap, setProductCheckbox]
+    [categoryId, isEditingMenu, sectionMap, setProductCheckbox]
   );
 
-  const onEditMEnu = useCallback(() => {
+  const onEditMEnu = useCallback(() => {    
+    const nextCategory =
+    categoryId === "all" ? allCategories[0]._id : categoryId;
+    console.log("nextCategory", nextCategory)
     const sectionMap = new Map();
     const selectedMenuSections =
       menusData?.getAllMenusByBusinessID.find((menu) => menu?._id === menuId)
         ?.sections ?? [];
-
     selectedMenuSections.forEach((section) => {
       const productMap = new Map();
       section?.products?.forEach((product) =>
@@ -278,10 +279,18 @@ function MenuProducts() {
       sectionMap.set(section.category._id, productMap);
     });
 
+    setCategory(nextCategory);
     setSectionMap?.(sectionMap);
     seIsEditingMenu(true);
-
-  }, [menuId, menusData, seIsEditingMenu, setSectionMap]);
+  }, [
+    menuId,
+    menusData,
+    seIsEditingMenu,
+    setSectionMap,
+    setCategory,
+    allCategories,
+    categoryId,
+  ]);
 
   const icontype = useMemo(() => {
     if (!isEditingMenu) {
@@ -303,6 +312,9 @@ function MenuProducts() {
     return searchProductsByName(searchString, productsFiltereOnMenu);
   }, [searchString, productsFiltereOnMenu]);
 
+  const filteredProductsByCategory = useMemo(() => {
+    return searchProductsByName(searchString, productsFiltereByCategory);
+  }, [searchString, productsFiltereByCategory]);
   return (
     <Box
       p={"4"}
@@ -345,24 +357,43 @@ function MenuProducts() {
 
         {/* Categories */}
         <ScrollView flex={1} horizontal>
-          {(sectionsWithAll).map(
-            (category) => (
-              <Button
-                key={category._id}
-                px={4}
-                mr={2}
-                m={0}
-                minW={"100px"}
-                disabled={categoryId === category._id}
-                textDecorationColor={"black"}
-                variant={categoryId === category._id ? "subtle" : "outline"}
-                colorScheme={categoryId === category._id ? "success" : "black"}
-                onPress={() => setCategory(category._id)}
-              >
-                {category.name}
-              </Button>
-            )
-          )}
+          {!isEditingMenu
+            ? sectionsWithAll.map((category) => (
+                <Button
+                  key={category._id}
+                  px={4}
+                  mr={2}
+                  m={0}
+                  minW={"100px"}
+                  disabled={categoryId === category._id}
+                  textDecorationColor={"black"}
+                  variant={categoryId === category._id ? "subtle" : "outline"}
+                  colorScheme={
+                    categoryId === category._id ? "success" : "black"
+                  }
+                  onPress={() => setCategory(category._id)}
+                >
+                  {category.name}
+                </Button>
+              ))
+            : allCategories.map((category) => (
+                <Button
+                  key={category._id}
+                  px={4}
+                  mr={2}
+                  m={0}
+                  minW={"100px"}
+                  disabled={categoryId === category._id}
+                  textDecorationColor={"black"}
+                  variant={categoryId === category._id ? "subtle" : "outline"}
+                  colorScheme={
+                    categoryId === category._id ? "success" : "black"
+                  }
+                  onPress={() => setCategory(category._id)}
+                >
+                  {category.name}
+                </Button>
+              ))}
         </ScrollView>
       </HStack>
       <HStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>
@@ -386,7 +417,7 @@ function MenuProducts() {
         {isEditingMenu ? (
           <FlatList
             key={numColumns}
-            data={productsFiltereByCategory}
+            data={filteredProductsByCategory}
             numColumns={numColumns}
             renderItem={renderProductTile}
             keyExtractor={(item) => `${item?._id}`}
