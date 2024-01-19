@@ -13,6 +13,7 @@ import { GetAllProductsByBusinessIdQuery } from '../../gen/generated';
 import { useTranslation } from 'next-i18next';
 import { MoreButton } from '../../components/MoreButton';
 import { PlusButton } from '../Tables/SquareTable';
+import { parseToCurrency } from 'app-helpers';
 
 type Products = GetAllProductsByBusinessIdQuery["getAllProductsByBusinessID"];
 
@@ -148,7 +149,7 @@ const ProductList = (
 								quantity={item?.quantity || undefined}
 								name={item.name}
 								description={item.description ?? ""}
-								price={item.price}
+								price={parseToCurrency(item.price, item.currency)}
 								imageUrl={item.imageUrl ?? ""}
 								onPress={() => setProductValues(item)}
 								key={item._id}

@@ -31,6 +31,7 @@ import { Icon } from "../../components/atoms/NavigationButton";
 import { Pressable } from "react-native";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
+import { parseToCurrency } from "app-helpers";
 
 // Todo: [repeated code] AddToToOrder has the same function
 const searchProductsByName = (
@@ -229,7 +230,7 @@ function MenuProducts() {
       return (
         <ProductCard
           description={item.description ?? ""}
-          price={item.price}
+          price={parseToCurrency(item.price, item.currency)}
           ctaTitle={"Edit Item"}
           imageUrl={item.imageUrl ?? ""}
           name={item.name}

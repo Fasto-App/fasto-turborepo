@@ -263,6 +263,11 @@ export type CreateTableInput = {
   space: Scalars['ID'];
 };
 
+export enum Currency {
+  Brl = 'BRL',
+  Usd = 'USD'
+}
+
 export type CustomSplitInput = {
   amount: Scalars['Float'];
   patron: Scalars['ID'];
@@ -972,6 +977,7 @@ export type Product = {
   _id: Scalars['ID'];
   addonsID?: Maybe<Array<Maybe<Scalars['ID']>>>;
   category?: Maybe<Category>;
+  currency?: Maybe<Currency>;
   description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1542,6 +1548,7 @@ export type ResolversTypes = {
   CreateSubResponse: ResolverTypeWrapper<CreateSubResponse>;
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
+  Currency: Currency;
   CustomSplitInput: CustomSplitInput;
   CustomerRequestPayFullInput: CustomerRequestPayFullInput;
   CustomerRequestSplitInput: CustomerRequestSplitInput;
@@ -2100,6 +2107,7 @@ export type ProductResolvers<ContextType = Context, ParentType extends Resolvers
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   addonsID?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
+  currency?: Resolver<Maybe<ResolversTypes['Currency']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

@@ -263,6 +263,11 @@ export type CreateTableInput = {
   space: Scalars['ID'];
 };
 
+export enum Currency {
+  Brl = 'BRL',
+  Usd = 'USD'
+}
+
 export type CustomSplitInput = {
   amount: Scalars['Float'];
   patron: Scalars['ID'];
@@ -972,6 +977,7 @@ export type Product = {
   _id: Scalars['ID'];
   addonsID?: Maybe<Array<Maybe<Scalars['ID']>>>;
   category?: Maybe<Category>;
+  currency?: Maybe<Currency>;
   description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1659,21 +1665,21 @@ export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typ
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null }> }> | null }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null, currency?: Currency | null }> }> | null }> };
 
 export type GetClientMenuQueryVariables = Exact<{
   input: GetMenu;
 }>;
 
 
-export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, quantity?: number | null, name: string, description?: string | null, price: number, imageUrl?: string | null }> }> | null } | null };
+export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, quantity?: number | null, name: string, description?: string | null, price: number, imageUrl?: string | null, currency?: Currency | null }> }> | null } | null };
 
 export type GetMenuByIdQueryVariables = Exact<{
   input?: InputMaybe<GetMenuById>;
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null }> }> | null } };
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null }> }> | null } };
 
 export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
@@ -1777,7 +1783,7 @@ export type GetProductByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetProductByIdQuery = { __typename?: 'Query', getProductByID?: { __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null, quantity?: number | null } | null };
+export type GetProductByIdQuery = { __typename?: 'Query', getProductByID?: { __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null } | null };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -1796,12 +1802,12 @@ export type DeleteProductMutation = { __typename?: 'Mutation', deleteProduct?: {
 export type GetMostSellingProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSellingProducts?: Array<{ __typename?: 'Product', _id: string, price: number, imageUrl?: string | null, name: string, totalOrdered?: number | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> | null };
+export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSellingProducts?: Array<{ __typename?: 'Product', _id: string, price: number, imageUrl?: string | null, name: string, totalOrdered?: number | null, currency?: Currency | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> | null };
 
 export type GetAllProductsByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllProductsByBusinessIdQuery = { __typename?: 'Query', getAllProductsByBusinessID: Array<{ __typename?: 'Product', _id: string, name: string, price: number, description?: string | null, imageUrl?: string | null, quantity?: number | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> };
+export type GetAllProductsByBusinessIdQuery = { __typename?: 'Query', getAllProductsByBusinessID: Array<{ __typename?: 'Product', _id: string, name: string, price: number, description?: string | null, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> };
 
 export type UpdateProductByIdMutationVariables = Exact<{
   input: UpdateProductInput;
@@ -1852,19 +1858,19 @@ export type DeclineTabRequestMutationVariables = Exact<{
 
 export type DeclineTabRequestMutation = { __typename?: 'Mutation', declineTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null } };
 
-export type RequestJoinTabMutationVariables = Exact<{
-  input: JoinTabForm;
-}>;
-
-
-export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
-
 export type OpenTabRequestMutationVariables = Exact<{
   input: OpenTabRequestInput;
 }>;
 
 
 export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
+
+export type RequestJoinTabMutationVariables = Exact<{
+  input: JoinTabForm;
+}>;
+
+
+export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
 
 export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3419,6 +3425,7 @@ export const GetAllMenusByBusinessIdDocument = gql`
         imageUrl
         price
         quantity
+        currency
       }
     }
   }
@@ -3468,6 +3475,7 @@ export const GetClientMenuDocument = gql`
         description
         price
         imageUrl
+        currency
       }
     }
   }
@@ -3518,6 +3526,7 @@ export const GetMenuByIdDocument = gql`
         price
         description
         quantity
+        currency
       }
     }
   }
@@ -4136,6 +4145,7 @@ export const GetProductByIdDocument = gql`
     price
     imageUrl
     quantity
+    currency
   }
 }
     `;
@@ -4245,6 +4255,7 @@ export const GetMostSellingProductsDocument = gql`
     imageUrl
     name
     totalOrdered
+    currency
     category {
       name
       _id
@@ -4288,6 +4299,7 @@ export const GetAllProductsByBusinessIdDocument = gql`
     description
     imageUrl
     quantity
+    currency
     category {
       name
       _id
@@ -4565,37 +4577,6 @@ export function useDeclineTabRequestMutation(baseOptions?: Apollo.MutationHookOp
 export type DeclineTabRequestMutationHookResult = ReturnType<typeof useDeclineTabRequestMutation>;
 export type DeclineTabRequestMutationResult = Apollo.MutationResult<DeclineTabRequestMutation>;
 export type DeclineTabRequestMutationOptions = Apollo.BaseMutationOptions<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>;
-export const RequestJoinTabDocument = gql`
-    mutation RequestJoinTab($input: JoinTabForm!) {
-  requestJoinTab(input: $input)
-}
-    `;
-export type RequestJoinTabMutationFn = Apollo.MutationFunction<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
-
-/**
- * __useRequestJoinTabMutation__
- *
- * To run a mutation, you first call `useRequestJoinTabMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRequestJoinTabMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [requestJoinTabMutation, { data, loading, error }] = useRequestJoinTabMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RequestJoinTabMutation, RequestJoinTabMutationVariables>(RequestJoinTabDocument, options);
-      }
-export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
-export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
-export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
 export const OpenTabRequestDocument = gql`
     mutation OpenTabRequest($input: OpenTabRequestInput!) {
   openTabRequest(input: $input)
@@ -4627,6 +4608,37 @@ export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptio
 export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
 export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
 export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
+export const RequestJoinTabDocument = gql`
+    mutation RequestJoinTab($input: JoinTabForm!) {
+  requestJoinTab(input: $input)
+}
+    `;
+export type RequestJoinTabMutationFn = Apollo.MutationFunction<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
+
+/**
+ * __useRequestJoinTabMutation__
+ *
+ * To run a mutation, you first call `useRequestJoinTabMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestJoinTabMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestJoinTabMutation, { data, loading, error }] = useRequestJoinTabMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RequestJoinTabMutation, RequestJoinTabMutationVariables>(RequestJoinTabDocument, options);
+      }
+export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
+export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
+export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
 export const GetClientSessionDocument = gql`
     query GetClientSession {
   getClientSession {

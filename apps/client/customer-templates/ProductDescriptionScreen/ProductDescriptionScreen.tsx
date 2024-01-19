@@ -156,7 +156,7 @@ export const ProductDescriptionScreen = () => {
               objectFit="cover"
               style={{ borderRadius: 5 }}
             />
-            <PriceTag price={parseToCurrency(data?.getProductByID?.price)} />
+            <PriceTag price={parseToCurrency(data?.getProductByID?.price, data?.getProductByID?.currency)} />
           </Box>
           <Box pt={"4"}>
             <Text fontWeight={"semibold"} fontSize={"25"}>

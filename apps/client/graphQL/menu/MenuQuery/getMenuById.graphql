@@ -14,6 +14,7 @@ query GetMenuByID($input: GetMenuById) {
 				price
 				description
 				quantity
+				currency
 			}
 		}
 	}

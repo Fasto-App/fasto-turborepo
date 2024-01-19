@@ -9,6 +9,8 @@ import { Context } from "../types";
 import { MenuModel } from "../../../models";
 import { MutationResolvers } from "../../../generated/graphql";
 
+const getCurrency = (country: "US" | "BR") => country === "US" ? "USD" : "BRL"
+
 // @ts-ignore
 const createProduct: MutationResolvers["createProduct"] = async (_parent, { input }, { db, business }) => {
     const Product = ProductModel(db);
@@ -45,7 +47,8 @@ const createProduct: MutationResolvers["createProduct"] = async (_parent, { inpu
             business: businessByID?._id,
             category: categoryByID?._id,
             addons: input?.addons,
-            quantity: input?.quantity
+            quantity: input?.quantity,
+            currency: getCurrency(businessByID.country)
         });
 
         if (input.file) {
