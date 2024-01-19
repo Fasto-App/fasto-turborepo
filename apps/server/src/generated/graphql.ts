@@ -1000,7 +1000,7 @@ export type Query = {
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllOrderDetailsByDate?: Maybe<Array<Maybe<OrderDetailsByDate>>>;
   getAllOrderDetailsByOrderID?: Maybe<Array<Maybe<OrderDetail>>>;
-  getAllProductsByBusinessID: Array<Maybe<Product>>;
+  getAllProductsByBusinessID: Array<Product>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
   getBusinessById: Business;
@@ -2130,7 +2130,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getAllOpenTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
   getAllOrderDetailsByDate?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderDetailsByDate']>>>, ParentType, ContextType>;
   getAllOrderDetailsByOrderID?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderDetail']>>>, ParentType, ContextType, RequireFields<QueryGetAllOrderDetailsByOrderIdArgs, 'orderID'>>;
-  getAllProductsByBusinessID?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType>;
+  getAllProductsByBusinessID?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
   getAllTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   getBusinessById?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<QueryGetBusinessByIdArgs, 'input'>>;

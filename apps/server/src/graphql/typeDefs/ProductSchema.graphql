@@ -1,5 +1,5 @@
 extend type Query {
-	getAllProductsByBusinessID: [Product]!
+	getAllProductsByBusinessID: [Product!]!
 	getProductByID(productID: ID!): Product
 	getMostSellingProducts: [Product]
 }
