@@ -24,6 +24,7 @@ query GetTabByID($input: GetById!) {
 				imageUrl
 				price
 				name
+				currency
 			}
 		}
 	}

@@ -263,6 +263,11 @@ export type CreateTableInput = {
   space: Scalars['ID'];
 };
 
+export enum Currency {
+  Brl = 'BRL',
+  Usd = 'USD'
+}
+
 export type CustomSplitInput = {
   amount: Scalars['Float'];
   patron: Scalars['ID'];
@@ -972,6 +977,7 @@ export type Product = {
   _id: Scalars['ID'];
   addonsID?: Maybe<Array<Maybe<Scalars['ID']>>>;
   category?: Maybe<Category>;
+  currency?: Maybe<Currency>;
   description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -994,7 +1000,7 @@ export type Query = {
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllOrderDetailsByDate?: Maybe<Array<Maybe<OrderDetailsByDate>>>;
   getAllOrderDetailsByOrderID?: Maybe<Array<Maybe<OrderDetail>>>;
-  getAllProductsByBusinessID: Array<Maybe<Product>>;
+  getAllProductsByBusinessID: Array<Product>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
   getBusinessById: Business;
@@ -1542,6 +1548,7 @@ export type ResolversTypes = {
   CreateSubResponse: ResolverTypeWrapper<CreateSubResponse>;
   CreateTabInput: CreateTabInput;
   CreateTableInput: CreateTableInput;
+  Currency: Currency;
   CustomSplitInput: CustomSplitInput;
   CustomerRequestPayFullInput: CustomerRequestPayFullInput;
   CustomerRequestSplitInput: CustomerRequestSplitInput;
@@ -2100,6 +2107,7 @@ export type ProductResolvers<ContextType = Context, ParentType extends Resolvers
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   addonsID?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
+  currency?: Resolver<Maybe<ResolversTypes['Currency']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2122,7 +2130,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getAllOpenTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
   getAllOrderDetailsByDate?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderDetailsByDate']>>>, ParentType, ContextType>;
   getAllOrderDetailsByOrderID?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderDetail']>>>, ParentType, ContextType, RequireFields<QueryGetAllOrderDetailsByOrderIdArgs, 'orderID'>>;
-  getAllProductsByBusinessID?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType>;
+  getAllProductsByBusinessID?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
   getAllTabsByBusinessID?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tab']>>>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   getBusinessById?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<QueryGetBusinessByIdArgs, 'input'>>;

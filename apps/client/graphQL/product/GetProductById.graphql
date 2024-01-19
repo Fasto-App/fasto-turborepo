@@ -6,5 +6,6 @@ query GetProductByID($productId: ID!) {
 		price
 		imageUrl
 		quantity
+		currency
 	}
 }
