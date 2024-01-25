@@ -212,10 +212,7 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
         return request.save()
       });
       const awaitedRequests = await Promise.all(savePromises);
-      console.log("awaitedRequests", awaitedRequests)
     }
-
-    // Tab closed. Perhaps send an email?
   }
 
   await foundCheckout.save()

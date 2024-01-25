@@ -41,6 +41,10 @@ export class Checkout {
   @prop({ default: 0 })
   public tax?: number;
 
+  public get taxValue() {
+    return getPercentageOfValue(this.total, this.tax ?? 0);
+  }
+
   @prop({ required: true, default: 0 })
   public total!: number;
 
