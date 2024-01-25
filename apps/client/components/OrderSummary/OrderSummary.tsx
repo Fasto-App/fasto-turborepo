@@ -10,7 +10,7 @@ import { useTranslation } from "next-i18next";
 
 type SummaryProps = {
   name: string;
-  price: number;
+  price: string;
   quantity: number;
   onPlusPress?: () => void;
   onMinusPress?: () => void;
@@ -61,7 +61,7 @@ export const SummaryComponent = ({ name,
           >
             {t("extras")}
           </Button>
-          <Text>{parseToCurrency(price)}</Text>
+          <Text>{price}</Text>
         </HStack>
       </HStack>
       <HStack space={1} alignItems={"center"} pb={1}>

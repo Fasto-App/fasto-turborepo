@@ -5,6 +5,7 @@ query GetMostSellingProducts {
 		imageUrl
 		name
 		totalOrdered
+		currency
 		category {
 			name
 			_id

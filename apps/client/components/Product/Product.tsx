@@ -31,7 +31,7 @@ type ProductTileProps = {
 
 type ProductCardProps = ProductTileProps & {
   description?: string;
-  price: number;
+  price: string;
 };
 
 type ProductTileWithCheckboxProps = ProductTileProps & {
@@ -43,12 +43,6 @@ const maxLength = 120;
 
 const IMAGE_PLACEHOLDER =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJtmXoCwCBNSm0w3SLD1aWW9m6kpRUoCFp2qmT7i5TTKE_KMRIfZUNReWEyJ6QWtx3Iww&usqp=CAU";
-
-const Price = ({ price }: { price: number }) => (
-  <Text fontWeight="400" fontSize={"lg"} mx={"4"}>
-    {`$${(price / 100).toFixed(2)}`}
-  </Text>
-);
 
 const ProductCard = ({
   name,
@@ -114,7 +108,9 @@ const ProductCard = ({
           {formattedDescriptions}
         </Text>
         <HStack alignItems="center" space={2} justifyContent="center">
-          <Price price={price} />
+          <Text fontWeight="400" fontSize={"lg"} mx={"4"}>
+            {price}
+          </Text>
           {onPress ? (
             <Button w={"100"} colorScheme="tertiary" onPress={onPress}>
               {t("edit")}

@@ -1,5 +1,5 @@
 extend type Query {
-	getAllProductsByBusinessID: [Product]!
+	getAllProductsByBusinessID: [Product!]!
 	getProductByID(productID: ID!): Product
 	getMostSellingProducts: [Product]
 }
@@ -20,6 +20,7 @@ type Product {
 	category: Category
 	quantity: Int
 	totalOrdered: Int
+	currency: Currency
 }
 
 input CreateProductInput {
@@ -40,4 +41,9 @@ input UpdateProductInput {
 	file: Upload
 	category: ID!
 	quantity: Int
+}
+
+enum Currency {
+	USD
+	BRL
 }

@@ -87,10 +87,10 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
               return <OrderTile key={order._id}
                 imageUrl={order.product.imageUrl}
                 name={order.product.name}
-                price={order.product.price}
+                price={parseToCurrency(order.product.price, order.product.currency)}
+                subTotal={parseToCurrency(order.subTotal, order.product.currency)}
                 quantity={order.quantity}
                 status={order.status}
-                subTotal={order.subTotal}
               />
             })}
         </VStack>
@@ -102,10 +102,10 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
 type OrderTileProps = {
   imageUrl: OrderDetail["product"]["imageUrl"];
   name: OrderDetail["product"]["name"];
-  price: OrderDetail["product"]["price"];
   quantity: OrderDetail["quantity"];
-  subTotal: OrderDetail["subTotal"];
   status: OrderDetail["status"];
+  price: string;
+  subTotal: string;
 }
 
 const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderTileProps) => {
@@ -120,7 +120,7 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
       </Center>
       <VStack pl={2} pt={3}>
         <Heading size={"sm"}>{`${name}`}</Heading>
-        <Text>{`${parseToCurrency(price)}`}</Text>
+        <Text>{price}</Text>
       </VStack>
     </HStack>
     <Center flex={1}>
@@ -137,7 +137,7 @@ const OrderTile = ({ imageUrl, name, price, quantity, status, subTotal }: OrderT
       </Select>
     </Center>
     <HStack flex={1} justifyContent={"space-between"}>
-      <Text>{`${parseToCurrency(subTotal)}`}</Text>
+      <Text>{subTotal}</Text>
       <Text >{`${quantity}x`}</Text>
       <Center p={6}>
         <CheckIcon />

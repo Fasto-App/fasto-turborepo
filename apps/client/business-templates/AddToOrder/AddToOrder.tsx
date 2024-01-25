@@ -284,7 +284,7 @@ export const AddToOrder = () => {
                   lastItem={index === orderItems.length - 1}
                   assignedToPersonIndex={selectedUserIndex}
                   name={order.name}
-                  price={order.price}
+                  price={parseToCurrency(order.price, order.currency)}
                   quantity={order.quantity}
                   onEditPress={() => console.log("EDIT")}
                   onRemovePress={() => {

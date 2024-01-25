@@ -1,12 +1,11 @@
-import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from "app-helpers";
-import { Box, HStack, Text, Image, Pressable, Badge } from "native-base";
+import { PRODUCT_PLACEHOLDER_IMAGE } from "app-helpers";
+import { Box, HStack, Text, Image, Pressable } from "native-base";
 import React from "react";
 import { PriceTag } from "./PriceTag";
-import { convertAbsoluteToRem } from "native-base/lib/typescript/theme/tools";
 
 type MenuItemProps = {
   name: string;
-  price: number;
+  price: string;
   uri?: string | null;
   description?: string | null;
   onPress: () => void;
@@ -49,7 +48,7 @@ const MenuItem = ({
             alt={""}
             borderRadius={5}
           />
-          <PriceTag price={parseToCurrency(price)} />
+          <PriceTag price={price} />
         </Box>
       </HStack>
     </Pressable>
