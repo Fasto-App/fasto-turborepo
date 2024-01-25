@@ -1,13 +1,11 @@
-import { getPercentageOfValue, paymentSchema, PaymentType } from "app-helpers";
-import { BusinessModel, OrderDetailModel, ProductModel, RequestModel, TableModel, TabModel, User, UserModel } from "../../../models";
-import { Checkout, CheckoutModel } from "../../../models/checkout";
+import { getPercentageOfValue, paymentSchema } from "app-helpers";
+import { BusinessModel, RequestModel, TableModel, TabModel, UserModel } from "../../../models";
+import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { MutationResolvers } from "../../../generated/graphql";
 import { updateProductQuantity } from "../helpers/helpers";
 import { ObjectId } from "mongodb";
-import { Connection } from "mongoose";
-import { ClientContext, UserContext } from "../types";
 import { getTableTotalPerPerson, splitBillCheckForErrors, splitByPatron } from "./helpers";
 
 // @ts-ignore
@@ -233,7 +231,9 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
       const serviceFeeValue = foundCheckout.serviceFeeValue
       const taxValue = foundCheckout.taxValue
       const absoluteTotal = foundCheckout.subTotal + tipValue + serviceFeeValue + taxValue
+
       foundCheckout.total = absoluteTotal
+      foundCheckout.updated_at = Date.now()
       await foundCheckout.save()
     }
 
@@ -262,12 +262,6 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
       case "ByPatron":
         //@ts-ignore
         const ordersByPatron = await splitByPatron(db, foundCheckout, foundUsers)
-
-        console.log({
-          fee: foundCheckout.serviceFeeValue,
-          tip: foundCheckout.tipValue,
-        })
-
         // 02. from the total of the orders, get the total of the tab with taxes, fee, and order for the table
         const tabTotalPerUser = getTableTotalPerPerson({
           subtotal: ordersByPatron.tab.subTotal,
@@ -279,10 +273,6 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
         // for each user, create a payment
         for (const user of foundUsers) {
           const individualTotal = (ordersByPatron[user._id.toString()].subTotal ?? 0) + tabTotalPerUser.total
-
-          console.log({
-            individualTotal,
-          })
 
           const payment = await PaymentModel(db).create({
             checkout: foundCheckout._id,

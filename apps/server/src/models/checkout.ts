@@ -1,5 +1,5 @@
 import { Connection, Types } from 'mongoose'
-import { prop, getModelForClass, Severity, modelOptions, DocumentType, } from '@typegoose/typegoose';
+import { prop, getModelForClass, Severity, modelOptions, } from '@typegoose/typegoose';
 import { getPercentageOfValue, type CheckoutStatusKeys, type SplitType } from 'app-helpers';
 
 @modelOptions({ options: { allowMixed: Severity.ALLOW } })
@@ -60,6 +60,9 @@ export class Checkout {
 
   @prop({ default: Date.now() })
   public created_date!: Date;
+
+  @prop({ default: Date.now() })
+  public updated_at!: number;
 };
 
 export const CheckoutModel = (conn: Connection) =>

@@ -201,6 +201,7 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
     // when the payment is made, subtract from
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
+    foundCheckout.updated_at = Date.now()
 
     await updateProductQuantity(foundCheckout, db)
 
@@ -211,7 +212,8 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
         request.status = "Completed"
         return request.save()
       });
-      const awaitedRequests = await Promise.all(savePromises);
+
+      await Promise.all(savePromises);
     }
   }
 
