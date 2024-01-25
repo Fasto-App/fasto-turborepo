@@ -168,8 +168,6 @@ const SettingsScreen = () => {
     }
   }, [QR_CODE, isAdmin])
 
-  console.log(QR_CODE)
-
   return (
     <VStack space="4" px={"2"}>
       <ListBorderTile>
