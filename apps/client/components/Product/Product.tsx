@@ -26,6 +26,7 @@ type ProductTileProps = {
   imageUrl?: string;
   description?: string | null;
   quantity?: number | null;
+  hideButton?: boolean;
 };
 
 type ProductCardProps = ProductTileProps & {
@@ -89,18 +90,18 @@ const ProductCard = ({
         <Text fontSize={"xs"} fontWeight={"500"} textAlign={"center"}>
           {quantity ? (
             quantity <= MINIMUM_ITEMS_QUANTITY ? (
-              <Badge
-                colorScheme={"error"}
-                variant={"solid"}
-              >{`${t("lowStock")}: ${quantity}`}</Badge>
+              <Badge colorScheme={"error"} variant={"solid"}>{`${t(
+                "lowStock"
+              )}: ${quantity}`}</Badge>
             ) : (
-              <Badge
-                colorScheme={"success"}
-                variant={"outline"}
-              >{`${t("inStock")}: ${quantity}`}</Badge>
+              <Badge colorScheme={"success"} variant={"outline"}>{`${t(
+                "inStock"
+              )}: ${quantity}`}</Badge>
             )
           ) : (
-            <Badge colorScheme={"orange"} variant={"solid"}>{`${t("noStock")}`}</Badge>
+            <Badge colorScheme={"orange"} variant={"solid"}>{`${t(
+              "noStock"
+            )}`}</Badge>
           )}
         </Text>
         <Text fontWeight="400" textAlign={"center"} flex={1}>
@@ -129,6 +130,7 @@ const ProductTile = ({
   ctaTitle,
   description,
   quantity,
+  hideButton,
 }: ProductTileProps) => {
   const { t } = useTranslation("common");
 
@@ -153,21 +155,18 @@ const ProductTile = ({
           <Text fontSize={"xs"} fontWeight={"500"} textAlign={"left"}>
             {quantity ? (
               quantity <= MINIMUM_ITEMS_QUANTITY ? (
-                <Badge
-                  colorScheme={"error"}
-                  variant={"solid"}
-                >{`${t("lowStock")}: ${quantity}`}</Badge>
+                <Badge colorScheme={"error"} variant={"solid"}>{`${t(
+                  "lowStock"
+                )}: ${quantity}`}</Badge>
               ) : (
-                <Badge
-                  colorScheme={"success"}
-                  variant={"outline"}
-                >{`${t("inStock")}: ${quantity}`}</Badge>
+                <Badge colorScheme={"success"} variant={"outline"}>{`${t(
+                  "inStock"
+                )}: ${quantity}`}</Badge>
               )
             ) : (
-              <Badge
-                colorScheme={"orange"}
-                variant={"solid"}
-              >{`${t("noStock")}`}</Badge>
+              <Badge colorScheme={"orange"} variant={"solid"}>{`${t(
+                "noStock"
+              )}`}</Badge>
             )}
           </Text>
           {formattedDescriptions ? (
@@ -182,7 +181,12 @@ const ProductTile = ({
           justifyContent="space-between"
           py={4}
         >
-          <Button w={"100"} colorScheme="tertiary" onPress={onPress}>
+          <Button
+            w={"100"}
+            colorScheme="tertiary"
+            onPress={onPress}
+            isDisabled={hideButton || (!!quantity && quantity <= 0)}
+          >
             {ctaTitle}
           </Button>
         </HStack>

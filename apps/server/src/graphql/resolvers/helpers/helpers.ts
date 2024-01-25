@@ -2,6 +2,7 @@ import { Connection } from "mongoose";
 import { AddressModel, BusinessModel, OrderDetailModel, ProductModel } from "../../../models";
 import { Checkout } from "../../../models/checkout";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
+import { Bugsnag } from '../../../bugsnag/bugsnag';
 
 export const updateProductQuantity = async (foundCheckout: Checkout, db: Connection) => {
   const ordersDetails = await OrderDetailModel(db).find({ _id: { $in: foundCheckout.orders } });
@@ -15,10 +16,11 @@ export const updateProductQuantity = async (foundCheckout: Checkout, db: Connect
     // subtract
     if (product?.quantity && product.quantity >= quantity) {
       product.quantity = product.quantity - quantity;
+      product.totalOrdered = product.totalOrdered + quantity
       await product.save();
       console.log(`Product ${product._id} has been updated`);
     } else {
-      console.error(`Insufficient quantity for product ${product?._id}`);
+      Bugsnag.notify(`Insufficient quantity for product ${product?._id}`)
     }
   }
 }

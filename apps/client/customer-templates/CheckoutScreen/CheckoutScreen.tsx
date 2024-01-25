@@ -319,7 +319,7 @@ export const OrderTotals = () => {
 
       <HStack justifyContent={"space-between"} pt={2} px={4}>
         <Text fontSize={"xl"} bold>{t('totalAmount')}</Text>
-        <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal + serviceFeeValue)}</Text>
+        <Text fontSize={"xl"} bold>{parseToCurrency(absoluteTotal)}</Text>
       </HStack>
     </Box>
   )

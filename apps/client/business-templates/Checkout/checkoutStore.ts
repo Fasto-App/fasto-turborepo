@@ -154,7 +154,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
   // function that receives a value and the user id
   // it calculates the logic and set the new customSubtotal
   setCustomInputOnChange: (userId: string, value: string) => {
-    const { customSubTotals, total, selectedDiscount, customDiscount, selectedTip, customTip, tip, discount, selectedUsers } = get()
+    const { customSubTotals, total, selectedDiscount, customDiscount, selectedTip, customTip, tip, discount, selectedUsers, serviceFeeValue } = get()
 
     const text = value.replace(/[$,.]/g, '');
     const convertedValue = Number(text);
@@ -172,7 +172,7 @@ export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSele
       return acc + customSubTotals[key]
     }, 0)
 
-    const absoluteTotal = total - valueOfDiscount + valueOfTip
+    const absoluteTotal = total - valueOfDiscount + valueOfTip + serviceFeeValue
 
     const customTotalRemaing = absoluteTotal - customSummed
 
@@ -254,6 +254,8 @@ export const useComputedChekoutStore = () => {
       }
     }
   }, { tab: { subTotal: valueOfTip } } as SPlitByPatron)
+
+  computedSplitByPatron.tab.subTotal += store.serviceFeeValue
 
   // if there is a subtotal, add the amount per user to each user
   if (computedSplitByPatron.tab.subTotal) {
