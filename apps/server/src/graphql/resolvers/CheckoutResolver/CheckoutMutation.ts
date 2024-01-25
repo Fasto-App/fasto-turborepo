@@ -139,10 +139,10 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
       // from the found checkout, create the payment method and update the checkout
       const payment = await Payment.create({
         checkout: foundCheckout._id,
-        amount: foundCheckout.total,
+        amount: Math.ceil(foundCheckout.total),
         tip,
         discount,
-        patron: typeof foundPatron === "string" ? foundPatron : foundPatron?._id,
+        patron: foundPatron?._id,
         paymentMethod,
         paid: true,
         splitType: "Full",
@@ -180,9 +180,11 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
   const foundUser = await User.findById(input.patron)
   const foundBusiness = await Business.findById(client?.business)
 
-  if (!foundCheckout || !foundUser || !foundBusiness?.stripeAccountId) throw ApolloError(new Error("Not enough data to perfom the action"), 'BadRequest')
-  if (foundCheckout?.splitType) throw ApolloError(new Error('Checkout is already splited'), 'BadRequest')
+  if (!foundCheckout || !foundUser || !foundBusiness?.stripeAccountId) {
+    throw ApolloError(new Error("Not enough data to perfom the action"), 'BadRequest')
+  }
 
+  if (foundCheckout?.splitType) throw ApolloError(new Error('Checkout is already splited'), 'BadRequest')
   // before creating the payment, we get the total of service fee
   // tipe and taxes, and then add all of the to update the total value
   const serviceFeeValue = getPercentageOfValue(foundCheckout.subTotal, foundCheckout.serviceFee || 0)
@@ -194,10 +196,10 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
 
   const payment = await Payment.create({
     checkout: foundCheckout._id,
-    amount: foundCheckout?.total,
+    amount: Math.ceil(foundCheckout?.total),
     patron: foundUser._id,
     tip: tipValue,
-    serviceFee: serviceFeeValue,
+    serviceFee: Math.ceil(serviceFeeValue),
     discount: foundCheckout?.discount,
     splitType: "Full",
   })
@@ -247,9 +249,9 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
           const payment = await PaymentModel(db).create({
             checkout: foundCheckout._id,
             patron: user._id,
-            amount: totalEqually,
+            amount: Math.ceil(totalEqually),
             splitType: input.splitType,
-            serviceFee,
+            serviceFee: Math.ceil(serviceFee),
             tip,
           })
 
@@ -276,11 +278,11 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
 
           const payment = await PaymentModel(db).create({
             checkout: foundCheckout._id,
-            amount: individualTotal,
+            amount: Math.ceil(individualTotal),
             patron: user._id,
             splitType: input.splitType,
             tip: tabTotalPerUser.tipSplited,
-            serviceFee: tabTotalPerUser.feeSplited
+            serviceFee: Math.ceil(tabTotalPerUser.feeSplited)
           })
 
           foundCheckout.payments?.push(payment._id)
@@ -308,9 +310,10 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
           const payment = await PaymentModel(db).create({
             checkout: foundCheckout._id,
             patron: split.patron,
-            amount: split.amount,
+            amount: Math.ceil(split.amount),
             splitType: input.splitType,
             tip: input.tip,
+            serviceFee: Math.ceil(foundCheckout.serviceFeeValue / input.customSplit.length),
           })
 
           foundCheckout.payments?.push(payment._id)

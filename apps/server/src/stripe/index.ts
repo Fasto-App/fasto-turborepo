@@ -133,11 +133,11 @@ export const createPaymentIntent = async ({
 
   try {
     const paymentIntent = await stripe(country).paymentIntents.create({
-      amount: Math.trunc(amount),
+      amount: Math.ceil(amount),
       currency: country === "US" ? "USD" : "BRL",
       description,
       automatic_payment_methods: { enabled: true },
-      application_fee_amount: serviceFee,
+      application_fee_amount: Math.ceil(serviceFee ?? 0),
       transfer_data: {
         destination: stripeAccount,
       },
