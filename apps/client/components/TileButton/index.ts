@@ -1,1 +1,1 @@
-export * from "./TileButton"
+export * from "./TileButton";

@@ -1,1 +1,1 @@
-export * from "./SuccessAnimation"
+export * from "./SuccessAnimation";

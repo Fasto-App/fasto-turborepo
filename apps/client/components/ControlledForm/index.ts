@@ -1,2 +1,2 @@
-export * from "./ControlledForm"
-export * from "./ControlledInput"
+export * from "./ControlledForm";
+export * from "./ControlledInput";

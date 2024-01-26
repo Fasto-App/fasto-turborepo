@@ -1,1 +1,1 @@
-export * from "./FDSTab"
+export * from "./FDSTab";

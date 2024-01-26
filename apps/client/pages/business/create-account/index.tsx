@@ -6,24 +6,25 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 
 export default function CreateAccountPage() {
-  const { t } = useTranslation('businessCreateAccount');
+	const { t } = useTranslation("businessCreateAccount");
 
-  return (
-    <>
-      <Head>
-        <title>{t("createPassword")}</title>
-      </Head>
-      <CreateAccountScreen />
-    </>)
+	return (
+		<>
+			<Head>
+				<title>{t("createPassword")}</title>
+			</Head>
+			<CreateAccountScreen />
+		</>
+	);
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "en", [
-        'common',
-        'businessCreateAccount'
-      ])),
-    },
-  };
+	return {
+		props: {
+			...(await serverSideTranslations(locale ?? "en", [
+				"common",
+				"businessCreateAccount",
+			])),
+		},
+	};
 };

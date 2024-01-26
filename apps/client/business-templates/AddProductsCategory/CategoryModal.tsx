@@ -10,119 +10,119 @@ import { ModalAddButtons } from "../../components/ModalButtons";
 import { useTranslation } from "next-i18next";
 
 type CategoriesModalProps = {
-  showModal: boolean;
-  setShowModal: (val: boolean) => void;
-  categoryControl: Control<CategoryFields>;
-  categoryFormState: FormState<CategoryFields>;
-  handleCategorySubmit: UseFormHandleSubmit<CategoryFields>;
-  resetCategoryForm: () => void;
+	showModal: boolean;
+	setShowModal: (val: boolean) => void;
+	categoryControl: Control<CategoryFields>;
+	categoryFormState: FormState<CategoryFields>;
+	handleCategorySubmit: UseFormHandleSubmit<CategoryFields>;
+	resetCategoryForm: () => void;
 };
 
 const CategoryModal = ({
-  showModal,
-  setShowModal,
-  categoryControl,
-  categoryFormState,
-  handleCategorySubmit,
-  resetCategoryForm,
+	showModal,
+	setShowModal,
+	categoryControl,
+	categoryFormState,
+	handleCategorySubmit,
+	resetCategoryForm,
 }: CategoriesModalProps) => {
-  const setCategory = useAppStore((state) => state.setCategory);
-  const categoryId = useAppStore((state) => state.category);
-  const isEditing = !!categoryId;
+	const setCategory = useAppStore((state) => state.setCategory);
+	const categoryId = useAppStore((state) => state.category);
+	const isEditing = !!categoryId;
 
-  const { t } = useTranslation("businessCategoriesProducts");
+	const { t } = useTranslation("businessCategoriesProducts");
 
-  const { updateCategory, createCategory, deleteCategory, categoryError } =
-    useCategoryMutationHook();
+	const { updateCategory, createCategory, deleteCategory, categoryError } =
+		useCategoryMutationHook();
 
-  const closeModalAndClearQueryParams = () => {
-    setCategory(null);
-    setShowModal(false);
-    resetCategoryForm();
-  };
+	const closeModalAndClearQueryParams = () => {
+		setCategory(null);
+		setShowModal(false);
+		resetCategoryForm();
+	};
 
-  const onCategorySubmit = async (values: CategoryFields) => {
-    console.log("onCategorySubmit", values);
-    // if theres a categoryId, then we are updating a category
-    if (values._id) {
-      updateCategory({
-        variables: {
-          input: {
-            _id: values._id,
-            name: values.categoryName,
-          },
-        },
-      });
-    } else {
-      createCategory({
-        variables: {
-          input: {
-            name: values.categoryName,
-          },
-        },
-      });
-    }
+	const onCategorySubmit = async (values: CategoryFields) => {
+		console.log("onCategorySubmit", values);
+		// if theres a categoryId, then we are updating a category
+		if (values._id) {
+			updateCategory({
+				variables: {
+					input: {
+						_id: values._id,
+						name: values.categoryName,
+					},
+				},
+			});
+		} else {
+			createCategory({
+				variables: {
+					input: {
+						name: values.categoryName,
+					},
+				},
+			});
+		}
 
-    closeModalAndClearQueryParams();
-  };
+		closeModalAndClearQueryParams();
+	};
 
-  const deleteCategoryCb = () => {
-    if (!categoryId) return;
+	const deleteCategoryCb = () => {
+		if (!categoryId) return;
 
-    closeModalAndClearQueryParams();
-    deleteCategory({
-      variables: {
-        id: categoryId,
-      },
-    });
-  };
+		closeModalAndClearQueryParams();
+		deleteCategory({
+			variables: {
+				id: categoryId,
+			},
+		});
+	};
 
-  return (
-    <>
-      <Modal isOpen={showModal} onClose={closeModalAndClearQueryParams}>
-        <Modal.Content maxWidth="400px">
-          <Modal.CloseButton />
-          <Modal.Header>
-            {isEditing ? t("editTitle") : t("addTitle")}
-          </Modal.Header>
-          <Modal.Body>
-            {/* Name */}
-            <ControlledForm
-              control={categoryControl}
-              formState={categoryFormState}
-              Config={{
-                categoryName: {
-                  name: "categoryName",
-                  label: t("dishesCategories"),
-                  placeholder: t("dishesCategories"),
-                  helperText: t("categoriesHelperText"),
-                  isRequired: true,
-                },
-              }}
-            />
-            {isEditing ? (
-              <DeleteAlert
-                deleteItem={() => {
-                  deleteCategoryCb();
-                  setShowModal(false);
-                }}
-                title={t("delete")}
-                body={t("deleteCategoryBody")}
-                cancel={t("cancel")}
-              />
-            ) : null}
-          </Modal.Body>
-          <Modal.Footer borderColor={"white"}>
-            <ModalAddButtons
-              isEditing={isEditing}
-              cancelAction={closeModalAndClearQueryParams}
-              saveAction={handleCategorySubmit(onCategorySubmit)}
-            />
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
-    </>
-  );
+	return (
+		<>
+			<Modal isOpen={showModal} onClose={closeModalAndClearQueryParams}>
+				<Modal.Content maxWidth="400px">
+					<Modal.CloseButton />
+					<Modal.Header>
+						{isEditing ? t("editTitle") : t("addTitle")}
+					</Modal.Header>
+					<Modal.Body>
+						{/* Name */}
+						<ControlledForm
+							control={categoryControl}
+							formState={categoryFormState}
+							Config={{
+								categoryName: {
+									name: "categoryName",
+									label: t("dishesCategories"),
+									placeholder: t("dishesCategories"),
+									helperText: t("categoriesHelperText"),
+									isRequired: true,
+								},
+							}}
+						/>
+						{isEditing ? (
+							<DeleteAlert
+								deleteItem={() => {
+									deleteCategoryCb();
+									setShowModal(false);
+								}}
+								title={t("delete")}
+								body={t("deleteCategoryBody")}
+								cancel={t("cancel")}
+							/>
+						) : null}
+					</Modal.Body>
+					<Modal.Footer borderColor={"white"}>
+						<ModalAddButtons
+							isEditing={isEditing}
+							cancelAction={closeModalAndClearQueryParams}
+							saveAction={handleCategorySubmit(onCategorySubmit)}
+						/>
+					</Modal.Footer>
+				</Modal.Content>
+			</Modal>
+		</>
+	);
 };
 
 export { CategoryModal };

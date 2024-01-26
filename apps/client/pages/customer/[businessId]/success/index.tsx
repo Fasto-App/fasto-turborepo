@@ -7,27 +7,29 @@ import Head from "next/head";
 import { SuccessScreen } from "../../../../customer-templates/SuccessScreen/SuccessScreen";
 
 export default function CheckoutPage() {
-  const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
-  return <>
-    <Head>
-      <title>{t("checkout")}</title>
-    </Head>
-    <SuccessScreen />
-  </>
+	return (
+		<>
+			<Head>
+				<title>{t("checkout")}</title>
+			</Head>
+			<SuccessScreen />
+		</>
+	);
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "en", [
-        'common',
-        'customerCheckout'
-      ])),
-    },
-  };
+	return {
+		props: {
+			...(await serverSideTranslations(locale ?? "en", [
+				"common",
+				"customerCheckout",
+			])),
+		},
+	};
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  return { paths: [], fallback: true };
+	return { paths: [], fallback: true };
 };

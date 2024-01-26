@@ -1,2 +1,2 @@
-export * from "./businessCookies"
-export * from "./clientCookies"
+export * from "./businessCookies";
+export * from "./clientCookies";

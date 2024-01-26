@@ -31,4 +31,4 @@
 //   products: []
 // }
 
-export { }
+export {};

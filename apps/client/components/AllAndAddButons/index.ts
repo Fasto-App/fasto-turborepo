@@ -1,1 +1,1 @@
-export * from './AllAndAddButtons';
+export * from "./AllAndAddButtons";

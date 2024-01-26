@@ -11,16 +11,16 @@
 // please read our getting started guide:
 // https://on.cypress.io/introduction-to-cypress
 
-describe('Test Landing Page', () => {
+describe("Test Landing Page", () => {
 	beforeEach(() => {
 		// Cypress starts out with a blank slate for each test
 		// so we must tell it to visit our website with the `cy.visit()` command.
 		// Since we want to visit the same URL at the start of all our tests,
 		// we include it in our beforeEach function so that it runs before each test
-		cy.visit('/');
+		cy.visit("/");
 	});
 
-	it('Find the hero element', () => {
+	it("Find the hero element", () => {
 		// We use the `cy.get()` command to get all elements that match the selector.
 		// Then, we use `should` to assert that there are two matched items,
 		// which are the two default items.
@@ -32,13 +32,15 @@ describe('Test Landing Page', () => {
 		// and then perform an assertion with `should`.
 		// cy.get('.todo-list li').first().should('have.text', 'Pay electric bill');
 		// cy.get('.todo-list li').last().should('have.text', 'Walk the dog');
-		cy.contains('THE SMARTEST WAY TO PLACE YOUR ORDER');
+		cy.contains("THE SMARTEST WAY TO PLACE YOUR ORDER");
 	});
 
-	it('Navigate to Signup', () => {
+	it("Navigate to Signup", () => {
 		// We'll store our item text in a variable so we can reuse it
-		cy.contains('CREATE AN ACCOUNT', { matchCase: false }).click({ force: true });
-		cy.contains('Welcome to Fasto', { matchCase: false });
+		cy.contains("CREATE AN ACCOUNT", { matchCase: false }).click({
+			force: true,
+		});
+		cy.contains("Welcome to Fasto", { matchCase: false });
 	});
 
 	// it('can check off an item as completed', () => {
@@ -110,4 +112,4 @@ describe('Test Landing Page', () => {
 	// });
 });
 
-export { }
+export {};

@@ -1,4 +1,4 @@
-import { BusinessDashboard } from './../business-templates/Dashboard/BusinessDashboard';
+import { BusinessDashboard } from "./../business-templates/Dashboard/BusinessDashboard";
 // import the original type declarations
 import "i18next";
 
@@ -21,41 +21,41 @@ import customerProductDescription from "../public/locales/en/customerProductDesc
 import customerSettings from "../public/locales/en/customerSettings.json";
 import customerCart from "../public/locales/en/customerCart.json";
 import common from "../public/locales/en/common.json";
-import landingPage from "../public/locales/en/landingPage.json"
+import landingPage from "../public/locales/en/landingPage.json";
 import customerPayment from "../public/locales/en/customerPayment.json";
-import businessSubscriptions from "../public/locales/en/businessSubscriptions.json"
-import businessDashboard from "../public/locales/en/businessDashboard.json"
+import businessSubscriptions from "../public/locales/en/businessSubscriptions.json";
+import businessDashboard from "../public/locales/en/businessDashboard.json";
 
 declare module "i18next" {
-  // Extend CustomTypeOptions
-  interface CustomTypeOptions {
-    // custom namespace type, if you changed it
-    defaultNS: "common";
-    // custom resources type
-    resources: {
-      common: typeof common;
-      customerCart: typeof customerCart;
-      customerSettings: typeof customerSettings;
-      customerCheckout: typeof customerCheckout;
-      customerHome: typeof customerHome;
-      customerProductDescription: typeof customerProductDescription;
-      customerPayment: typeof customerPayment;
-      businessLogin: typeof businessLogin;
-      businessSignUp: typeof businessSignUp;
-      businessCreateAccount: typeof businessCreateAccount;
-      businessForgotPassword: typeof businessForgotPassword;
-      businessResetPassword: typeof businessResetPassword;
-      businessCategoriesProducts: typeof businessCategoriesProducts;
-      businessMenu: typeof businessMenu;
-      businessTables: typeof businessTables;
-      businessSettings: typeof businessSettings;
-      businessAddToOrder: typeof businessAddToOrder;
-      businessCheckout: typeof businessCheckout;
-      businessOrders: typeof businessOrders;
-      businessPayments: typeof businessPayments;
-      landingPage: typeof landingPage;
-      businessSubscriptions: typeof businessSubscriptions;
-      businessDashboard: typeof businessDashboard
-    };
-  }
+	// Extend CustomTypeOptions
+	interface CustomTypeOptions {
+		// custom namespace type, if you changed it
+		defaultNS: "common";
+		// custom resources type
+		resources: {
+			common: typeof common;
+			customerCart: typeof customerCart;
+			customerSettings: typeof customerSettings;
+			customerCheckout: typeof customerCheckout;
+			customerHome: typeof customerHome;
+			customerProductDescription: typeof customerProductDescription;
+			customerPayment: typeof customerPayment;
+			businessLogin: typeof businessLogin;
+			businessSignUp: typeof businessSignUp;
+			businessCreateAccount: typeof businessCreateAccount;
+			businessForgotPassword: typeof businessForgotPassword;
+			businessResetPassword: typeof businessResetPassword;
+			businessCategoriesProducts: typeof businessCategoriesProducts;
+			businessMenu: typeof businessMenu;
+			businessTables: typeof businessTables;
+			businessSettings: typeof businessSettings;
+			businessAddToOrder: typeof businessAddToOrder;
+			businessCheckout: typeof businessCheckout;
+			businessOrders: typeof businessOrders;
+			businessPayments: typeof businessPayments;
+			landingPage: typeof landingPage;
+			businessSubscriptions: typeof businessSubscriptions;
+			businessDashboard: typeof businessDashboard;
+		};
+	}
 }

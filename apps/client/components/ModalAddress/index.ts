@@ -1,1 +1,1 @@
-export * from "./ModalAddress"
+export * from "./ModalAddress";

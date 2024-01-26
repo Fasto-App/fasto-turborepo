@@ -1,1 +1,1 @@
-export * from "./ErrorBanner"
+export * from "./ErrorBanner";

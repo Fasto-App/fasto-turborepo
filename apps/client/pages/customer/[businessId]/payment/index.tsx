@@ -7,27 +7,27 @@ import { useTranslation } from "next-i18next";
 import { PaymentScreen } from "../../../../customer-templates/PaymentScreen";
 
 export default function MenuPage() {
-  const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
-  return <>
-    <Head>
-      {/* <title>{t("payment")}</title> */}
-    </Head>
-    <PaymentScreen />
-  </>
+	return (
+		<>
+			<Head>{/* <title>{t("payment")}</title> */}</Head>
+			<PaymentScreen />
+		</>
+	);
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "en", [
-        'common',
-        'customerPayment'
-      ])),
-    },
-  };
+	return {
+		props: {
+			...(await serverSideTranslations(locale ?? "en", [
+				"common",
+				"customerPayment",
+			])),
+		},
+	};
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  return { paths: [], fallback: true };
+	return { paths: [], fallback: true };
 };

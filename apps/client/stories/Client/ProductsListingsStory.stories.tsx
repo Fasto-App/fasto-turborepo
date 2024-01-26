@@ -1,21 +1,19 @@
 //@ts-nocheck
-import React from 'react';
-import { StoryProvider } from '../StoryProvider';
-import { ProductsListingScreen } from '../../customer-templates/MenuScreen/MenuScreen';
+import React from "react";
+import { StoryProvider } from "../StoryProvider";
+import { ProductsListingScreen } from "../../customer-templates/MenuScreen/MenuScreen";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-	title: 'Client/Menu',
+	title: "Client/Menu",
 	component: ProductsListingScreen,
 	decorators: [StoryProvider],
 	argTypes: {
-		primary: { control: 'color' },
+		primary: { control: "color" },
 	},
 };
 
-const Template = (args) => (
-	<ProductsListingScreen {...args} />
-);
+const Template = (args) => <ProductsListingScreen {...args} />;
 
 // Does it need NatibeBase?
 

@@ -1,35 +1,35 @@
 //@ts-nocheck
-import React from "react"
+import React from "react";
 import Menu from "../../pages/business/admin/menu";
-import { StoryProvider } from "../StoryProvider"
+import { StoryProvider } from "../StoryProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  title: "Business/Menu",
-  component: Menu,
-  decorators: [StoryProvider],
-  argTypes: {
-    primary: { control: "color" },
-  }
-}
+	title: "Business/Menu",
+	component: Menu,
+	decorators: [StoryProvider],
+	argTypes: {
+		primary: { control: "color" },
+	},
+};
 
-const Template = (args) => <Menu {...args} />
+const Template = (args) => <Menu {...args} />;
 
 export const InitialState = Template.bind({});
 InitialState.args = {
-  // primary: "red",
-}
+	// primary: "red",
+};
 
 InitialState.story = {
-  parameters: {
-    nextRouter: {
-      path: "/profile/[id]",
-      asPath: "/profile/lifeiscontent",
-      query: {
-        token: "lifeiscontent",
-        email: "test@gmail.com"
-      },
-    },
-  },
+	parameters: {
+		nextRouter: {
+			path: "/profile/[id]",
+			asPath: "/profile/lifeiscontent",
+			query: {
+				token: "lifeiscontent",
+				email: "test@gmail.com",
+			},
+		},
+	},
 };

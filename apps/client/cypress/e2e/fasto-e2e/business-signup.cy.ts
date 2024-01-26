@@ -3,17 +3,17 @@
 
 import { appRoute } from "fasto-route";
 
-describe('Business Sign Up Screen', () => {
+describe("Business Sign Up Screen", () => {
 	beforeEach(() => {
 		cy.visit(appRoute.businessRoute.signup);
 	});
 
-	it('Find H1 text', () => {
-		cy.contains('Welcome to Fasto', { matchCase: false });
+	it("Find H1 text", () => {
+		cy.contains("Welcome to Fasto", { matchCase: false });
 	});
 });
 
-export { }
+export {};
 // describe('example to-do app', () => {
 //   beforeEach(() => {
 //     // Cypress starts out with a blank slate for each test

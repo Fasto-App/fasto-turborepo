@@ -1,9 +1,5 @@
 import * as React from "react";
 
 export const Button = () => {
-  return (
-    <button>
-      Test
-    </button>
-  )
+	return <button>Test</button>;
 };

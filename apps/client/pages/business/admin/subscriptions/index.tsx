@@ -6,24 +6,25 @@ import { useTranslation } from "next-i18next";
 import { Subscriptions } from "../../../../business-templates/Subscription";
 
 export default function SubscriptionsPage() {
-  const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
-  return (
-    <>
-      <Head>
-        <title>{t("subscriptions")}</title>
-      </Head>
-      <Subscriptions />
-    </>)
+	return (
+		<>
+			<Head>
+				<title>{t("subscriptions")}</title>
+			</Head>
+			<Subscriptions />
+		</>
+	);
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "en", [
-        'common',
-        'businessSubscriptions'
-      ])),
-    },
-  };
+	return {
+		props: {
+			...(await serverSideTranslations(locale ?? "en", [
+				"common",
+				"businessSubscriptions",
+			])),
+		},
+	};
 };

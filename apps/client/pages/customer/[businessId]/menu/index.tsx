@@ -6,26 +6,26 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 
 export default function MenuPage() {
-  const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
-  return <>
-    <Head>
-      <title>{t("menu")}</title>
-    </Head>
-    <MenuScreen />
-  </>
+	return (
+		<>
+			<Head>
+				<title>{t("menu")}</title>
+			</Head>
+			<MenuScreen />
+		</>
+	);
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "en", [
-        'common',
-      ])),
-    },
-  };
+	return {
+		props: {
+			...(await serverSideTranslations(locale ?? "en", ["common"])),
+		},
+	};
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  return { paths: [], fallback: true };
+	return { paths: [], fallback: true };
 };

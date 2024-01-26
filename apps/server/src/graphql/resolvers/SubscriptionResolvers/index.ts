@@ -1,2 +1,2 @@
-export * from "./SubscriptionQuery"
-export * from "./SubscriptionMutation"
+export * from "./SubscriptionQuery";
+export * from "./SubscriptionMutation";

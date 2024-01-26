@@ -1,1 +1,1 @@
-export * from "./CheckoutScreen"
+export * from "./CheckoutScreen";

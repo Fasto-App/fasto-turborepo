@@ -1,25 +1,26 @@
-import { PresenceTransition } from 'native-base'
-import React, { PropsWithChildren } from 'react'
+import { PresenceTransition } from "native-base";
+import React, { PropsWithChildren } from "react";
 
 function Transition({
-  isVisible,
-  children
+	isVisible,
+	children,
 }: PropsWithChildren<{
-  isVisible: boolean
+	isVisible: boolean;
 }>) {
-  return (
-    <PresenceTransition
-      visible={isVisible}
-      initial={{ opacity: 0, }}
-      animate={{
-        opacity: 1,
-        transition: {
-          duration: 250
-        }
-      }}>
-      {children}
-    </PresenceTransition>
-  )
+	return (
+		<PresenceTransition
+			visible={isVisible}
+			initial={{ opacity: 0 }}
+			animate={{
+				opacity: 1,
+				transition: {
+					duration: 250,
+				},
+			}}
+		>
+			{children}
+		</PresenceTransition>
+	);
 }
 
-export { Transition }
+export { Transition };

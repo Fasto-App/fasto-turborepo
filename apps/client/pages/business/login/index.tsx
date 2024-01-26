@@ -6,24 +6,25 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 
 export default function LoginPage() {
-  const { t } = useTranslation('common');
+	const { t } = useTranslation("common");
 
-  return (
-    <>
-      <Head>
-        <title>{t("login")}</title>
-      </Head>
-      <LoginForm />
-    </>)
+	return (
+		<>
+			<Head>
+				<title>{t("login")}</title>
+			</Head>
+			<LoginForm />
+		</>
+	);
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "en", [
-        'common',
-        'businessLogin'
-      ])),
-    },
-  };
+	return {
+		props: {
+			...(await serverSideTranslations(locale ?? "en", [
+				"common",
+				"businessLogin",
+			])),
+		},
+	};
 };

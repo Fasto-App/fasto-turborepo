@@ -1,1 +1,1 @@
-export * from "./BottomSection"
+export * from "./BottomSection";

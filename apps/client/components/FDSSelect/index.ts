@@ -1,1 +1,1 @@
-export * from "./FDSSelected"
+export * from "./FDSSelected";

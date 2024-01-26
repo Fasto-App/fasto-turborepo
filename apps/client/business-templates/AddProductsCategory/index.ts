@@ -1,1 +1,1 @@
-export * from "./AddProductsCategories"
+export * from "./AddProductsCategories";

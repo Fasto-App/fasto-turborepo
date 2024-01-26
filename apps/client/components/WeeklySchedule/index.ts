@@ -1,1 +1,1 @@
-export * from "./WeeklySchedule"
+export * from "./WeeklySchedule";

@@ -4,31 +4,26 @@ import { useForm } from "react-hook-form";
 import { RegularInputConfig } from "../../components/ControlledForm";
 
 export const MenuConfig: RegularInputConfig = {
-  name: {
-    name: "name",
-    label: "Menu Name",
-    type: "text",
-    placeholder: "Weekends",
-    isRequired: true,
-  },
-}
+	name: {
+		name: "name",
+		label: "Menu Name",
+		type: "text",
+		placeholder: "Weekends",
+		isRequired: true,
+	},
+};
 
 export const useMenuHook = () => {
+	const { control, handleSubmit, formState } = useForm<menuSchemaInput>({
+		defaultValues: {
+			name: "",
+		},
+		resolver: zodResolver(menuSchema),
+	});
 
-  const {
-    control,
-    handleSubmit,
-    formState
-  } = useForm<menuSchemaInput>({
-    defaultValues: {
-      name: "",
-    },
-    resolver: zodResolver(menuSchema),
-  });
-
-  return {
-    control,
-    handleSubmit,
-    formState
-  }
-}
+	return {
+		control,
+		handleSubmit,
+		formState,
+	};
+};

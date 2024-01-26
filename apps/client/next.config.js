@@ -1,15 +1,15 @@
-const { i18n } = require('./next-i18next.config');
-const { withExpo } = require('@expo/next-adapter');
-const withFonts = require('next-fonts');
-const withPlugins = require('next-compose-plugins');
-const withTM = require('next-transpile-modules')([
-	'react-native-web',
-	'react-native-svg',
-	'native-base',
-	'react-native-svg',
-	'react-native',
-	'app-helpers',
-	'fasto-route',
+const { i18n } = require("./next-i18next.config");
+const { withExpo } = require("@expo/next-adapter");
+const withFonts = require("next-fonts");
+const withPlugins = require("next-compose-plugins");
+const withTM = require("next-transpile-modules")([
+	"react-native-web",
+	"react-native-svg",
+	"native-base",
+	"react-native-svg",
+	"react-native",
+	"app-helpers",
+	"fasto-route",
 ]);
 
 /**
@@ -35,8 +35,8 @@ const nextConfig = {
 	images: {
 		remotePatterns: [
 			{
-				protocol: 'https',
-				hostname: '*',
+				protocol: "https",
+				hostname: "*",
 			},
 		],
 	},
@@ -48,8 +48,8 @@ const nextConfig = {
 	headers() {
 		return [
 			{
-				source: '/.well-known/apple-developer-merchantid-domain-association',
-				headers: [{ key: 'content-type', value: 'application/json' }],
+				source: "/.well-known/apple-developer-merchantid-domain-association",
+				headers: [{ key: "content-type", value: "application/json" }],
 			},
 		];
 	},
