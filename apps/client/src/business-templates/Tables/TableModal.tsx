@@ -152,7 +152,10 @@ export const NewTabModal = ({
 export const OccupiedTabModal = ({
 	tabId,
 	setIsModalOpen,
-}: { tabId?: string; setIsModalOpen: () => void }) => {
+}: {
+	tabId?: string;
+	setIsModalOpen: () => void;
+}) => {
 	const { t } = useTranslation("businessTables");
 
 	const router = useRouter();

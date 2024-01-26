@@ -5,7 +5,8 @@
 	"version": "0.0.0",
 	"scripts": {
 		"dev": "email dev -p 3001",
-		"export": "email export"
+		"export": "email export",
+		"format": "npx @biomejs/biome format ./src/ --write"
 	},
 	"dependencies": {
 		"@react-email/button": "^0.0.6",

@@ -40,7 +40,9 @@ import { getLocale } from "../../authUtilities/utils";
 
 const Subscription = ({
 	signedUpSub,
-}: { signedUpSub: GetSignUpSubscriptionsQuery["getSignUpSubscription"] }) => {
+}: {
+	signedUpSub: GetSignUpSubscriptionsQuery["getSignUpSubscription"];
+}) => {
 	const { t } = useTranslation("businessSubscriptions");
 	const router = useRouter();
 

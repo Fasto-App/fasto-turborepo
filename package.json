@@ -15,9 +15,9 @@
 	"scripts": {
 		"postinstall": "husky install",
 		"dev": "turbo run dev --parallel",
-		"ft": "turbo run format --parallel",
+		"format": "turbo run format --parallel",
 		"lint": "turbo run lint",
-		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
+		"ft": "prettier --write \"**/*.{ts,tsx,md}\"",
 		"build:client": "turbo run build --filter=client",
 		"build:api": "turbo run build --filter=server",
 		"start:client": "turbo run start --filter=client",

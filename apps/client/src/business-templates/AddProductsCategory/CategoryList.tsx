@@ -19,7 +19,10 @@ type Categories = NonNullable<
 const CategoryList = ({
 	resetAll,
 	categories,
-}: { resetAll: () => void; categories: Categories }) => {
+}: {
+	resetAll: () => void;
+	categories: Categories;
+}) => {
 	const [showCategoryModal, setShowCategoryModal] = useState(false);
 	const setCategory = useAppStore((state) => state.setCategory);
 	const categoryId = useAppStore((state) => state.category);

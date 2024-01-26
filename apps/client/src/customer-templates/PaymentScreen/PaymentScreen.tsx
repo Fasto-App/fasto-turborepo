@@ -28,7 +28,11 @@ const Row = ({
 	title,
 	value,
 	bold,
-}: { title: string; value: string; bold?: boolean }) => (
+}: {
+	title: string;
+	value: string;
+	bold?: boolean;
+}) => (
 	<HStack justifyContent={"space-between"}>
 		<Text fontSize={"lg"} bold={bold}>
 			{title}

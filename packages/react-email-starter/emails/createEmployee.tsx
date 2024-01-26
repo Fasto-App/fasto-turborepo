@@ -70,7 +70,12 @@ export function CreateEmployeeEmail({
 	name = "John Doe",
 	businessName = "Fasto",
 	locale = "en",
-}: { url: string; name: string; businessName: string; locale: Locale }) {
+}: {
+	url: string;
+	name: string;
+	businessName: string;
+	locale: Locale;
+}) {
 	return (
 		<Html>
 			<Head />

@@ -58,7 +58,10 @@ export const texts = {
 export function WelcomeEmail({
 	url = "https://fastoapp.com",
 	locale = "en",
-}: { url: string; locale: Locale }) {
+}: {
+	url: string;
+	locale: Locale;
+}) {
 	return (
 		<Html>
 			<Head />

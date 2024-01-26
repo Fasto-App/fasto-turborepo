@@ -3051,12 +3051,12 @@ export type GetUserInformationQuery = {
 };
 
 export const CreateCustomerAddressDocument = gql`
-    mutation CreateCustomerAddress($input: AddressInput!) {
-  createCustomerAddress(input: $input) {
-    _id
+  mutation CreateCustomerAddress($input: AddressInput!) {
+    createCustomerAddress(input: $input) {
+      _id
+    }
   }
-}
-    `;
+`;
 export type CreateCustomerAddressMutationFn = Apollo.MutationFunction<
 	CreateCustomerAddressMutation,
 	CreateCustomerAddressMutationVariables
@@ -3101,13 +3101,13 @@ export type CreateCustomerAddressMutationOptions = Apollo.BaseMutationOptions<
 	CreateCustomerAddressMutationVariables
 >;
 export const GetGoogleAutocompleteDocument = gql`
-    query GetGoogleAutocomplete($input: AutoCompleteInput!) {
-  getGoogleAutoComplete(input: $input) {
-    description
-    place_id
+  query GetGoogleAutocomplete($input: AutoCompleteInput!) {
+    getGoogleAutoComplete(input: $input) {
+      description
+      place_id
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetGoogleAutocompleteQuery__
@@ -3160,10 +3160,10 @@ export type GetGoogleAutocompleteQueryResult = Apollo.QueryResult<
 	GetGoogleAutocompleteQueryVariables
 >;
 export const DeleteBusinessEmployeeDocument = gql`
-    mutation DeleteBusinessEmployee($input: DeleteEmployee!) {
-  deleteBusinessEmployee(input: $input)
-}
-    `;
+  mutation DeleteBusinessEmployee($input: DeleteEmployee!) {
+    deleteBusinessEmployee(input: $input)
+  }
+`;
 export type DeleteBusinessEmployeeMutationFn = Apollo.MutationFunction<
 	DeleteBusinessEmployeeMutation,
 	DeleteBusinessEmployeeMutationVariables
@@ -3208,15 +3208,15 @@ export type DeleteBusinessEmployeeMutationOptions = Apollo.BaseMutationOptions<
 	DeleteBusinessEmployeeMutationVariables
 >;
 export const ManageBusinessEmployeesDocument = gql`
-    mutation ManageBusinessEmployees($input: ManageBusinessEmployeesInput!) {
-  manageBusinessEmployees(input: $input) {
-    email
-    name
-    picture
-    privilege
+  mutation ManageBusinessEmployees($input: ManageBusinessEmployeesInput!) {
+    manageBusinessEmployees(input: $input) {
+      email
+      name
+      picture
+      privilege
+    }
   }
-}
-    `;
+`;
 export type ManageBusinessEmployeesMutationFn = Apollo.MutationFunction<
 	ManageBusinessEmployeesMutation,
 	ManageBusinessEmployeesMutationVariables
@@ -3261,10 +3261,10 @@ export type ManageBusinessEmployeesMutationOptions = Apollo.BaseMutationOptions<
 	ManageBusinessEmployeesMutationVariables
 >;
 export const ShareQrCodeDocument = gql`
-    mutation ShareQRCode($input: ShareQRCodeInput!) {
-  shareQRCode(input: $input)
-}
-    `;
+  mutation ShareQRCode($input: ShareQRCodeInput!) {
+    shareQRCode(input: $input)
+  }
+`;
 export type ShareQrCodeMutationFn = Apollo.MutationFunction<
 	ShareQrCodeMutation,
 	ShareQrCodeMutationVariables
@@ -3309,15 +3309,15 @@ export type ShareQrCodeMutationOptions = Apollo.BaseMutationOptions<
 	ShareQrCodeMutationVariables
 >;
 export const UpdateBusinessInformationDocument = gql`
-    mutation UpdateBusinessInformation($input: UpdateBusinessInfoInput!) {
-  updateBusinessInformation(input: $input) {
-    name
-    picture
-    description
-    _id
+  mutation UpdateBusinessInformation($input: UpdateBusinessInfoInput!) {
+    updateBusinessInformation(input: $input) {
+      name
+      picture
+      description
+      _id
+    }
   }
-}
-    `;
+`;
 export type UpdateBusinessInformationMutationFn = Apollo.MutationFunction<
 	UpdateBusinessInformationMutation,
 	UpdateBusinessInformationMutationVariables
@@ -3363,20 +3363,20 @@ export type UpdateBusinessInformationMutationOptions =
 		UpdateBusinessInformationMutationVariables
 	>;
 export const UpdateBusinessLocationDocument = gql`
-    mutation UpdateBusinessLocation($input: UpdateAddressInput!) {
-  updateBusinessLocation(input: $input) {
-    address {
-      streetAddress
-      stateOrProvince
-      postalCode
-      country
-      complement
-      city
-      _id
+  mutation UpdateBusinessLocation($input: UpdateAddressInput!) {
+    updateBusinessLocation(input: $input) {
+      address {
+        streetAddress
+        stateOrProvince
+        postalCode
+        country
+        complement
+        city
+        _id
+      }
     }
   }
-}
-    `;
+`;
 export type UpdateBusinessLocationMutationFn = Apollo.MutationFunction<
 	UpdateBusinessLocationMutation,
 	UpdateBusinessLocationMutationVariables
@@ -3421,16 +3421,16 @@ export type UpdateBusinessLocationMutationOptions = Apollo.BaseMutationOptions<
 	UpdateBusinessLocationMutationVariables
 >;
 export const GetAllBusinessDocument = gql`
-    query GetAllBusiness {
-  getAllBusiness {
-    name
-    _id
-    picture
-    description
-    cuisine
+  query GetAllBusiness {
+    getAllBusiness {
+      name
+      _id
+      picture
+      description
+      cuisine
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllBusinessQuery__
@@ -3482,29 +3482,29 @@ export type GetAllBusinessQueryResult = Apollo.QueryResult<
 	GetAllBusinessQueryVariables
 >;
 export const GetAllEmployeesDocument = gql`
-    query GetAllEmployees {
-  getAllEmployees {
-    employees {
-      jobTitle
-      isPending
-      name
-      email
-      picture
-      privilege
-      _id
-    }
-    employeesPending {
-      jobTitle
-      isPending
-      email
-      name
-      picture
-      privilege
-      _id
+  query GetAllEmployees {
+    getAllEmployees {
+      employees {
+        jobTitle
+        isPending
+        name
+        email
+        picture
+        privilege
+        _id
+      }
+      employeesPending {
+        jobTitle
+        isPending
+        email
+        name
+        picture
+        privilege
+        _id
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllEmployeesQuery__
@@ -3556,17 +3556,17 @@ export type GetAllEmployeesQueryResult = Apollo.QueryResult<
 	GetAllEmployeesQueryVariables
 >;
 export const GetBusinessByIdDocument = gql`
-    query GetBusinessById($input: GetById!) {
-  getBusinessById(input: $input) {
-    name
-    picture
-    address {
-      _id
-      country
+  query GetBusinessById($input: GetById!) {
+    getBusinessById(input: $input) {
+      name
+      picture
+      address {
+        _id
+        country
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetBusinessByIdQuery__
@@ -3619,16 +3619,16 @@ export type GetBusinessByIdQueryResult = Apollo.QueryResult<
 	GetBusinessByIdQueryVariables
 >;
 export const GetBusinessInformationDocument = gql`
-    query GetBusinessInformation {
-  getBusinessInformation {
-    _id
-    name
-    description
-    picture
-    country
+  query GetBusinessInformation {
+    getBusinessInformation {
+      _id
+      name
+      description
+      picture
+      country
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetBusinessInformationQuery__
@@ -3680,18 +3680,18 @@ export type GetBusinessInformationQueryResult = Apollo.QueryResult<
 	GetBusinessInformationQueryVariables
 >;
 export const GetBusinessLocationDocument = gql`
-    query GetBusinessLocation {
-  getBusinessLocation {
-    streetAddress
-    stateOrProvince
-    postalCode
-    country
-    complement
-    city
-    _id
+  query GetBusinessLocation {
+    getBusinessLocation {
+      streetAddress
+      stateOrProvince
+      postalCode
+      country
+      complement
+      city
+      _id
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetBusinessLocationQuery__
@@ -3743,18 +3743,18 @@ export type GetBusinessLocationQueryResult = Apollo.QueryResult<
 	GetBusinessLocationQueryVariables
 >;
 export const AddItemToCartDocument = gql`
-    mutation AddItemToCart($input: addItemToCartInput!) {
-  addItemToCart(input: $input) {
-    _id
-    quantity
-    product {
+  mutation AddItemToCart($input: addItemToCartInput!) {
+    addItemToCart(input: $input) {
       _id
-      name
-      price
+      quantity
+      product {
+        _id
+        name
+        price
+      }
     }
   }
-}
-    `;
+`;
 export type AddItemToCartMutationFn = Apollo.MutationFunction<
 	AddItemToCartMutation,
 	AddItemToCartMutationVariables
@@ -3799,16 +3799,16 @@ export type AddItemToCartMutationOptions = Apollo.BaseMutationOptions<
 	AddItemToCartMutationVariables
 >;
 export const DeleteItemFromCartDocument = gql`
-    mutation DeleteItemFromCart($input: deleteItemFromCartInput!) {
-  deleteItemFromCart(input: $input) {
-    _id
-    quantity
-    notes
-    options
-    subTotal
+  mutation DeleteItemFromCart($input: deleteItemFromCartInput!) {
+    deleteItemFromCart(input: $input) {
+      _id
+      quantity
+      notes
+      options
+      subTotal
+    }
   }
-}
-    `;
+`;
 export type DeleteItemFromCartMutationFn = Apollo.MutationFunction<
 	DeleteItemFromCartMutation,
 	DeleteItemFromCartMutationVariables
@@ -3853,16 +3853,16 @@ export type DeleteItemFromCartMutationOptions = Apollo.BaseMutationOptions<
 	DeleteItemFromCartMutationVariables
 >;
 export const UpdateItemFromCartDocument = gql`
-    mutation UpdateItemFromCart($input: updateItemFromCartInput!) {
-  updateItemFromCart(input: $input) {
-    _id
-    quantity
-    notes
-    options
-    subTotal
+  mutation UpdateItemFromCart($input: updateItemFromCartInput!) {
+    updateItemFromCart(input: $input) {
+      _id
+      quantity
+      notes
+      options
+      subTotal
+    }
   }
-}
-    `;
+`;
 export type UpdateItemFromCartMutationFn = Apollo.MutationFunction<
 	UpdateItemFromCartMutation,
 	UpdateItemFromCartMutationVariables
@@ -3907,24 +3907,24 @@ export type UpdateItemFromCartMutationOptions = Apollo.BaseMutationOptions<
 	UpdateItemFromCartMutationVariables
 >;
 export const GetCartItemsPerTabDocument = gql`
-    query GetCartItemsPerTab {
-  getCartItemsPerTab {
-    _id
-    product {
+  query GetCartItemsPerTab {
+    getCartItemsPerTab {
       _id
-      name
-      imageUrl
-    }
-    quantity
-    notes
-    subTotal
-    user {
-      _id
-      name
+      product {
+        _id
+        name
+        imageUrl
+      }
+      quantity
+      notes
+      subTotal
+      user {
+        _id
+        name
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetCartItemsPerTabQuery__
@@ -3976,14 +3976,14 @@ export type GetCartItemsPerTabQueryResult = Apollo.QueryResult<
 	GetCartItemsPerTabQueryVariables
 >;
 export const CreateCategoryDocument = gql`
-    mutation CreateCategory($input: CategoryInput!) {
-  createCategory(input: $input) {
-    _id
-    name
-    description
+  mutation CreateCategory($input: CategoryInput!) {
+    createCategory(input: $input) {
+      _id
+      name
+      description
+    }
   }
-}
-    `;
+`;
 export type CreateCategoryMutationFn = Apollo.MutationFunction<
 	CreateCategoryMutation,
 	CreateCategoryMutationVariables
@@ -4028,12 +4028,12 @@ export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<
 	CreateCategoryMutationVariables
 >;
 export const DeleteCategoryDocument = gql`
-    mutation DeleteCategory($id: ID!) {
-  deleteCategory(id: $id) {
-    ok
+  mutation DeleteCategory($id: ID!) {
+    deleteCategory(id: $id) {
+      ok
+    }
   }
-}
-    `;
+`;
 export type DeleteCategoryMutationFn = Apollo.MutationFunction<
 	DeleteCategoryMutation,
 	DeleteCategoryMutationVariables
@@ -4078,14 +4078,14 @@ export type DeleteCategoryMutationOptions = Apollo.BaseMutationOptions<
 	DeleteCategoryMutationVariables
 >;
 export const GetAllCategoriesByBusinessDocument = gql`
-    query getAllCategoriesByBusiness {
-  getAllCategoriesByBusiness {
-    _id
-    name
-    description
+  query getAllCategoriesByBusiness {
+    getAllCategoriesByBusiness {
+      _id
+      name
+      description
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllCategoriesByBusinessQuery__
@@ -4137,14 +4137,14 @@ export type GetAllCategoriesByBusinessQueryResult = Apollo.QueryResult<
 	GetAllCategoriesByBusinessQueryVariables
 >;
 export const UpdateCategoryDocument = gql`
-    mutation UpdateCategory($input: UpdateCategoryInput) {
-  updateCategory(input: $input) {
-    _id
-    name
-    description
+  mutation UpdateCategory($input: UpdateCategoryInput) {
+    updateCategory(input: $input) {
+      _id
+      name
+      description
+    }
   }
-}
-    `;
+`;
 export type UpdateCategoryMutationFn = Apollo.MutationFunction<
 	UpdateCategoryMutation,
 	UpdateCategoryMutationVariables
@@ -4189,32 +4189,32 @@ export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<
 	UpdateCategoryMutationVariables
 >;
 export const CustomerRequestPayFullDocument = gql`
-    mutation CustomerRequestPayFull($input: CustomerRequestPayFullInput!) {
-  customerRequestPayFull(input: $input) {
-    _id
-    business
-    tab
-    status
-    paid
-    subTotal
-    tip
-    discount
-    tax
-    total
-    totalPaid
-    splitType
-    created_date
-    payments {
+  mutation CustomerRequestPayFull($input: CustomerRequestPayFullInput!) {
+    customerRequestPayFull(input: $input) {
       _id
-      amount
-      patron
+      business
+      tab
+      status
+      paid
+      subTotal
       tip
-      splitType
       discount
+      tax
+      total
+      totalPaid
+      splitType
+      created_date
+      payments {
+        _id
+        amount
+        patron
+        tip
+        splitType
+        discount
+      }
     }
   }
-}
-    `;
+`;
 export type CustomerRequestPayFullMutationFn = Apollo.MutationFunction<
 	CustomerRequestPayFullMutation,
 	CustomerRequestPayFullMutationVariables
@@ -4259,23 +4259,23 @@ export type CustomerRequestPayFullMutationOptions = Apollo.BaseMutationOptions<
 	CustomerRequestPayFullMutationVariables
 >;
 export const CustomerRequestSplitDocument = gql`
-    mutation CustomerRequestSplit($input: CustomerRequestSplitInput!) {
-  customerRequestSplit(input: $input) {
-    _id
-    business
-    tab
-    status
-    paid
-    subTotal
-    tip
-    discount
-    tax
-    total
-    totalPaid
-    created_date
+  mutation CustomerRequestSplit($input: CustomerRequestSplitInput!) {
+    customerRequestSplit(input: $input) {
+      _id
+      business
+      tab
+      status
+      paid
+      subTotal
+      tip
+      discount
+      tax
+      total
+      totalPaid
+      created_date
+    }
   }
-}
-    `;
+`;
 export type CustomerRequestSplitMutationFn = Apollo.MutationFunction<
 	CustomerRequestSplitMutation,
 	CustomerRequestSplitMutationVariables
@@ -4320,13 +4320,13 @@ export type CustomerRequestSplitMutationOptions = Apollo.BaseMutationOptions<
 	CustomerRequestSplitMutationVariables
 >;
 export const DeleteCheckoutDataDocument = gql`
-    mutation DeleteCheckoutData($ids: [ID!]!) {
-  deleteCheckoutData(ids: $ids) {
-    acknowledged
-    deletedCount
+  mutation DeleteCheckoutData($ids: [ID!]!) {
+    deleteCheckoutData(ids: $ids) {
+      acknowledged
+      deletedCount
+    }
   }
-}
-    `;
+`;
 export type DeleteCheckoutDataMutationFn = Apollo.MutationFunction<
 	DeleteCheckoutDataMutation,
 	DeleteCheckoutDataMutationVariables
@@ -4371,20 +4371,20 @@ export type DeleteCheckoutDataMutationOptions = Apollo.BaseMutationOptions<
 	DeleteCheckoutDataMutationVariables
 >;
 export const MakeCheckoutFullPaymentDocument = gql`
-    mutation MakeCheckoutFullPayment($input: MakeCheckoutFullPaymentInput!) {
-  makeCheckoutFullPayment(input: $input) {
-    _id
-    paid
-    totalPaid
-    total
-    tip
-    tax
-    tab
-    subTotal
-    status
+  mutation MakeCheckoutFullPayment($input: MakeCheckoutFullPaymentInput!) {
+    makeCheckoutFullPayment(input: $input) {
+      _id
+      paid
+      totalPaid
+      total
+      tip
+      tax
+      tab
+      subTotal
+      status
+    }
   }
-}
-    `;
+`;
 export type MakeCheckoutFullPaymentMutationFn = Apollo.MutationFunction<
 	MakeCheckoutFullPaymentMutation,
 	MakeCheckoutFullPaymentMutationVariables
@@ -4429,33 +4429,33 @@ export type MakeCheckoutFullPaymentMutationOptions = Apollo.BaseMutationOptions<
 	MakeCheckoutFullPaymentMutationVariables
 >;
 export const MakeCheckoutPaymentDocument = gql`
-    mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
-  makeCheckoutPayment(input: $input) {
-    _id
-    business
-    tab
-    status
-    paid
-    subTotal
-    tip
-    discount
-    tax
-    total
-    totalPaid
-    splitType
-    created_date
-    payments {
+  mutation MakeCheckoutPayment($input: MakeCheckoutPaymentInput!) {
+    makeCheckoutPayment(input: $input) {
       _id
-      amount
-      patron
-      tip
-      splitType
-      discount
+      business
+      tab
+      status
       paid
+      subTotal
+      tip
+      discount
+      tax
+      total
+      totalPaid
+      splitType
+      created_date
+      payments {
+        _id
+        amount
+        patron
+        tip
+        splitType
+        discount
+        paid
+      }
     }
   }
-}
-    `;
+`;
 export type MakeCheckoutPaymentMutationFn = Apollo.MutationFunction<
 	MakeCheckoutPaymentMutation,
 	MakeCheckoutPaymentMutationVariables
@@ -4500,17 +4500,17 @@ export type MakeCheckoutPaymentMutationOptions = Apollo.BaseMutationOptions<
 	MakeCheckoutPaymentMutationVariables
 >;
 export const GetPaidCheckoutByDateDocument = gql`
-    query GetPaidCheckoutByDate($input: GetPaidCheckout!) {
-  getPaidCheckoutByDate(input: $input) {
-    total
-    sortBy
-    data {
-      _id
-      totalAmount
+  query GetPaidCheckoutByDate($input: GetPaidCheckout!) {
+    getPaidCheckoutByDate(input: $input) {
+      total
+      sortBy
+      data {
+        _id
+        totalAmount
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetPaidCheckoutByDateQuery__
@@ -4563,35 +4563,35 @@ export type GetPaidCheckoutByDateQueryResult = Apollo.QueryResult<
 	GetPaidCheckoutByDateQueryVariables
 >;
 export const GetCheckoutByIdDocument = gql`
-    query GetCheckoutByID($input: GetById!) {
-  getCheckoutByID(input: $input) {
-    _id
-    serviceFee
-    serviceFeeValue
-    splitType
-    business
-    created_date
-    paid
-    subTotal
-    totalPaid
-    total
-    tip
-    tipValue
-    tax
-    tab
-    status
-    payments {
-      amount
+  query GetCheckoutByID($input: GetById!) {
+    getCheckoutByID(input: $input) {
       _id
+      serviceFee
+      serviceFeeValue
       splitType
-      patron
-      tip
-      discount
+      business
+      created_date
       paid
+      subTotal
+      totalPaid
+      total
+      tip
+      tipValue
+      tax
+      tab
+      status
+      payments {
+        amount
+        _id
+        splitType
+        patron
+        tip
+        discount
+        paid
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetCheckoutByIdQuery__
@@ -4644,23 +4644,23 @@ export type GetCheckoutByIdQueryResult = Apollo.QueryResult<
 	GetCheckoutByIdQueryVariables
 >;
 export const GetCheckoutsByBusinessDocument = gql`
-    query GetCheckoutsByBusiness($page: Int!, $pageSize: Int!) {
-  getCheckoutsByBusiness(page: $page, pageSize: $pageSize) {
-    _id
-    business
-    tab
-    status
-    paid
-    subTotal
-    tip
-    discount
-    tax
-    total
-    totalPaid
-    created_date
+  query GetCheckoutsByBusiness($page: Int!, $pageSize: Int!) {
+    getCheckoutsByBusiness(page: $page, pageSize: $pageSize) {
+      _id
+      business
+      tab
+      status
+      paid
+      subTotal
+      tip
+      discount
+      tax
+      total
+      totalPaid
+      created_date
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetCheckoutsByBusinessQuery__
@@ -4714,31 +4714,31 @@ export type GetCheckoutsByBusinessQueryResult = Apollo.QueryResult<
 	GetCheckoutsByBusinessQueryVariables
 >;
 export const GetOrdersByCheckoutDocument = gql`
-    query GetOrdersByCheckout($input: GetById!) {
-  getOrdersByCheckout(input: $input) {
-    orders {
-      _id
-      product {
+  query GetOrdersByCheckout($input: GetById!) {
+    getOrdersByCheckout(input: $input) {
+      orders {
         _id
-        name
-        price
-        imageUrl
+        product {
+          _id
+          name
+          price
+          imageUrl
+        }
+        user
+        quantity
+        subTotal
+        status
+        message
       }
-      user
-      quantity
-      subTotal
+      _id
       status
-      message
+      paid
+      subTotal
+      tab
+      created_date
     }
-    _id
-    status
-    paid
-    subTotal
-    tab
-    created_date
   }
-}
-    `;
+`;
 
 /**
  * __useGetOrdersByCheckoutQuery__
@@ -4791,21 +4791,21 @@ export type GetOrdersByCheckoutQueryResult = Apollo.QueryResult<
 	GetOrdersByCheckoutQueryVariables
 >;
 export const CreateMenuDocument = gql`
-    mutation CreateMenu($input: CreateMenuInput!) {
-  createMenu(input: $input) {
-    _id
-    name
-    sections {
-      category {
-        name
-      }
-      products {
-        _id
+  mutation CreateMenu($input: CreateMenuInput!) {
+    createMenu(input: $input) {
+      _id
+      name
+      sections {
+        category {
+          name
+        }
+        products {
+          _id
+        }
       }
     }
   }
-}
-    `;
+`;
 export type CreateMenuMutationFn = Apollo.MutationFunction<
 	CreateMenuMutation,
 	CreateMenuMutationVariables
@@ -4850,13 +4850,13 @@ export type CreateMenuMutationOptions = Apollo.BaseMutationOptions<
 	CreateMenuMutationVariables
 >;
 export const DeleteMenuDocument = gql`
-    mutation DeleteMenu($id: ID!) {
-  deleteMenu(id: $id) {
-    _id
-    name
+  mutation DeleteMenu($id: ID!) {
+    deleteMenu(id: $id) {
+      _id
+      name
+    }
   }
-}
-    `;
+`;
 export type DeleteMenuMutationFn = Apollo.MutationFunction<
 	DeleteMenuMutation,
 	DeleteMenuMutationVariables
@@ -4901,13 +4901,13 @@ export type DeleteMenuMutationOptions = Apollo.BaseMutationOptions<
 	DeleteMenuMutationVariables
 >;
 export const UpdateMenuInfoDocument = gql`
-    mutation UpdateMenuInfo($input: UpdateMenuInfoInput) {
-  updateMenuInfo(input: $input) {
-    _id
-    name
+  mutation UpdateMenuInfo($input: UpdateMenuInfoInput) {
+    updateMenuInfo(input: $input) {
+      _id
+      name
+    }
   }
-}
-    `;
+`;
 export type UpdateMenuInfoMutationFn = Apollo.MutationFunction<
 	UpdateMenuInfoMutation,
 	UpdateMenuInfoMutationVariables
@@ -4952,24 +4952,24 @@ export type UpdateMenuInfoMutationOptions = Apollo.BaseMutationOptions<
 	UpdateMenuInfoMutationVariables
 >;
 export const UpdateMenuDocument = gql`
-    mutation UpdateMenu($input: UpdateMenuInput) {
-  updateMenu(input: $input) {
-    _id
-    name
-    isFavorite
-    sections {
-      category {
-        _id
-        name
-      }
-      products {
-        _id
-        name
+  mutation UpdateMenu($input: UpdateMenuInput) {
+    updateMenu(input: $input) {
+      _id
+      name
+      isFavorite
+      sections {
+        category {
+          _id
+          name
+        }
+        products {
+          _id
+          name
+        }
       }
     }
   }
-}
-    `;
+`;
 export type UpdateMenuMutationFn = Apollo.MutationFunction<
 	UpdateMenuMutation,
 	UpdateMenuMutationVariables
@@ -5014,29 +5014,29 @@ export type UpdateMenuMutationOptions = Apollo.BaseMutationOptions<
 	UpdateMenuMutationVariables
 >;
 export const GetAllMenusByBusinessIdDocument = gql`
-    query GetAllMenusByBusinessID {
-  getAllMenusByBusinessID {
-    _id
-    name
-    isFavorite
-    sections {
-      category {
-        _id
-        name
-      }
-      products {
-        _id
-        name
-        description
-        imageUrl
-        price
-        quantity
-        currency
+  query GetAllMenusByBusinessID {
+    getAllMenusByBusinessID {
+      _id
+      name
+      isFavorite
+      sections {
+        category {
+          _id
+          name
+        }
+        products {
+          _id
+          name
+          description
+          imageUrl
+          price
+          quantity
+          currency
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllMenusByBusinessIdQuery__
@@ -5088,28 +5088,28 @@ export type GetAllMenusByBusinessIdQueryResult = Apollo.QueryResult<
 	GetAllMenusByBusinessIdQueryVariables
 >;
 export const GetClientMenuDocument = gql`
-    query GetClientMenu($input: GetMenu!) {
-  getClientMenu(input: $input) {
-    _id
-    name
-    sections {
-      category {
-        _id
-        name
-      }
-      products {
-        _id
-        quantity
-        name
-        description
-        price
-        imageUrl
-        currency
+  query GetClientMenu($input: GetMenu!) {
+    getClientMenu(input: $input) {
+      _id
+      name
+      sections {
+        category {
+          _id
+          name
+        }
+        products {
+          _id
+          quantity
+          name
+          description
+          price
+          imageUrl
+          currency
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetClientMenuQuery__
@@ -5162,28 +5162,28 @@ export type GetClientMenuQueryResult = Apollo.QueryResult<
 	GetClientMenuQueryVariables
 >;
 export const GetMenuByIdDocument = gql`
-    query GetMenuByID($input: GetMenuById) {
-  getMenuByID(input: $input) {
-    _id
-    name
-    sections {
-      category {
-        _id
-        name
-      }
-      products {
-        _id
-        name
-        imageUrl
-        price
-        description
-        quantity
-        currency
+  query GetMenuByID($input: GetMenuById) {
+    getMenuByID(input: $input) {
+      _id
+      name
+      sections {
+        category {
+          _id
+          name
+        }
+        products {
+          _id
+          name
+          imageUrl
+          price
+          description
+          quantity
+          currency
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetMenuByIdQuery__
@@ -5234,21 +5234,23 @@ export type GetMenuByIdQueryResult = Apollo.QueryResult<
 	GetMenuByIdQueryVariables
 >;
 export const ClientCreateMultipleOrderDetailsDocument = gql`
-    mutation ClientCreateMultipleOrderDetails($input: [ClientCreateOrderInput!]!) {
-  clientCreateMultipleOrderDetails(input: $input) {
-    _id
-    product {
+  mutation ClientCreateMultipleOrderDetails(
+    $input: [ClientCreateOrderInput!]!
+  ) {
+    clientCreateMultipleOrderDetails(input: $input) {
       _id
-      price
-      description
-      imageUrl
+      product {
+        _id
+        price
+        description
+        imageUrl
+      }
+      subTotal
+      quantity
+      status
     }
-    subTotal
-    quantity
-    status
   }
-}
-    `;
+`;
 export type ClientCreateMultipleOrderDetailsMutationFn =
 	Apollo.MutationFunction<
 		ClientCreateMultipleOrderDetailsMutation,
@@ -5295,24 +5297,24 @@ export type ClientCreateMultipleOrderDetailsMutationOptions =
 		ClientCreateMultipleOrderDetailsMutationVariables
 	>;
 export const CreateOrdersCheckoutDocument = gql`
-    mutation CreateOrdersCheckout($input: [OrderDetailInput!]!) {
-  createOrdersCheckout(input: $input) {
-    _id
-    business
-    tab
-    status
-    paid
-    subTotal
-    tip
-    discount
-    tax
-    total
-    totalPaid
-    splitType
-    created_date
+  mutation CreateOrdersCheckout($input: [OrderDetailInput!]!) {
+    createOrdersCheckout(input: $input) {
+      _id
+      business
+      tab
+      status
+      paid
+      subTotal
+      tip
+      discount
+      tax
+      total
+      totalPaid
+      splitType
+      created_date
+    }
   }
-}
-    `;
+`;
 export type CreateOrdersCheckoutMutationFn = Apollo.MutationFunction<
 	CreateOrdersCheckoutMutation,
 	CreateOrdersCheckoutMutationVariables
@@ -5357,13 +5359,13 @@ export type CreateOrdersCheckoutMutationOptions = Apollo.BaseMutationOptions<
 	CreateOrdersCheckoutMutationVariables
 >;
 export const UpdateOrderGroupDataDocument = gql`
-    mutation UpdateOrderGroupData($input: UpdateOrdersGroupInput!) {
-  updateOrderGroupData(input: $input) {
-    status
-    _id
+  mutation UpdateOrderGroupData($input: UpdateOrdersGroupInput!) {
+    updateOrderGroupData(input: $input) {
+      status
+      _id
+    }
   }
-}
-    `;
+`;
 export type UpdateOrderGroupDataMutationFn = Apollo.MutationFunction<
 	UpdateOrderGroupDataMutation,
 	UpdateOrderGroupDataMutationVariables
@@ -5408,19 +5410,19 @@ export type UpdateOrderGroupDataMutationOptions = Apollo.BaseMutationOptions<
 	UpdateOrderGroupDataMutationVariables
 >;
 export const CreateMultipleOrderDetailsDocument = gql`
-    mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
-  createMultipleOrderDetails(input: $input) {
-    _id
-    product {
-      imageUrl
+  mutation CreateMultipleOrderDetails($input: [CreateOrderInput!]!) {
+    createMultipleOrderDetails(input: $input) {
+      _id
+      product {
+        imageUrl
+      }
+      status
+      quantity
+      subTotal
+      user
     }
-    status
-    quantity
-    subTotal
-    user
   }
-}
-    `;
+`;
 export type CreateMultipleOrderDetailsMutationFn = Apollo.MutationFunction<
 	CreateMultipleOrderDetailsMutation,
 	CreateMultipleOrderDetailsMutationVariables
@@ -5466,13 +5468,13 @@ export type CreateMultipleOrderDetailsMutationOptions =
 		CreateMultipleOrderDetailsMutationVariables
 	>;
 export const DeleteOrdersGroupDataDocument = gql`
-    mutation DeleteOrdersGroupData($ids: [ID!]!) {
-  deleteOrdersGroupData(ids: $ids) {
-    acknowledged
-    deletedCount
+  mutation DeleteOrdersGroupData($ids: [ID!]!) {
+    deleteOrdersGroupData(ids: $ids) {
+      acknowledged
+      deletedCount
+    }
   }
-}
-    `;
+`;
 export type DeleteOrdersGroupDataMutationFn = Apollo.MutationFunction<
 	DeleteOrdersGroupDataMutation,
 	DeleteOrdersGroupDataMutationVariables
@@ -5517,29 +5519,29 @@ export type DeleteOrdersGroupDataMutationOptions = Apollo.BaseMutationOptions<
 	DeleteOrdersGroupDataMutationVariables
 >;
 export const GetOrderGroupByIdDocument = gql`
-    query GetOrderGroupById($getOrderGroupByIdId: ID!) {
-  getOrderGroupById(id: $getOrderGroupByIdId) {
-    _id
-    created_date
-    business
-    createdByUser
-    status
-    type
-    orders {
+  query GetOrderGroupById($getOrderGroupByIdId: ID!) {
+    getOrderGroupById(id: $getOrderGroupByIdId) {
       _id
-      message
-      product {
-        name
-        imageUrl
-      }
-      quantity
+      created_date
+      business
+      createdByUser
       status
-      subTotal
-      user
+      type
+      orders {
+        _id
+        message
+        product {
+          name
+          imageUrl
+        }
+        quantity
+        status
+        subTotal
+        user
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetOrderGroupByIdQuery__
@@ -5592,20 +5594,20 @@ export type GetOrderGroupByIdQueryResult = Apollo.QueryResult<
 	GetOrderGroupByIdQueryVariables
 >;
 export const GetOrdersBySessionDocument = gql`
-    query GetOrdersBySession {
-  getOrdersBySession {
-    _id
-    quantity
-    status
-    subTotal
-    user
-    product {
-      name
-      imageUrl
+  query GetOrdersBySession {
+    getOrdersBySession {
+      _id
+      quantity
+      status
+      subTotal
+      user
+      product {
+        name
+        imageUrl
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetOrdersBySessionQuery__
@@ -5657,20 +5659,20 @@ export type GetOrdersBySessionQueryResult = Apollo.QueryResult<
 	GetOrdersBySessionQueryVariables
 >;
 export const GetOrdersGroupDocument = gql`
-    query GetOrdersGroup($input: GetOrdersGroup!) {
-  getOrdersGroup(input: $input) {
-    created_date
-    _id
-    business
-    status
-    createdByUser
-    type
-    orders {
+  query GetOrdersGroup($input: GetOrdersGroup!) {
+    getOrdersGroup(input: $input) {
+      created_date
       _id
+      business
+      status
+      createdByUser
+      type
+      orders {
+        _id
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetOrdersGroupQuery__
@@ -5723,10 +5725,10 @@ export type GetOrdersGroupQueryResult = Apollo.QueryResult<
 	GetOrdersGroupQueryVariables
 >;
 export const ConfirmPaymentDocument = gql`
-    mutation ConfirmPayment($input: ConfirmPaymentInput!) {
-  confirmPayment(input: $input)
-}
-    `;
+  mutation ConfirmPayment($input: ConfirmPaymentInput!) {
+    confirmPayment(input: $input)
+  }
+`;
 export type ConfirmPaymentMutationFn = Apollo.MutationFunction<
 	ConfirmPaymentMutation,
 	ConfirmPaymentMutationVariables
@@ -5771,10 +5773,10 @@ export type ConfirmPaymentMutationOptions = Apollo.BaseMutationOptions<
 	ConfirmPaymentMutationVariables
 >;
 export const ConnectExpressPaymentDocument = gql`
-    mutation ConnectExpressPayment($input: ConnectExpressInput!) {
-  connectExpressPayment(input: $input)
-}
-    `;
+  mutation ConnectExpressPayment($input: ConnectExpressInput!) {
+    connectExpressPayment(input: $input)
+  }
+`;
 export type ConnectExpressPaymentMutationFn = Apollo.MutationFunction<
 	ConnectExpressPaymentMutation,
 	ConnectExpressPaymentMutationVariables
@@ -5819,15 +5821,15 @@ export type ConnectExpressPaymentMutationOptions = Apollo.BaseMutationOptions<
 	ConnectExpressPaymentMutationVariables
 >;
 export const GeneratePaymentIntentDocument = gql`
-    mutation GeneratePaymentIntent($input: generatePaymentIntentInput!) {
-  generatePaymentIntent(input: $input) {
-    paymentIntent
-    clientSecret
-    amount
-    currency
+  mutation GeneratePaymentIntent($input: generatePaymentIntentInput!) {
+    generatePaymentIntent(input: $input) {
+      paymentIntent
+      clientSecret
+      amount
+      currency
+    }
   }
-}
-    `;
+`;
 export type GeneratePaymentIntentMutationFn = Apollo.MutationFunction<
 	GeneratePaymentIntentMutation,
 	GeneratePaymentIntentMutationVariables
@@ -5872,10 +5874,10 @@ export type GeneratePaymentIntentMutationOptions = Apollo.BaseMutationOptions<
 	GeneratePaymentIntentMutationVariables
 >;
 export const GenerateStripePayoutDocument = gql`
-    mutation GenerateStripePayout {
-  generateStripePayout
-}
-    `;
+  mutation GenerateStripePayout {
+    generateStripePayout
+  }
+`;
 export type GenerateStripePayoutMutationFn = Apollo.MutationFunction<
 	GenerateStripePayoutMutation,
 	GenerateStripePayoutMutationVariables
@@ -5919,10 +5921,10 @@ export type GenerateStripePayoutMutationOptions = Apollo.BaseMutationOptions<
 	GenerateStripePayoutMutationVariables
 >;
 export const CreateStripeAccessLinkDocument = gql`
-    query CreateStripeAccessLink {
-  createStripeAccessLink
-}
-    `;
+  query CreateStripeAccessLink {
+    createStripeAccessLink
+  }
+`;
 
 /**
  * __useCreateStripeAccessLinkQuery__
@@ -5974,16 +5976,16 @@ export type CreateStripeAccessLinkQueryResult = Apollo.QueryResult<
 	CreateStripeAccessLinkQueryVariables
 >;
 export const GetIsConnectdDocument = gql`
-    query GetIsConnectd {
-  getIsConnected {
-    balanceAvailable
-    balancePending
-    balanceCurrency
-    url
-    name
+  query GetIsConnectd {
+    getIsConnected {
+      balanceAvailable
+      balancePending
+      balanceCurrency
+      url
+      name
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetIsConnectdQuery__
@@ -6035,23 +6037,23 @@ export type GetIsConnectdQueryResult = Apollo.QueryResult<
 	GetIsConnectdQueryVariables
 >;
 export const GetPaymentInformationDocument = gql`
-    query GetPaymentInformation($input: GetPayment!) {
-  getPaymentInformation(input: $input) {
-    _id
-    amount
-    patron
-    tip
-    splitType
-    discount
-    paid
-    checkout {
+  query GetPaymentInformation($input: GetPayment!) {
+    getPaymentInformation(input: $input) {
       _id
-      subTotal
+      amount
+      patron
+      tip
+      splitType
+      discount
+      paid
+      checkout {
+        _id
+        subTotal
+      }
+      serviceFee
     }
-    serviceFee
   }
-}
-    `;
+`;
 
 /**
  * __useGetPaymentInformationQuery__
@@ -6104,18 +6106,18 @@ export type GetPaymentInformationQueryResult = Apollo.QueryResult<
 	GetPaymentInformationQueryVariables
 >;
 export const GetProductByIdDocument = gql`
-    query GetProductByID($productId: ID!) {
-  getProductByID(productID: $productId) {
-    _id
-    name
-    description
-    price
-    imageUrl
-    quantity
-    currency
+  query GetProductByID($productId: ID!) {
+    getProductByID(productID: $productId) {
+      _id
+      name
+      description
+      price
+      imageUrl
+      quantity
+      currency
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetProductByIdQuery__
@@ -6168,16 +6170,16 @@ export type GetProductByIdQueryResult = Apollo.QueryResult<
 	GetProductByIdQueryVariables
 >;
 export const CreateProductDocument = gql`
-    mutation CreateProduct($input: CreateProductInput!) {
-  createProduct(input: $input) {
-    _id
-    name
-    description
-    price
-    imageUrl
+  mutation CreateProduct($input: CreateProductInput!) {
+    createProduct(input: $input) {
+      _id
+      name
+      description
+      price
+      imageUrl
+    }
   }
-}
-    `;
+`;
 export type CreateProductMutationFn = Apollo.MutationFunction<
 	CreateProductMutation,
 	CreateProductMutationVariables
@@ -6222,12 +6224,12 @@ export type CreateProductMutationOptions = Apollo.BaseMutationOptions<
 	CreateProductMutationVariables
 >;
 export const DeleteProductDocument = gql`
-    mutation DeleteProduct($id: ID!) {
-  deleteProduct(id: $id) {
-    ok
+  mutation DeleteProduct($id: ID!) {
+    deleteProduct(id: $id) {
+      ok
+    }
   }
-}
-    `;
+`;
 export type DeleteProductMutationFn = Apollo.MutationFunction<
 	DeleteProductMutation,
 	DeleteProductMutationVariables
@@ -6272,21 +6274,21 @@ export type DeleteProductMutationOptions = Apollo.BaseMutationOptions<
 	DeleteProductMutationVariables
 >;
 export const GetMostSellingProductsDocument = gql`
-    query GetMostSellingProducts {
-  getMostSellingProducts {
-    _id
-    price
-    imageUrl
-    name
-    totalOrdered
-    currency
-    category {
-      name
+  query GetMostSellingProducts {
+    getMostSellingProducts {
       _id
+      price
+      imageUrl
+      name
+      totalOrdered
+      currency
+      category {
+        name
+        _id
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetMostSellingProductsQuery__
@@ -6338,22 +6340,22 @@ export type GetMostSellingProductsQueryResult = Apollo.QueryResult<
 	GetMostSellingProductsQueryVariables
 >;
 export const GetAllProductsByBusinessIdDocument = gql`
-    query GetAllProductsByBusinessID {
-  getAllProductsByBusinessID {
-    _id
-    name
-    price
-    description
-    imageUrl
-    quantity
-    currency
-    category {
-      name
+  query GetAllProductsByBusinessID {
+    getAllProductsByBusinessID {
       _id
+      name
+      price
+      description
+      imageUrl
+      quantity
+      currency
+      category {
+        name
+        _id
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllProductsByBusinessIdQuery__
@@ -6405,14 +6407,14 @@ export type GetAllProductsByBusinessIdQueryResult = Apollo.QueryResult<
 	GetAllProductsByBusinessIdQueryVariables
 >;
 export const UpdateProductByIdDocument = gql`
-    mutation UpdateProductByID($input: UpdateProductInput!) {
-  updateProductByID(input: $input) {
-    _id
-    name
-    description
+  mutation UpdateProductByID($input: UpdateProductInput!) {
+    updateProductByID(input: $input) {
+      _id
+      name
+      description
+    }
   }
-}
-    `;
+`;
 export type UpdateProductByIdMutationFn = Apollo.MutationFunction<
 	UpdateProductByIdMutation,
 	UpdateProductByIdMutationVariables
@@ -6457,10 +6459,10 @@ export type UpdateProductByIdMutationOptions = Apollo.BaseMutationOptions<
 	UpdateProductByIdMutationVariables
 >;
 export const UploadFileDocument = gql`
-    mutation UploadFile($file: Upload!) {
-  uploadFile(file: $file)
-}
-    `;
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file)
+  }
+`;
 export type UploadFileMutationFn = Apollo.MutationFunction<
 	UploadFileMutation,
 	UploadFileMutationVariables
@@ -6505,17 +6507,17 @@ export type UploadFileMutationOptions = Apollo.BaseMutationOptions<
 	UploadFileMutationVariables
 >;
 export const AcceptInvitationDocument = gql`
-    mutation AcceptInvitation($input: GetById!) {
-  acceptInvitation(input: $input) {
-    _id
-    business
-    totalGuests
-    names
-    status
-    tab
+  mutation AcceptInvitation($input: GetById!) {
+    acceptInvitation(input: $input) {
+      _id
+      business
+      totalGuests
+      names
+      status
+      tab
+    }
   }
-}
-    `;
+`;
 export type AcceptInvitationMutationFn = Apollo.MutationFunction<
 	AcceptInvitationMutation,
 	AcceptInvitationMutationVariables
@@ -6560,14 +6562,14 @@ export type AcceptInvitationMutationOptions = Apollo.BaseMutationOptions<
 	AcceptInvitationMutationVariables
 >;
 export const AcceptTabRequestDocument = gql`
-    mutation AcceptTabRequest($input: AcceptTabRequestInput!) {
-  acceptTabRequest(input: $input) {
-    _id
-    totalGuests
-    status
+  mutation AcceptTabRequest($input: AcceptTabRequestInput!) {
+    acceptTabRequest(input: $input) {
+      _id
+      totalGuests
+      status
+    }
   }
-}
-    `;
+`;
 export type AcceptTabRequestMutationFn = Apollo.MutationFunction<
 	AcceptTabRequestMutation,
 	AcceptTabRequestMutationVariables
@@ -6612,10 +6614,12 @@ export type AcceptTabRequestMutationOptions = Apollo.BaseMutationOptions<
 	AcceptTabRequestMutationVariables
 >;
 export const CreateNewTakeoutOrDeliveryDocument = gql`
-    mutation CreateNewTakeoutOrDelivery($input: CreateNewTakeoutOrDeliveryInput!) {
-  createNewTakeoutOrDelivery(input: $input)
-}
-    `;
+  mutation CreateNewTakeoutOrDelivery(
+    $input: CreateNewTakeoutOrDeliveryInput!
+  ) {
+    createNewTakeoutOrDelivery(input: $input)
+  }
+`;
 export type CreateNewTakeoutOrDeliveryMutationFn = Apollo.MutationFunction<
 	CreateNewTakeoutOrDeliveryMutation,
 	CreateNewTakeoutOrDeliveryMutationVariables
@@ -6661,17 +6665,17 @@ export type CreateNewTakeoutOrDeliveryMutationOptions =
 		CreateNewTakeoutOrDeliveryMutationVariables
 	>;
 export const DeclineInvitationDocument = gql`
-    mutation DeclineInvitation($input: GetById!) {
-  declineInvitation(input: $input) {
-    _id
-    business
-    totalGuests
-    names
-    status
-    tab
+  mutation DeclineInvitation($input: GetById!) {
+    declineInvitation(input: $input) {
+      _id
+      business
+      totalGuests
+      names
+      status
+      tab
+    }
   }
-}
-    `;
+`;
 export type DeclineInvitationMutationFn = Apollo.MutationFunction<
 	DeclineInvitationMutation,
 	DeclineInvitationMutationVariables
@@ -6716,14 +6720,14 @@ export type DeclineInvitationMutationOptions = Apollo.BaseMutationOptions<
 	DeclineInvitationMutationVariables
 >;
 export const DeclineTabRequestDocument = gql`
-    mutation DeclineTabRequest($input: GetById!) {
-  declineTabRequest(input: $input) {
-    _id
-    status
-    totalGuests
+  mutation DeclineTabRequest($input: GetById!) {
+    declineTabRequest(input: $input) {
+      _id
+      status
+      totalGuests
+    }
   }
-}
-    `;
+`;
 export type DeclineTabRequestMutationFn = Apollo.MutationFunction<
 	DeclineTabRequestMutation,
 	DeclineTabRequestMutationVariables
@@ -6768,10 +6772,10 @@ export type DeclineTabRequestMutationOptions = Apollo.BaseMutationOptions<
 	DeclineTabRequestMutationVariables
 >;
 export const OpenTabRequestDocument = gql`
-    mutation OpenTabRequest($input: OpenTabRequestInput!) {
-  openTabRequest(input: $input)
-}
-    `;
+  mutation OpenTabRequest($input: OpenTabRequestInput!) {
+    openTabRequest(input: $input)
+  }
+`;
 export type OpenTabRequestMutationFn = Apollo.MutationFunction<
 	OpenTabRequestMutation,
 	OpenTabRequestMutationVariables
@@ -6816,10 +6820,10 @@ export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<
 	OpenTabRequestMutationVariables
 >;
 export const RequestJoinTabDocument = gql`
-    mutation RequestJoinTab($input: JoinTabForm!) {
-  requestJoinTab(input: $input)
-}
-    `;
+  mutation RequestJoinTab($input: JoinTabForm!) {
+    requestJoinTab(input: $input)
+  }
+`;
 export type RequestJoinTabMutationFn = Apollo.MutationFunction<
 	RequestJoinTabMutation,
 	RequestJoinTabMutationVariables
@@ -6864,47 +6868,47 @@ export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<
 	RequestJoinTabMutationVariables
 >;
 export const GetClientSessionDocument = gql`
-    query GetClientSession {
-  getClientSession {
-    user {
-      _id
-      name
-      phoneNumber
-      address {
-        _id
-        streetAddress
-        complement
-        postalCode
-        city
-        stateOrProvince
-        country
-      }
-    }
-    request {
-      _id
-      status
-    }
-    tab {
-      _id
-      type
-      status
-      admin
-      checkout
-      table {
-        tableNumber
-      }
-      users {
+  query GetClientSession {
+    getClientSession {
+      user {
         _id
         name
+        phoneNumber
+        address {
+          _id
+          streetAddress
+          complement
+          postalCode
+          city
+          stateOrProvince
+          country
+        }
       }
-      orders {
+      request {
         _id
+        status
       }
-      cartItems
+      tab {
+        _id
+        type
+        status
+        admin
+        checkout
+        table {
+          tableNumber
+        }
+        users {
+          _id
+          name
+        }
+        orders {
+          _id
+        }
+        cartItems
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetClientSessionQuery__
@@ -6956,22 +6960,22 @@ export type GetClientSessionQueryResult = Apollo.QueryResult<
 	GetClientSessionQueryVariables
 >;
 export const GetPendingInvitationsDocument = gql`
-    query GetPendingInvitations {
-  getPendingInvitations {
-    _id
-    business
-    totalGuests
-    names
-    status
-    tab
-    requestor {
+  query GetPendingInvitations {
+    getPendingInvitations {
       _id
-      name
-      phoneNumber
+      business
+      totalGuests
+      names
+      status
+      tab
+      requestor {
+        _id
+        name
+        phoneNumber
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetPendingInvitationsQuery__
@@ -7023,22 +7027,22 @@ export type GetPendingInvitationsQueryResult = Apollo.QueryResult<
 	GetPendingInvitationsQueryVariables
 >;
 export const GetTabRequestDocument = gql`
-    query GetTabRequest {
-  getTabRequest {
-    _id
-    admin {
+  query GetTabRequest {
+    getTabRequest {
       _id
-      name
-      phoneNumber
+      admin {
+        _id
+        name
+        phoneNumber
+      }
+      business
+      names
+      totalGuests
+      status
+      tab
     }
-    business
-    names
-    totalGuests
-    status
-    tab
   }
-}
-    `;
+`;
 
 /**
  * __useGetTabRequestQuery__
@@ -7090,24 +7094,24 @@ export type GetTabRequestQueryResult = Apollo.QueryResult<
 	GetTabRequestQueryVariables
 >;
 export const GetTabRequestsDocument = gql`
-    query GetTabRequests($input: GetTabRequestInput) {
-  getTabRequests(input: $input) {
-    _id
-    requestor {
+  query GetTabRequests($input: GetTabRequestInput) {
+    getTabRequests(input: $input) {
       _id
-      name
-      phoneNumber
+      requestor {
+        _id
+        name
+        phoneNumber
+      }
+      admin {
+        _id
+        name
+        phoneNumber
+      }
+      status
+      totalGuests
     }
-    admin {
-      _id
-      name
-      phoneNumber
-    }
-    status
-    totalGuests
   }
-}
-    `;
+`;
 
 /**
  * __useGetTabRequestsQuery__
@@ -7160,19 +7164,19 @@ export type GetTabRequestsQueryResult = Apollo.QueryResult<
 	GetTabRequestsQueryVariables
 >;
 export const OnTabRequestDocument = gql`
-    subscription OnTabRequest {
-  onTabRequest {
-    _id
-    requestor {
+  subscription OnTabRequest {
+    onTabRequest {
       _id
-      name
-      phoneNumber
+      requestor {
+        _id
+        name
+        phoneNumber
+      }
+      status
+      totalGuests
     }
-    status
-    totalGuests
   }
-}
-    `;
+`;
 
 /**
  * __useOnTabRequestSubscription__
@@ -7207,20 +7211,20 @@ export type OnTabRequestSubscriptionHookResult = ReturnType<
 export type OnTabRequestSubscriptionResult =
 	Apollo.SubscriptionResult<OnTabRequestSubscription>;
 export const OnTabRequestResponseDocument = gql`
-    subscription OnTabRequestResponse {
-  onTabRequestResponse {
-    _id
-    requestor {
+  subscription OnTabRequestResponse {
+    onTabRequestResponse {
       _id
+      requestor {
+        _id
+      }
+      admin {
+        _id
+      }
+      status
+      tab
     }
-    admin {
-      _id
-    }
-    status
-    tab
   }
-}
-    `;
+`;
 
 /**
  * __useOnTabRequestResponseSubscription__
@@ -7255,10 +7259,10 @@ export type OnTabRequestResponseSubscriptionHookResult = ReturnType<
 export type OnTabRequestResponseSubscriptionResult =
 	Apollo.SubscriptionResult<OnTabRequestResponseSubscription>;
 export const SubscriptionDocument = gql`
-    subscription Subscription {
-  numberIncremented
-}
-    `;
+  subscription Subscription {
+    numberIncremented
+  }
+`;
 
 /**
  * __useSubscriptionSubscription__
@@ -7293,14 +7297,14 @@ export type SubscriptionSubscriptionHookResult = ReturnType<
 export type SubscriptionSubscriptionResult =
 	Apollo.SubscriptionResult<SubscriptionSubscription>;
 export const CreateSpaceDocument = gql`
-    mutation CreateSpace($input: CreateSpaceInput) {
-  createSpace(input: $input) {
-    _id
-    name
-    business
+  mutation CreateSpace($input: CreateSpaceInput) {
+    createSpace(input: $input) {
+      _id
+      name
+      business
+    }
   }
-}
-    `;
+`;
 export type CreateSpaceMutationFn = Apollo.MutationFunction<
 	CreateSpaceMutation,
 	CreateSpaceMutationVariables
@@ -7345,22 +7349,22 @@ export type CreateSpaceMutationOptions = Apollo.BaseMutationOptions<
 	CreateSpaceMutationVariables
 >;
 export const GetSpacesFromBusinessDocument = gql`
-    query GetSpacesFromBusiness {
-  getSpacesFromBusiness {
-    _id
-    name
-    business
-    tables {
+  query GetSpacesFromBusiness {
+    getSpacesFromBusiness {
       _id
-      status
-      tableNumber
-      tab {
+      name
+      business
+      tables {
         _id
+        status
+        tableNumber
+        tab {
+          _id
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetSpacesFromBusinessQuery__
@@ -7412,14 +7416,14 @@ export type GetSpacesFromBusinessQueryResult = Apollo.QueryResult<
 	GetSpacesFromBusinessQueryVariables
 >;
 export const CreateSubscriptionDocument = gql`
-    mutation CreateSubscription($input: CreateSubInput!) {
-  createSubscription(input: $input) {
-    subscriptionId
-    clientSecret
-    price
+  mutation CreateSubscription($input: CreateSubInput!) {
+    createSubscription(input: $input) {
+      subscriptionId
+      clientSecret
+      price
+    }
   }
-}
-    `;
+`;
 export type CreateSubscriptionMutationFn = Apollo.MutationFunction<
 	CreateSubscriptionMutation,
 	CreateSubscriptionMutationVariables
@@ -7464,13 +7468,13 @@ export type CreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<
 	CreateSubscriptionMutationVariables
 >;
 export const CancelSubscriptionDocument = gql`
-    mutation CancelSubscription($input: DeleteSubInput!) {
-  cancelSubscription(input: $input) {
-    id
-    status
+  mutation CancelSubscription($input: DeleteSubInput!) {
+    cancelSubscription(input: $input) {
+      id
+      status
+    }
   }
-}
-    `;
+`;
 export type CancelSubscriptionMutationFn = Apollo.MutationFunction<
 	CancelSubscriptionMutation,
 	CancelSubscriptionMutationVariables
@@ -7515,23 +7519,23 @@ export type CancelSubscriptionMutationOptions = Apollo.BaseMutationOptions<
 	CancelSubscriptionMutationVariables
 >;
 export const GetSignUpSubscriptionsDocument = gql`
-    query GetSignUpSubscriptions {
-  getSignUpSubscription {
-    id
-    tier
-    status
-    current_period_end
-    current_period_start
-    items {
-      data {
-        price {
-          id
+  query GetSignUpSubscriptions {
+    getSignUpSubscription {
+      id
+      tier
+      status
+      current_period_end
+      current_period_start
+      items {
+        data {
+          price {
+            id
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetSignUpSubscriptionsQuery__
@@ -7583,19 +7587,19 @@ export type GetSignUpSubscriptionsQueryResult = Apollo.QueryResult<
 	GetSignUpSubscriptionsQueryVariables
 >;
 export const GetSubscriptionPricesDocument = gql`
-    query GetSubscriptionPrices($input: GetSubsInput) {
-  getSubscriptionPrices(input: $input) {
-    id
-    currency
-    unit_amount
-    product {
+  query GetSubscriptionPrices($input: GetSubsInput) {
+    getSubscriptionPrices(input: $input) {
       id
-      name
-      description
+      currency
+      unit_amount
+      product {
+        id
+        name
+        description
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetSubscriptionPricesQuery__
@@ -7648,15 +7652,15 @@ export type GetSubscriptionPricesQueryResult = Apollo.QueryResult<
 	GetSubscriptionPricesQueryVariables
 >;
 export const UpdateSubscriptionDocument = gql`
-    mutation UpdateSubscription($input: UpdatedSubInput!) {
-  updateSubscription(input: $input) {
-    id
-    status
-    current_period_end
-    current_period_start
+  mutation UpdateSubscription($input: UpdatedSubInput!) {
+    updateSubscription(input: $input) {
+      id
+      status
+      current_period_end
+      current_period_start
+    }
   }
-}
-    `;
+`;
 export type UpdateSubscriptionMutationFn = Apollo.MutationFunction<
 	UpdateSubscriptionMutation,
 	UpdateSubscriptionMutationVariables
@@ -7701,17 +7705,17 @@ export type UpdateSubscriptionMutationOptions = Apollo.BaseMutationOptions<
 	UpdateSubscriptionMutationVariables
 >;
 export const CreateTabDocument = gql`
-    mutation CreateTab($input: CreateTabInput!) {
-  createTab(input: $input) {
-    _id
-    status
-    table {
+  mutation CreateTab($input: CreateTabInput!) {
+    createTab(input: $input) {
       _id
-      tableNumber
+      status
+      table {
+        _id
+        tableNumber
+      }
     }
   }
-}
-    `;
+`;
 export type CreateTabMutationFn = Apollo.MutationFunction<
 	CreateTabMutation,
 	CreateTabMutationVariables
@@ -7755,12 +7759,14 @@ export type CreateTabMutationOptions = Apollo.BaseMutationOptions<
 	CreateTabMutationVariables
 >;
 export const UpdateCustomerUpdateTabTypeDocument = gql`
-    mutation UpdateCustomerUpdateTabType($input: UpdateCustomerUpdateTabTypeInput!) {
-  updateCustomerUpdateTabType(input: $input) {
-    _id
+  mutation UpdateCustomerUpdateTabType(
+    $input: UpdateCustomerUpdateTabTypeInput!
+  ) {
+    updateCustomerUpdateTabType(input: $input) {
+      _id
+    }
   }
-}
-    `;
+`;
 export type UpdateCustomerUpdateTabTypeMutationFn = Apollo.MutationFunction<
 	UpdateCustomerUpdateTabTypeMutation,
 	UpdateCustomerUpdateTabTypeMutationVariables
@@ -7806,17 +7812,17 @@ export type UpdateCustomerUpdateTabTypeMutationOptions =
 		UpdateCustomerUpdateTabTypeMutationVariables
 	>;
 export const RequestCloseTabDocument = gql`
-    mutation RequestCloseTab($input: GetById) {
-  requestCloseTab(input: $input) {
-    _id
-    checkout
-    status
-    users {
+  mutation RequestCloseTab($input: GetById) {
+    requestCloseTab(input: $input) {
       _id
+      checkout
+      status
+      users {
+        _id
+      }
     }
   }
-}
-    `;
+`;
 export type RequestCloseTabMutationFn = Apollo.MutationFunction<
 	RequestCloseTabMutation,
 	RequestCloseTabMutationVariables
@@ -7861,15 +7867,18 @@ export type RequestCloseTabMutationOptions = Apollo.BaseMutationOptions<
 	RequestCloseTabMutationVariables
 >;
 export const UpdateTypeAndAddressDocument = gql`
-    mutation UpdateTypeAndAddress($input: UpdateCustomerUpdateTabTypeInput!, $createCustomerAddressInput2: AddressInput!) {
-  updateCustomerUpdateTabType(input: $input) {
-    _id
+  mutation UpdateTypeAndAddress(
+    $input: UpdateCustomerUpdateTabTypeInput!
+    $createCustomerAddressInput2: AddressInput!
+  ) {
+    updateCustomerUpdateTabType(input: $input) {
+      _id
+    }
+    createCustomerAddress(input: $createCustomerAddressInput2) {
+      _id
+    }
   }
-  createCustomerAddress(input: $createCustomerAddressInput2) {
-    _id
-  }
-}
-    `;
+`;
 export type UpdateTypeAndAddressMutationFn = Apollo.MutationFunction<
 	UpdateTypeAndAddressMutation,
 	UpdateTypeAndAddressMutationVariables
@@ -7915,38 +7924,38 @@ export type UpdateTypeAndAddressMutationOptions = Apollo.BaseMutationOptions<
 	UpdateTypeAndAddressMutationVariables
 >;
 export const GetTabByIdDocument = gql`
-    query GetTabByID($input: GetById!) {
-  getTabByID(input: $input) {
-    checkout
-    _id
-    status
-    admin
-    users {
-      _id
-      name
-    }
-    _id
-    table {
-      _id
-      tableNumber
-    }
-    admin
-    orders {
+  query GetTabByID($input: GetById!) {
+    getTabByID(input: $input) {
+      checkout
       _id
       status
-      quantity
-      subTotal
-      product {
+      admin
+      users {
         _id
-        imageUrl
-        price
         name
-        currency
+      }
+      _id
+      table {
+        _id
+        tableNumber
+      }
+      admin
+      orders {
+        _id
+        status
+        quantity
+        subTotal
+        product {
+          _id
+          imageUrl
+          price
+          name
+          currency
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetTabByIdQuery__
@@ -7997,21 +8006,21 @@ export type GetTabByIdQueryResult = Apollo.QueryResult<
 	GetTabByIdQueryVariables
 >;
 export const GetTabCheckoutByIdDocument = gql`
-    query GetTabCheckoutByID($input: GetById!) {
-  getTabByID(input: $input) {
-    _id
-    status
-    users {
+  query GetTabCheckoutByID($input: GetById!) {
+    getTabByID(input: $input) {
       _id
-    }
-    orders {
-      user
-      _id
-      subTotal
+      status
+      users {
+        _id
+      }
+      orders {
+        user
+        _id
+        subTotal
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetTabCheckoutByIdQuery__
@@ -8064,13 +8073,13 @@ export type GetTabCheckoutByIdQueryResult = Apollo.QueryResult<
 	GetTabCheckoutByIdQueryVariables
 >;
 export const CreateTableDocument = gql`
-    mutation CreateTable($input: CreateTableInput) {
-  createTable(input: $input) {
-    space
-    _id
+  mutation CreateTable($input: CreateTableInput) {
+    createTable(input: $input) {
+      space
+      _id
+    }
   }
-}
-    `;
+`;
 export type CreateTableMutationFn = Apollo.MutationFunction<
 	CreateTableMutation,
 	CreateTableMutationVariables
@@ -8115,36 +8124,36 @@ export type CreateTableMutationOptions = Apollo.BaseMutationOptions<
 	CreateTableMutationVariables
 >;
 export const GetTableByIdDocument = gql`
-    query GetTableById($input: GetById!) {
-  getTableById(input: $input) {
-    _id
-    space
-    status
-    tableNumber
-    tab {
+  query GetTableById($input: GetById!) {
+    getTableById(input: $input) {
       _id
-      admin
-      orders {
+      space
+      status
+      tableNumber
+      tab {
         _id
-        status
-        quantity
-        subTotal
-        product {
+        admin
+        orders {
           _id
-          imageUrl
-          name
-          price
-          currency
+          status
+          quantity
+          subTotal
+          product {
+            _id
+            imageUrl
+            name
+            price
+            currency
+          }
         }
-      }
-      users {
-        _id
-        name
+        users {
+          _id
+          name
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetTableByIdQuery__
@@ -8197,15 +8206,15 @@ export type GetTableByIdQueryResult = Apollo.QueryResult<
 	GetTableByIdQueryVariables
 >;
 export const GetTablesFromSpaceDocument = gql`
-    query GetTablesFromSpace($input: GetById!) {
-  getTablesFromSpace(input: $input) {
-    _id
-    status
-    tableNumber
-    space
+  query GetTablesFromSpace($input: GetById!) {
+    getTablesFromSpace(input: $input) {
+      _id
+      status
+      tableNumber
+      space
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetTablesFromSpaceQuery__
@@ -8258,16 +8267,16 @@ export type GetTablesFromSpaceQueryResult = Apollo.QueryResult<
 	GetTablesFromSpaceQueryVariables
 >;
 export const CreateEmployeeAccountDocument = gql`
-    mutation CreateEmployeeAccount($input: CreateEmployeeAccountInput!) {
-  createEmployeeAccount(input: $input) {
-    token
-    name
-    email
-    _id
-    picture
+  mutation CreateEmployeeAccount($input: CreateEmployeeAccountInput!) {
+    createEmployeeAccount(input: $input) {
+      token
+      name
+      email
+      _id
+      picture
+    }
   }
-}
-    `;
+`;
 export type CreateEmployeeAccountMutationFn = Apollo.MutationFunction<
 	CreateEmployeeAccountMutation,
 	CreateEmployeeAccountMutationVariables
@@ -8312,15 +8321,15 @@ export type CreateEmployeeAccountMutationOptions = Apollo.BaseMutationOptions<
 	CreateEmployeeAccountMutationVariables
 >;
 export const CreateUserDocument = gql`
-    mutation CreateUser($input: UserInput!) {
-  createUser(input: $input) {
-    _id
-    name
-    email
-    token
+  mutation CreateUser($input: UserInput!) {
+    createUser(input: $input) {
+      _id
+      name
+      email
+      token
+    }
   }
-}
-    `;
+`;
 export type CreateUserMutationFn = Apollo.MutationFunction<
 	CreateUserMutation,
 	CreateUserMutationVariables
@@ -8365,16 +8374,16 @@ export type CreateUserMutationOptions = Apollo.BaseMutationOptions<
 	CreateUserMutationVariables
 >;
 export const PasswordResetDocument = gql`
-    mutation PasswordReset($input: ResetPasswordInput!) {
-  passwordReset(input: $input) {
-    _id
-    email
-    name
-    token
-    picture
+  mutation PasswordReset($input: ResetPasswordInput!) {
+    passwordReset(input: $input) {
+      _id
+      email
+      name
+      token
+      picture
+    }
   }
-}
-    `;
+`;
 export type PasswordResetMutationFn = Apollo.MutationFunction<
 	PasswordResetMutation,
 	PasswordResetMutationVariables
@@ -8419,14 +8428,14 @@ export type PasswordResetMutationOptions = Apollo.BaseMutationOptions<
 	PasswordResetMutationVariables
 >;
 export const PostUserLoginDocument = gql`
-    mutation PostUserLogin($input: LoginInput!) {
-  postUserLogin(input: $input) {
-    name
-    email
-    token
+  mutation PostUserLogin($input: LoginInput!) {
+    postUserLogin(input: $input) {
+      name
+      email
+      token
+    }
   }
-}
-    `;
+`;
 export type PostUserLoginMutationFn = Apollo.MutationFunction<
 	PostUserLoginMutation,
 	PostUserLoginMutationVariables
@@ -8471,12 +8480,12 @@ export type PostUserLoginMutationOptions = Apollo.BaseMutationOptions<
 	PostUserLoginMutationVariables
 >;
 export const RecoverPasswordDocument = gql`
-    mutation RecoverPassword($input: String!) {
-  recoverPassword(input: $input) {
-    ok
+  mutation RecoverPassword($input: String!) {
+    recoverPassword(input: $input) {
+      ok
+    }
   }
-}
-    `;
+`;
 export type RecoverPasswordMutationFn = Apollo.MutationFunction<
 	RecoverPasswordMutation,
 	RecoverPasswordMutationVariables
@@ -8521,13 +8530,13 @@ export type RecoverPasswordMutationOptions = Apollo.BaseMutationOptions<
 	RecoverPasswordMutationVariables
 >;
 export const RequestUserAccountCreationDocument = gql`
-    mutation RequestUserAccountCreation($input: RequestUserAccountInput!) {
-  requestUserAccountCreation(input: $input) {
-    ok
-    url
+  mutation RequestUserAccountCreation($input: RequestUserAccountInput!) {
+    requestUserAccountCreation(input: $input) {
+      ok
+      url
+    }
   }
-}
-    `;
+`;
 export type RequestUserAccountCreationMutationFn = Apollo.MutationFunction<
 	RequestUserAccountCreationMutation,
 	RequestUserAccountCreationMutationVariables
@@ -8573,19 +8582,19 @@ export type RequestUserAccountCreationMutationOptions =
 		RequestUserAccountCreationMutationVariables
 	>;
 export const UpdateUserInformationDocument = gql`
-    mutation UpdateUserInformation($input: UpdateUserInput!) {
-  updateUserInformation(input: $input) {
-    _id
-    email
-    name
-    picture
-    businesses {
-      business
-      privilege
+  mutation UpdateUserInformation($input: UpdateUserInput!) {
+    updateUserInformation(input: $input) {
+      _id
+      email
+      name
+      picture
+      businesses {
+        business
+        privilege
+      }
     }
   }
-}
-    `;
+`;
 export type UpdateUserInformationMutationFn = Apollo.MutationFunction<
 	UpdateUserInformationMutation,
 	UpdateUserInformationMutationVariables
@@ -8630,14 +8639,14 @@ export type UpdateUserInformationMutationOptions = Apollo.BaseMutationOptions<
 	UpdateUserInformationMutationVariables
 >;
 export const GetClientInformationDocument = gql`
-    query GetClientInformation {
-  getClientInformation {
-    _id
-    name
-    phoneNumber
+  query GetClientInformation {
+    getClientInformation {
+      _id
+      name
+      phoneNumber
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useGetClientInformationQuery__
@@ -8689,19 +8698,19 @@ export type GetClientInformationQueryResult = Apollo.QueryResult<
 	GetClientInformationQueryVariables
 >;
 export const GetUserInformationDocument = gql`
-    query GetUserInformation {
-  getUserInformation {
-    _id
-    email
-    name
-    picture
-    businesses {
-      business
-      privilege
+  query GetUserInformation {
+    getUserInformation {
+      _id
+      email
+      name
+      picture
+      businesses {
+        business
+        privilege
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetUserInformationQuery__

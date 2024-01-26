@@ -28,7 +28,9 @@ const OrdersRow = ({ orderType, number }: any) => (
 
 export function PieChart({
 	data,
-}: { data: GetMostSellingProductsQuery | undefined }) {
+}: {
+	data: GetMostSellingProductsQuery | undefined;
+}) {
 	const { t } = useTranslation("businessDashboard");
 	return (
 		<ScrollView pr={2} pb={2}>

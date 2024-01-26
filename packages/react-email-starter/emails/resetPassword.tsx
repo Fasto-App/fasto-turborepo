@@ -44,7 +44,11 @@ export function ResetPasswordEmail({
 	url = "https://fastoapp.com",
 	name = "Alex",
 	locale = "pt",
-}: { url: string; name: string; locale: Locale }) {
+}: {
+	url: string;
+	name: string;
+	locale: Locale;
+}) {
 	return (
 		<Html>
 			<Head />

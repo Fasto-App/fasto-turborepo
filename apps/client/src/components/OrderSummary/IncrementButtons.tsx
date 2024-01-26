@@ -4,7 +4,10 @@ import { AddIcon, Box, HStack, IconButton, MinusIcon, Text } from "native-base";
 const StyledIconButton = ({
 	type,
 	onPress,
-}: { type: "plus" | "minus"; onPress?: () => void }) => {
+}: {
+	type: "plus" | "minus";
+	onPress?: () => void;
+}) => {
 	const Icon = type === "plus" ? AddIcon : MinusIcon;
 	return (
 		<IconButton

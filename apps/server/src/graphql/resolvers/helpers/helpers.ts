@@ -39,9 +39,11 @@ export const getCountry = async ({
 	db,
 	business,
 	input,
-}: { db: Connection; business?: string; input?: string | null }): Promise<
-	"BR" | "US"
-> => {
+}: {
+	db: Connection;
+	business?: string;
+	input?: string | null;
+}): Promise<"BR" | "US"> => {
 	const foundBusiness = await BusinessModel(db).findById(business);
 
 	if (!foundBusiness || !foundBusiness?.country) {

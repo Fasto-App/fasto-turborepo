@@ -7,6 +7,6 @@
 > For acess docs: [apollographql.com](https://www.apollographql.com/docs/react/get-started)
 > version in use in **FASTO**: ^3.6.2
 
--   **Outher information**
-    This means you are not authorized yet, and to login and set up [Doppler](docs/DOPPLER.md).
-    How to prepar the ambientation system to run project [Environment](docs/ENVIRONMENT.md).
+- **Outher information**
+  This means you are not authorized yet, and to login and set up [Doppler](docs/DOPPLER.md).
+  How to prepar the ambientation system to run project [Environment](docs/ENVIRONMENT.md).

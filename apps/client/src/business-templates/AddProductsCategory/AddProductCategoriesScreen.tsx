@@ -11,7 +11,9 @@ import { OrangeBox } from "../../components/OrangeBox";
 
 export default function AddProductCategoriesScreen({
 	resetAll,
-}: { resetAll: () => void }) {
+}: {
+	resetAll: () => void;
+}) {
 	const { allCategories, loadingCategory } = useCategoryMutationHook();
 	const { allProducts, loadingProduct } = useProductMutationHook();
 	const categoryId = useAppStore((state) => state.category);
