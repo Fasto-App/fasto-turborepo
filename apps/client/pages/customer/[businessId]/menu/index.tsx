@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { MenuScreen } from "../../../../customer-templates/MenuScreen/MenuScreen";
+import { MenuScreen } from "../../../../src/customer-templates/MenuScreen/MenuScreen";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 

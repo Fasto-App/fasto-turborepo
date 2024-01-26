@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { PaymentsScreen } from "../../../../business-templates/Payments";
+import { PaymentsScreen } from "../../../../src/business-templates/Payments";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 

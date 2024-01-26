@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuScreen } from "../../../../business-templates/Menu";
+import { MenuScreen } from "../../../../src/business-templates/Menu";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";

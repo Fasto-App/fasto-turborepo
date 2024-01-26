@@ -70,8 +70,8 @@ interface CheckoutStore {
 }
 
 // TODO: add getters https://github.com/pmndrs/zustand/discussions/1166
-// @ts-ignore
 export const useCheckoutStore = create<CheckoutStore>(
+	// @ts-ignore
 	devtools(
 		subscribeWithSelector((set, get) => ({
 			total: 0,

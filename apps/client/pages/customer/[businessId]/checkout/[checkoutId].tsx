@@ -1,6 +1,6 @@
 import React from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { CheckoutScreen } from "../../../../customer-templates/CheckoutScreen";
+import { CheckoutScreen } from "../../../../src/customer-templates/CheckoutScreen";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import Head from "next/head";

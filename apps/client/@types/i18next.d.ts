@@ -1,4 +1,4 @@
-import { BusinessDashboard } from "./../business-templates/Dashboard/BusinessDashboard";
+import { BusinessDashboard } from "../src/business-templates/Dashboard/BusinessDashboard";
 // import the original type declarations
 import "i18next";
 

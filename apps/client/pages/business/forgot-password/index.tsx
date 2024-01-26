@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { ForgotPasswordForm } from "../../../business-templates/ForgotPassword/ForgotPasswordForm";
+import { ForgotPasswordForm } from "../../../src/business-templates/ForgotPassword/ForgotPasswordForm";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 

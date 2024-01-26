@@ -46,8 +46,8 @@ export const ControlledForm = <T extends Record<string, string>>({
 											control={control}
 											name={keyName as string}
 											label={subKeyConfig[keyName].label}
-											//  @ts-ignore
 											errorMessage={
+												//  @ts-ignore
 												t(formState?.errors?.[keyName]?.message) as string
 											}
 										/>

@@ -1,6 +1,6 @@
 import React from "react";
 import type { GetStaticProps } from "next";
-import { ResetPasswordScreen } from "../../../business-templates/ResetPassword";
+import { ResetPasswordScreen } from "../../../src/business-templates/ResetPassword";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";

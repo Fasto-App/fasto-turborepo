@@ -1,6 +1,6 @@
 import { GetStaticProps, GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { HomeScreen } from "../../../customer-templates/HomeScreen/HomeScreen";
+import { HomeScreen } from "../../../src/customer-templates/HomeScreen/HomeScreen";
 
 import React from "react";
 import Head from "next/head";

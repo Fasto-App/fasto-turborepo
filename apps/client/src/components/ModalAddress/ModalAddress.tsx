@@ -24,7 +24,7 @@ import {
 } from "../../gen/generated";
 import { CustomModal } from "../CustomModal/CustomModal";
 import { showToast } from "../showToast";
-import { Icon } from "../../components/atoms/NavigationButton";
+import { Icon } from "../atoms/NavigationButton";
 import { typedKeys } from "app-helpers";
 
 type ModalAddressProps = {

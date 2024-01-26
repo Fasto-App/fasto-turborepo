@@ -16,10 +16,10 @@ export class Category {
 	public parentCategory?: Ref<Category, string>;
 
 	@prop({ ref: () => Category, default: [] })
-	public subCategories?: String[];
+	public subCategories?: string[];
 
 	@prop({ ref: () => Product, default: [] })
-	public products?: [String];
+	public products?: [string];
 
 	@prop({ default: Date.now() })
 	public created_date!: Date;

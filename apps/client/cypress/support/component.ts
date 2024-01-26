@@ -1,4 +1,4 @@
-import { AppApolloProvider } from "../../apollo-client/AppApolloProvider";
+import { AppApolloProvider } from "../../src/apollo-client/AppApolloProvider";
 // ***********************************************************
 // This example support/component.ts is processed and
 // loaded automatically before your test files.

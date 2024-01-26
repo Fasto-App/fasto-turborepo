@@ -1,14 +1,14 @@
 import React from "react";
 import Script from "next/script";
 import Link from "next/link";
-import { FDSSelect } from "../components/FDSSelect";
+import { FDSSelect } from "../src/components/FDSSelect";
 import { useRouter } from "next/router";
 import { Locale, localeObj, parseToCurrency } from "app-helpers";
 import { Box, HStack } from "native-base";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticProps } from "next";
-import { Countries, useGetSubscriptionPricesQuery } from "../gen/generated";
+import { Countries, useGetSubscriptionPricesQuery } from "../src/gen/generated";
 
 export default function Index() {
 	const router = useRouter();

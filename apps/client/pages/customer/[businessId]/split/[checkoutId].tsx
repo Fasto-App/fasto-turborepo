@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { SplitScreen } from "../../../../customer-templates/Split";
+import { SplitScreen } from "../../../../src/customer-templates/Split";
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
 

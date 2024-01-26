@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { AddToOrder } from "../../../../business-templates/AddToOrder";
+import { AddToOrder } from "../../../../src/business-templates/AddToOrder";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 

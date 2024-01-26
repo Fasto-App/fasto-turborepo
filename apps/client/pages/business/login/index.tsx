@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { LoginForm } from "../../../business-templates/Login";
+import { LoginForm } from "../../../src/business-templates/Login";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 

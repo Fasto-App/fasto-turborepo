@@ -3,7 +3,7 @@ import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
-import { Subscriptions } from "../../../../business-templates/Subscription";
+import { Subscriptions } from "../../../../src/business-templates/Subscription";
 
 export default function SubscriptionsPage() {
 	const { t } = useTranslation("common");

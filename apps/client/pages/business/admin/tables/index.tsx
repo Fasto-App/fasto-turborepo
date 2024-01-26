@@ -1,5 +1,5 @@
 import React from "react";
-import { TablesScreen } from "../../../../business-templates/Tables";
+import { TablesScreen } from "../../../../src/business-templates/Tables";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";

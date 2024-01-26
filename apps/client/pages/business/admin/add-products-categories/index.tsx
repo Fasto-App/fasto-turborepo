@@ -1,5 +1,5 @@
 import React from "react";
-import { AddProductsCategories } from "../../../../business-templates/AddProductsCategory";
+import { AddProductsCategories } from "../../../../src/business-templates/AddProductsCategory";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticProps } from "next";
 import Head from "next/head";

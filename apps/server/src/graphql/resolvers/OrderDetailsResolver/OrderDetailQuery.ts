@@ -129,8 +129,8 @@ const getOrdersGroup: QueryResolvers["getOrdersGroup"] = async (
 		.sort({ _id: -1 });
 };
 
-//@ts-ignore
-const getOrderGroupById: QueryResolvers["getOrdersGroupById"] = async (
+// @ts-ignore
+const getOrderGroupById: QueryResolvers["getOrderGroupById"] = async (
 	paren,
 	{ id },
 	{ db, business },
@@ -143,6 +143,7 @@ const getOrderGroupById: QueryResolvers["getOrdersGroupById"] = async (
 
 	if (!foundOrderGroup)
 		throw ApolloError(new Error("OrderGroup not found"), "Unauthorized");
+
 	foundOrderGroup.orders = await OrderDetailModel(db).find({
 		_id: { $in: foundOrderGroup.orders },
 	});

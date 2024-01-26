@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { CreateAccountScreen } from "../../../business-templates/CreateaAccount";
+import { CreateAccountScreen } from "../../../src/business-templates/CreateaAccount";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 

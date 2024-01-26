@@ -308,10 +308,10 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (
 				await updateCheckout();
 				break;
 			case "ByPatron":
-				//@ts-ignore
 				const ordersByPatron = await splitByPatron(
 					db,
 					foundCheckout,
+					//@ts-ignore
 					foundUsers,
 				);
 				// 02. from the total of the orders, get the total of the tab with taxes, fee, and order for the table
