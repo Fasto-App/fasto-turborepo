@@ -87,7 +87,7 @@ const createCustomerAddress: MutationResolvers["createCustomerAddress"] = async 
         city: data?.result.address?.postalAddress.locality,
         country: data?.result.address?.postalAddress.regionCode,
     })
-
+    console.log(address)
     await UserModel(db).findByIdAndUpdate(client._id, {
         address: address._id
     })

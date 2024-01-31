@@ -21,6 +21,8 @@ import { SessionModel } from '../../../models/session';
 import { sendEployeeAccountCreation, sendExistingUserEployeeEmail, sendQRCodeAttachment } from '../../../email-tool';
 import { MutationResolvers, QueryResolvers } from '../../../generated/graphql';
 import { Stream } from "stream"
+import { TaxModel } from '../../../models/tax';
+import { Bugsnag } from '../../../bugsnag/bugsnag';
 
 
 //FIX: this should be a validation of the token, not the business id
@@ -177,19 +179,19 @@ const updateBusinessLocation: MutationResolvers["updateBusinessLocation"] = asyn
   _parent,
   { input },
   { db, business }) => {
-  console.log("Location Input", input)
   const Business = BusinessModel(db)
   const Address = AddressModel(db)
+  let businessAddress
 
   try {
-
     const validatedInput = businessLocationSchema.parse(input)
     const updateBusiness = await Business.findById(business)
 
     if (!updateBusiness) throw new Error("Business not found");
 
     if (updateBusiness?.address) {
-      await Address.findByIdAndUpdate(updateBusiness.address, {
+      
+      businessAddress = await Address.findByIdAndUpdate(updateBusiness.address, {
         streetAddress: validatedInput.streetAddress,
         complement: validatedInput.complement,
         postalCode: validatedInput.postalCode,
@@ -197,9 +199,10 @@ const updateBusinessLocation: MutationResolvers["updateBusinessLocation"] = asyn
         stateOrProvince: validatedInput.stateOrProvince,
         country: validatedInput.country,
       })
+      
     } else {
 
-      const address = new Address({
+      businessAddress = new Address({
         streetAddress: validatedInput.streetAddress,
         complement: validatedInput.complement,
         postalCode: validatedInput.postalCode,
@@ -208,10 +211,20 @@ const updateBusinessLocation: MutationResolvers["updateBusinessLocation"] = asyn
         country: validatedInput.country,
       })
 
-      const savedAddress = await address.save()
+      const savedAddress = await businessAddress.save()
       updateBusiness.address = savedAddress._id
+      
     }
 
+    const taxRequest = await TaxModel(db).findOne({zipcode: businessAddress?.postalCode})
+
+    if (taxRequest){
+      // update the business tax
+      updateBusiness.taxRate = taxRequest.rate
+    } else {
+      Bugsnag.notify(new Error(`We are not supporting this zipcode yet. ZIPCODE: ${businessAddress?.postalCode}`))
+    }
+    
     return await updateBusiness.save()
   } catch (err) {
     throw new Error(`Error saving business information: ${err}`);
