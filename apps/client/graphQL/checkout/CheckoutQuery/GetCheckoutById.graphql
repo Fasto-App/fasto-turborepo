@@ -13,6 +13,7 @@ query GetCheckoutByID($input: GetById!) {
 		tip
 		tipValue
 		tax
+		taxValue
 		tab
 		status
 		payments {

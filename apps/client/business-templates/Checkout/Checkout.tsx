@@ -10,6 +10,7 @@ import {
   Divider,
   ScrollView,
   Image,
+  Pressable
 } from "native-base";
 import { useRouter } from "next/router";
 import React from "react";
@@ -37,7 +38,6 @@ import {
 import { PaymentTile } from "./TableComponents";
 import { showToast } from "../../components/showToast";
 import { CheckoutModal } from "./CheckoutModal";
-import { Pressable } from "react-native";
 
 const checkoutOptions = ["payFull", "splitBill", "success"] as const;
 
@@ -116,7 +116,7 @@ export const Checkout = () => {
     totalPaid,
     splitType,
     payments,
-    // serviceFee,
+    taxValue,
     serviceFeeValue,
     total,
   } = data?.getCheckoutByID || {};
@@ -245,8 +245,8 @@ export const Checkout = () => {
                       />
                       <SummaryRow
                         label={t("feesAndTax")}
-                        value={parseToCurrency(tax)}
-                      />
+                        value={parseToCurrency(taxValue)}
+                      /> 
                       <Divider my={2} />
                       <SummaryRow
                         label={t("total")}
@@ -295,6 +295,7 @@ export const Checkout = () => {
                   tip={tip}
                   total={total}
                   setSelectedOption={setSelectedOption}
+                  taxValue={taxValue}
                 />
               ) : selectedOption === "splitBill" ? (
                 <Split

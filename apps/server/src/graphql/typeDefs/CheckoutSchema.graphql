@@ -33,6 +33,7 @@ type Checkout {
 	tipValue: Float
 	discount: Float
 	tax: Float!
+	taxValue: Float
 	total: Float!
 	totalPaid: Float!
 	splitType: SplitType

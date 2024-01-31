@@ -2,10 +2,10 @@ export const typedKeys = <T extends {}>(obj?: T) => Object.keys(obj ?? {}) as Ar
 export const typedValues = <T extends {}>(obj?: T) => Object.values(obj ?? {}) as Array<T[keyof T]>
 
 // Define the fixed-point factor
-export const FIXED_POINT_FACTOR_PERCENTAGE = 10000;
+export const FIXED_POINT_FACTOR_PERCENTAGE = 100000;
 const FIXED_POINT_FACTOR_CURRENCY = 100;
 
-export const SERVICE_FEE = 201
+export const SERVICE_FEE = 2010
 
 export const MINIMUM_ITEMS_QUANTITY = 3
 
@@ -37,7 +37,7 @@ export const parseToFixedPoint = (percentage?: number) => {
 
 // get percentage of a value
 export const getPercentageOfValue = (value: number, percentage: number) => {
-  return Math.trunc((Math.floor(value * percentage) / FIXED_POINT_FACTOR_PERCENTAGE));
+  return Math.trunc((Math.ceil(value * percentage) / FIXED_POINT_FACTOR_PERCENTAGE));
 }
 
 // get the percentage value with the fixed-point value
