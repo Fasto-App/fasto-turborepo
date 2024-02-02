@@ -17,6 +17,7 @@ query GetTableById($input: GetById!) {
 					imageUrl
 					name
 					price
+					currency
 				}
 			}
 			users {

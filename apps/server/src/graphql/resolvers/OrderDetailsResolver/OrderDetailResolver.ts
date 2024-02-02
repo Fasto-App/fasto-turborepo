@@ -134,19 +134,21 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
             return orderDetails
         }));
 
+        //TODO: error tab null
+        if (!tab.type) tab.type = "DineIn"
         await tab.save();
 
         await OrdersGroupModel(db).create({
             orders: orderDetails.map(order => order._id),
             business,
             tab: tab._id,
-            type: tab.type,
+            type: tab?.type,
             createdByUser: businessUser?._id
         })
 
         return orderDetails;
     } catch (err) {
-        throw ApolloError(err as Error, "BadRequest");
+        throw ApolloError(err as Error, "InternalServerError");
     }
 }
 

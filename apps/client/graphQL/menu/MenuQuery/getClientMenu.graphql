@@ -14,6 +14,7 @@ query GetClientMenu($input: GetMenu!) {
 				description
 				price
 				imageUrl
+				currency
 			}
 		}
 	}

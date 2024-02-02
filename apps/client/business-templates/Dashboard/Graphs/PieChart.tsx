@@ -30,6 +30,7 @@ export function PieChart({ data }: { data: GetMostSellingProductsQuery | undefin
         key={product?._id}
         {...product}
         quantity={product?.totalOrdered}
+        price={parseToCurrency(product?.price, product?.currency)}
       />)}
     </VStack>
     <Box
@@ -66,7 +67,7 @@ const ProductItem = ({
     </Box>
     <VStack>
 
-      <Text alignSelf={"center"} fontSize={"md"} fontWeight={"500"}>{parseToCurrency(price)}</Text>
+      <Text alignSelf={"center"} fontSize={"md"} fontWeight={"500"}>{price}</Text>
       <Text
         fontSize={"md"}
         fontStyle={"italic"}
