@@ -1,6 +1,6 @@
 import { MutationResolvers } from "../../../generated/graphql";
-import { AddressModel, BusinessModel, OrderDetailModel, ProductModel, RequestModel, TabModel, TableModel, UserModel } from "../../../models";
-import { Checkout, CheckoutModel } from "../../../models/checkout";
+import { AddressModel, BusinessModel, RequestModel, TabModel, TableModel, UserModel } from "../../../models";
+import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { createPaymentIntent, stripe, stripeAuthorize, stripeOnboard } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";

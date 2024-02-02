@@ -263,6 +263,11 @@ export type CreateTableInput = {
   space: Scalars['ID'];
 };
 
+export enum Currency {
+  Brl = 'BRL',
+  Usd = 'USD'
+}
+
 export type CustomSplitInput = {
   amount: Scalars['Float'];
   patron: Scalars['ID'];
@@ -972,6 +977,7 @@ export type Product = {
   _id: Scalars['ID'];
   addonsID?: Maybe<Array<Maybe<Scalars['ID']>>>;
   category?: Maybe<Category>;
+  currency?: Maybe<Currency>;
   description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -994,7 +1000,7 @@ export type Query = {
   getAllOpenTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllOrderDetailsByDate?: Maybe<Array<Maybe<OrderDetailsByDate>>>;
   getAllOrderDetailsByOrderID?: Maybe<Array<Maybe<OrderDetail>>>;
-  getAllProductsByBusinessID: Array<Maybe<Product>>;
+  getAllProductsByBusinessID: Array<Product>;
   getAllTabsByBusinessID?: Maybe<Array<Maybe<Tab>>>;
   getAllUsers: Array<User>;
   getBusinessById: Business;
@@ -1659,21 +1665,21 @@ export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typ
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null }> }> | null }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null, currency?: Currency | null }> }> | null }> };
 
 export type GetClientMenuQueryVariables = Exact<{
   input: GetMenu;
 }>;
 
 
-export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, quantity?: number | null, name: string, description?: string | null, price: number, imageUrl?: string | null }> }> | null } | null };
+export type GetClientMenuQuery = { __typename?: 'Query', getClientMenu?: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, quantity?: number | null, name: string, description?: string | null, price: number, imageUrl?: string | null, currency?: Currency | null }> }> | null } | null };
 
 export type GetMenuByIdQueryVariables = Exact<{
   input?: InputMaybe<GetMenuById>;
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null }> }> | null } };
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null }> }> | null } };
 
 export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
@@ -1777,7 +1783,7 @@ export type GetProductByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetProductByIdQuery = { __typename?: 'Query', getProductByID?: { __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null, quantity?: number | null } | null };
+export type GetProductByIdQuery = { __typename?: 'Query', getProductByID?: { __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null } | null };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -1796,12 +1802,12 @@ export type DeleteProductMutation = { __typename?: 'Mutation', deleteProduct?: {
 export type GetMostSellingProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSellingProducts?: Array<{ __typename?: 'Product', _id: string, price: number, imageUrl?: string | null, name: string, totalOrdered?: number | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> | null };
+export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSellingProducts?: Array<{ __typename?: 'Product', _id: string, price: number, imageUrl?: string | null, name: string, totalOrdered?: number | null, currency?: Currency | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> | null };
 
 export type GetAllProductsByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllProductsByBusinessIdQuery = { __typename?: 'Query', getAllProductsByBusinessID: Array<{ __typename?: 'Product', _id: string, name: string, price: number, description?: string | null, imageUrl?: string | null, quantity?: number | null, category?: { __typename?: 'Category', name: string, _id: string } | null } | null> };
+export type GetAllProductsByBusinessIdQuery = { __typename?: 'Query', getAllProductsByBusinessID: Array<{ __typename?: 'Product', _id: string, name: string, price: number, description?: string | null, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null, category?: { __typename?: 'Category', name: string, _id: string } | null }> };
 
 export type UpdateProductByIdMutationVariables = Exact<{
   input: UpdateProductInput;
@@ -1982,7 +1988,7 @@ export type GetTabByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTabByIdQuery = { __typename?: 'Query', getTabByID: { __typename?: 'Tab', checkout?: string | null, _id: string, status: TabStatus, admin: string, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', _id: string, imageUrl?: string | null, price: number, name: string } }> } };
+export type GetTabByIdQuery = { __typename?: 'Query', getTabByID: { __typename?: 'Tab', checkout?: string | null, _id: string, status: TabStatus, admin: string, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null, table?: { __typename?: 'Table', _id: string, tableNumber: string } | null, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', _id: string, imageUrl?: string | null, price: number, name: string, currency?: Currency | null } }> } };
 
 export type GetTabCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -2003,7 +2009,7 @@ export type GetTableByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTableByIdQuery = { __typename?: 'Query', getTableById: { __typename?: 'Table', _id: string, space: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', _id: string, imageUrl?: string | null, name: string, price: number } }>, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null } | null } };
+export type GetTableByIdQuery = { __typename?: 'Query', getTableById: { __typename?: 'Table', _id: string, space: string, status: TableStatus, tableNumber: string, tab?: { __typename?: 'Tab', _id: string, admin: string, orders: Array<{ __typename?: 'OrderDetail', _id: string, status: OrderStatus, quantity: number, subTotal: number, product: { __typename?: 'Product', _id: string, imageUrl?: string | null, name: string, price: number, currency?: Currency | null } }>, users?: Array<{ __typename?: 'User', _id: string, name?: string | null }> | null } | null } };
 
 export type GetTablesFromSpaceQueryVariables = Exact<{
   input: GetById;
@@ -3419,6 +3425,7 @@ export const GetAllMenusByBusinessIdDocument = gql`
         imageUrl
         price
         quantity
+        currency
       }
     }
   }
@@ -3468,6 +3475,7 @@ export const GetClientMenuDocument = gql`
         description
         price
         imageUrl
+        currency
       }
     }
   }
@@ -3518,6 +3526,7 @@ export const GetMenuByIdDocument = gql`
         price
         description
         quantity
+        currency
       }
     }
   }
@@ -4136,6 +4145,7 @@ export const GetProductByIdDocument = gql`
     price
     imageUrl
     quantity
+    currency
   }
 }
     `;
@@ -4245,6 +4255,7 @@ export const GetMostSellingProductsDocument = gql`
     imageUrl
     name
     totalOrdered
+    currency
     category {
       name
       _id
@@ -4288,6 +4299,7 @@ export const GetAllProductsByBusinessIdDocument = gql`
     description
     imageUrl
     quantity
+    currency
     category {
       name
       _id
@@ -5375,6 +5387,7 @@ export const GetTabByIdDocument = gql`
         imageUrl
         price
         name
+        currency
       }
     }
   }
@@ -5506,6 +5519,7 @@ export const GetTableByIdDocument = gql`
           imageUrl
           name
           price
+          currency
         }
       }
       users {

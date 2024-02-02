@@ -62,7 +62,6 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
 
             newTab.orders.push(orderDetails._id);
 
-            product.totalOrdered = product.totalOrdered + parsedInput.quantity
             productsToUpdate.push(product)
 
             return orderDetails
@@ -125,8 +124,6 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
                 type: "DineIn"
             });
 
-            //Product should have a totalOrdered property that will increase as it's items are sold
-            product.totalOrdered += product.totalOrdered + parsedInput.quantity
             product.save()
 
             tab.orders.push(orderDetails._id);
@@ -134,19 +131,21 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
             return orderDetails
         }));
 
+        //TODO: error tab null
+        if (!tab.type) tab.type = "DineIn"
         await tab.save();
 
         await OrdersGroupModel(db).create({
             orders: orderDetails.map(order => order._id),
             business,
             tab: tab._id,
-            type: tab.type,
+            type: tab?.type,
             createdByUser: businessUser?._id
         })
 
         return orderDetails;
     } catch (err) {
-        throw ApolloError(err as Error, "BadRequest");
+        throw ApolloError(err as Error, "InternalServerError");
     }
 }
 
@@ -198,7 +197,6 @@ const clientCreateMultipleOrderDetails:
 
             await CartItemModel(db).findOneAndDelete({ _id: parsedInput._id });
 
-            product.totalOrdered += product.totalOrdered + parsedInput.quantity
             product.save()
 
             return orderDetails

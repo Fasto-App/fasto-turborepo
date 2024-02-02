@@ -8,3 +8,4 @@ export * from "./user";
 export * from "./tab";
 export * from "./table";
 export * from "./request";
+export * from "./checkout"

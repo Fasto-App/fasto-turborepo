@@ -9,6 +9,7 @@ import { useTranslation } from "next-i18next";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { ModalAddress } from "../../components/ModalAddress";
 import { getClientCookies } from "../../cookies";
+import { parseToCurrency } from "app-helpers";
 
 
 export const MenuScreen = () => {
@@ -170,7 +171,7 @@ export const MenuScreen = () => {
             renderItem={({ item }) => (
               <MenuItem
                 name={item.name}
-                price={item.price}
+                price={parseToCurrency(item.price, item.currency)}
                 description={item.description}
                 uri={item.imageUrl}
                 quantity={item?.quantity}

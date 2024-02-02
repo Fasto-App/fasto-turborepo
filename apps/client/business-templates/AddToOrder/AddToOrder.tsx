@@ -34,7 +34,6 @@ import { showToast } from "../../components/showToast";
 import { OrangeBox } from "../../components/OrangeBox";
 import { Icon } from "../../components/atoms/NavigationButton";
 
-
 // Helper can be outside of component
 // specially if we want to reuse this
 const searchProductsByName = (
@@ -238,6 +237,14 @@ export const AddToOrder = () => {
       });
   }, [sectionsWithAll, selectedCategory, searchString]);
 
+  const getOrderById = (id: string) => {
+    return orderItems.find((item) => item._id === id);
+  };
+
+  const getProductById = (orderId: string) => {
+    return allProducts.find((item) => item._id === orderId);
+  };
+
   return (
     <Flex flexDirection={"row"} flex={1}>
       <LeftSideBar>
@@ -277,7 +284,7 @@ export const AddToOrder = () => {
                   lastItem={index === orderItems.length - 1}
                   assignedToPersonIndex={selectedUserIndex}
                   name={order.name}
-                  price={order.price}
+                  price={parseToCurrency(order.price, order.currency)}
                   quantity={order.quantity}
                   onEditPress={() => console.log("EDIT")}
                   onRemovePress={() => {
@@ -287,8 +294,16 @@ export const AddToOrder = () => {
                     setOrderItems(newOrderItems);
                   }}
                   onPlusPress={() => {
+                    //TODO: we should update `orderItems` from an array state to an object
+                    // to avoid nested loops when updating the quantity
                     const newOrderItems = orderItems.map((item, orderIndex) => {
-                      if (index === orderIndex) {
+                      const product = getProductById(item._id);
+
+                      if (
+                        index === orderIndex &&
+                        product?.quantity &&
+                        product?.quantity - order.quantity > 0
+                      ) {
                         return {
                           ...item,
                           quantity: item.quantity + 1,
@@ -432,6 +447,13 @@ export const AddToOrder = () => {
                           imageUrl={product.imageUrl ?? ""}
                           description={product.description}
                           quantity={product.quantity}
+                          hideButton={
+                            !product.quantity ||
+                            (getOrderById(product._id) &&
+                              product.quantity -
+                              getOrderById(product._id)!.quantity <
+                              1)
+                          }
                           onPress={() => {
                             const findIndex = orderItems.findIndex(
                               (order) =>
