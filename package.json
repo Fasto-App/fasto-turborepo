@@ -47,7 +47,6 @@
 		"graphql": "^16.6.0",
 		"graphql-ws": "^5.12.1",
 		"jose": "^4.13.1",
-		"react-image-file-resizer": "^0.4.8",
 		"zod": "^3.21.4"
 	},
 	"packageManager": "yarn@1.22.17"
