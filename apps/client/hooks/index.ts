@@ -39,8 +39,8 @@ export const useUploadFileHook = () => {
   const [imageSrc, setImageUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | undefined>();
 
-  const handleFileOnChange = async (evt: any) => {
-    const file = evt?.target?.files?.[0];    
+  const handleFileOnChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const file = evt?.target?.files?.[0];
 
     if (!file) {
       setImageUrl('');
@@ -50,7 +50,7 @@ export const useUploadFileHook = () => {
 
     try {
       const { base64String, resizedFile } = await resizeFile(file);
-      console.log('resized image:', base64String);
+
       setImageUrl(base64String);
       setImageFile(new File([resizedFile], 'resized.webp', { type: 'image/webp' }));
     } catch (err) {
