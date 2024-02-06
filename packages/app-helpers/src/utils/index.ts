@@ -37,7 +37,7 @@ export const parseToFixedPoint = (percentage?: number) => {
 
 // get percentage of a value
 export const getPercentageOfValue = (value: number, percentage: number) => {
-  return Math.trunc((Math.ceil(value * percentage) / FIXED_POINT_FACTOR_PERCENTAGE));
+  return Math.ceil((value * percentage) / FIXED_POINT_FACTOR_PERCENTAGE);
 }
 
 // get the percentage value with the fixed-point value
