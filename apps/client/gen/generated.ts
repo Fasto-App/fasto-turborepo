@@ -234,6 +234,7 @@ export type CreateProductInput = {
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
+  paused?: InputMaybe<Scalars['Boolean']>;
   price: Scalars['Int'];
   quantity?: InputMaybe<Scalars['Int']>;
 };
@@ -981,6 +982,7 @@ export type Product = {
   description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  paused?: Maybe<Scalars['Boolean']>;
   price: Scalars['Int'];
   quantity?: Maybe<Scalars['Int']>;
   totalOrdered?: Maybe<Scalars['Int']>;
@@ -1025,7 +1027,7 @@ export type Query = {
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
-  getProductByID?: Maybe<Product>;
+  getProductByID: Product;
   getSignUpSubscription?: Maybe<StripeSubscription>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getSubscriptionPrices: Array<Price>;
@@ -1347,6 +1349,7 @@ export type UpdateProductInput = {
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
+  paused?: InputMaybe<Scalars['Boolean']>;
   price: Scalars['Int'];
   quantity?: InputMaybe<Scalars['Int']>;
 };
@@ -1783,7 +1786,7 @@ export type GetProductByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetProductByIdQuery = { __typename?: 'Query', getProductByID?: { __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null } | null };
+export type GetProductByIdQuery = { __typename?: 'Query', getProductByID: { __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null } };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -1807,7 +1810,7 @@ export type GetMostSellingProductsQuery = { __typename?: 'Query', getMostSelling
 export type GetAllProductsByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllProductsByBusinessIdQuery = { __typename?: 'Query', getAllProductsByBusinessID: Array<{ __typename?: 'Product', _id: string, name: string, price: number, description?: string | null, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null, category?: { __typename?: 'Category', name: string, _id: string } | null }> };
+export type GetAllProductsByBusinessIdQuery = { __typename?: 'Query', getAllProductsByBusinessID: Array<{ __typename?: 'Product', _id: string, name: string, price: number, description?: string | null, imageUrl?: string | null, quantity?: number | null, currency?: Currency | null, paused?: boolean | null, category?: { __typename?: 'Category', name: string, _id: string } | null }> };
 
 export type UpdateProductByIdMutationVariables = Exact<{
   input: UpdateProductInput;
@@ -1858,19 +1861,19 @@ export type DeclineTabRequestMutationVariables = Exact<{
 
 export type DeclineTabRequestMutation = { __typename?: 'Mutation', declineTabRequest: { __typename?: 'Request', _id: string, status: RequestStatus, totalGuests?: number | null } };
 
-export type OpenTabRequestMutationVariables = Exact<{
-  input: OpenTabRequestInput;
-}>;
-
-
-export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
-
 export type RequestJoinTabMutationVariables = Exact<{
   input: JoinTabForm;
 }>;
 
 
 export type RequestJoinTabMutation = { __typename?: 'Mutation', requestJoinTab?: string | null };
+
+export type OpenTabRequestMutationVariables = Exact<{
+  input: OpenTabRequestInput;
+}>;
+
+
+export type OpenTabRequestMutation = { __typename?: 'Mutation', openTabRequest?: string | null };
 
 export type GetClientSessionQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4300,6 +4303,7 @@ export const GetAllProductsByBusinessIdDocument = gql`
     imageUrl
     quantity
     currency
+    paused
     category {
       name
       _id
@@ -4577,37 +4581,6 @@ export function useDeclineTabRequestMutation(baseOptions?: Apollo.MutationHookOp
 export type DeclineTabRequestMutationHookResult = ReturnType<typeof useDeclineTabRequestMutation>;
 export type DeclineTabRequestMutationResult = Apollo.MutationResult<DeclineTabRequestMutation>;
 export type DeclineTabRequestMutationOptions = Apollo.BaseMutationOptions<DeclineTabRequestMutation, DeclineTabRequestMutationVariables>;
-export const OpenTabRequestDocument = gql`
-    mutation OpenTabRequest($input: OpenTabRequestInput!) {
-  openTabRequest(input: $input)
-}
-    `;
-export type OpenTabRequestMutationFn = Apollo.MutationFunction<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
-
-/**
- * __useOpenTabRequestMutation__
- *
- * To run a mutation, you first call `useOpenTabRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOpenTabRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [openTabRequestMutation, { data, loading, error }] = useOpenTabRequestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OpenTabRequestMutation, OpenTabRequestMutationVariables>(OpenTabRequestDocument, options);
-      }
-export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
-export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
-export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
 export const RequestJoinTabDocument = gql`
     mutation RequestJoinTab($input: JoinTabForm!) {
   requestJoinTab(input: $input)
@@ -4639,6 +4612,37 @@ export function useRequestJoinTabMutation(baseOptions?: Apollo.MutationHookOptio
 export type RequestJoinTabMutationHookResult = ReturnType<typeof useRequestJoinTabMutation>;
 export type RequestJoinTabMutationResult = Apollo.MutationResult<RequestJoinTabMutation>;
 export type RequestJoinTabMutationOptions = Apollo.BaseMutationOptions<RequestJoinTabMutation, RequestJoinTabMutationVariables>;
+export const OpenTabRequestDocument = gql`
+    mutation OpenTabRequest($input: OpenTabRequestInput!) {
+  openTabRequest(input: $input)
+}
+    `;
+export type OpenTabRequestMutationFn = Apollo.MutationFunction<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
+
+/**
+ * __useOpenTabRequestMutation__
+ *
+ * To run a mutation, you first call `useOpenTabRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOpenTabRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [openTabRequestMutation, { data, loading, error }] = useOpenTabRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOpenTabRequestMutation(baseOptions?: Apollo.MutationHookOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OpenTabRequestMutation, OpenTabRequestMutationVariables>(OpenTabRequestDocument, options);
+      }
+export type OpenTabRequestMutationHookResult = ReturnType<typeof useOpenTabRequestMutation>;
+export type OpenTabRequestMutationResult = Apollo.MutationResult<OpenTabRequestMutation>;
+export type OpenTabRequestMutationOptions = Apollo.BaseMutationOptions<OpenTabRequestMutation, OpenTabRequestMutationVariables>;
 export const GetClientSessionDocument = gql`
     query GetClientSession {
   getClientSession {

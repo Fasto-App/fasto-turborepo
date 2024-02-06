@@ -10,13 +10,13 @@ import {
   Image,
   Avatar,
   VStack,
-  Spacer,
   Checkbox,
   Badge,
 } from "native-base";
 import { BorderTile } from "../BorderTile";
 import { useTranslation } from "next-i18next";
 import { MINIMUM_ITEMS_QUANTITY } from "app-helpers";
+import { Icon } from "../atoms/NavigationButton";
 
 type ProductTileProps = {
   _id?: string;
@@ -27,6 +27,7 @@ type ProductTileProps = {
   description?: string | null;
   quantity?: number | null;
   hideButton?: boolean;
+  paused?: boolean | null;
 };
 
 type ProductCardProps = ProductTileProps & {
@@ -51,6 +52,7 @@ const ProductCard = ({
   description,
   onPress,
   quantity,
+  paused
 }: ProductCardProps) => {
   const { t } = useTranslation("common");
 
@@ -71,8 +73,14 @@ const ProductCard = ({
       shadow="4"
       mr={"4"}
       mb={"4"}
+      opacity={paused ? 0.6 : 1}
     >
-      <Box alignItems="center" backgroundColor={"secondary.300"}>
+      <Box alignItems="center" backgroundColor={"secondary.300"} >
+        {paused ? <Box
+          position={"absolute"}
+          alignItems={"flex-end"} w={"100%"}>
+          <Icon type="Paused" color="red" />
+        </Box> : null}
         <AspectRatio w="60%" ratio={16 / 9} top={5}>
           <Image
             source={{

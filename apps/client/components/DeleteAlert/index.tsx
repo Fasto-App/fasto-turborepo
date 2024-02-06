@@ -18,8 +18,12 @@ export const DeleteAlert = (props: DeleteAlertProps) => {
 	}, [deleteItem])
 
 	return (
-		<Center>
-			<Button _text={{ bold: true }} w={"100%"} my={2} colorScheme="error" onPress={() => setIsOpen(!isOpen)}>
+		<Center pt={4} pb={2} w={"100%"}>
+			<Button
+				_text={{ bold: true }}
+				w={"100%"}
+				colorScheme="error"
+				onPress={() => setIsOpen(!isOpen)}>
 				{title}
 			</Button>
 			<Alert

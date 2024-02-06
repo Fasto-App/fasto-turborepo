@@ -48,7 +48,8 @@ const createProduct: MutationResolvers["createProduct"] = async (_parent, { inpu
             category: categoryByID?._id,
             addons: input?.addons,
             quantity: input?.quantity,
-            currency: getCurrency(businessByID.country)
+            currency: getCurrency(businessByID.country),
+            paused: input?.paused,
         });
 
         if (input.file) {
@@ -170,6 +171,8 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (_parent
     if (input.quantity) {
         product.quantity = input.quantity
     }
+
+    product.paused = input.paused
     // if theres a addons, see if the addons are valid
     // if (input.addons) {
     //     if (input.addons.length > 10)

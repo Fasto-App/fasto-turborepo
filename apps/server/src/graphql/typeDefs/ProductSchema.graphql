@@ -1,6 +1,6 @@
 extend type Query {
 	getAllProductsByBusinessID: [Product!]!
-	getProductByID(productID: ID!): Product
+	getProductByID(productID: ID!): Product!
 	getMostSellingProducts: [Product]
 }
 
@@ -21,6 +21,7 @@ type Product {
 	quantity: Int
 	totalOrdered: Int
 	currency: Currency
+	paused: Boolean
 }
 
 input CreateProductInput {
@@ -31,6 +32,7 @@ input CreateProductInput {
 	addons: [CreateProductInput]
 	category: ID!
 	quantity: Int
+	paused: Boolean!
 }
 
 input UpdateProductInput {
@@ -41,6 +43,7 @@ input UpdateProductInput {
 	file: Upload
 	category: ID!
 	quantity: Int
+	paused: Boolean!
 }
 
 enum Currency {

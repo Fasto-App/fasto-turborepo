@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { UseFormGetValues, useForm } from "react-hook-form";
 import * as z from 'zod';
 
 // PRODUCT FORM STATE
@@ -10,7 +10,8 @@ const productSchema = z.object({
   category: z.string().min(1, { message: 'error.required' }),
   file: z.string().optional().nullable(),
   description: z.string().optional(),
-  quantity: z.number().optional()
+  quantity: z.number().optional(),
+  paused: z.boolean().optional(),
 });
 
 export type ProductFields = z.infer<typeof productSchema>;
@@ -24,6 +25,7 @@ export const useProductFormHook = () => {
     handleSubmit: handleProductSubmit,
     setValue: setProductValue,
     reset: resetProduct,
+    getValues: getProductValues,
   } = useForm<ProductFields>({
     defaultValues: {
       _id: '',
@@ -33,6 +35,7 @@ export const useProductFormHook = () => {
       price: 0,
       file: undefined,
       quantity: undefined,
+      paused: false,
     },
     resolver: zodResolver(productSchema),
   });
@@ -44,6 +47,8 @@ export const useProductFormHook = () => {
     handleProductSubmit,
     setProductValue,
     resetProduct,
+    getProductValues,
   }
 }
 
+export type GetProductValues = UseFormGetValues<ProductFields>

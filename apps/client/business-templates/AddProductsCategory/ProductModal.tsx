@@ -1,21 +1,19 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
 	Button,
 	Modal
 } from 'native-base';
 import { DeleteAlert } from '../../components/DeleteAlert';
 import { useCategoryMutationHook } from '../../graphQL/CategoryQL';
-import { useProductMutationHook } from '../../graphQL/ProductQL';
 import { useAppStore } from '../UseAppStore';
-import { ProductFields } from './useProductFormHook';
+import { GetProductValues, ProductFields } from './useProductFormHook';
 import { DevTool } from "@hookform/devtools";
-import { ControlledForm, RegularInputConfig, SideBySideInputConfig } from '../../components/ControlledForm/ControlledForm';
+import { ControlledForm, SideBySideInputConfig } from '../../components/ControlledForm/ControlledForm';
 import { UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'next-i18next';
 import { useUploadFileHook } from '../../hooks';
 import { ControlledInput, InputProps } from '../../components/ControlledForm';
 import {
-	useGetAllProductsByBusinessIdQuery,
 	useCreateProductMutation,
 	GetAllProductsByBusinessIdDocument,
 	useDeleteProductMutation,
@@ -32,6 +30,7 @@ type ProductModalProps = {
 	productControl: any,
 	setProductValue: UseFormSetValue<ProductFields>,
 	resetProduct: () => void,
+	getProductValues: GetProductValues
 }
 
 const ProductModal = ({
@@ -41,7 +40,9 @@ const ProductModal = ({
 	handleProductSubmit,
 	productFormState,
 	productControl,
-	resetProduct
+	resetProduct,
+	setProductValue,
+	getProductValues
 }: ProductModalProps) => {
 	const productId = useAppStore(state => state.product)
 	const setProduct = useAppStore(state => state.setProduct)
@@ -142,7 +143,8 @@ const ProductModal = ({
 						price: Number(values.price),
 						file: imageFile,
 						category: values.category,
-						quantity: values.quantity
+						quantity: values.quantity,
+						paused: values.paused
 					}
 				}
 			});
@@ -157,7 +159,8 @@ const ProductModal = ({
 						price: Number(values.price),
 						file: imageFile,
 						category: values.category,
-						quantity: values.quantity
+						quantity: values.quantity,
+						paused: values.paused
 					},
 				},
 			});
@@ -166,15 +169,36 @@ const ProductModal = ({
 		closeModalAndClearQueryParams();
 	};
 
+	const handleSwitch = useCallback(() => {
+		setProductValue('paused', !getProductValues("paused"))
+	}, [getProductValues, setProductValue])
+
 	// @ts-ignore
 	const ProductFormConfig: SideBySideInputConfig = useMemo(() => ({
-		name: {
-			isRequired: true,
-			name: 'name',
-			label: t("dishesProducts"),
-			placeholder: t("dishesProducts"),
-
+		paused: {
+			name: 'paused',
+			label: "Pause Item",
+			inputType: 'Switch',
+			handleOnChange: handleSwitch
 		},
+		nameAndCategory: [{
+			name: {
+				isRequired: true,
+				name: 'name',
+				label: t("dishesProducts"),
+				placeholder: t("dishesProducts"),
+
+			}
+		}, {
+			category: {
+				isRequired: true,
+				name: 'category',
+				label: t("category"),
+				placeholder: t("category"),
+				inputType: 'Select',
+				array: allCategories.map(cat => ({ name: cat.name, _id: cat._id })) ?? []
+			}
+		}],
 		priceAndQuantity: [{
 			price: {
 				isRequired: true,
@@ -192,21 +216,13 @@ const ProductModal = ({
 				inputType: "Number",
 			},
 		}],
-		category: {
-			isRequired: true,
-			name: 'category',
-			label: t("category"),
-			placeholder: t("category"),
-			inputType: 'Select',
-			array: allCategories.map(cat => ({ name: cat.name, _id: cat._id })) ?? []
-		},
 		description: {
 			name: 'description',
 			label: t("description"),
 			placeholder: t("description"),
 			inputType: 'TextArea'
 		}
-	}), [allCategories, t])
+	}), [allCategories, handleSwitch, t])
 
 	const uploadPicture: InputProps = useMemo(() => ({
 		name: 'file',
