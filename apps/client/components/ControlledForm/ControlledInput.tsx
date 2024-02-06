@@ -16,7 +16,7 @@ type CustomInputProps = {
   array?: { name: string, _id: string }[];
   formatValue?: (value: string) => string;
   formatOnChange?: (value: string, cb: (num: number) => void) => void;
-  handleOnChange?: (e: SyntheticEvent) => void;
+  handleOnChange?: (e: React.ChangeEvent<HTMLInputElement> | null) => void;
   isDisabled?: boolean;
   accessibilityLabel?: string;
 }
