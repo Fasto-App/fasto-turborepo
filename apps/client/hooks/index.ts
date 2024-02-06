@@ -39,7 +39,7 @@ export const useUploadFileHook = () => {
   const [imageSrc, setImageUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | undefined>();
 
-  const handleFileOnChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileOnChange = async (evt: React.ChangeEvent<HTMLInputElement> | null) => {
     const file = evt?.target?.files?.[0];
 
     if (!file) {
