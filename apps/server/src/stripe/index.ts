@@ -133,11 +133,11 @@ export const createPaymentIntent = async ({
 
   try {
     const paymentIntent = await stripe(country).paymentIntents.create({
-      amount: Math.trunc(amount),
+      amount: Math.ceil(amount),
       currency: country === "US" ? "USD" : "BRL",
       description,
       automatic_payment_methods: { enabled: true },
-      application_fee_amount: serviceFee,
+      application_fee_amount: Math.ceil(serviceFee ?? 0),
       transfer_data: {
         destination: stripeAccount,
       },
@@ -201,6 +201,7 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
     // when the payment is made, subtract from
     foundCheckout.status = "Paid"
     foundCheckout.paid = true
+    foundCheckout.updated_at = Date.now()
 
     await updateProductQuantity(foundCheckout, db)
 
@@ -211,11 +212,9 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
         request.status = "Completed"
         return request.save()
       });
-      const awaitedRequests = await Promise.all(savePromises);
-      console.log("awaitedRequests", awaitedRequests)
-    }
 
-    // Tab closed. Perhaps send an email?
+      await Promise.all(savePromises);
+    }
   }
 
   await foundCheckout.save()
