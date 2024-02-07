@@ -11,7 +11,7 @@ const productSchema = z.object({
   file: z.string().optional().nullable(),
   description: z.string().optional(),
   quantity: z.number().optional(),
-  paused: z.boolean().optional(),
+  paused: z.boolean(),
 });
 
 export type ProductFields = z.infer<typeof productSchema>;

@@ -216,7 +216,10 @@ const getProductsBySection = async (_parent: any, args: any, { db }: { db: Conne
 
     return await Product.find({
         _id: { $in: _parent.products },
-        paused: false || undefined
+        $or: [
+            { paused: false },
+            { paused: { $exists: false } }
+        ]
     })
 }
 

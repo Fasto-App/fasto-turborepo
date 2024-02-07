@@ -234,7 +234,7 @@ export type CreateProductInput = {
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
-  paused?: InputMaybe<Scalars['Boolean']>;
+  paused: Scalars['Boolean'];
   price: Scalars['Int'];
   quantity?: InputMaybe<Scalars['Int']>;
 };
@@ -1349,7 +1349,7 @@ export type UpdateProductInput = {
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
-  paused?: InputMaybe<Scalars['Boolean']>;
+  paused: Scalars['Boolean'];
   price: Scalars['Int'];
   quantity?: InputMaybe<Scalars['Int']>;
 };
@@ -1668,7 +1668,7 @@ export type UpdateMenuMutation = { __typename?: 'Mutation', updateMenu?: { __typ
 export type GetAllMenusByBusinessIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null, currency?: Currency | null }> }> | null }> };
+export type GetAllMenusByBusinessIdQuery = { __typename?: 'Query', getAllMenusByBusinessID: Array<{ __typename?: 'Menu', _id: string, name: string, isFavorite?: boolean | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, imageUrl?: string | null, price: number, quantity?: number | null, currency?: Currency | null, paused?: boolean | null }> }> | null }> };
 
 export type GetClientMenuQueryVariables = Exact<{
   input: GetMenu;
@@ -3429,6 +3429,7 @@ export const GetAllMenusByBusinessIdDocument = gql`
         price
         quantity
         currency
+        paused
       }
     }
   }
