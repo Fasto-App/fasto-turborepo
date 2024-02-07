@@ -197,6 +197,7 @@ export const ControlledInput = <T extends Record<string, string>>({
                   <Switch
                     isChecked={field.value as boolean}
                     onToggle={handleOnChange}
+                    size={"lg"}
                   />
                 )
               case "Input":
