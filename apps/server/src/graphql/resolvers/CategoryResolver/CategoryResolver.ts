@@ -180,7 +180,7 @@ const deleteCategory = async (_parent: any, args: { id: string }, { db, business
     const category = await CategoryModel(db).findById(args.id);
     if (!category) throw ApolloError(new Error("no category"), 'NotFound')
 
-    await MenuModel(db).updateMany({}, { $pull: { sections: { categories: category._id } } })
+    await MenuModel(db).updateMany({}, { $pull: { sections: { category: category._id } } })
     await ProductModel(db).deleteMany({ category: category._id })
     await category.deleteOne();
 

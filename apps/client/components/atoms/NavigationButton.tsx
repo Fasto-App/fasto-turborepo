@@ -18,12 +18,12 @@ import {
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
 import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid, BsPeopleFill, BsBag, BsTrash, BsCalendarDate } from "react-icons/bs";
-import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp, IoMdShareAlt } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line, RiUserSettingsLine } from "react-icons/ri"
 import { BiLogOutCircle } from "react-icons/bi"
-import { MdOutlineFrontHand, MdOutlinePhoneIphone, MdLocationPin } from "react-icons/md"
+import { MdOutlineFrontHand, MdOutlinePhoneIphone, MdLocationPin, MdMotionPhotosPaused } from "react-icons/md"
 import { ImQrcode } from "react-icons/im"
 import { HiOutlineClipboardList } from "react-icons/hi"
 import { Badge, Box, Pressable, Text, } from "native-base";
@@ -36,6 +36,10 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "Share":
+      return <IoMdShareAlt color={color} size={size} />;
+    case "Paused":
+      return <MdMotionPhotosPaused color={color} size={size} />;
     case "Calendar":
       return <BsCalendarDate color={color} size={size} />;
     case "Location":

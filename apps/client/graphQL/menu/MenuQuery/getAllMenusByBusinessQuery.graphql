@@ -16,6 +16,7 @@ query GetAllMenusByBusinessID {
 				price
 				quantity
 				currency
+				paused
 			}
 		}
 	}

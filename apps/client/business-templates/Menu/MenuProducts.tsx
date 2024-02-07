@@ -84,7 +84,7 @@ function MenuProducts() {
   );
 
   const [updateMenu, { loading: loadingUpdate }] = useUpdateMenuMutation({
-    onCompleted: (data) => {},
+    onCompleted: (data) => { },
     updateQueries: {
       getAllMenusByBusinessID: (prev, { mutationResult }) => {
         return Object.assign({}, prev, {
@@ -95,7 +95,7 @@ function MenuProducts() {
   });
 
   const [deleteMenu, { loading: loadingDelete }] = useDeleteMenuMutation({
-    onCompleted: (data) => {},
+    onCompleted: (data) => { },
     update: (cache, { data }) => {
       // @ts-ignore
       const { getAllMenusByBusinessID } = cache.readQuery({
@@ -171,10 +171,10 @@ function MenuProducts() {
     return categoryId === "all"
       ? allProducts
       : sections
-          .filter((section) => section.category._id === categoryId)
-          .flatMap(
-            (section) => section.products?.map((product) => product._id) ?? []
-          );
+        .filter((section) => section.category._id === categoryId)
+        .flatMap(
+          (section) => section.products?.map((product) => product._id) ?? []
+        );
   }, [categoryId, selectedMenu?.sections]);
 
   const selectedCategories = useMemo(() => {
@@ -186,8 +186,8 @@ function MenuProducts() {
       categoryId === "all" && !isEditingMenu
         ? allProducts
         : allProducts.filter((product): product is Product =>
-            categoryId ? product?.category?._id === categoryId : true
-          )
+          categoryId ? product?.category?._id === categoryId : true
+        )
     ).filter(Boolean);
   }, [allProducts, categoryId, isEditingMenu]);
 
@@ -238,7 +238,7 @@ function MenuProducts() {
   );
 
   const renderProductTile = useCallback(
-    ({ item, index }: { item?: Product | null; index: number }) => {
+    ({ item }: { item?: Product | null; index: number }) => {
       if (!item || (categoryId === "all" && isEditingMenu)) {
         return null;
       }
@@ -258,15 +258,16 @@ function MenuProducts() {
           isChecked={isSelected}
           onCheck={(selected) => setProductCheckbox(selected, item._id)}
           description={item.description}
+          paused={item.paused}
         />
       );
     },
     [categoryId, isEditingMenu, sectionMap, setProductCheckbox]
   );
 
-  const onEditMEnu = useCallback(() => {    
+  const onEditMEnu = useCallback(() => {
     const nextCategory =
-    categoryId === "all" ? allCategories[0]._id : categoryId;
+      categoryId === "all" ? allCategories[0]._id : categoryId;
     console.log("nextCategory", nextCategory)
     const sectionMap = new Map();
     const selectedMenuSections =
@@ -360,41 +361,41 @@ function MenuProducts() {
         <ScrollView flex={1} horizontal>
           {!isEditingMenu
             ? sectionsWithAll.map((category) => (
-                <Button
-                  key={category._id}
-                  px={4}
-                  mr={2}
-                  m={0}
-                  minW={"100px"}
-                  disabled={categoryId === category._id}
-                  textDecorationColor={"black"}
-                  variant={categoryId === category._id ? "subtle" : "outline"}
-                  colorScheme={
-                    categoryId === category._id ? "success" : "black"
-                  }
-                  onPress={() => setCategory(category._id)}
-                >
-                  {category.name}
-                </Button>
-              ))
+              <Button
+                key={category._id}
+                px={4}
+                mr={2}
+                m={0}
+                minW={"100px"}
+                disabled={categoryId === category._id}
+                textDecorationColor={"black"}
+                variant={categoryId === category._id ? "subtle" : "outline"}
+                colorScheme={
+                  categoryId === category._id ? "success" : "black"
+                }
+                onPress={() => setCategory(category._id)}
+              >
+                {category.name}
+              </Button>
+            ))
             : allCategories.map((category) => (
-                <Button
-                  key={category._id}
-                  px={4}
-                  mr={2}
-                  m={0}
-                  minW={"100px"}
-                  disabled={categoryId === category._id}
-                  textDecorationColor={"black"}
-                  variant={categoryId === category._id ? "subtle" : "outline"}
-                  colorScheme={
-                    categoryId === category._id ? "success" : "black"
-                  }
-                  onPress={() => setCategory(category._id)}
-                >
-                  {category.name}
-                </Button>
-              ))}
+              <Button
+                key={category._id}
+                px={4}
+                mr={2}
+                m={0}
+                minW={"100px"}
+                disabled={categoryId === category._id}
+                textDecorationColor={"black"}
+                variant={categoryId === category._id ? "subtle" : "outline"}
+                colorScheme={
+                  categoryId === category._id ? "success" : "black"
+                }
+                onPress={() => setCategory(category._id)}
+              >
+                {category.name}
+              </Button>
+            ))}
         </ScrollView>
       </HStack>
       <HStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>

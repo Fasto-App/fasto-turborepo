@@ -4,7 +4,6 @@ import { Control, Controller, UseControllerProps } from 'react-hook-form'
 import { AiOutlineCloudDownload } from 'react-icons/ai';
 import Image from 'next/image'
 import { isInteger } from 'lodash';
-import { useCheckoutStore } from '../../business-templates/Checkout/checkoutStore';
 
 type CustomInputProps = {
   src?: string | null;
@@ -21,7 +20,7 @@ type CustomInputProps = {
   accessibilityLabel?: string;
 }
 
-type InputType = "Input" | "TextArea" | "Select" | "File" | "Date" | "Currency" | "Number" | "Radio"
+type InputType = "Input" | "TextArea" | "Select" | "File" | "Date" | "Currency" | "Number" | "Radio" | "Switch"
 
 export type InputProps = IInputProps & CustomInputProps
 export type ControlledFormInput<T extends Record<string, string | number>> = Omit<UseControllerProps, "control"> & InputProps &
@@ -192,6 +191,14 @@ export const ControlledInput = <T extends Record<string, string>>({
                       </Box>
                     </label>
                   </Box>
+                )
+              case "Switch":
+                return (
+                  <Switch
+                    isChecked={field.value as boolean}
+                    onToggle={handleOnChange}
+                    size={"lg"}
+                  />
                 )
               case "Input":
               case "Number":
