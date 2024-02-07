@@ -8,7 +8,7 @@ export const ApolloError = (error: Error, httpStatus: HttpStatusKeysType, app?: 
 
   Bugsnag.notify(error)
 
-  throw new GraphQLError(HttpStatusMessage[code], {
+  throw new GraphQLError(error.message, {
     extensions: {
       code,
       httpStatus,

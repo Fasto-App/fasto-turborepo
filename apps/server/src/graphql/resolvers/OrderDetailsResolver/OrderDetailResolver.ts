@@ -62,7 +62,6 @@ const createOrdersCheckout: MutationResolvers["createOrdersCheckout"] = async (p
 
             newTab.orders.push(orderDetails._id);
 
-            product.totalOrdered = product.totalOrdered + parsedInput.quantity
             productsToUpdate.push(product)
 
             return orderDetails
@@ -125,8 +124,6 @@ const createMultipleOrderDetails: MutationResolvers["createMultipleOrderDetails"
                 type: "DineIn"
             });
 
-            //Product should have a totalOrdered property that will increase as it's items are sold
-            product.totalOrdered += product.totalOrdered + parsedInput.quantity
             product.save()
 
             tab.orders.push(orderDetails._id);
@@ -200,7 +197,6 @@ const clientCreateMultipleOrderDetails:
 
             await CartItemModel(db).findOneAndDelete({ _id: parsedInput._id });
 
-            product.totalOrdered += product.totalOrdered + parsedInput.quantity
             product.save()
 
             return orderDetails

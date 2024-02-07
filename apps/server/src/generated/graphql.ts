@@ -234,6 +234,7 @@ export type CreateProductInput = {
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
+  paused: Scalars['Boolean'];
   price: Scalars['Int'];
   quantity?: InputMaybe<Scalars['Int']>;
 };
@@ -981,6 +982,7 @@ export type Product = {
   description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  paused?: Maybe<Scalars['Boolean']>;
   price: Scalars['Int'];
   quantity?: Maybe<Scalars['Int']>;
   totalOrdered?: Maybe<Scalars['Int']>;
@@ -1025,7 +1027,7 @@ export type Query = {
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
-  getProductByID?: Maybe<Product>;
+  getProductByID: Product;
   getSignUpSubscription?: Maybe<StripeSubscription>;
   getSpacesFromBusiness?: Maybe<Array<Space>>;
   getSubscriptionPrices: Array<Price>;
@@ -1347,6 +1349,7 @@ export type UpdateProductInput = {
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
+  paused: Scalars['Boolean'];
   price: Scalars['Int'];
   quantity?: InputMaybe<Scalars['Int']>;
 };
@@ -2111,6 +2114,7 @@ export type ProductResolvers<ContextType = Context, ParentType extends Resolvers
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paused?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   quantity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalOrdered?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -2155,7 +2159,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getPaidCheckoutByDate?: Resolver<Maybe<ResolversTypes['PaidCheckoutRes']>, ParentType, ContextType, RequireFields<QueryGetPaidCheckoutByDateArgs, 'input'>>;
   getPaymentInformation?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<QueryGetPaymentInformationArgs, 'input'>>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
-  getProductByID?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
+  getProductByID?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
   getSignUpSubscription?: Resolver<Maybe<ResolversTypes['StripeSubscription']>, ParentType, ContextType>;
   getSpacesFromBusiness?: Resolver<Maybe<Array<ResolversTypes['Space']>>, ParentType, ContextType>;
   getSubscriptionPrices?: Resolver<Array<ResolversTypes['Price']>, ParentType, ContextType, Partial<QueryGetSubscriptionPricesArgs>>;

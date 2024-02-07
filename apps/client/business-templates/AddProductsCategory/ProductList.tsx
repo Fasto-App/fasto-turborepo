@@ -3,7 +3,6 @@ import {
 	Box, Heading, Link, Text, FlatList, HStack, Badge
 } from 'native-base';
 import { ProductCard, ProductTile } from '../../components/Product/Product';
-import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { ProductModal } from './ProductModal';
 import { useNumOfColumns } from '../../hooks';
 import { useAppStore } from '../UseAppStore';
@@ -40,13 +39,14 @@ const ProductList = (
 		handleProductSubmit,
 		productFormState,
 		productControl,
-		resetProduct
+		resetProduct,
+		getProductValues
 	} = useProductFormHook()
 
 	const { t } = useTranslation("businessCategoriesProducts");
 
 	const setProductValues = useCallback((item) => {
-		const { _id, name, description, price, imageUrl, quantity } = item
+		const { _id, name, description, price, imageUrl, quantity, paused } = item
 
 		setProduct(_id)
 		setProductValue("_id", _id)
@@ -56,6 +56,7 @@ const ProductList = (
 		setProductValue("file", imageUrl)
 		setProductValue("category", item?.category?._id)
 		setProductValue("quantity", quantity)
+		setProductValue("paused", paused)
 
 		setShowProductModal(true)
 
@@ -78,6 +79,7 @@ const ProductList = (
 			description={item.description}
 			ctaTitle={t("editItem")}
 			quantity={item?.quantity || undefined}
+			paused={item?.paused}
 		/>
 	}, [setProductValues, t])
 
@@ -91,6 +93,7 @@ const ProductList = (
 			productControl={productControl}
 			resetProduct={resetProduct}
 			setProductValue={setProductValue}
+			getProductValues={getProductValues}
 		/>
 		<Box
 			flex={"1 1 1px"}
@@ -154,6 +157,7 @@ const ProductList = (
 								onPress={() => setProductValues(item)}
 								key={item._id}
 								ctaTitle={t("editItem")}
+								paused={item?.paused}
 							/>
 					))}
 			</HStack>

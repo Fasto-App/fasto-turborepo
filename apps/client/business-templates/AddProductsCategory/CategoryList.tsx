@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import {
-	Box, Heading, Text, FlatList, HStack, VStack
+	Box, Heading, Text, FlatList, HStack, VStack, Button
 } from 'native-base';
-import { AddMoreButton, SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
+import { SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { useAppStore } from '../UseAppStore';
-import { AllAndEditButtons } from '../../components/AllAndAddButons';
 import { useCategoryFormHook } from './useCategoryFormHook';
 import { CategoryModal } from './CategoryModal';
 import { GetAllCategoriesByBusinessQuery } from '../../gen/generated';
@@ -91,20 +90,32 @@ const CategoryList = ({ resetAll, categories }:
 					{t("categories")}
 				</Heading>
 				<HStack>
-					<AllAndEditButtons
-						categoryId={categoryId}
-						allAction={clearQueryParams}
-						editAction={() => setShowCategoryModal(true)}
-					/>
+					<Button
+						disabled={!categoryId}
+						isDisabled={!categoryId}
+						variant={"solid"}
+						width={"100px"}
+						colorScheme="success"
+						onPress={() => setShowCategoryModal(true)}>
+						{t("edit")}
+					</Button>
 				</HStack>
 			</Box>
 
 			<HStack space={2}>
 				{categories.length ?
-					<SmallAddMoreButton onPress={() => {
-						removeQueryParams()
-						setShowCategoryModal(true)
-					}} />
+					<>
+						<SmallAddMoreButton onPress={() => {
+							removeQueryParams()
+							setShowCategoryModal(true)
+						}} />
+						<Tile
+							selected={!categoryId}
+							onPress={clearQueryParams}
+						>
+							{t("all")}
+						</Tile>
+					</>
 					: null}
 				<HStack flex={1} space={1}>
 					<FlatList

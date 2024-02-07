@@ -169,8 +169,6 @@ const getClientMenu = async (_parent: any, args: {
         business: string
     }
 }, { db }: { db: Connection }) => {
-    console.log("getClientMenu")
-
     const Menu = MenuModel(db);
 
     if (!args.input._id) {
@@ -216,7 +214,13 @@ const getProductsBySection = async (_parent: any, args: any, { db }: { db: Conne
     const Product = ProductModel(db);
     if (!_parent.products.length) return []
 
-    return await Product.find({ _id: { $in: _parent.products } })
+    return await Product.find({
+        _id: { $in: _parent.products },
+        $or: [
+            { paused: false },
+            { paused: { $exists: false } }
+        ]
+    })
 }
 
 const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Connection }) => {
