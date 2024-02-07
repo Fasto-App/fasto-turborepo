@@ -297,12 +297,13 @@ export const AddToOrder = () => {
                     //TODO: we should update `orderItems` from an array state to an object
                     // to avoid nested loops when updating the quantity
                     const newOrderItems = orderItems.map((item, orderIndex) => {
-                      const product = getProductById(item._id);
+                      // const product = getProductById(item._id);
 
                       if (
-                        index === orderIndex &&
-                        product?.quantity &&
-                        product?.quantity - order.quantity > 0
+                        item._id === order._id
+                        // index === orderIndex &&
+                        // product?.quantity &&
+                        // product?.quantity - order.quantity > 0
                       ) {
                         return {
                           ...item,
@@ -447,13 +448,13 @@ export const AddToOrder = () => {
                           imageUrl={product.imageUrl ?? ""}
                           description={product.description}
                           quantity={product.quantity}
-                          hideButton={
-                            !product.quantity ||
-                            (getOrderById(product._id) &&
-                              product.quantity -
-                              getOrderById(product._id)!.quantity <
-                              1)
-                          }
+                          // hideButton={
+                            // !product.quantity ||
+                            // (getOrderById(product._id) &&
+                              // product.quantity -
+                              // getOrderById(product._id)!.quantity <
+                              // 1)
+                          // }
                           onPress={() => {
                             const findIndex = orderItems.findIndex(
                               (order) =>
