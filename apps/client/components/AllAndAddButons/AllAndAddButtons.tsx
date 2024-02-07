@@ -1,43 +1,5 @@
 import React from "react"
 import { Button, HStack } from "native-base"
-import { useTranslation } from "next-i18next";
-
-type AllAndEditButtonsProps = {
-  allAction: () => void;
-  editAction: (categoryId?: string | null) => void;
-  categoryId?: string | null;
-}
-
-export const AllAndEditButtons = ({
-  allAction,
-  editAction,
-  categoryId
-}: AllAndEditButtonsProps) => {
-  const { t } = useTranslation("businessCategoriesProducts")
-
-  return (
-    <HStack space={2}>
-      <Button
-        width={"100"}
-        variant={"ghost"}
-        onPress={allAction}
-        colorScheme="lightBlue"
-      >
-        {t("all")}
-      </Button>
-
-      <Button
-        disabled={!categoryId}
-        isDisabled={!categoryId}
-        variant={"ghost"}
-        width={"100px"}
-        colorScheme="lightBlue"
-        onPress={() => editAction(categoryId)}>
-        {t("edit")}
-      </Button>
-    </HStack>
-  )
-}
 
 type SideBySideButtonsProps = {
   leftAction: () => void;

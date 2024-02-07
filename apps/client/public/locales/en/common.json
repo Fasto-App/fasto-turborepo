@@ -58,6 +58,8 @@
 	"Rejected": "Rejected",
 	"payments": "Payments",
 	"subscriptions": "Subscriptions",
+	"shareLink": "Share Link",
+	"share": "Share",
 	"error": {
 		"email": "Please provide a valid email address",
 		"password": "Please provide a password",

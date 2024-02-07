@@ -18,7 +18,7 @@ import {
 import { NavigationButtonType } from "../types";
 import { colors } from "../../theme/colors";
 import { BsCreditCard2Back, BsListStars, BsUiRadiosGrid, BsPeopleFill, BsBag, BsTrash, BsCalendarDate } from "react-icons/bs";
-import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp, IoMdShareAlt } from "react-icons/io";
 import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line, RiUserSettingsLine } from "react-icons/ri"
@@ -36,6 +36,8 @@ type IconProps = {
 
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
+    case "Share":
+      return <IoMdShareAlt color={color} size={size} />;
     case "Paused":
       return <MdMotionPhotosPaused color={color} size={size} />;
     case "Calendar":
