@@ -17,7 +17,7 @@ type SummaryProps = {
   onRemovePress?: () => void;
   onEditPress?: () => void;
   lastItem: boolean;
-  assignedToPersonIndex?: number;
+  assignedToPersonIndex?: string;
 };
 
 export const SummaryComponent = ({ name,

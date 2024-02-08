@@ -14,7 +14,7 @@ import {
 import { useRouter } from "next/router";
 import { SummaryComponent } from "../../components/OrderSummary";
 import { LeftSideBar } from "../../components";
-import { parseToCurrency } from "app-helpers";
+import { parseToCurrency, typedKeys, typedValues } from "app-helpers";
 import { UpperSection } from "../../components/UpperSection";
 import { Tile } from "../../components/Tile";
 import { BottomSection } from "../../components/BottomSection/BottomSection";
@@ -48,13 +48,12 @@ const searchProductsByName = (
   return products.filter((product) => pattern.test(product.name));
 };
 
-type NewOrder = Product & { quantity: number; selectedUser?: string };
-
+type NewOrder = Product & { orderQuantity: number; selectedUser?: string };
 export const AddToOrder = () => {
   const route = useRouter();
   const { tabId } = route.query;
 
-  const [orderItems, setOrderItems] = React.useState<NewOrder[]>([]);
+  const [orderItems, setOrderItems] = React.useState<Record<string, NewOrder>>({});
   const [selectedUser, setSelectedUser] = React.useState<string>();
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
 
@@ -168,25 +167,32 @@ export const AddToOrder = () => {
   });
 
   const onSendToKitchen = useCallback(async () => {
+    // trasnform the orderItems to the correct format
     if (tabId) {
+      const orderItemsToCreate = Object.values(orderItems).map((order) => ({
+        ...(order?.selectedUser && { user: order?.selectedUser }),
+        product: order._id,
+        user: order?.selectedUser,
+        quantity: order.orderQuantity,
+        tab: tabId as string,
+      }));
+
       return await createOrders({
         variables: {
-          input: orderItems.map((order) => ({
-            ...(order?.selectedUser && { user: order?.selectedUser }),
-            tab: Array.isArray(tabId) ? tabId[0] : tabId,
-            product: order._id,
-            quantity: order.quantity,
-          })),
+          input: orderItemsToCreate,
         },
       });
     }
 
+    const orderItemsToCreate = Object.values(orderItems).map((order) => ({
+      ...(order?.selectedUser && { user: order?.selectedUser }),
+      product: order._id,
+      quantity: order.orderQuantity,
+    }));
+
     return await createOrderCheckout({
       variables: {
-        input: orderItems.map((order) => ({
-          product: order._id,
-          quantity: order.quantity,
-        })),
+        input: orderItemsToCreate,
       },
     });
   }, [createOrderCheckout, createOrders, orderItems, tabId]);
@@ -202,8 +208,9 @@ export const AddToOrder = () => {
   }, [requestCloseTabMutation, tabId]);
 
   const sections = menuData?.getMenuByID?.sections || [];
-  const total = orderItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+
+  const total = Object.values(orderItems).reduce(
+    (acc, item) => acc + item.price * item.orderQuantity,
     0
   );
 
@@ -220,7 +227,7 @@ export const AddToOrder = () => {
 
   const sectionsWithAll = useMemo(() => [allCategory, ...sections], [allCategory, sections]);
 
-  const [searchString, setSearchString] = React.useState<string | any>("");
+  const [searchString, setSearchString] = React.useState<string>("");
   const filteredSections = useMemo(() => {
     return sectionsWithAll
       .filter((section) => {
@@ -238,12 +245,85 @@ export const AddToOrder = () => {
   }, [sectionsWithAll, selectedCategory, searchString]);
 
   const getOrderById = (id: string) => {
-    return orderItems.find((item) => item._id === id);
+    return orderItems[id];
   };
 
   const getProductById = (orderId: string) => {
+    // fetch is better
     return allProducts.find((item) => item._id === orderId);
   };
+
+  const onRemoveOrderItem = useCallback((orderId: string) => {
+    setOrderItems(prevOrderItems => {
+      const newOrderItems = { ...prevOrderItems };
+      delete newOrderItems[orderId]; // Remove the order item by id
+      return newOrderItems;
+    })
+
+    showToast({
+      message: "Removed",
+      status: "warning",
+    })
+  }, [])
+
+  const onAddOrIncreaseQnt = useCallback((order: NewOrder) => {
+    setOrderItems(prevOrderItems => ({
+      ...prevOrderItems,
+      [order._id]: {
+        ...order,
+        // Add or update the order item by id
+        orderQuantity: (prevOrderItems[order._id]?.orderQuantity || order.orderQuantity) + 1,
+      },
+    }));
+
+    showToast({
+      message: "Added",
+      status: "success",
+    })
+  }, [])
+
+  const onDecrease = useCallback(
+    (order: NewOrder) => {
+      setOrderItems(prevOrderItems => ({
+        ...prevOrderItems,
+        [order._id]: {
+          ...order,
+          orderQuantity: order.orderQuantity - 1, // Add or update the order item by id
+        },
+      }));
+
+      showToast({
+        message: "Subtracted",
+        status: "warning"
+      })
+    },
+    [],
+  )
+
+
+  const onDecreaseQnt = useCallback((order: NewOrder) => {
+    if (order.orderQuantity === 1) {
+      onRemoveOrderItem(order._id)
+      return;
+    }
+
+    onDecrease(order)
+  }, [])
+
+  // const AddOnrEncrease = useCallback(
+  //   (order: NewOrder) => {
+  //     // see if the item if on the order
+  //     orderItems[order._id]
+
+  //     if (order.orderQuantity === 1) {
+  //       onRemoveOrderItem(order._id)
+  //       return;
+  //     }
+  //     onAddOrIncreaseQnt(order)
+  //   },
+
+  //   [onAddOrIncreaseQnt, onRemoveOrderItem, orderItems]
+  // )
 
   return (
     <Flex flexDirection={"row"} flex={1}>
@@ -268,72 +348,29 @@ export const AddToOrder = () => {
             ) : null}
           </Flex>
           <ScrollView flex={1}>
-            {orderItems?.map((order, index) => {
-              const personIndex = tabData?.getTabByID?.users?.findIndex(
-                (user) => user._id === order.selectedUser
-              );
-              let selectedUserIndex;
+            {typedValues(orderItems)?.map((order, index) => {
+              // const personIndex = tabData?.getTabByID?.users?.findIndex(
+              //   (user) => user._id === order.selectedUser
+              // );
 
-              if (personIndex !== undefined && personIndex !== -1) {
-                selectedUserIndex = personIndex + 1;
-              }
+              // let selectedUserIndex: number;
+
+              // if (personIndex !== undefined && personIndex !== -1) {
+              //   selectedUserIndex = personIndex + 1;
+              // }
 
               return (
                 <SummaryComponent
-                  key={order._id + selectedUserIndex}
-                  lastItem={index === orderItems.length - 1}
-                  assignedToPersonIndex={selectedUserIndex}
+                  key={order._id + order.selectedUser}
+                  lastItem={index === typedValues(orderItems).length - 1}
+                  assignedToPersonIndex={order.selectedUser}
                   name={order.name}
                   price={parseToCurrency(order.price, order.currency)}
-                  quantity={order.quantity}
+                  quantity={order.orderQuantity}
                   onEditPress={() => console.log("EDIT")}
-                  onRemovePress={() => {
-                    const newOrderItems = orderItems.filter(
-                      (_, orderIndex) => index !== orderIndex
-                    );
-                    setOrderItems(newOrderItems);
-                  }}
-                  onPlusPress={() => {
-                    //TODO: we should update `orderItems` from an array state to an object
-                    // to avoid nested loops when updating the quantity
-                    const newOrderItems = orderItems.map((item, orderIndex) => {
-                      // const product = getProductById(item._id);
-
-                      if (
-                        item._id === order._id
-                        // index === orderIndex &&
-                        // product?.quantity &&
-                        // product?.quantity - order.quantity > 0
-                      ) {
-                        return {
-                          ...item,
-                          quantity: item.quantity + 1,
-                        };
-                      }
-                      return item;
-                    });
-                    setOrderItems(newOrderItems);
-                  }}
-                  onMinusPress={() => {
-                    if (order.quantity === 1) {
-                      const newOrderItems = orderItems.filter(
-                        (_, orderIndex) => index !== orderIndex
-                      );
-                      setOrderItems(newOrderItems);
-                      return;
-                    }
-
-                    const newOrderItems = orderItems.map((item, orderIndex) => {
-                      if (index === orderIndex && item.quantity > 1) {
-                        return {
-                          ...item,
-                          quantity: item.quantity - 1,
-                        };
-                      }
-                      return item;
-                    });
-                    setOrderItems(newOrderItems);
-                  }}
+                  onRemovePress={() => onRemoveOrderItem(order._id)}
+                  onPlusPress={() => onAddOrIncreaseQnt(order)}
+                  onMinusPress={() => onDecreaseQnt(order)}
                 />
               );
             })}
@@ -349,7 +386,7 @@ export const AddToOrder = () => {
                 w={"full"}
                 isLoading={loading || createOrderCheckoutLoading}
                 onPress={onSendToKitchen}
-                isDisabled={orderItems.length <= 0}
+                isDisabled={typedKeys(orderItems).length <= 0}
               >
                 {t("sendToKitchen")}
               </Button>
@@ -448,38 +485,21 @@ export const AddToOrder = () => {
                           imageUrl={product.imageUrl ?? ""}
                           description={product.description}
                           quantity={product.quantity}
-                          // hideButton={
-                            // !product.quantity ||
-                            // (getOrderById(product._id) &&
-                              // product.quantity -
-                              // getOrderById(product._id)!.quantity <
-                              // 1)
-                          // }
+                          hideButton={
+                            !!product.blockOnZeroQuantity &&
+                            !product.quantity
+                          }
                           onPress={() => {
-                            const findIndex = orderItems.findIndex(
-                              (order) =>
-                                order._id === product._id &&
-                                order?.selectedUser === selectedUser
-                            );
-
-                            if (findIndex >= 0) {
-                              const newOrder = {
-                                ...orderItems[findIndex],
-                                quantity: orderItems[findIndex].quantity + 1,
-                                selectedUser,
-                              };
-
-                              const newArray = orderItems.map((order, index) =>
-                                index === findIndex ? newOrder : order
-                              );
-
-                              return setOrderItems(newArray);
-                            }
-
-                            setOrderItems([
-                              ...orderItems,
-                              { ...product, quantity: 1, selectedUser },
-                            ]);
+                            onAddOrIncreaseQnt({
+                              _id: product._id,
+                              name: product.name,
+                              imageUrl: product.imageUrl,
+                              description: product.description,
+                              quantity: product.quantity,
+                              price: product.price,
+                              selectedUser,
+                              orderQuantity: 0,
+                            })
                           }}
                         />
                       ))}
