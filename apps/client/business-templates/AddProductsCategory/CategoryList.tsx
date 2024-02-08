@@ -1,14 +1,18 @@
 import React, { useCallback, useState } from 'react';
-import {
-	Box, Heading, Text, FlatList, HStack, VStack, Button
-} from 'native-base';
-import { SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
-import { useAppStore } from '../UseAppStore';
-import { useCategoryFormHook } from './useCategoryFormHook';
-import { CategoryModal } from './CategoryModal';
 import { GetAllCategoriesByBusinessQuery } from '../../gen/generated';
 import { useTranslation } from 'react-i18next';
-import { Tile } from '../../components/Tile';
+import { CategoryModal } from '@/src/business-templates/AddProductsCategory/CategoryModal';
+import { useCategoryFormHook } from '@/src/business-templates/AddProductsCategory/useCategoryFormHook';
+import { Tile } from '@/src/components/Tile';
+import { SmallAddMoreButton } from '@/src/components/atoms/AddMoreButton';
+import { useAppStore } from '@/src/business-templates/UseAppStore';
+import Box from 'native-base/lib/typescript/components/primitives/Box';
+import Heading from 'native-base/lib/typescript/components/primitives/Heading';
+import { Button } from 'native-base/lib/typescript/components/primitives/Button';
+import HStack from 'native-base/lib/typescript/components/primitives/Stack/HStack';
+import { FlatList } from 'native-base/lib/typescript/components/basic/FlatList/FlatList';
+import VStack from 'native-base/lib/typescript/components/primitives/Stack/VStack';
+import Text from 'native-base/lib/typescript/components/primitives/Text';
 
 type Categories = NonNullable<GetAllCategoriesByBusinessQuery["getAllCategoriesByBusiness"]>
 

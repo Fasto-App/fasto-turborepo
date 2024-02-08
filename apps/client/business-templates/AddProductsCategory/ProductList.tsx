@@ -1,18 +1,16 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import {
-	Box, Heading, Link, Text, FlatList, HStack, Badge
-} from 'native-base';
-import { ProductCard, ProductTile } from '../../components/Product/Product';
-import { ProductModal } from './ProductModal';
-import { useNumOfColumns } from '../../hooks';
-import { useAppStore } from '../UseAppStore';
-import { useCategoryMutationHook } from '../../graphQL/CategoryQL';
-import { useProductFormHook } from './useProductFormHook';
-import { GetAllProductsByBusinessIdQuery } from '../../gen/generated';
-import { useTranslation } from 'next-i18next';
-import { MoreButton } from '../../components/MoreButton';
-import { PlusButton } from '../Tables/SquareTable';
-import { parseToCurrency } from 'app-helpers';
+import { ProductTile, ProductCard } from "@/components/Product/Product";
+import { GetAllProductsByBusinessIdQuery } from "@/gen/generated";
+import { useNumOfColumns } from "@/hooks";
+import { PlusButton } from "@/src/business-templates/Tables/SquareTable";
+import { useAppStore } from "@/src/business-templates/UseAppStore";
+import { MoreButton } from "@/src/components/MoreButton";
+import { useCategoryMutationHook } from "@/src/graphQL/CategoryQL";
+import { parseToCurrency } from "app-helpers";
+import { Box, FlatList, HStack, Heading, Link } from "native-base";
+import { useState, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { ProductModal } from "./ProductModal";
+import { useProductFormHook } from "./useProductFormHook";
 
 type Products = GetAllProductsByBusinessIdQuery["getAllProductsByBusinessID"];
 

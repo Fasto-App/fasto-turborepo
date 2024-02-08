@@ -227,20 +227,19 @@ const updateProductByID: MutationResolvers["updateProductByID"] = async (
 	//         throw ApolloError(new Error(), 'BadRequest', "Addons must be less than 10. Please try it again.")
 	// }
 
-
 	if (input.quantity) {
-		product.quantity = input.quantity
+		product.quantity = input.quantity;
 	}
 
-	product.paused = input.paused
+	product.paused = input.paused;
 	// if theres a addons, see if the addons are valid
 	// if (input.addons) {
 	//     if (input.addons.length > 10)
 	//         throw ApolloError(new Error(), 'BadRequest', "Addons must be less than 10. Please try it again.")
 	// }
 
-	return await product.save()
-}
+	return await product.save();
+};
 
 // delete category
 const deleteProduct = async (
