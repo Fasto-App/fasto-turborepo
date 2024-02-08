@@ -7,6 +7,7 @@ query GetAllProductsByBusinessID {
 		imageUrl
 		quantity
 		currency
+		paused
 		category {
 			name
 			_id

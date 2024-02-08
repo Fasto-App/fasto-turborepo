@@ -190,6 +190,29 @@ const updateCategory = async (
 		await subCategory.save();
 	});
 
+	// v2
+	// Check if this is working properly
+	if (input.parentCategory) {
+		const parentCategoryFound = await Category.findById(input.parentCategory)
+		if (!parentCategoryFound) throw ApolloError(new Error("parent not found"), 'NotFound')
+		parentCategory = parentCategoryFound
+	}
+
+	// v2
+	// Check if this is working properly
+	if (input.subCategories) {
+		const subCategoriesFound = await Category.find({ _id: { $in: input.subCategories } })
+		if (subCategoriesFound.length !== input.subCategories.length) throw ApolloError(new Error("No all data was found"), 'NotFound')
+		subCategories = subCategoriesFound
+	}
+	// v2
+	// Check if this is working properly
+	subCategories?.forEach(async subCategory => {
+		if (subCategory.parentCategory) throw ApolloError(new Error("no parent"), 'BadRequest')
+		subCategory.parentCategory = (input._id)
+		await subCategory.save()
+	})
+
 	try {
 		if (input.name) category.name = input.name;
 		if (input.description) category.description = input.description;
@@ -198,28 +221,23 @@ const updateCategory = async (
 		const savedCategory = await category.save();
 		return savedCategory;
 	} catch (err) {
-		throw ApolloError(err as Error, "InternalServerError");
+		throw ApolloError(err as Error, "InternalServerError",)
 	}
-};
+}
+
+
 
 // delete category
-const deleteCategory = async (
-	_parent: any,
-	args: { id: string },
-	{ db, business }: Context,
-) => {
-	if (!business) throw ApolloError(new Error("no business"), "NotFound");
+const deleteCategory = async (_parent: any, args: { id: string }, { db, business }: Context) => {
+	if (!business) throw ApolloError(new Error("no business"), "NotFound")
 	const category = await CategoryModel(db).findById(args.id);
-	if (!category) throw ApolloError(new Error("no category"), "NotFound");
+	if (!category) throw ApolloError(new Error("no category"), 'NotFound')
 
-	await MenuModel(db).updateMany(
-		{},
-		{ $pull: { sections: { categories: category._id } } },
-	);
-	await ProductModel(db).deleteMany({ category: category._id });
+	await MenuModel(db).updateMany({}, { $pull: { sections: { category: category._id } } })
+	await ProductModel(db).deleteMany({ category: category._id })
 	await category.deleteOne();
 
-	return { ok: true };
+	return { ok: true }
 };
 
 const linkCategoryToProducts = async (
@@ -254,7 +272,7 @@ const linkCategoryToProducts = async (
 		});
 
 		return await categoryByID.save();
-	} catch {}
+	} catch { }
 
 	return [];
 };

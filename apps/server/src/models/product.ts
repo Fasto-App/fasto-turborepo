@@ -31,8 +31,11 @@ export class Product {
 	@prop({ default: 0 })
 	public totalOrdered!: number;
 
+	@prop({ default: false })
+	public paused!: boolean;
+
 	@prop({ default: "BRL" })
-	public currency!: "BRL" | "USD";
+	public currency!: "BRL" | "USD";;
 
 	@prop({ default: Date.now() })
 	public created_date!: Date;

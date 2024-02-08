@@ -15,5 +15,7 @@
 	"deleteMenu": "Delete Menu",
 	"deleteMenuBody": "This will remove all data related to this menu. This action cannot be undone.",
 	"search": "Search",
-	"all": "All"
+	"all": "All",
+	"shareLink": "Share Link",
+	"share": "Share"
 }

@@ -194,40 +194,35 @@ const deleteMenu = async (
 	}
 };
 
-const getClientMenu = async (
-	_parent: any,
-	args: {
-		input: {
-			_id?: string;
-			business: string;
-		};
-	},
-	{ db }: { db: Connection },
-) => {
-	console.log("getClientMenu");
-
+const getClientMenu = async (_parent: any, args: {
+	input: {
+		_id?: string,
+		business: string
+	}
+}, { db }: { db: Connection }) => {
 	const Menu = MenuModel(db);
 
 	if (!args.input._id) {
+
 		const favoriteMenu = await Menu.findOne({
 			business: args.input.business,
-			isFavorite: true,
-		});
+			isFavorite: true
+		})
 
 		if (!favoriteMenu) {
 			return await Menu.findOne({
-				business: args.input.business,
-			});
+				business: args.input.business
+			})
 		}
 
-		return favoriteMenu;
+		return favoriteMenu
 	}
 
 	const menu = await Menu.findOne({ _id: args.input._id });
-	if (!menu) throw ApolloError(new Error("Menu not found"), "BadRequest");
+	if (!menu) throw ApolloError(new Error('Menu not found'), 'BadRequest');
 
-	return menu;
-};
+	return menu
+}
 
 const MenuResolverMutation = {
 	createMenu,
@@ -257,8 +252,14 @@ const getProductsBySection = async (
 	const Product = ProductModel(db);
 	if (!_parent.products.length) return [];
 
-	return await Product.find({ _id: { $in: _parent.products } });
-};
+	return await Product.find({
+		_id: { $in: _parent.products },
+		$or: [
+			{ paused: false },
+			{ paused: { $exists: false } }
+		]
+	})
+}
 
 const getCategoryBySection = async (
 	_parent: any,

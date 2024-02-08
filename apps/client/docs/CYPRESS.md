@@ -1,5 +1,11 @@
 # Run Cypress Tests
 
+Remember to have the `/client` and `/server` running.
+
+```
+  yarn test:gui
+```
+
 To run Cypress with the GUI and have access to E2E and Components Tests, from the Root `fastoapp/` run:
 
 ```
