@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react'
-import { Box, Button, Heading, HStack, Modal, ScrollView, useTheme, VStack, Pressable } from 'native-base'
+import React, { useState } from 'react'
+import { Box, Button, Heading, HStack, Modal, ScrollView, useTheme, VStack } from 'native-base'
 import { SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { useAppStore } from '../UseAppStore';
 import { Tile } from '../../components/Tile';
@@ -10,8 +10,6 @@ import { menuSchemaInput } from 'app-helpers';
 import { AllMenusbyBusiness } from './types';
 import { useTranslation } from 'next-i18next';
 import { Icon } from '../../components/atoms/NavigationButton';
-import { showToast } from '../../components/showToast';
-import { customerRoute } from 'fasto-route';
 import { useRouter } from 'next/router';
 
 export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
@@ -26,18 +24,6 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
   const theme = useTheme()
   const router = useRouter()
 
-  const shareMenuLink = useCallback(() => {
-    console.log("Share link and show toast")
-    if (!data?.getBusinessInformation._id) throw new Error("No business id")
-
-    const customerPath = `${process.env.FRONTEND_URL}/${router.locale ?? "en"}${customerRoute['/customer/[businessId]'].replace("[businessId]", data?.getBusinessInformation._id)}`
-
-    const menuIdQuery = `${customerPath}?menuId=${menu}`
-    navigator.clipboard.writeText(menuIdQuery)
-
-    showToast({ message: t("shareLink") })
-  }, [data?.getBusinessInformation._id, menu, router.locale, t],)
-
 
   return (
     <Box
@@ -49,18 +35,15 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
       backgroundColor={"white"}
       flexDirection={"row"}
     >
+      <Button onPress={() => notifyMe()}>
+        Test
+      </Button>
       <Box flex={1}>
         <HStack
           flexDirection={"row"} mb={"2"} space={2}>
           <Heading>
             {t("title")}
           </Heading>
-          <Pressable
-            variant={"ghost"}
-            disabled={!menu}
-            onPress={shareMenuLink}>
-            <Icon type='Share' color={theme.colors.primary[500]} />
-          </Pressable>
         </HStack>
         <VStack space={4}>
           <HStack space={2}>
@@ -170,4 +153,34 @@ const MenuModal = ({ showModal, setShowModal }: {
       </Modal.Content>
     </Modal >
   )
+}
+
+const title = "Test de Notification Tictle";
+const msg = "A message here to test";
+const icon = "/images/fasto-logo.png";
+const song = "./fasto-sound.wav";
+
+function notifyMe() {
+  if (!("Notification" in window)) {
+    alert("This browser does not support Desktop notifications");
+  }
+  if (Notification.permission === "granted") {
+    callNotify(title, msg, icon);
+
+    return;
+  }
+  if (Notification.permission !== "denied") {
+    Notification.requestPermission((permission) => {
+      if (permission === "granted") {
+        callNotify(title, msg, icon);
+      }
+    });
+    console.log("Test 2")
+    return;
+  }
+}
+
+function callNotify(title: string, msg: string, icone: string) {
+  new Notification(title, { body: msg, icon: icone });
+  new Audio("/fasto-sound.wav").play();
 }
