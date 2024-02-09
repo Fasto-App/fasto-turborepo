@@ -46,7 +46,7 @@ const apolloServer = new ApolloServer<Context>({
   cache: 'bounded',
   // @ts-ignore
   uploads: false,
-  introspection: true,
+  introspection: process.env.ENVIRONMENT === "development",
   formatError: (error) => {
     console.log("Error: 👹 ", error.message, "👹")
     return error;

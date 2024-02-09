@@ -1,16 +1,4 @@
 import React, { useCallback, useMemo } from "react";
-import {
-  Button,
-  Box,
-  Divider,
-  Flex,
-  Heading,
-  Text,
-  HStack,
-  VStack,
-  ScrollView,
-  Input,
-} from "native-base";
 import { useRouter } from "next/router";
 import { SummaryComponent } from "../../components/OrderSummary";
 import { LeftSideBar } from "../../components";
@@ -31,8 +19,8 @@ import {
 import { businessRoute } from "fasto-route";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
-import { OrangeBox } from "../../components/OrangeBox";
 import { Icon } from "../../components/atoms/NavigationButton";
+import { Flex, Divider, Box, HStack, Heading, VStack, Input, ScrollView, Button, Text } from "native-base";
 
 // Helper can be outside of component
 // specially if we want to reuse this
@@ -48,7 +36,7 @@ const searchProductsByName = (
   return products.filter((product) => pattern.test(product.name));
 };
 
-type NewOrder = Product & { orderQuantity: number; selectedUser?: string };
+type NewOrder = Product & { orderQuantity: number; selectedUser?: string, productId: string };
 export const AddToOrder = () => {
   const route = useRouter();
   const { tabId } = route.query;
@@ -171,7 +159,7 @@ export const AddToOrder = () => {
     if (tabId) {
       const orderItemsToCreate = Object.values(orderItems).map((order) => ({
         ...(order?.selectedUser && { user: order?.selectedUser }),
-        product: order._id,
+        product: order.productId,
         user: order?.selectedUser,
         quantity: order.orderQuantity,
         tab: tabId as string,
@@ -186,7 +174,7 @@ export const AddToOrder = () => {
 
     const orderItemsToCreate = Object.values(orderItems).map((order) => ({
       ...(order?.selectedUser && { user: order?.selectedUser }),
-      product: order._id,
+      product: order.productId,
       quantity: order.orderQuantity,
     }));
 
@@ -217,6 +205,7 @@ export const AddToOrder = () => {
   const allProducts = ([] as (typeof sections)[number]["products"]).concat(
     ...sections.map((section) => section.products || [])
   );
+
   const allCategory = useMemo(() => ({
     category: {
       _id: "all",
@@ -243,15 +232,6 @@ export const AddToOrder = () => {
         };
       });
   }, [sectionsWithAll, selectedCategory, searchString]);
-
-  const getOrderById = (id: string) => {
-    return orderItems[id];
-  };
-
-  const getProductById = (orderId: string) => {
-    // fetch is better
-    return allProducts.find((item) => item._id === orderId);
-  };
 
   const onRemoveOrderItem = useCallback((orderId: string) => {
     setOrderItems(prevOrderItems => {
@@ -283,12 +263,12 @@ export const AddToOrder = () => {
   }, [])
 
   const onDecrease = useCallback(
-    (order: NewOrder) => {
+    (orderId: string) => {
       setOrderItems(prevOrderItems => ({
         ...prevOrderItems,
-        [order._id]: {
-          ...order,
-          orderQuantity: order.orderQuantity - 1, // Add or update the order item by id
+        [orderId]: {
+          ...prevOrderItems[orderId],
+          orderQuantity: prevOrderItems[orderId]?.orderQuantity - 1,
         },
       }));
 
@@ -300,30 +280,13 @@ export const AddToOrder = () => {
     [],
   )
 
-
   const onDecreaseQnt = useCallback((order: NewOrder) => {
-    if (order.orderQuantity === 1) {
-      onRemoveOrderItem(order._id)
-      return;
+    if (order.orderQuantity <= 1) {
+      return onRemoveOrderItem(order._id);
     }
 
-    onDecrease(order)
-  }, [])
-
-  // const AddOnrEncrease = useCallback(
-  //   (order: NewOrder) => {
-  //     // see if the item if on the order
-  //     orderItems[order._id]
-
-  //     if (order.orderQuantity === 1) {
-  //       onRemoveOrderItem(order._id)
-  //       return;
-  //     }
-  //     onAddOrIncreaseQnt(order)
-  //   },
-
-  //   [onAddOrIncreaseQnt, onRemoveOrderItem, orderItems]
-  // )
+    onDecrease(order._id)
+  }, [onDecrease, onRemoveOrderItem])
 
   return (
     <Flex flexDirection={"row"} flex={1}>
@@ -349,21 +312,19 @@ export const AddToOrder = () => {
           </Flex>
           <ScrollView flex={1}>
             {typedValues(orderItems)?.map((order, index) => {
-              // const personIndex = tabData?.getTabByID?.users?.findIndex(
-              //   (user) => user._id === order.selectedUser
-              // );
-
-              // let selectedUserIndex: number;
-
-              // if (personIndex !== undefined && personIndex !== -1) {
-              //   selectedUserIndex = personIndex + 1;
-              // }
+              const personIndex = tabData?.getTabByID?.users?.findIndex(
+                (user) => user._id === order.selectedUser
+              );
 
               return (
                 <SummaryComponent
                   key={order._id + order.selectedUser}
                   lastItem={index === typedValues(orderItems).length - 1}
-                  assignedToPersonIndex={order.selectedUser}
+                  assignedToPersonIndex={
+                    personIndex !== undefined && personIndex !== -1
+                      ? personIndex + 1
+                      : undefined
+                  }
                   name={order.name}
                   price={parseToCurrency(order.price, order.currency)}
                   quantity={order.orderQuantity}
@@ -406,7 +367,13 @@ export const AddToOrder = () => {
         </Flex>
       </LeftSideBar>
       <Box flex={1}>
-        <OrangeBox />
+        <Box
+          backgroundColor={"primary.500"}
+          h={100}
+          w={"100%"}
+          position={"absolute"}
+          zIndex={-1}
+        />
         <VStack flex={1} p={4} space={4}>
           <UpperSection>
             <Heading>{t("patrons")}</Heading>
@@ -491,7 +458,7 @@ export const AddToOrder = () => {
                           }
                           onPress={() => {
                             onAddOrIncreaseQnt({
-                              _id: product._id,
+                              _id: selectedUser ? `${product._id}:${selectedUser}` : product._id,
                               name: product.name,
                               imageUrl: product.imageUrl,
                               description: product.description,
@@ -499,6 +466,7 @@ export const AddToOrder = () => {
                               price: product.price,
                               selectedUser,
                               orderQuantity: 0,
+                              productId: product._id,
                             })
                           }}
                         />
