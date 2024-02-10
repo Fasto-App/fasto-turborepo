@@ -20,8 +20,10 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (par
   const foundPayment = await Payment.findById(input.payment)
   const foundCheckout = await Checkout.findById(input.checkout)
 
+
   if (!foundPayment || !foundCheckout) throw ApolloError(new Error("No payment os checkout"), 'BadRequest')
 
+  foundCheckout.updated_at = new Date(Date.now())
   foundPayment.paid = true
 
   foundCheckout.totalPaid = foundCheckout.totalPaid + foundPayment.amount
@@ -84,6 +86,8 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] = as
   if (!foundCheckout) throw ApolloError(new Error('Checkout not found'), 'BadRequest',)
   if (!foundCheckout?.tab) throw ApolloError(new Error('Tab not found'), 'BadRequest',)
   if (foundCheckout.splitType) throw ApolloError(new Error('Split type is already set'), 'BadRequest',)
+
+  foundCheckout.updated_at = new Date(Date.now())
 
   if (foundCheckout?.discount === undefined && discount) {
     foundCheckout.discount = discount
@@ -205,6 +209,7 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] = asyn
   })
 
   foundCheckout.payments = [payment._id]
+  foundCheckout.updated_at = new Date(Date.now())
 
   return await foundCheckout.save()
 }
@@ -235,7 +240,7 @@ const customerRequestSplit: MutationResolvers["customerRequestSplit"] = async (p
       const absoluteTotal = foundCheckout.subTotal + tipValue + serviceFeeValue + taxValue
 
       foundCheckout.total = absoluteTotal
-      foundCheckout.updated_at = Date.now()
+      foundCheckout.updated_at = new Date(Date.now())
       await foundCheckout.save()
     }
 

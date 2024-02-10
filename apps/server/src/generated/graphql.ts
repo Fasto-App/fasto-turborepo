@@ -160,6 +160,7 @@ export type Checkout = {
   tipValue?: Maybe<Scalars['Float']>;
   total: Scalars['Float'];
   totalPaid: Scalars['Float'];
+  updated_at?: Maybe<Scalars['String']>;
 };
 
 export enum CheckoutStatusKeys {
@@ -1882,6 +1883,7 @@ export type CheckoutResolvers<ContextType = Context, ParentType extends Resolver
   tipValue?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalPaid?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  updated_at?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

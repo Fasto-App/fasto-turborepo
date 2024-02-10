@@ -146,7 +146,7 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
               <OrderDetails
                 key={checkout._id}
                 _id={`#${checkout._id.slice(-6)}`}
-                date={format(Number(checkout.created_date), "Pp", getLocale(router.locale))}
+                date={format(Number(checkout.updated_at || checkout.created_date), 'E, MMM d, p', getLocale(router.locale))}
                 total={parseToCurrency(checkout.total)}
                 status={t(CheckoutStatusKeys[checkout.status])}
                 colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
@@ -251,7 +251,7 @@ const TableHeader = ({ onPress, selectAll, deselectedAll, loading }: {
 }
 
 const TableData: FC = ({ children }) => (
-  <Text textAlign={"center"} flex="1" fontSize={"md"}>{children}</Text>
+  <Text textAlign={"center"} textTransform={"capitalize"} style={{}} flex="1" fontSize={"md"}>{children}</Text>
 )
 
 type OrderDetailsProps = {
