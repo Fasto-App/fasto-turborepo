@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import { SummaryComponent } from "../../components/OrderSummary";
-import { LeftSideBar } from "../../components";
+// import { LeftSideBar } from "../../components";
 import { parseToCurrency, typedKeys, typedValues } from "app-helpers";
 import { UpperSection } from "../../components/UpperSection";
 import { Tile } from "../../components/Tile";
@@ -21,6 +21,7 @@ import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { Flex, Divider, Box, HStack, Heading, VStack, Input, ScrollView, Button, Text } from "native-base";
+import { LeftSideBar } from "../../components/LeftSideBar";
 
 // Helper can be outside of component
 // specially if we want to reuse this
