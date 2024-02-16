@@ -1,12 +1,15 @@
-import { Connection } from "mongoose"
+import { Connection, Document, Types } from "mongoose"
 import { Checkout, OrderDetailModel, BusinessModel, CheckoutModel, UserModel, User } from "../../../models"
 import { ClientContext, UserContext } from "../types"
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended"
+import { BeAnObject, IObjectWithTypegooseFunction } from "@typegoose/typegoose/lib/types";
 
 export async function splitByPatron(
   db: Connection,
   foundCheckout: Checkout & { _id: string },
-  foundUsers: User & { _id: string }[]) {
+  foundUsers: (Document<any, BeAnObject, User> & User & IObjectWithTypegooseFunction & {
+    _id: Types.ObjectId;
+  })[]) {
 
   const orders = await OrderDetailModel(db).find({ _id: { $in: foundCheckout.orders } })
 

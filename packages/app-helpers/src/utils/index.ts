@@ -9,13 +9,18 @@ export const SERVICE_FEE = 201
 
 export const MINIMUM_ITEMS_QUANTITY = 3
 
-const getCurrency = (str?: string | null): "BRL" | "USD" => {
+const getCurrency = (str?: string | null) => {
   if (str?.toUpperCase().startsWith("B")) return "BRL"
   return "USD"
 }
 
+const getRegion = (str?: string | null) => {
+  if (str?.toUpperCase().startsWith("B")) return "pt-BR"
+  return "en-US"
+}
+
 export const parseToCurrency = (number?: number | null, currency?: string | null) => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(getRegion(currency), {
     style: 'currency',
     currency: getCurrency(currency),
   }).format(Math.floor(number ?? 0) / FIXED_POINT_FACTOR_CURRENCY);
