@@ -16,6 +16,7 @@ import { ColorSchemeType } from "native-base/lib/typescript/components/types"
 import { Icon } from '../../components/atoms/NavigationButton'
 import { Alert } from "../../components/DeleteAlert"
 import { showToast } from "../../components/showToast"
+import { formatDate } from "../../hooks/helper"
 
 type CheckoutState = {
   isOpen: boolean;
@@ -146,7 +147,8 @@ export const BottomCheckoutTableWithModal = ({ setModalData, modalData }: {
               <OrderDetails
                 key={checkout._id}
                 _id={`#${checkout._id.slice(-6)}`}
-                date={format(Number(checkout.updated_at || checkout.created_date), 'E, MMM d, p', getLocale(router.locale))}
+                date={formatDate(checkout.updated_at ||
+                  checkout.created_date, router.locale)}
                 total={parseToCurrency(checkout.total)}
                 status={t(CheckoutStatusKeys[checkout.status])}
                 colorScheme={checkout.status === "Paid" ? "success" : "yellow"}
