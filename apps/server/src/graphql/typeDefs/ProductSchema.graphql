@@ -22,6 +22,7 @@ type Product {
 	totalOrdered: Int
 	currency: Currency
 	paused: Boolean
+	blockOnZeroQuantity: Boolean
 }
 
 input CreateProductInput {
@@ -33,6 +34,7 @@ input CreateProductInput {
 	category: ID!
 	quantity: Int
 	paused: Boolean!
+	blockOnZeroQuantity: Boolean!
 }
 
 input UpdateProductInput {
@@ -44,6 +46,7 @@ input UpdateProductInput {
 	category: ID!
 	quantity: Int
 	paused: Boolean!
+	blockOnZeroQuantity: Boolean!
 }
 
 enum Currency {

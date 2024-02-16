@@ -2,13 +2,14 @@ import React, { useCallback, useMemo, useState } from "react";
 import {
   Box,
   Button,
-  Checkbox,
   FlatList,
   Heading,
   HStack,
   Input,
   ScrollView,
   Text,
+  useTheme,
+  Pressable
 } from "native-base";
 import {
   ProductCard,
@@ -25,13 +26,15 @@ import {
   useDeleteMenuMutation,
   useGetAllCategoriesByBusinessQuery,
   useGetAllMenusByBusinessIdQuery,
+  useGetBusinessInformationQuery,
   useUpdateMenuMutation,
 } from "../../gen/generated";
 import { Icon } from "../../components/atoms/NavigationButton";
-import { Pressable } from "react-native";
 import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 import { parseToCurrency } from "app-helpers";
+import { useRouter } from "next/router";
+import { copyMenuLinkToClipboard } from "./hooks";
 
 // Todo: [repeated code] AddToToOrder has the same function
 const searchProductsByName = (
@@ -317,6 +320,24 @@ function MenuProducts() {
   const filteredProductsByCategory = useMemo(() => {
     return searchProductsByName(searchString, productsFiltereByCategory);
   }, [searchString, productsFiltereByCategory]);
+
+
+  const theme = useTheme()
+  const router = useRouter()
+
+  const { data: businessData } = useGetBusinessInformationQuery()
+
+  const shareMenuLink = useCallback(() => {
+    copyMenuLinkToClipboard({
+      businessId: businessData?.getBusinessInformation._id,
+      locale: router.locale,
+      menuId,
+    })
+
+    showToast({ message: t("shareLink") })
+  }, [businessData?.getBusinessInformation._id, menuId, router.locale, t],)
+
+
   return (
     <Box
       p={"4"}
@@ -327,19 +348,7 @@ function MenuProducts() {
       backgroundColor={"white"}
     >
       <HStack flexDirection={"row"} mb={"2"} space={4}>
-        <HStack space={2}>
-          <Pressable
-            disabled={!isEditingMenu}
-            onPress={() =>
-              selectedMenu?._id &&
-              setFavoriteMenus({
-                ...favoriteMenus,
-                [selectedMenu?._id]: !favoriteMenus[selectedMenu?._id],
-              })
-            }
-          >
-            <Icon type={icontype} />
-          </Pressable>
+        <HStack space={3}>
           {isEditingMenu ? (
             <Input
               size={"2xl"}
@@ -355,6 +364,28 @@ function MenuProducts() {
               {selectedMenu?.name}
             </Heading>
           )}
+
+          <HStack space={2}>
+            <Pressable
+              disabled={!isEditingMenu}
+              onPress={() =>
+                selectedMenu?._id &&
+                setFavoriteMenus({
+                  ...favoriteMenus,
+                  [selectedMenu?._id]: !favoriteMenus[selectedMenu?._id],
+                })
+              }
+            >
+              <Icon type={icontype} color={theme.colors.yellow[500]} />
+            </Pressable>
+
+            <Pressable
+              variant={"ghost"}
+              disabled={!menuId}
+              onPress={shareMenuLink}>
+              <Icon type='Share' color={theme.colors.primary[500]} />
+            </Pressable>
+          </HStack>
         </HStack>
 
         {/* Categories */}
@@ -397,23 +428,24 @@ function MenuProducts() {
               </Button>
             ))}
         </ScrollView>
-      </HStack>
-      <HStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>
-        <Input
-          placeholder={t("search")}
-          variant="rounded"
-          borderRadius="10"
-          size="md"
-          value={searchString}
-          onChangeText={(text) => {
-            setSearchString(text);
-          }}
-          InputLeftElement={
-            <Box p="1">
-              <Icon type="Search" />
-            </Box>
-          }
-        />
+        <HStack flexDir={"row"} flexWrap={"wrap"}>
+          <Input
+            placeholder={t("search")}
+            variant="rounded"
+            borderRadius="10"
+            size="md"
+            h={"10"}
+            value={searchString}
+            onChangeText={(text) => {
+              setSearchString(text);
+            }}
+            InputLeftElement={
+              <Box p="1">
+                <Icon type="Search" />
+              </Box>
+            }
+          />
+        </HStack>
       </HStack>
       <Box flex={1} p={"4"}>
         {isEditingMenu ? (
