@@ -127,16 +127,16 @@ export const createUser = async (_parent: any, { input }: { input: CreateAccount
 
 
 // Enter credentials to get existing user
-export const postUserLogin: MutationResolvers["postUserLogin"] = async (_parent, { input }, { db }) => {
+export const postUserLogin = async (_parent: any, { input }: any, { db }: { db: Connection }) => {
   const { email, password } = loginSchema.parse(input)
 
   const User = UserModel(db)
   const user = await User.findOne({ email })
 
-  if (!user || !user.password) throw ApolloError(new Error("User not found"), 'Unauthorized')
+  if (!user || !user.password) throw new Error("User not found")
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
-  if (!isPasswordMatch) throw ApolloError(new Error("Passwords don't match"), 'Unauthorized')
+  if (!isPasswordMatch) throw new Error("User not found")
 
   const allBusiness = typedKeys(user.businesses)
   const businessId = allBusiness.length ? allBusiness[0] as string : undefined;

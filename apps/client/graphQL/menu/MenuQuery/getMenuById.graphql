@@ -15,7 +15,6 @@ query GetMenuByID($input: GetMenuById) {
 				description
 				quantity
 				currency
-				blockOnZeroQuantity
 			}
 		}
 	}

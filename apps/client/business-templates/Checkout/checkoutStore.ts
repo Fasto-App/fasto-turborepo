@@ -62,12 +62,12 @@ interface CheckoutStore {
 // @ts-ignore
 export const useCheckoutStore = create<CheckoutStore>(devtools(subscribeWithSelector(((set, get) => ({
   total: 0,
-  tip: 0,
+  tip: 1000,
   discount: 0,
   customTip: 0,
   customDiscount: 0,
   customSubTotals: {},
-  selectedTip: "0%",
+  selectedTip: "10%",
   selectedDiscount: "0%",
   selectedSplitType: "Equally",
   serviceFeeValue: 0,

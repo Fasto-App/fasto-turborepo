@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Box, Button, Heading, HStack, Modal, ScrollView, VStack } from 'native-base'
+import React, { useCallback, useState } from 'react'
+import { Box, Button, Heading, HStack, Modal, ScrollView, useTheme, VStack, Pressable } from 'native-base'
 import { SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { useAppStore } from '../UseAppStore';
 import { Tile } from '../../components/Tile';
@@ -10,13 +10,33 @@ import { menuSchemaInput } from 'app-helpers';
 import { AllMenusbyBusiness } from './types';
 import { useTranslation } from 'next-i18next';
 import { Icon } from '../../components/atoms/NavigationButton';
+import { showToast } from '../../components/showToast';
+import { customerRoute } from 'fasto-route';
+import { useRouter } from 'next/router';
 
 export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
   const { t } = useTranslation("businessMenu")
+  const { data } = useGetBusinessInformationQuery()
+
   const [showModal, setShowModal] = useState(false)
   const setMenu = useAppStore(state => state.setMenu)
   const menu = useAppStore(state => state.menu ?? menusData?.[0]?._id)
   const resetEditingAndSectionMap = useAppStore(state => state.resetEditingAndSectionMap)
+
+  const theme = useTheme()
+  const router = useRouter()
+
+  const shareMenuLink = useCallback(() => {
+    console.log("Share link and show toast")
+    if (!data?.getBusinessInformation._id) throw new Error("No business id")
+
+    const customerPath = `${process.env.FRONTEND_URL}/${router.locale ?? "en"}${customerRoute['/customer/[businessId]'].replace("[businessId]", data?.getBusinessInformation._id)}`
+
+    const menuIdQuery = `${customerPath}?menuId=${menu}`
+    navigator.clipboard.writeText(menuIdQuery)
+
+    showToast({ message: t("shareLink") })
+  }, [data?.getBusinessInformation._id, menu, router.locale, t],)
 
 
   return (
@@ -35,6 +55,12 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
           <Heading>
             {t("title")}
           </Heading>
+          <Pressable
+            variant={"ghost"}
+            disabled={!menu}
+            onPress={shareMenuLink}>
+            <Icon type='Share' color={theme.colors.primary[500]} />
+          </Pressable>
         </HStack>
         <VStack space={4}>
           <HStack space={2}>
@@ -145,4 +171,3 @@ const MenuModal = ({ showModal, setShowModal }: {
     </Modal >
   )
 }
-

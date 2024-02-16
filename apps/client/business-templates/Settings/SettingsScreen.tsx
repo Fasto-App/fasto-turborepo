@@ -8,7 +8,7 @@ import { ManageEmployee } from './ManageEmployee'
 import { UpperSection } from '../../components/UpperSection'
 import { OrangeBox } from '../../components/OrangeBox'
 import { BottomSection } from '../../components/BottomSection'
-import { useRouter } from 'next/router'
+import router, { useRouter } from 'next/router'
 import { FDSSelect } from "../../components/FDSSelect";
 import { useTranslation } from "next-i18next";
 import { QRcodeAndShare } from './QRcodeAndShare'

@@ -230,7 +230,6 @@ export type CreateOrderInput = {
 
 export type CreateProductInput = {
   addons?: InputMaybe<Array<InputMaybe<CreateProductInput>>>;
-  blockOnZeroQuantity: Scalars['Boolean'];
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
@@ -978,7 +977,6 @@ export type Product = {
   __typename?: 'Product';
   _id: Scalars['ID'];
   addonsID?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  blockOnZeroQuantity?: Maybe<Scalars['Boolean']>;
   category?: Maybe<Category>;
   currency?: Maybe<Currency>;
   description?: Maybe<Scalars['String']>;
@@ -1347,7 +1345,6 @@ export type UpdateOrdersGroupInput = {
 
 export type UpdateProductInput = {
   _id: Scalars['ID'];
-  blockOnZeroQuantity: Scalars['Boolean'];
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
@@ -1393,7 +1390,7 @@ export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
   address?: Maybe<Address>;
-  businesses?: Maybe<Array<Maybe<BusinessPrivileges>>>;
+  businesses: Array<BusinessPrivileges>;
   email?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
@@ -2112,7 +2109,6 @@ export type PriceResolvers<ContextType = Context, ParentType extends ResolversPa
 export type ProductResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Product'] = ResolversParentTypes['Product']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   addonsID?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType>;
-  blockOnZeroQuantity?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
   currency?: Resolver<Maybe<ResolversTypes['Currency']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2271,7 +2267,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   address?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
-  businesses?: Resolver<Maybe<Array<Maybe<ResolversTypes['BusinessPrivileges']>>>, ParentType, ContextType>;
+  businesses?: Resolver<Array<ResolversTypes['BusinessPrivileges']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
