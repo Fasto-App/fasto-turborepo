@@ -6,10 +6,9 @@ import { useGetOrdersByCheckoutQuery } from '../../gen/generated'
 import { LoadingCartItems } from '../../customer-templates/CartScreen/LoadingTiles'
 import { PastOrdersTile } from '../../customer-templates/CartScreen/PastOrdersModal'
 import { PRODUCT_PLACEHOLDER_IMAGE, parseToCurrency } from 'app-helpers'
-import { format } from 'date-fns'
-import { getLocale } from '../../authUtilities/utils'
 import { businessRoute } from 'fasto-route'
 import { useTranslation } from 'next-i18next'
+import { formatDate } from '../../hooks/helper'
 
 type CheckoutModalProps = {
   isOpen: boolean;
@@ -43,9 +42,11 @@ export const CheckoutModal = ({ isOpen, setIsOpen, checkoutId }: CheckoutModalPr
         </Text>
 
         <Text fontSize={"lg"}>
-          {/* TODO: Make this a reusable function */}
-          {`${format(Number(data?.getOrdersByCheckout.created_date || 0),
-            "PPp", getLocale(router.locale))}`}
+          {formatDate(
+            data?.getOrdersByCheckout.updated_at ||
+            data?.getOrdersByCheckout.created_date,
+            router.locale
+          )}
         </Text>
       </VStack>}
       ModalBody={<>

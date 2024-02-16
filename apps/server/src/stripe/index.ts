@@ -168,54 +168,53 @@ export type Metada = {
 }
 
 export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) => {
-  const { payment_id } = metadata
+  const { payment_id } = metadata;
 
-  const foundPayment = await PaymentModel(db).findById(payment_id)
-  if (!foundPayment) throw ApolloError(new Error("Payment not found."), "BadRequest")
+  const foundPayment = await PaymentModel(db).findById(payment_id);
+  if (!foundPayment) throw ApolloError(new Error('Payment not found.'), 'BadRequest');
 
-  const foundCheckout = await CheckoutModel(db).findById(foundPayment?.checkout)
-  if (!foundCheckout) throw ApolloError(new Error("Check not found."), "BadRequest")
+  const foundCheckout = await CheckoutModel(db).findById(foundPayment?.checkout);
+  if (!foundCheckout) throw ApolloError(new Error('Check not found.'), 'BadRequest');
 
-  const foundTab = await TabModel(db).findById(foundCheckout.tab)
-  if (!foundTab) throw ApolloError(new Error("Tab not found"), "BadRequest")
+  const foundTab = await TabModel(db).findById(foundCheckout.tab);
+  if (!foundTab) throw ApolloError(new Error('Tab not found'), 'BadRequest');
 
   foundPayment.paid = true;
-  await foundPayment.save()
+  await foundPayment.save();
 
-  foundCheckout.totalPaid += foundPayment.amount
+  foundCheckout.totalPaid += foundPayment.amount;
 
   if (foundCheckout.totalPaid >= foundCheckout.total) {
-
     if (foundTab?.table) {
-      const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table)
-      if (!foundTable) throw ApolloError(new Error('Table not found'), "BadRequest")
+      const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table);
+      if (!foundTable) throw ApolloError(new Error('Table not found'), 'BadRequest');
 
-      foundTable.status = "Available"
-      foundTable.tab = undefined
-      await foundTable.save()
+      foundTable.status = 'Available';
+      foundTable.tab = undefined;
+      await foundTable.save();
     }
 
-    foundTab.status = "Closed"
-    await foundTab.save()
+    foundTab.status = 'Closed';
+    await foundTab.save();
 
     // when the payment is made, subtract from
-    foundCheckout.status = "Paid"
-    foundCheckout.paid = true
-    foundCheckout.updated_at = Date.now()
+    foundCheckout.status = 'Paid';
+    foundCheckout.paid = true;
+    foundCheckout.updated_at = new Date();
 
-    await updateProductQuantity(foundCheckout, db)
+    await updateProductQuantity(foundCheckout, db);
 
     // update all the requests associated with this tab
-    const foundRequests = await RequestModel(db).find({ tab: foundTab?._id })
+    const foundRequests = await RequestModel(db).find({ tab: foundTab?._id });
     if (foundRequests.length > 0) {
       const savePromises = foundRequests.map((request) => {
-        request.status = "Completed"
-        return request.save()
+        request.status = 'Completed';
+        return request.save();
       });
 
       await Promise.all(savePromises);
     }
   }
 
-  await foundCheckout.save()
-}
+  await foundCheckout.save();
+};

@@ -61,8 +61,8 @@ export class Checkout {
   @prop({ default: Date.now() })
   public created_date!: Date;
 
-  @prop({ default: Date.now() })
-  public updated_at!: number;
+  @prop({ required: true, default: Date.now() })
+  public updated_at!: Date;
 };
 
 export const CheckoutModel = (conn: Connection) =>

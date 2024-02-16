@@ -32,17 +32,13 @@ import {
 } from "../../gen/generated";
 import { LoadingItems } from "./LoadingItems";
 import { typedKeys, typedValues } from "app-helpers";
-import router, { useRouter } from "next/router";
+import router from "next/router";
 import { ColorSchemeType } from "native-base/lib/typescript/components/types";
 import { OrdersModal } from "./OrdersModal";
 import { Icon } from "../../components/atoms/NavigationButton";
 import { showToast } from "../../components/showToast";
-import { format } from "date-fns";
-import { getLocale } from "../../authUtilities/utils";
 import { getOrderColor } from "./utils";
-
-const formatDateFNS = (date?: string) => format(Number(date || 0),
-  "PPp", getLocale(router.locale))
+import { formatDate } from "../../hooks/helper";
 
 const TableHeader: FC = ({ children }) => (
   <Heading textAlign={"center"} flex="1" size={"md"}>
@@ -419,7 +415,7 @@ export const BottomOrdersTableWithModal: React.FC<
             <OrderDetails
               key={order._id}
               _id={`#${order._id.slice(-6)}`}
-              date={formatDateFNS(order.created_date)}
+              date={formatDate(order.created_date, router.locale)}
               status={t(OrderStatus[order.status])}
               colorScheme={getOrderColor(order.status)}
               selected={!!orderObj[order._id]}

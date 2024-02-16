@@ -37,6 +37,7 @@ type Checkout {
 	totalPaid: Float!
 	splitType: SplitType
 	created_date: String!
+	updated_at: String
 }
 
 input CustomerRequestPayFullInput {
