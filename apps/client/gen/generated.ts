@@ -231,6 +231,7 @@ export type CreateOrderInput = {
 
 export type CreateProductInput = {
   addons?: InputMaybe<Array<InputMaybe<CreateProductInput>>>;
+  blockOnZeroQuantity: Scalars['Boolean'];
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
@@ -978,6 +979,7 @@ export type Product = {
   __typename?: 'Product';
   _id: Scalars['ID'];
   addonsID?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  blockOnZeroQuantity?: Maybe<Scalars['Boolean']>;
   category?: Maybe<Category>;
   currency?: Maybe<Currency>;
   description?: Maybe<Scalars['String']>;
@@ -1346,6 +1348,7 @@ export type UpdateOrdersGroupInput = {
 
 export type UpdateProductInput = {
   _id: Scalars['ID'];
+  blockOnZeroQuantity: Scalars['Boolean'];
   category: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
   file?: InputMaybe<Scalars['Upload']>;
@@ -1391,7 +1394,7 @@ export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
   address?: Maybe<Address>;
-  businesses: Array<BusinessPrivileges>;
+  businesses?: Maybe<Array<Maybe<BusinessPrivileges>>>;
   email?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
@@ -1683,7 +1686,7 @@ export type GetMenuByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null }> }> | null } };
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null }> }> | null } };
 
 export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
@@ -2069,7 +2072,7 @@ export type UpdateUserInformationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } };
+export type UpdateUserInformationMutation = { __typename?: 'Mutation', updateUserInformation: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses?: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges } | null> | null } };
 
 export type GetClientInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2079,7 +2082,7 @@ export type GetClientInformationQuery = { __typename?: 'Query', getClientInforma
 export type GetUserInformationQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges }> } | null };
+export type GetUserInformationQuery = { __typename?: 'Query', getUserInformation?: { __typename?: 'User', _id: string, email?: string | null, name?: string | null, picture?: string | null, businesses?: Array<{ __typename?: 'BusinessPrivileges', business: string, privilege: UserPrivileges } | null> | null } | null };
 
 
 export const CreateCustomerAddressDocument = gql`
@@ -3534,6 +3537,7 @@ export const GetMenuByIdDocument = gql`
         description
         quantity
         currency
+        blockOnZeroQuantity
       }
     }
   }

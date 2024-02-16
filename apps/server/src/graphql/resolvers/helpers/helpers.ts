@@ -8,7 +8,7 @@ export const updateProductQuantity = async (foundCheckout: Checkout, db: Connect
   const ordersDetails = await OrderDetailModel(db).find({ _id: { $in: foundCheckout.orders } });
   const Product = ProductModel(db)
 
-  for (let order of ordersDetails) {
+  for (const order of ordersDetails) {
     // from each order, subtract the products with the quantity
     const quantity = order.quantity
     const product = await Product.findById(order.product)
@@ -17,9 +17,10 @@ export const updateProductQuantity = async (foundCheckout: Checkout, db: Connect
     if (product?.quantity && product.quantity >= quantity) {
       product.quantity = product.quantity - quantity;
       product.totalOrdered = product.totalOrdered + quantity
-      await product.save();
-      console.log(`Product ${product._id} has been updated`);
-    } else {
+      return await product.save();
+    }
+
+    if (product?.blockOnZeroQuantity) {
       Bugsnag.notify(`Insufficient quantity for product ${product?._id}`)
     }
   }

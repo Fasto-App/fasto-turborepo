@@ -12,6 +12,7 @@ const productSchema = z.object({
   description: z.string().optional(),
   quantity: z.number().optional(),
   paused: z.boolean(),
+  blockOnZeroQuantity: z.boolean(),
 });
 
 export type ProductFields = z.infer<typeof productSchema>;
@@ -36,6 +37,7 @@ export const useProductFormHook = () => {
       file: undefined,
       quantity: undefined,
       paused: false,
+      blockOnZeroQuantity: false,
     },
     resolver: zodResolver(productSchema),
   });

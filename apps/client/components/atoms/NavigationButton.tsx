@@ -23,7 +23,7 @@ import { TiTabsOutline } from "react-icons/ti"
 import { GiKnifeFork } from "react-icons/gi"
 import { RiDashboard3Line, RiUserSettingsLine } from "react-icons/ri"
 import { BiLogOutCircle } from "react-icons/bi"
-import { MdOutlineFrontHand, MdOutlinePhoneIphone, MdLocationPin, MdMotionPhotosPaused } from "react-icons/md"
+import { MdOutlineFrontHand, MdOutlinePhoneIphone, MdLocationPin, MdMotionPhotosPaused, MdIosShare } from "react-icons/md"
 import { ImQrcode } from "react-icons/im"
 import { HiOutlineClipboardList } from "react-icons/hi"
 import { Badge, Box, Pressable, Text, } from "native-base";
@@ -37,7 +37,7 @@ type IconProps = {
 export const Icon = ({ type, color = colors.black, size = "2em" }: IconProps) => {
   switch (type) {
     case "Share":
-      return <IoMdShareAlt color={color} size={size} />;
+      return <MdIosShare color={color} size={size} />;
     case "Paused":
       return <MdMotionPhotosPaused color={color} size={size} />;
     case "Calendar":
