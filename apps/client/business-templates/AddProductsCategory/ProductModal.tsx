@@ -144,7 +144,8 @@ const ProductModal = ({
 						file: imageFile,
 						category: values.category,
 						quantity: values.quantity,
-						paused: values.paused
+						paused: values.paused,
+						blockOnZeroQuantity: values.blockOnZeroQuantity
 					}
 				}
 			});
@@ -160,7 +161,8 @@ const ProductModal = ({
 						file: imageFile,
 						category: values.category,
 						quantity: values.quantity,
-						paused: values.paused
+						paused: values.paused,
+						blockOnZeroQuantity: values.blockOnZeroQuantity
 					},
 				},
 			});

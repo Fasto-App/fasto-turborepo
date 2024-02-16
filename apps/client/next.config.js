@@ -12,12 +12,16 @@ const withTM = require('next-transpile-modules')([
 	'fasto-route',
 ]);
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+	enabled: process.env.ANALYZE === 'true',
+});
+
 /**
  * @type {import('next').NextConfig}
  */
-
 const nextConfig = {
 	env: {
+		ANALYZE: process.env.ANALYZE,
 		NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
 		NEXT_PUBLIC_API_KEY: process.env.NEXT_PUBLIC_API_KEY,
 		FRONTEND_URL: process.env.FRONTEND_URL,
@@ -60,8 +64,9 @@ module.exports = withPlugins(
 		withTM,
 		[withFonts, { projectRoot: __dirname }],
 		[withExpo, { projectRoot: __dirname }],
+		[withBundleAnalyzer],
 		// []
 		// your plugins go here.
 	],
-	nextConfig,
+	withBundleAnalyzer(nextConfig),
 );

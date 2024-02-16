@@ -35,7 +35,10 @@ export class Product {
   public paused!: boolean;
 
   @prop({ default: "BRL" })
-  public currency!: "BRL" | "USD";;
+  public currency!: "BRL" | "USD";
+
+  @prop({ default: false })
+  public blockOnZeroQuantity!: boolean;
 
   @prop({ default: Date.now() })
   public created_date!: Date;
