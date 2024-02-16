@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import {
   Box,
   Button,
-  Checkbox,
   FlatList,
   Heading,
   HStack,
@@ -10,8 +9,7 @@ import {
   ScrollView,
   Text,
   useTheme,
-  Pressable,
-  VStack
+  Pressable
 } from "native-base";
 import {
   ProductCard,
@@ -36,7 +34,7 @@ import { useTranslation } from "next-i18next";
 import { showToast } from "../../components/showToast";
 import { parseToCurrency } from "app-helpers";
 import { useRouter } from "next/router";
-import { customerRoute } from "fasto-route";
+import { copyMenuLinkToClipboard } from "./hooks";
 
 // Todo: [repeated code] AddToToOrder has the same function
 const searchProductsByName = (
@@ -330,12 +328,11 @@ function MenuProducts() {
   const { data: businessData } = useGetBusinessInformationQuery()
 
   const shareMenuLink = useCallback(() => {
-    if (!businessData?.getBusinessInformation._id) throw new Error("No business id")
-
-    const customerPath = `${process.env.FRONTEND_URL}/${router.locale ?? "en"}${customerRoute['/customer/[businessId]'].replace("[businessId]", businessData?.getBusinessInformation._id)}`
-
-    const menuIdQuery = `${customerPath}?menuId=${menuId}`
-    navigator.clipboard.writeText(menuIdQuery)
+    copyMenuLinkToClipboard({
+      businessId: businessData?.getBusinessInformation._id,
+      locale: router.locale,
+      menuId,
+    })
 
     showToast({ message: t("shareLink") })
   }, [businessData?.getBusinessInformation._id, menuId, router.locale, t],)
@@ -368,7 +365,7 @@ function MenuProducts() {
             </Heading>
           )}
 
-          <HStack>
+          <HStack space={2}>
             <Pressable
               disabled={!isEditingMenu}
               onPress={() =>
@@ -431,12 +428,13 @@ function MenuProducts() {
               </Button>
             ))}
         </ScrollView>
-        <HStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>
+        <HStack flexDir={"row"} flexWrap={"wrap"}>
           <Input
             placeholder={t("search")}
             variant="rounded"
             borderRadius="10"
             size="md"
+            h={"10"}
             value={searchString}
             onChangeText={(text) => {
               setSearchString(text);
