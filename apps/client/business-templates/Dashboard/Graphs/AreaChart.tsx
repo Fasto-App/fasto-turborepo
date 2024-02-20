@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/router";
 import { parseToCurrency } from "app-helpers";
 import { useTranslation } from "next-i18next";
+import { DatePickerDemo } from "../DatePicker";
 // 
 ChartJS.register(
   CategoryScale,
@@ -145,6 +146,8 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, }
         >
           {t("7Days")}
         </Button>
+
+        <DatePickerDemo />
       </Stack>
       <Line options={options} data={data} />
     </Border>

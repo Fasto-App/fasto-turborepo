@@ -12,6 +12,7 @@ import {
   useGetUserInformationQuery,
 } from "../../gen/generated";
 import { parseToCurrency } from "app-helpers";
+import { DatePickerDemo } from "./DatePicker";
 
 export const DashboardScreen = () => {
   const [selectedCheckoutFilter, setSelectedCheckoutFilter] = useState(
@@ -38,7 +39,6 @@ export const DashboardScreen = () => {
         <Panel
           mostSellingItem={data?.getMostSellingProducts?.[0]?.name}
           loading={loading} revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)} />
-        <h1 className="text-3xl text-red-500 font-bold underline">Hello world!</h1>
         <HStack space={3} flex={1}>
           <ScrollView pr={2} pb={2} borderRadius={"md"}>
             <VStack space={8} flex={1}>
