@@ -49,13 +49,5 @@ export function VerticalBar() {
       },
     ],
   };
-  return <Box borderWidth={0.5}
-    borderColor={"gray.200"}
-    shadow={"2"}
-    borderRadius={"md"}
-    bgColor={"white"}
-    p={2}
-    flex={1}
-  ><Bar options={options} data={data} />
-  </Box>;
+  return <Bar options={options} data={data} />
 }

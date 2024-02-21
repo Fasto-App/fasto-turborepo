@@ -108,7 +108,7 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, }
   };
 
   return (
-    <Border>
+    <div className="bg-white">
       <Stack
         mb="2.5"
         mt="1.5"
@@ -150,7 +150,7 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, }
         <DatePickerDemo />
       </Stack>
       <Line options={options} data={data} />
-    </Border>
+    </div>
   );
 }
 
