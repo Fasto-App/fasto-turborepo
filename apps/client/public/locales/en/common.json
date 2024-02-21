@@ -82,5 +82,7 @@
 	},
 	"lowStock": "Low stock",
 	"inStock": "In stock",
-	"noStock": "No stock"
+	"noStock": "No stock",
+	"headsUp": "Heads up!",
+	"responsiveVersion": "Responsive version is comming soon! Meanwhile, use the desktop version for best experience."
 }

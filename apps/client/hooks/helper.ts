@@ -44,4 +44,4 @@ export const resizeFile = (file: File) =>
     );
   });
 
-export const formatDate = (date?: string, locale?: string) => format(Number(date || 0), "E, MMM d, p", getLocale(locale))
+export const formatDate = (date?: string | Date, locale?: string) => format(Number(date || 0), "E, MMM d, p", getLocale(locale))
