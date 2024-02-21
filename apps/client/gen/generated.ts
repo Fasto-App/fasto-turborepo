@@ -84,6 +84,7 @@ export type Business = {
   picture?: Maybe<Scalars['String']>;
   price_range?: Maybe<Scalars['String']>;
   products: Array<Product>;
+  taxRate?: Maybe<Scalars['Int']>;
   user: Scalars['ID'];
   website: Scalars['String'];
 };
@@ -156,6 +157,7 @@ export type Checkout = {
   subTotal: Scalars['Float'];
   tab: Scalars['ID'];
   tax: Scalars['Float'];
+  taxValue?: Maybe<Scalars['Float']>;
   tip?: Maybe<Scalars['Float']>;
   tipValue?: Maybe<Scalars['Float']>;
   total: Scalars['Float'];
@@ -1624,7 +1626,7 @@ export type GetCheckoutByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, serviceFee: number, serviceFeeValue: number, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tipValue?: number | null, tax: number, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null, paid: boolean } | null> } };
+export type GetCheckoutByIdQuery = { __typename?: 'Query', getCheckoutByID: { __typename?: 'Checkout', _id: string, serviceFee: number, serviceFeeValue: number, splitType?: SplitType | null, business: string, created_date: string, paid: boolean, subTotal: number, totalPaid: number, total: number, tip?: number | null, tipValue?: number | null, tax: number, taxValue?: number | null, tab: string, status: CheckoutStatusKeys, payments: Array<{ __typename?: 'Payment', amount: number, _id: string, splitType?: SplitType | null, patron: string, tip: number, discount?: number | null, paid: boolean } | null> } };
 
 export type GetCheckoutsByBusinessQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -3116,6 +3118,7 @@ export const GetCheckoutByIdDocument = gql`
     tip
     tipValue
     tax
+    taxValue
     tab
     status
     payments {

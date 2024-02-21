@@ -14,6 +14,7 @@ import { showToast } from '../../components/showToast'
 export const PayInFull = ({
   subTotal,
   tax,
+  taxValue,
   setSelectedOption,
 }: Checkout & { setSelectedOption: (value: React.SetStateAction<"splitBill" | "success" | "payFull">) => void }) => {
 
@@ -105,7 +106,7 @@ export const PayInFull = ({
     <Center>
       <VStack w={"full"} minW={"lg"} space={4}>
         <SummaryRow label={t("subtotal")} value={parseToCurrency(subTotal)} />
-        <SummaryRow label={t("feesAndTax")} value={parseToCurrency(subTotal ? (tax ?? 0 * subTotal ?? 0) : 0)} />
+        <SummaryRow label={t("feesAndTax")} value={parseToCurrency(taxValue)} />
         <HStack justifyContent={"space-between"} px={12}>
           <Text fontSize={"xl"}>{t("discount")}</Text>
           <HStack space={2} alignItems={"self-end"}>

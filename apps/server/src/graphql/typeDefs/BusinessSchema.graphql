@@ -110,6 +110,7 @@ type Business {
 	employees: [String]!
 	picture: String
 	hoursOfOperation: HoursOfOperation
+	taxRate: Int
 }
 
 type Hours {

@@ -42,7 +42,7 @@ export class Checkout {
   public tax?: number;
 
   public get taxValue() {
-    return getPercentageOfValue(this.total, this.tax ?? 0);
+    return getPercentageOfValue(this.subTotal, this.tax ?? 0);
   }
 
   @prop({ required: true, default: 0 })
