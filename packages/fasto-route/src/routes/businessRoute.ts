@@ -1,4 +1,4 @@
-const ADMIN = "/admin" as const
+export const ADMIN = "/admin" as const
 export const BUSINESS = "/business" as const
 export const BUSINESS_ADMIN = `${BUSINESS}${ADMIN}` as const
 

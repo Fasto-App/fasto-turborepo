@@ -80,7 +80,7 @@ export const ResetPasswordScreen = () => {
   if (!email || !token) return <Center><Text>{t("businessResetPassword:goBack")}</Text></Center>
 
   return (
-    <Center w="100%" height={"100%"}>
+    <Center w="100%" height={"100%"} background={"white"}>
       <Box position={"absolute"} top={"5"} left={"5"}>
         <Image src="/images/fasto-logo.svg"
           alt="Fasto Logo"

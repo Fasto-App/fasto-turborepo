@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import { BusinessLayout } from '../business-templates/Layout/BusinessLayout';
 import { CustomerLayout } from '../customer-templates/Layout';
 import { AppProvider } from '../appProvider';
-import { BUSINESS, CUSTOMER } from 'fasto-route';
+import { CUSTOMER } from 'fasto-route';
 import { AppApolloProvider } from '../apollo-client/AppApolloProvider';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import NextNProgress from "nextjs-progressbar";
@@ -18,6 +18,7 @@ import { useTheme } from 'native-base';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { View } from 'react-native';
 import { appWithTranslation } from 'next-i18next'
+import { ADMIN } from 'fasto-route/src/routes/businessRoute'
 
 const LandingWrapper: React.FC = ({ children }) => (
 	<Fragment>
@@ -38,7 +39,7 @@ const ProgressBar = () => {
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
-	const isBusinessExp = router.route.includes(BUSINESS);
+	const isBusinessExp = router.route.includes(ADMIN);
 	const isCustomerExp = router.route.includes(CUSTOMER);
 
 	const Wrapper = useMemo(() => {
