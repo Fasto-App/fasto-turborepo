@@ -1,5 +1,4 @@
 import React from "react";
-import { Box } from "native-base";
 import { Alert, AlertDescription, AlertTitle } from "@/shadcn/components/ui/alert";
 import { RocketIcon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
@@ -21,14 +20,17 @@ const NotForPhonesComponent = () => {
 };
 
 const BusinessScreenContainer = ({ children }: { children: React.ReactNode }) => {
-  return <Box
-    flex={1}
-    flexDirection={"row"}
-    backgroundColor={"white"}
+  return <div
+    // flex={1}
+    // flexDirection={"row"}
+    // backgroundColor={"white"}
+    // borderWidth={8}
+    // borderColor={"indigo.600"}
+    className="flex flex-row h-screen w-screen bg-white border-4 border-red-300"
   >
     {children}
     <NotForPhonesComponent />
-  </Box>;
+  </div>;
 };
 
 export { BusinessScreenContainer };

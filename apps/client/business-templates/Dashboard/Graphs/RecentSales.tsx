@@ -21,8 +21,8 @@ export function RecentSales() {
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-lg font-medium leading-none">Olivia Martin</p>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-md font-medium leading-none">Olivia Martin</p>
+            <p className="text-md text-muted-foreground">
               olivia.martin@email.com
             </p>
           </div>
