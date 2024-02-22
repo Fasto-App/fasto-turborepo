@@ -198,7 +198,11 @@ const updateBusinessLocation: MutationResolvers["updateBusinessLocation"] = asyn
         city: validatedInput.city,
         stateOrProvince: validatedInput.stateOrProvince,
         country: validatedInput.country,
-      })
+      },
+      {
+        new: true,
+      }
+      )
       
     } else {
 
@@ -217,10 +221,11 @@ const updateBusinessLocation: MutationResolvers["updateBusinessLocation"] = asyn
     }
 
     const taxRequest = await TaxModel(db).findOne({zipcode: businessAddress?.postalCode})
-
+    console.log({taxRequest})
     if (taxRequest){
       // update the business tax
       updateBusiness.taxRate = taxRequest.rate
+      
     } else {
       Bugsnag.notify(new Error(`We are not supporting this zipcode yet. ZIPCODE: ${businessAddress?.postalCode}`))
     }
