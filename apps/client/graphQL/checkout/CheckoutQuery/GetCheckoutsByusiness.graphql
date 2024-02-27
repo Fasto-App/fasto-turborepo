@@ -12,5 +12,6 @@ query GetCheckoutsByBusiness($page: Int!, $pageSize: Int!) {
 		total
 		totalPaid
 		created_date
+		updated_at
 	}
 }

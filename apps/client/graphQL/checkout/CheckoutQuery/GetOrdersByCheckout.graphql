@@ -20,5 +20,6 @@ query GetOrdersByCheckout($input: GetById!) {
 		subTotal
 		tab
 		created_date
+		updated_at
 	}
 }

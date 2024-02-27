@@ -1,4 +1,6 @@
 import Resizer from 'react-image-file-resizer';
+import { format } from 'date-fns'
+import { getLocale } from '../authUtilities/utils';
 
 const dataURLtoBlob = (dataurl: string) => {
   const arr = dataurl.split(',');
@@ -41,3 +43,5 @@ export const resizeFile = (file: File) =>
       'base64'
     );
   });
+
+export const formatDate = (date?: string, locale?: string) => format(Number(date || 0), "E, MMM d, p", getLocale(locale))

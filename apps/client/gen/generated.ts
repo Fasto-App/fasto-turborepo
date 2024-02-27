@@ -160,6 +160,7 @@ export type Checkout = {
   tipValue?: Maybe<Scalars['Float']>;
   total: Scalars['Float'];
   totalPaid: Scalars['Float'];
+  updated_at?: Maybe<Scalars['String']>;
 };
 
 export enum CheckoutStatusKeys {
@@ -1631,14 +1632,14 @@ export type GetCheckoutsByBusinessQueryVariables = Exact<{
 }>;
 
 
-export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string }> };
+export type GetCheckoutsByBusinessQuery = { __typename?: 'Query', getCheckoutsByBusiness: Array<{ __typename?: 'Checkout', _id: string, business: string, tab: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tip?: number | null, discount?: number | null, tax: number, total: number, totalPaid: number, created_date: string, updated_at?: string | null }> };
 
 export type GetOrdersByCheckoutQueryVariables = Exact<{
   input: GetById;
 }>;
 
 
-export type GetOrdersByCheckoutQuery = { __typename?: 'Query', getOrdersByCheckout: { __typename?: 'Checkout', _id: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tab: string, created_date: string, orders: Array<{ __typename?: 'OrderDetail', _id: string, user?: string | null, quantity: number, subTotal: number, status: OrderStatus, message?: string | null, product: { __typename?: 'Product', _id: string, name: string, price: number, imageUrl?: string | null } } | null> } };
+export type GetOrdersByCheckoutQuery = { __typename?: 'Query', getOrdersByCheckout: { __typename?: 'Checkout', _id: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tab: string, created_date: string, updated_at?: string | null, orders: Array<{ __typename?: 'OrderDetail', _id: string, user?: string | null, quantity: number, subTotal: number, status: OrderStatus, message?: string | null, product: { __typename?: 'Product', _id: string, name: string, price: number, imageUrl?: string | null } } | null> } };
 
 export type CreateMenuMutationVariables = Exact<{
   input: CreateMenuInput;
@@ -3172,6 +3173,7 @@ export const GetCheckoutsByBusinessDocument = gql`
     total
     totalPaid
     created_date
+    updated_at
   }
 }
     `;
@@ -3227,6 +3229,7 @@ export const GetOrdersByCheckoutDocument = gql`
     subTotal
     tab
     created_date
+    updated_at
   }
 }
     `;
