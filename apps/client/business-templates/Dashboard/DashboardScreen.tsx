@@ -37,50 +37,44 @@ export const DashboardScreen = () => {
 
   return (
     <div className="flex flex-1">
-      {/* <div className="flex flex-1 bg-gray-100"> */}
       <OrangeBox />
-      {/* <VStack space={4} p={4} flex={1} borderWidth={1}> */}
       <div className="flex flex-1 gap-4 p-4 flex-col">
         <Panel
           loading={loading}
           mostSellingItem={data?.getMostSellingProducts?.[0]?.name}
           revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)}
         />
-        <Card className="h-full">
-          <Tabs defaultValue="pagamentos" className="flex flex-1 flex-col p-2">
-            <div className="flex justify-end w-full">
-              <TabsList className="w-[400px]">
+        <ScrollArea className="h-full flex flex-1 ">
+          <Card className="h-full p-2">
+            <Tabs defaultValue="pagamentos" className="flex flex-1 flex-col p-2 gap-4 h-full">
+              <TabsList className="flex justify-end w-full">
                 <TabsTrigger value="pagamentos">Pagamentos</TabsTrigger>
                 <TabsTrigger value="pedidos">Pedidos</TabsTrigger>
               </TabsList>
-            </div>
-            <TabsContent value="pedidos">
-              <div className="grid xl:grid-cols-6 gap-4 border-1 border-red-500">
-                <ScrollArea className="p-2 border-1 border-red-500">
-                  <Card className="col-span-4">
-                    <CardHeader>
-                      <CardTitle>Overview</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pl-2">
-                      <VerticalBar />
-                    </CardContent>
-                  </Card>
 
-                  <Card className="col-span-2">
-                    <CardHeader>
-                      <CardTitle>Overview</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pl-2">
-                      <PieChart data={data} />
-                    </CardContent>
-                  </Card>
-                </ScrollArea>
-              </div>
+              <TabsContent value="pedidos" className="grid grid-cols-6 gap-4">
+                <Card className="col-span-6 xl:col-span-4">
+                  <CardHeader>
+                    <CardTitle>Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <VerticalBar />
+                  </CardContent>
+                </Card>
 
-            </TabsContent>
-            <TabsContent value="pagamentos">
-              <div className="grid lg:grid-cols-6 gap-4 border-1 border-red-500">
-                <Card className="lg:col-span-4">
+                <Card className="col-span-6 xl:col-span-2">
+                  <CardHeader>
+                    <CardTitle>Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <PieChart data={data} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="pagamentos" className="grid grid-cols-6 gap-4">
+
+                <Card className="col-span-6 xl:col-span-4">
                   <CardHeader>
                     <CardTitle>Recent Sales</CardTitle>
                     <CardDescription>
@@ -94,21 +88,19 @@ export const DashboardScreen = () => {
                     />
                   </CardContent>
                 </Card>
-                <Card className="col-span-2">
+                <Card className="col-span-6 xl:col-span-2">
                   <CardHeader>
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
-                  <CardContent className="pl-2">
+                  <CardContent>
                     <RecentSales />
                   </CardContent>
                 </Card>
 
-              </div>
-            </TabsContent>
-
-
-          </Tabs>
-        </Card>
+              </TabsContent>
+            </Tabs>
+          </Card>
+        </ScrollArea>
       </div>
     </div>
   );
