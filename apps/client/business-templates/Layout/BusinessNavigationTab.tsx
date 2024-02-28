@@ -4,7 +4,7 @@ import { Button, Center, VStack, Image } from "native-base";
 import { BusinessNavigationButton } from "../../components/atoms/NavigationButton";
 import { businessRoute } from "fasto-route";
 import type { AppNavigation } from "fasto-route";
-import { LeftSideBar } from "../../components";
+import { LeftSideBar } from "../../components/LeftSideBar/LeftSideBar";
 import { AccountMenu } from "../../components/MenuHamburguer";
 import { useTranslation } from "next-i18next";
 import { useGetSignUpSubscriptionsQuery } from "../../gen/generated";
