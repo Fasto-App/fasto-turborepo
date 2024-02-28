@@ -15,7 +15,7 @@ export class Section {
         type: [Product],
         default: [],
     })
-    public products?: Ref<Product>[];
+    public products!: Ref<Product>[];
 }
 
 export class Menu {
@@ -23,10 +23,17 @@ export class Menu {
     public name!: string;
 
     @prop({ default: [], type: () => Section })
-    public sections?: Section[];
+    public sections!: Section[];
 
     @prop({ ref: () => Business })
     public business!: Types.ObjectId;
+
+    @prop({
+        ref: () => Product,
+        type: [Product],
+        default: [],
+    })
+    public items?: Ref<Product>[];
 
     @prop({ default: false })
     public isFavorite?: boolean

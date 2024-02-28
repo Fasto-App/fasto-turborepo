@@ -2,6 +2,19 @@ query GetMenuByID($input: GetMenuById) {
 	getMenuByID(input: $input) {
 		_id
 		name
+		items {
+      _id
+      name
+      description
+      price
+      imageUrl
+      addonsID
+      quantity
+      totalOrdered
+      currency
+      paused
+      blockOnZeroQuantity
+    }
 		sections {
 			category {
 				_id
@@ -16,6 +29,9 @@ query GetMenuByID($input: GetMenuById) {
 				quantity
 				currency
 				blockOnZeroQuantity
+				category {
+					_id
+				}
 			}
 		}
 	}
