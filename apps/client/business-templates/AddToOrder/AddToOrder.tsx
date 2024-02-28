@@ -15,8 +15,8 @@ import { showToast } from "../../components/showToast";
 import { Flex, Box, VStack } from "native-base";
 import { NewOrder, OrderState } from "./types";
 import { SummaryPanel } from "./SummaryPanel";
-import { MenuUpperSection } from "./MenuUpperSection";
-import { MenuBottomSection } from "./MenuBottomSection";
+import { AddToOrderUpperSection } from "./AddToOrderUpperSection";
+import { AddToOrderBottomSection } from "./AddToOrderBottomSection";
 
 // Helper can be outside of component
 // specially if we want to reuse this
@@ -305,14 +305,14 @@ export const AddToOrder = () => {
           position={"absolute"}
         />
         <VStack flex={1} p={4} space={4}>
-          <MenuUpperSection
+          <AddToOrderUpperSection
             tabData={tabData}
             isLoading={loadingCloseTab}
             requestCloseTab={requestCloseTab}
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
           />
-          <MenuBottomSection
+          <AddToOrderBottomSection
             menuData={menuData}
             selectedUser={selectedUser}
             selectedCategory={selectedCategory}

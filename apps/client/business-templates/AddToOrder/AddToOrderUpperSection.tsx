@@ -5,7 +5,7 @@ import { Tile } from '../../components/Tile'
 import { UpperSection } from '../../components/UpperSection'
 import { GetTabByIdQuery } from '../../gen/generated'
 
-export const MenuUpperSection = ({
+export const AddToOrderUpperSection = ({
   tabData,
   selectedUser,
   setSelectedUser,

@@ -9,7 +9,7 @@ import { GetMenuByIdQuery } from '../../gen/generated';
 import { NewOrder } from './types';
 import { Icon } from '../../components/atoms/NavigationButton';
 
-export const MenuBottomSection = ({
+export const AddToOrderBottomSection = ({
   menuData,
   selectedUser,
   selectedCategory,
@@ -27,33 +27,28 @@ export const MenuBottomSection = ({
 
   return (
     <BottomSection>
-      <HStack space={2}>
+      <HStack space={6} p={2}>
         <Heading pr={10}>{t("menu")}</Heading>
         <ScrollView horizontal={true} pb={2}>
           <HStack space={2}>
-            {menuData?.getMenuByID?.sections?.map((section) => (
-              <Tile
-                key={section.category._id}
-                selected={section.category._id === selectedCategory}
-                onPress={() => setSelectedCategory(section.category._id)}
-              >
-                {section.category.name}
-              </Tile>
-            ))}
+            <CategoriesList
+              menuData={menuData}
+              setSelectedCategory={setSelectedCategory}
+              selectedCategory={selectedCategory}
+            />
           </HStack>
         </ScrollView>
-      </HStack>
-      <VStack flexDir={"row"} flexWrap={"wrap"} paddingY={2}>
         <Input
           placeholder={t("search")}
           variant="rounded"
           borderRadius="10"
           size="md"
+          h={"10"}
           value={searchString}
           onChangeText={(text) => setSearchString(text)}
           InputLeftElement={<Box p="1"><Icon type="Search" /></Box>}
         />
-      </VStack>
+      </HStack>
       <ScrollView pt={2}>
         <VStack flexDir={"row"} flexWrap={"wrap"} space={4}>
           {menuData?.getMenuByID.items?.map(product => (
@@ -121,3 +116,20 @@ export const MenuBottomSection = ({
     </BottomSection>
   )
 }
+
+
+const CategoriesList = ({
+  menuData,
+  setSelectedCategory,
+  selectedCategory
+}: any) => <>
+    {menuData?.getMenuByID?.sections?.map((section: any) => (
+      <Tile
+        key={section.category._id}
+        selected={section.category._id === selectedCategory}
+        onPress={() => setSelectedCategory(section.category._id)}
+      >
+        {section.category.name}
+      </Tile>
+    ))}
+  </>
