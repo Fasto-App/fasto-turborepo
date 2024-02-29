@@ -2,7 +2,6 @@ import { useTranslation } from 'next-i18next'
 import { Heading, HStack, ScrollView, Button } from 'native-base'
 import React from 'react'
 import { Tile } from '../../components/Tile'
-import { UpperSection } from '../../components/UpperSection'
 import { GetTabByIdQuery } from '../../gen/generated'
 
 export const AddToOrderUpperSection = ({
@@ -21,7 +20,7 @@ export const AddToOrderUpperSection = ({
   const { t } = useTranslation("businessAddToOrder");
 
   return (
-    <UpperSection>
+    <div className="row-span-1 p-4 m-4 border rounded-lg bg-white z-10">
       <Heading>{t("patrons")}</Heading>
       <HStack space={2}>
         <ScrollView horizontal={true} pb={2}>
@@ -54,6 +53,6 @@ export const AddToOrderUpperSection = ({
           {t("closeTab")}
         </Button>
       ) : null}
-    </UpperSection>
+    </div>
   )
 }

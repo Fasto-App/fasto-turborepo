@@ -287,7 +287,7 @@ export const AddToOrder = () => {
   }, [onDecrease, onRemoveOrderItem])
 
   return (
-    <Flex flexDirection={"row"} flex={1}>
+    <div className={"flex flex-1 flex-row"}>
       <SummaryPanel
         tabData={tabData}
         orderItems={orderItems}
@@ -297,21 +297,17 @@ export const AddToOrder = () => {
         onMinusPress={onDecreaseQnt}
         onSendToKitchen={onSendToKitchen}
       />
-      <Box flex={1}>
-        <Box
-          backgroundColor={"primary.500"}
-          h={100}
-          w={"100%"}
-          position={"absolute"}
+      <div className="grid grid-rows-6 grid-flow-col">
+        <div className={"bg-orange-500 w-full h-24 absolute box-border"}
         />
-        <VStack flex={1} p={4} space={4}>
-          <AddToOrderUpperSection
-            tabData={tabData}
-            isLoading={loadingCloseTab}
-            requestCloseTab={requestCloseTab}
-            selectedUser={selectedUser}
-            setSelectedUser={setSelectedUser}
-          />
+        <AddToOrderUpperSection
+          tabData={tabData}
+          isLoading={loadingCloseTab}
+          requestCloseTab={requestCloseTab}
+          selectedUser={selectedUser}
+          setSelectedUser={setSelectedUser}
+        />
+        <div className={"grid grid-rows-6 row-span-5 gap-4 border p-4 m-4 rounded-lg"}>
           <AddToOrderBottomSection
             menuData={menuData}
             selectedUser={selectedUser}
@@ -319,8 +315,8 @@ export const AddToOrder = () => {
             setSelectedCategory={setSelectedCategory}
             onAddOrIncreaseQnt={onAddOrIncreaseQnt}
           />
-        </VStack>
-      </Box>
-    </Flex>
+        </div>
+      </div>
+    </div>
   );
 };

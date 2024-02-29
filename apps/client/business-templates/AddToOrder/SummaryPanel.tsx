@@ -1,7 +1,7 @@
 import { typedValues, parseToCurrency, typedKeys } from 'app-helpers';
 import { Text, Flex, Divider, Box, HStack, Heading, VStack, ScrollView, Button } from 'native-base';
 import React from 'react'
-import { LeftSideBar } from '../../components';
+import { LeftSideBar } from '../../components/LeftSideBar';
 import { SummaryComponent } from '../../components/OrderSummary';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
