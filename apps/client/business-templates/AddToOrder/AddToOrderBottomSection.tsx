@@ -29,9 +29,9 @@ export const AddToOrderBottomSection = ({
     <>
       <div className='row-span-1'>
         <div className={"grid grid-cols-8 row-span-2 gap-4 p-2 content-center items-center"}>
-          <div className=""><Heading pr={10}>{t("menu")}</Heading></div>
+          <Heading>{t("menu")}</Heading>
           <div className="col-span-6">
-            <CategoriesList
+            <MemoizedCategoriesList
               menuData={menuData}
               setSelectedCategory={setSelectedCategory}
               selectedCategory={selectedCategory}
@@ -69,7 +69,7 @@ const MemoizedProducts = React.memo(function ProductsList({
   const { t } = useTranslation("businessAddToOrder");
 
   return <ScrollArea className="h-full w-full  whitespace-nowrap rounded-md border">
-    <div className='grid grid-cols-3 gap-4"'>
+    <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 p-4 gap-4'>
 
       {menuData?.getMenuByID.items?.map((product: any) => (
         <ProductTile
@@ -104,7 +104,7 @@ const MemoizedProducts = React.memo(function ProductsList({
   </ScrollArea>
 })
 
-function CategoriesList({
+const MemoizedCategoriesList = React.memo(function CategoriesList({
   menuData,
   setSelectedCategory,
   selectedCategory
@@ -126,3 +126,4 @@ function CategoriesList({
     </ScrollArea>
   )
 }
+)

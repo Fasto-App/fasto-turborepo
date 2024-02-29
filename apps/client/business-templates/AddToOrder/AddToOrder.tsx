@@ -11,12 +11,11 @@ import {
 } from "../../gen/generated";
 import { businessRoute } from "fasto-route";
 import { useTranslation } from "next-i18next";
-import { showToast } from "../../components/showToast";
-import { Flex, Box, VStack } from "native-base";
 import { NewOrder, OrderState } from "./types";
 import { SummaryPanel } from "./SummaryPanel";
 import { AddToOrderUpperSection } from "./AddToOrderUpperSection";
 import { AddToOrderBottomSection } from "./AddToOrderBottomSection";
+import { toast } from "sonner"
 
 // Helper can be outside of component
 // specially if we want to reuse this
@@ -48,7 +47,12 @@ export const AddToOrder = () => {
         const checkoutId = data?.createOrdersCheckout?._id;
         if (!checkoutId) throw new Error("Checkout id is missing");
 
-        showToast({ message: t("ordersCreatedSuccessfully") });
+        toast.success(t("ordersCreatedSuccessfully"), {
+          action: {
+            label: "Ok",
+            onClick: () => console.log("Undo"),
+          },
+        })
 
         route.push({
           pathname: businessRoute["checkout/[checkoutId]"],
@@ -59,10 +63,12 @@ export const AddToOrder = () => {
         });
       },
       onError: () => {
-        showToast({
-          status: "error",
-          message: t("errorCreatingOrders"),
-        });
+        toast.error(t("errorCreatingOrders"), {
+          action: {
+            label: "Ok",
+            onClick: () => console.log("Undo"),
+          },
+        })
       },
     });
 
@@ -70,9 +76,14 @@ export const AddToOrder = () => {
     useRequestCloseTabMutation({
       refetchQueries: ["GetSpacesFromBusiness"],
       onCompleted: (data) => {
-        showToast({
-          message: t("requestToCloseTabSuccessfully"),
-        });
+        toast.success(t("requestToCloseTabSuccessfully"), {
+          action: {
+            label: "Ok",
+            onClick: () => console.log("Undo"),
+          },
+        })
+
+
 
         const status = data?.requestCloseTab?.status;
         const checkoutId = data?.requestCloseTab?.checkout;
@@ -99,10 +110,12 @@ export const AddToOrder = () => {
 
   const { data: menuData } = useGetMenuByIdQuery({
     onError: () => {
-      showToast({
-        message: t("errorGettingMenu"),
-        status: "error",
-      });
+      toast.error(t("errorGettingMenu"), {
+        action: {
+          label: "Ok",
+          onClick: () => console.log("Undo"),
+        },
+      })
     },
   });
 
@@ -119,10 +132,12 @@ export const AddToOrder = () => {
       // }
     },
     onError: () => {
-      showToast({
-        status: "error",
-        message: t("errorGettingTabData"),
-      });
+      toast.error(t("errorGettingTabData"), {
+        action: {
+          label: "Ok",
+          onClick: () => console.log("Undo"),
+        },
+      })
     },
   });
 
@@ -138,15 +153,22 @@ export const AddToOrder = () => {
       },
     ],
     onCompleted: () => {
-      showToast({ message: t("ordersCreatedSuccessfully") });
+      toast.success(t("ordersCreatedSuccessfully"), {
+        action: {
+          label: "Ok",
+          onClick: () => console.log("Undo"),
+        },
+      })
 
       route.back();
     },
     onError: () => {
-      showToast({
-        status: "error",
-        message: t("errorCreatingOrders"),
-      });
+      toast.error(t("errorCreatingOrders"), {
+        action: {
+          label: "Ok",
+          onClick: () => console.log("Undo"),
+        },
+      })
     },
   });
 
@@ -238,9 +260,12 @@ export const AddToOrder = () => {
       return newOrderItems;
     })
 
-    showToast({
-      message: "Removed",
-      status: "warning",
+    toast.info("Removed", {
+      description: `Product ${orderId}`,
+      action: {
+        label: "Ok",
+        onClick: () => console.log("Undo"),
+      },
     })
   }, [])
 
@@ -254,9 +279,13 @@ export const AddToOrder = () => {
       },
     }));
 
-    showToast({
-      message: "Added",
-      status: "success",
+
+    toast.success("Added", {
+      description: `Product ${order.name}`,
+      action: {
+        label: "Ok",
+        onClick: () => console.log("Undo"),
+      },
     })
   }, [])
 
@@ -270,9 +299,12 @@ export const AddToOrder = () => {
         },
       }));
 
-      showToast({
-        message: "Subtracted",
-        status: "warning"
+      toast.info("Subtracted", {
+        description: `Product ${orderId}`,
+        action: {
+          label: "Ok",
+          onClick: () => console.log("Undo"),
+        },
       })
     },
     [],

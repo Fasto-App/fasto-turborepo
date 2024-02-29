@@ -19,6 +19,7 @@ import { ErrorBanner } from '../components/ErrorBanner';
 import { View } from 'react-native';
 import { appWithTranslation } from 'next-i18next'
 import { ADMIN } from 'fasto-route/src/routes/businessRoute'
+import { Toaster } from '@/shadcn/components/ui/sonner'
 
 const LandingWrapper: React.FC = ({ children }) => (
 	<Fragment>
@@ -61,7 +62,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
 	return (
 		// 	@ts-ignore
-		<View style={{ height: "100%" }}>
+		<div style={{ height: "100%" }}>
 			<ThemeProvider >
 				<ErrorBanner />
 				<AppApolloProvider>
@@ -71,12 +72,13 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 								<ProgressBar />
 								{/* @ts-ignore */}
 								<Component {...pageProps} />
+								<Toaster />
 							</React.StrictMode>
 						</Wrapper>
 					</AppProvider>
 				</AppApolloProvider>
 			</ThemeProvider>
-		</View >
+		</div >
 	);
 }
 

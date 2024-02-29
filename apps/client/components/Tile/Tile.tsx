@@ -2,8 +2,9 @@ import React from "react"
 import { Button, HStack, Skeleton } from "native-base"
 
 type TileProps = {
-  selected: boolean,
-  onPress?: () => void
+  selected: boolean;
+  onPress?: () => void;
+  children: React.ReactElement
 }
 
 export const Tile: React.FC<TileProps> = ({
