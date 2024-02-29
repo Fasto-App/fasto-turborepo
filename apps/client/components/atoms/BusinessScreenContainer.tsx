@@ -26,7 +26,7 @@ const BusinessScreenContainer = ({ children }: { children: React.ReactNode }) =>
     // backgroundColor={"white"}
     // borderWidth={8}
     // borderColor={"indigo.600"}
-    className="flex flex-row h-screen w-screen bg-white border-4 border-red-300"
+    className="flex flex-row h-screen w-screen bg-white"
   >
     {children}
     <NotForPhonesComponent />

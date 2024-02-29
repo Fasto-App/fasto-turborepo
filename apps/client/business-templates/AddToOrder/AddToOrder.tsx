@@ -339,7 +339,7 @@ export const AddToOrder = () => {
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
         />
-        <div className={"grid grid-rows-6 row-span-5 gap-4 border p-4 m-4 rounded-lg"}>
+        <div className={"grid grid-rows-8 row-span-5 gap-4 border p-4 m-4 rounded-lg"}>
           <AddToOrderBottomSection
             menuData={menuData}
             selectedUser={selectedUser}

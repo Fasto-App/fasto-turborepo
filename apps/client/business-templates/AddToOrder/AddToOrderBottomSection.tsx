@@ -49,7 +49,7 @@ export const AddToOrderBottomSection = ({
           />
         </div>
       </div>
-      <div className="row-span-5">
+      <div className="row-span-7">
         <MemoizedProducts
           menuData={menuData}
           onAddOrIncreaseQnt={onAddOrIncreaseQnt}
