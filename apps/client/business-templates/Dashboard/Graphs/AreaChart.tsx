@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,15 +12,17 @@ import {
   ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { Box, Heading, Stack, Button, Text, Skeleton, View } from "native-base";
+import { Text, Skeleton, View } from "native-base";
 import {
   DateType,
   useGetPaidCheckoutByDateQuery,
 } from "../../../gen/generated";
 import { useRouter } from "next/router";
-import { parseToCurrency } from "app-helpers";
 import { useTranslation } from "next-i18next";
-// 
+import { DatePickerWithRange } from "../DatePicker";
+import { CardHeader, CardTitle, CardDescription, CardContent, Card } from "@/shadcn/components/ui/card";
+import { Button } from "@/shadcn/components/ui/button";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -107,61 +109,31 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, }
   };
 
   return (
-    <Border>
-      <Stack
-        mb="2.5"
-        mt="1.5"
-        direction={{
-          base: "column",
-          md: "row",
-        }}
-        space={2}
-        mx={{
-          base: "auto",
-          md: "0",
-        }}
-      >
-        <Button
-          onPress={triggerShallowNav(DateType.AllTime)}
-          isPressed={selectedCheckoutFilter === DateType.AllTime}
-          size="sm"
-          variant="ghost"
-        >
-          {t("allTime")}
-        </Button>
-        <Button
-          onPress={triggerShallowNav(DateType.ThirtyDays)}
-          isPressed={selectedCheckoutFilter === DateType.ThirtyDays}
-          size="sm"
-          variant="ghost"
-        >
-          {t("30Days")}
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          isPressed={selectedCheckoutFilter === DateType.SevenDays}
-          onPress={triggerShallowNav(DateType.SevenDays)}
-        >
-          {t("7Days")}
-        </Button>
-      </Stack>
-      <Line options={options} data={data} />
-    </Border>
+    <Card className="col-span-6 xl:col-span-4">
+      <CardHeader>
+        <CardTitle>Recent Sales</CardTitle>
+        <CardDescription className="flex flex-1 flex-row gap-2 items-center justify-between">
+          <div className="p-2 flex justify-start gap-2">
+            <Button
+              disabled={selectedCheckoutFilter === DateType.SevenDays}
+              variant="default" onClick={triggerShallowNav(DateType.SevenDays)}>{t("7Days")}</Button>
+            <Button
+              disabled={selectedCheckoutFilter === DateType.ThirtyDays}
+              variant="default" onClick={triggerShallowNav(DateType.ThirtyDays)}>{t("30Days")}</Button>
+            <Button
+              disabled={selectedCheckoutFilter === DateType.AllTime}
+              variant="default" onClick={triggerShallowNav(DateType.AllTime)}>{t("allTime")}</Button>
+          </div>
+          <div className="opacity-30">
+            <DatePickerWithRange />
+          </div>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="bg-white">
+          <Line options={options} data={data} />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
-
-const Border: React.FC = ({ children }) => (
-  <Box
-    flex={1}
-    borderWidth={1}
-    borderColor={"gray.200"}
-    shadow={"2"}
-    borderRadius={"md"}
-    bgColor={"white"}
-    justifyContent={"center"}
-    p={4}
-  >
-    {children}
-  </Box>
-);

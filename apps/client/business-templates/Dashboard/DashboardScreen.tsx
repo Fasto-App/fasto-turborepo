@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, HStack, Heading, ScrollView, Text, VStack, Spinner } from "native-base";
+import { Box, HStack, Heading, Text, VStack, Spinner } from "native-base";
 import { AreaChart } from "./Graphs/AreaChart";
 import { PieChart } from "./Graphs/PieChart";
 import { VerticalBar } from "./Graphs/VerticalBar";
@@ -12,6 +12,10 @@ import {
   useGetUserInformationQuery,
 } from "../../gen/generated";
 import { parseToCurrency } from "app-helpers";
+import { ScrollArea } from "@/shadcn/components/ui/scroll-area";
+import { CardHeader, CardTitle, CardDescription, CardContent, Card } from "@/shadcn/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/components/ui/tabs";
+import { RecentSales } from "./Graphs/RecentSales";
 
 export const DashboardScreen = () => {
   const [selectedCheckoutFilter, setSelectedCheckoutFilter] = useState(
@@ -32,26 +36,61 @@ export const DashboardScreen = () => {
   const { data } = useGetMostSellingProductsQuery()
 
   return (
-    <Box flex={1} shadow={"2"} backgroundColor={"gray.100"}>
+    <div className="flex flex-1">
       <OrangeBox />
-      <VStack space={4} p={4} flex={1}>
+      <div className="flex flex-1 gap-4 p-4 flex-col">
         <Panel
+          loading={loading}
           mostSellingItem={data?.getMostSellingProducts?.[0]?.name}
-          loading={loading} revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)} />
-        <HStack space={3} flex={1}>
-          <ScrollView pr={2} pb={2} borderRadius={"md"}>
-            <VStack space={8} flex={1}>
-              <AreaChart
-                selectedCheckoutFilter={selectedCheckoutFilter}
-                setSelectedCheckoutFilter={setSelectedCheckoutFilter}
-              />
-              <VerticalBar />
-            </VStack>
-          </ScrollView>
-          <PieChart data={data} />
-        </HStack>
-      </VStack>
-    </Box>
+          revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)}
+        />
+        <ScrollArea className="h-full flex flex-1 ">
+          <Card className="h-full p-2">
+            <Tabs defaultValue="pagamentos" className="flex flex-1 flex-col p-2 gap-4 h-full">
+              <TabsList className="flex justify-end w-full">
+                <TabsTrigger value="pagamentos">Pagamentos</TabsTrigger>
+                <TabsTrigger value="pedidos">Pedidos</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="pedidos" className="grid grid-cols-6 gap-4">
+                <Card className="col-span-6 xl:col-span-4">
+                  <CardHeader>
+                    <CardTitle>Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <VerticalBar />
+                  </CardContent>
+                </Card>
+
+                <Card className="col-span-6 xl:col-span-2">
+                  <CardHeader>
+                    <CardTitle>Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <PieChart data={data} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="pagamentos" className="grid grid-cols-6 gap-4">
+                <AreaChart
+                  selectedCheckoutFilter={selectedCheckoutFilter}
+                  setSelectedCheckoutFilter={setSelectedCheckoutFilter}
+                />
+                <Card className="col-span-6 xl:col-span-2">
+                  <CardHeader>
+                    <CardTitle>Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <RecentSales />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </Card>
+        </ScrollArea>
+      </div>
+    </div>
   );
 };
 const Panel = ({ loading, revenue, mostSellingItem }: any) => {
@@ -68,8 +107,11 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
       borderRadius={"md"}
       bgColor={"white"}
     >
-      <Heading size="md">{`${t("hello")} ${userData?.data?.getUserInformation
-        ?.name}`}</Heading>
+      <Heading size="md">
+        {`${t("hello")} ${userData
+          ?.data?.getUserInformation
+          ?.name}`}
+      </Heading>
       <Heading size="xs">{t("welcomeDashBoard")}</Heading>
 
       <HStack space={"3"}>
@@ -84,7 +126,6 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
           <Text fontSize={"md"} bold>
             {loading
               ? <>
-                {/* TODO: accessibility should be translated as well */}
                 <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
                 </Heading>
               </>

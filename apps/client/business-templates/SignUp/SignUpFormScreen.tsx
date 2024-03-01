@@ -36,7 +36,7 @@ export const SignUpFormScreen = () => {
   }
 
   return (
-    <Center w="100%" height={"100vh"}>
+    <Center w="100%" height={"100vh"} background={"white"}>
       <Box position={"absolute"} top={"5"} left={"5"}>
         <Image src="/images/fasto-logo.svg"
           alt="Fasto Logo"

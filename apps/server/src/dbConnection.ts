@@ -25,4 +25,6 @@ function dbConnection() {
   return mongoose.connection;
 };
 
-export { dbConnection };
+const db = dbConnection();
+
+export { dbConnection, db };

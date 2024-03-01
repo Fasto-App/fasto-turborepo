@@ -4,6 +4,7 @@ import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Context } from "../types";
 import { CreateMenuInput, UpdateMenuInput } from "./types";
 import { QueryResolvers } from "../../../generated/graphql";
+import { getBusinessMenu, populateProducts } from "./helpers";
 
 type UpdateMenuInfo = Pick<UpdateMenuInput, 'name' | '_id'>;
 
@@ -28,25 +29,14 @@ const createMenu = async (_parent: any, { input }: CreateMenuInput, { db, user, 
 }
 
 // @ts-ignore
-const getMenuByID: QueryResolvers["getMenuByID"] = async (_parent, args, { db, business }) => {
+const getMenuByID: QueryResolvers["getMenuByID"] = async (_parent, args, { business }) => {
+    if (!business) throw Error('Business not found');
 
-    const Menu = MenuModel(db);
-    let menu;
-    if (args.input?.id) {
-        menu = await Menu.findOne({ _id: args.input?.id });
-        if (!menu) throw ApolloError(new Error('Menu not found'), 'NotFound',);
-    } else {
-        menu = await Menu.findOne({ business, isFavorite: true });
-
-        if (!menu) {
-            menu = await Menu.findOne({ business });
-            if (!menu) throw ApolloError(new Error('Menu not found'), 'NotFound',);
-        };
-    }
-
-    return menu
+    return await getBusinessMenu({
+        _id: args.input?.id,
+        business
+    });
 }
-
 
 const getAllMenusByBusinessID = async (_parent: any, { id }: { id: string }, { db, business }: Context) => {
     const Menu = MenuModel(db);
@@ -86,11 +76,11 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
     const menu = await Menu.findById(input._id);
     if (!menu) throw Error('Menu not found')
 
+    // frontend will send the information that needs to be updated
     if (input.name) {
         menu.name = input.name
     }
 
-    console.log("Updating isFavorite")
 
     if (input.isFavorite) {
         const currentFavorite = await Menu.findOne({ isFavorite: true })
@@ -108,35 +98,41 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
         return await menu.save();
     }
 
-    const newSections = input.sections.map(async (section) => {
+    // from all the sections, just get the product ids
+    const productIds = input.sections.map(section => section.products).flat();
+    // make sure they dont repeat 
+    const uniqueProductIds = Array.from(new Set(productIds))
+    // find all the products that match the ids
 
-        if (!section.category) throw Error('Section category is required');
-        // find if category exists
-        const category = await Category.findOne({ _id: section.category });
-        if (!category?._id) throw ApolloError(new Error("BAD USER DATA: Category not found when updating menu"), 'BadRequest',);
+    const products = await Product.find({ _id: { $in: uniqueProductIds } })
 
-        // looks for an array of products and see if they all exist
-        if (section.products?.length) {
-            const products = await Product.find({ _id: { $in: section.products } })
-            if (products.length !== section.products.length) {
-                throw ApolloError(new Error('BAD USER DATA: Product not found when updating menu'), "BadRequest")
-            };
+    if (products.length !== uniqueProductIds.length) {
+        throw ApolloError(new Error('BAD USER DATA: Product not found when updating menu'), "BadRequest")
+    }
 
-            return ({
-                category: category._id,
-                products: products.map(product => product._id),
-            })
-        } else {
-            return ({
-                category: category._id,
-                products: [],
-            })
+    // separate the products in groups based on the category
+    const productsByCategory = products.reduce((acc, product) => {
+        const category = product.category as unknown as string;
+
+        if (!acc[category]) {
+            acc[category] = []
         }
+        acc[category].push(product)
+        return acc
+    }, {} as Record<string, Product[]>);
+
+    const sections = Object.entries(productsByCategory).map(([category, products]) => {
+        //@ts-ignore
+        const section = {
+            category,
+            products
+        } as Section;
+
+        return section
     })
 
-    const allSectionsResolved = await Promise.all(newSections);
-
-    menu.sections = allSectionsResolved
+    menu.items = products;
+    menu.sections = sections;
 
     return await menu.save()
 }
@@ -230,10 +226,15 @@ const getCategoryBySection = async (_parent: any, args: any, { db }: { db: Conne
     return await Category.findById(_parent.category)
 }
 
+async function getItemsByMenu(menu: any) {
+    return await populateProducts(menu);
+}
+
 const MenuResolver = {
     getSectionsByMenu,
     getProductsBySection,
-    getCategoryBySection
+    getCategoryBySection,
+    getItemsByMenu
 }
 
 export { MenuResolverMutation, MenuResolverQuery, MenuResolver }

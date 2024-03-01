@@ -483,6 +483,7 @@ export type Menu = {
   __typename?: 'Menu';
   _id: Scalars['ID'];
   isFavorite?: Maybe<Scalars['Boolean']>;
+  items?: Maybe<Array<Product>>;
   name: Scalars['String'];
   sections?: Maybe<Array<Section>>;
 };
@@ -1686,7 +1687,7 @@ export type GetMenuByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null }> }> | null } };
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, items?: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null, category?: { __typename?: 'Category', _id: string } | null }> | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null, category?: { __typename?: 'Category', _id: string } | null }> }> | null } };
 
 export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
@@ -3524,6 +3525,19 @@ export const GetMenuByIdDocument = gql`
   getMenuByID(input: $input) {
     _id
     name
+    items {
+      _id
+      name
+      imageUrl
+      price
+      description
+      quantity
+      currency
+      blockOnZeroQuantity
+      category {
+        _id
+      }
+    }
     sections {
       category {
         _id
@@ -3538,6 +3552,9 @@ export const GetMenuByIdDocument = gql`
         quantity
         currency
         blockOnZeroQuantity
+        category {
+          _id
+        }
       }
     }
   }
