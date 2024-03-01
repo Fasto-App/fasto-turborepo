@@ -62,7 +62,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
 	return (
 		// 	@ts-ignore
-		<div style={{ height: "100%" }}>
+		<View style={{ height: "100%" }}>
 			<ThemeProvider >
 				<ErrorBanner />
 				<AppApolloProvider>
@@ -78,7 +78,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 					</AppProvider>
 				</AppApolloProvider>
 			</ThemeProvider>
-		</div >
+		</View >
 	);
 }
 

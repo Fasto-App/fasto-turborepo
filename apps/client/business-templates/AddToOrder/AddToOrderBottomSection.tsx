@@ -1,13 +1,31 @@
-import React from 'react'
-
-import { Heading, Input, Box } from 'native-base';
+import React, { useCallback } from 'react'
+import { Heading } from 'native-base';
 import { ProductTile } from '../../components/Product/Product';
 import { Tile } from '../../components/Tile';
 import { useTranslation } from 'next-i18next';
-import { GetMenuByIdQuery } from '../../gen/generated';
+import { GetMenuByIdQuery, Product } from '../../gen/generated';
 import { NewOrder } from './types';
-import { Icon } from '../../components/atoms/NavigationButton';
 import { ScrollArea, ScrollBar } from '@/shadcn/components/ui/scroll-area';
+import { Input } from '@/shadcn/components/ui/input';
+import debounce from 'lodash/debounce';
+const searchProductsByName = (
+  searchString: string,
+  products?: Product[] | null
+): Product[] => {
+  if (!products || !searchString) {
+    return products || [];
+  }
+  const escapedSearchString = searchString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(escapedSearchString, "gi");
+
+  const filteredProducts = products.filter((product) => {
+    const productsName = product.name.toLocaleLowerCase()
+    const match = productsName.match(pattern)
+    return match
+  });
+
+  return filteredProducts
+};
 
 export const AddToOrderBottomSection = ({
   menuData,
@@ -17,44 +35,51 @@ export const AddToOrderBottomSection = ({
   onAddOrIncreaseQnt,
 }: {
   selectedUser?: string,
-  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>,
-  selectedCategory: string
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string | undefined>>,
+  selectedCategory?: string
   menuData?: GetMenuByIdQuery,
   onAddOrIncreaseQnt: (id: NewOrder) => void,
 }) => {
   const { t } = useTranslation("businessAddToOrder");
   const [searchString, setSearchString] = React.useState<string>("");
 
+  const products = React.useMemo(() => !selectedCategory ? menuData?.getMenuByID.items :
+    menuData?.getMenuByID.sections?.find((section) => {
+      return section.category._id === selectedCategory
+    })?.products, [menuData?.getMenuByID.items, menuData?.getMenuByID.sections, selectedCategory]);
+
+  // @ts-ignore
+  const filteredProducts = React.useMemo(() => searchProductsByName(searchString, products), [products, searchString]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSetText = useCallback(debounce((e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    console.log("sending patch request");
+    setSearchString(e.target.value);
+  }, 500), [])
+
   return (
     <>
       <div className='row-span-1'>
         <div className={"grid grid-cols-8 row-span-2 gap-4 p-2 content-center items-center"}>
           <Heading>{t("menu")}</Heading>
-          <div className="col-span-6">
+          <div className="col-span-5">
             <MemoizedCategoriesList
               menuData={menuData}
               setSelectedCategory={setSelectedCategory}
               selectedCategory={selectedCategory}
             />
           </div>
-          <Input
-            placeholder={t("search")}
-            variant="rounded"
-            borderRadius="10"
-            size="md"
-            h={"10"}
-            value={searchString}
-            onChangeText={(text) => setSearchString(text)}
-            InputLeftElement={<Box p="1"><Icon type="Search" /></Box>}
-          />
+          <div className="col-span-2">
+            <Input type="text" placeholder={t("search")} onChange={debouncedSetText} />
+          </div>
         </div>
       </div>
       <div className="row-span-7">
         <MemoizedProducts
-          menuData={menuData}
+          products={filteredProducts}
           onAddOrIncreaseQnt={onAddOrIncreaseQnt}
           selectedUser={selectedUser}
-
         />
       </div>
     </>
@@ -62,7 +87,7 @@ export const AddToOrderBottomSection = ({
 }
 
 const MemoizedProducts = React.memo(function ProductsList({
-  menuData,
+  products,
   onAddOrIncreaseQnt,
   selectedUser
 }: any) {
@@ -71,7 +96,7 @@ const MemoizedProducts = React.memo(function ProductsList({
   return <ScrollArea className="h-full w-full  whitespace-nowrap rounded-md border">
     <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 p-4 gap-4'>
 
-      {menuData?.getMenuByID.items?.map((product: any) => (
+      {products?.map((product: any) => (
         <ProductTile
           ctaTitle={t("add")}
           key={product._id}
@@ -110,8 +135,14 @@ const MemoizedCategoriesList = React.memo(function CategoriesList({
   selectedCategory
 }: any) {
   return (
-    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+    <ScrollArea className="w-full whitespace-nowrap rounded-md">
       <div className="flex w-max space-x-4 p-4">
+        <Tile
+          selected={!selectedCategory}
+          onPress={() => setSelectedCategory(undefined)}
+        >
+          {"All"}
+        </Tile>
         {menuData?.getMenuByID?.sections?.map((section: any) => (
           <Tile
             key={section.category._id}

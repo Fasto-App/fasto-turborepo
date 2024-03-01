@@ -3,17 +3,17 @@ query GetMenuByID($input: GetMenuById) {
 		_id
 		name
 		items {
-      _id
-      name
-      description
-      price
-      imageUrl
-      addonsID
-      quantity
-      totalOrdered
-      currency
-      paused
-      blockOnZeroQuantity
+				_id
+				name
+				imageUrl
+				price
+				description
+				quantity
+				currency
+				blockOnZeroQuantity
+				category {
+					_id
+				}
     }
 		sections {
 			category {

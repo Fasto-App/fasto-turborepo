@@ -19,17 +19,6 @@ import { toast } from "sonner"
 
 // Helper can be outside of component
 // specially if we want to reuse this
-const searchProductsByName = (
-  searchString: string,
-  products: Product[]
-): Product[] => {
-  if (!searchString) {
-    return products;
-  }
-  const pattern = new RegExp(searchString, "gi");
-
-  return products.filter((product) => pattern.test(product.name));
-};
 
 export const AddToOrder = () => {
   const route = useRouter();
@@ -37,7 +26,7 @@ export const AddToOrder = () => {
 
   const [orderItems, setOrderItems] = React.useState<OrderState>({});
   const [selectedUser, setSelectedUser] = React.useState<string>();
-  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = React.useState<string>();
 
   const { t } = useTranslation("businessAddToOrder");
 
@@ -173,7 +162,6 @@ export const AddToOrder = () => {
   });
 
   const onSendToKitchen = useCallback(async () => {
-    // trasnform the orderItems to the correct format
     if (tabId) {
       const orderItemsToCreate = Object.values(orderItems).map((order) => ({
         ...(order?.selectedUser && { user: order?.selectedUser }),
@@ -212,46 +200,6 @@ export const AddToOrder = () => {
       },
     });
   }, [requestCloseTabMutation, tabId]);
-
-  const sections = menuData?.getMenuByID?.sections || [];
-
-  // const allProducts = ([] as (typeof sections)[number]["products"]).concat(
-  //   ...sections.map((section) => section.products || [])
-  // );
-
-  const allCategory = useMemo(() => ({
-    category: {
-      _id: "all",
-      name: t("all"),
-    },
-    products: menuData?.getMenuByID.items,
-  }), [menuData?.getMenuByID.items, t]);
-
-  const sectionsWithAll = useMemo(() => [allCategory, ...sections], [allCategory, sections]);
-
-  const [searchString, setSearchString] = React.useState<string>("");
-
-  // TODO fix this 
-  const filteredSections = useMemo(() => {
-
-    return sectionsWithAll
-    // return sectionsWithAll
-    //   .filter((section) => {
-    //     return (
-    //       selectedCategory === "all" ||
-    //       selectedCategory === section.category._id
-    //     );
-    //   })
-    //   .map((section) => {
-    //     return {
-    //       ...section,
-    //       products: searchProductsByName(searchString, section.products),
-    //     };
-    //   });
-  }, [sectionsWithAll, selectedCategory, searchString]);
-
-  // a query that gets all products and categories
-
 
   const onRemoveOrderItem = useCallback((orderId: string) => {
     setOrderItems(prevOrderItems => {
@@ -332,14 +280,14 @@ export const AddToOrder = () => {
       <div className="grid grid-rows-6 grid-flow-col">
         <div className={"bg-orange-500 w-full h-24 absolute box-border"}
         />
-        <AddToOrderUpperSection
+        {tabData ? <AddToOrderUpperSection
           tabData={tabData}
           isLoading={loadingCloseTab}
           requestCloseTab={requestCloseTab}
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
-        />
-        <div className={"grid grid-rows-8 row-span-5 gap-4 border p-4 m-4 rounded-lg"}>
+        /> : null}
+        <div className={"grid grid-rows-8 row-span-5 gap-4 border p-4 m-4 rounded-lg  bg-white z-10"}>
           <AddToOrderBottomSection
             menuData={menuData}
             selectedUser={selectedUser}

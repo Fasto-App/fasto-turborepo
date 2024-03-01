@@ -4,7 +4,7 @@ import { Button, HStack, Skeleton } from "native-base"
 type TileProps = {
   selected: boolean;
   onPress?: () => void;
-  children: React.ReactElement
+  children: React.ReactNode;
 }
 
 export const Tile: React.FC<TileProps> = ({

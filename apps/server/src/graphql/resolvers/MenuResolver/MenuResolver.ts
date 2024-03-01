@@ -105,11 +105,34 @@ const updateMenu = async (_parent: any, { input }: { input: UpdateMenuInput }, {
     // find all the products that match the ids
 
     const products = await Product.find({ _id: { $in: uniqueProductIds } })
+
     if (products.length !== uniqueProductIds.length) {
         throw ApolloError(new Error('BAD USER DATA: Product not found when updating menu'), "BadRequest")
     }
 
+    // separate the products in groups based on the category
+    const productsByCategory = products.reduce((acc, product) => {
+        const category = product.category as unknown as string;
+
+        if (!acc[category]) {
+            acc[category] = []
+        }
+        acc[category].push(product)
+        return acc
+    }, {} as Record<string, Product[]>);
+
+    const sections = Object.entries(productsByCategory).map(([category, products]) => {
+        //@ts-ignore
+        const section = {
+            category,
+            products
+        } as Section;
+
+        return section
+    })
+
     menu.items = products;
+    menu.sections = sections;
 
     return await menu.save()
 }

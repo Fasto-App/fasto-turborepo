@@ -1687,7 +1687,7 @@ export type GetMenuByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, items?: Array<{ __typename?: 'Product', _id: string, name: string, description?: string | null, price: number, imageUrl?: string | null, addonsID?: Array<string | null> | null, quantity?: number | null, totalOrdered?: number | null, currency?: Currency | null, paused?: boolean | null, blockOnZeroQuantity?: boolean | null }> | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null, category?: { __typename?: 'Category', _id: string } | null }> }> | null } };
+export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, items?: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null, category?: { __typename?: 'Category', _id: string } | null }> | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null, category?: { __typename?: 'Category', _id: string } | null }> }> | null } };
 
 export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
@@ -3528,15 +3528,15 @@ export const GetMenuByIdDocument = gql`
     items {
       _id
       name
-      description
-      price
       imageUrl
-      addonsID
+      price
+      description
       quantity
-      totalOrdered
       currency
-      paused
       blockOnZeroQuantity
+      category {
+        _id
+      }
     }
     sections {
       category {
