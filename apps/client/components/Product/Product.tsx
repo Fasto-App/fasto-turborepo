@@ -1,3 +1,4 @@
+import { Skeleton } from "@/shadcn/components/ui/skeleton"
 import React from "react";
 import {
   Box,
@@ -130,6 +131,15 @@ const ProductCard = ({
     </Box>
   );
 };
+
+
+export function SkeletonProductTile() {
+  return (
+    <div className="flex flex-col space-y-3">
+      <Skeleton className="h-20 w-full rounded-xl" />
+    </div>
+  )
+}
 
 // create a new component that accepts the same props as ProductTile
 const ProductTile = ({

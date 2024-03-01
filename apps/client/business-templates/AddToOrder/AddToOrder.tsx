@@ -1,8 +1,7 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import {
   GetTableByIdDocument,
-  Product,
   useCreateMultipleOrderDetailsMutation,
   useCreateOrdersCheckoutMutation,
   useGetMenuByIdQuery,
