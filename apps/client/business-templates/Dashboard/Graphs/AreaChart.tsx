@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,14 +12,14 @@ import {
   ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { Box, Heading, Stack, Button, Text, Skeleton, View } from "native-base";
+import { Text, Skeleton, View } from "native-base";
 import {
   DateType,
   useGetPaidCheckoutByDateQuery,
 } from "../../../gen/generated";
 import { useRouter } from "next/router";
-import { parseToCurrency } from "app-helpers";
 import { useTranslation } from "next-i18next";
+import { DatePickerWithRange } from "../DatePicker";
 // 
 ChartJS.register(
   CategoryScale,
@@ -107,61 +107,9 @@ export function AreaChart({ selectedCheckoutFilter, setSelectedCheckoutFilter, }
   };
 
   return (
-    <Border>
-      <Stack
-        mb="2.5"
-        mt="1.5"
-        direction={{
-          base: "column",
-          md: "row",
-        }}
-        space={2}
-        mx={{
-          base: "auto",
-          md: "0",
-        }}
-      >
-        <Button
-          onPress={triggerShallowNav(DateType.AllTime)}
-          isPressed={selectedCheckoutFilter === DateType.AllTime}
-          size="sm"
-          variant="ghost"
-        >
-          {t("allTime")}
-        </Button>
-        <Button
-          onPress={triggerShallowNav(DateType.ThirtyDays)}
-          isPressed={selectedCheckoutFilter === DateType.ThirtyDays}
-          size="sm"
-          variant="ghost"
-        >
-          {t("30Days")}
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          isPressed={selectedCheckoutFilter === DateType.SevenDays}
-          onPress={triggerShallowNav(DateType.SevenDays)}
-        >
-          {t("7Days")}
-        </Button>
-      </Stack>
+    <div className="bg-white">
+      <DatePickerWithRange />
       <Line options={options} data={data} />
-    </Border>
+    </div>
   );
 }
-
-const Border: React.FC = ({ children }) => (
-  <Box
-    flex={1}
-    borderWidth={1}
-    borderColor={"gray.200"}
-    shadow={"2"}
-    borderRadius={"md"}
-    bgColor={"white"}
-    justifyContent={"center"}
-    p={4}
-  >
-    {children}
-  </Box>
-);

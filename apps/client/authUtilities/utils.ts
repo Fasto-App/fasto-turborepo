@@ -12,13 +12,8 @@ export const validateEmail = (email?: string) => {
 };
 
 // TODO: deprecate
-export const validatePassword = (password: string) => {
-
-  return !!(String(password)
-    .length >= 6 &&
-    String(password)
-      .match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/));
-}
+export const validatePassword = (password: string) => password.length >= 6 &&
+  password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)
 
 const myLocales: Record<string, Locale> = {
   pt: pt,

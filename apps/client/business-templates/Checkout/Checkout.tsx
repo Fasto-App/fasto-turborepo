@@ -13,7 +13,7 @@ import {
 } from "native-base";
 import { useRouter } from "next/router";
 import React from "react";
-import { LeftSideBar } from "../../components";
+// import { LeftSideBar } from "../../components";
 import { BottomSection } from "../../components/BottomSection";
 import { OrangeBox } from "../../components/OrangeBox";
 import { SuccessAnimation } from "../../components/SuccessAnimation";
@@ -38,6 +38,7 @@ import { PaymentTile } from "./TableComponents";
 import { showToast } from "../../components/showToast";
 import { CheckoutModal } from "./CheckoutModal";
 import { Pressable } from "react-native";
+import { LeftSideBar } from "../../components/LeftSideBar";
 
 const checkoutOptions = ["payFull", "splitBill", "success"] as const;
 

@@ -42,6 +42,7 @@ type Menu {
 	name: String!
 	sections: [Section!]
 	isFavorite: Boolean
+	items: [Product!]
 }
 
 input UpdateSectionInput {

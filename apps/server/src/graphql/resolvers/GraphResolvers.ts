@@ -132,6 +132,7 @@ export const resolvers = {
   },
   Menu: {
     // sections: MenuResolver.getSectionsByMenu,
+    items: MenuResolver.getItemsByMenu,
   },
   Section: {
     products: MenuResolver.getProductsBySection,

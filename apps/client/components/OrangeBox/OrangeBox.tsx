@@ -8,7 +8,6 @@ export const OrangeBox = ({ height = 100 }: { height?: IBoxProps["h"] }) => {
       h={height}
       w={"100%"}
       position={"absolute"}
-      zIndex={-1}
     />
   )
 }
