@@ -88,13 +88,14 @@ export const AddToOrderBottomSection = ({
       </div>
       <div className="row-span-7">
         {!products?.length ?
-          Array(12).fill(null).map(i => <SkeletonProductTile key={i} />) :
+          <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 p-4 gap-4'>
+            {Array(12).fill(null).map(i => <SkeletonProductTile key={i} />)}
+          </div> :
           <MemoizedProducts
             products={filteredProducts}
             onAddOrIncreaseQnt={onAddOrIncreaseQnt}
             selectedUser={selectedUser}
-          />
-        }
+          />}
       </div>
     </>
   )
