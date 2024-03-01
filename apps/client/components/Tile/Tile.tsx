@@ -1,5 +1,6 @@
 import React from "react"
-import { Button, HStack, Skeleton } from "native-base"
+import { Button, HStack } from "native-base"
+import { Skeleton } from "@/shadcn/components/ui/skeleton";
 
 type TileProps = {
   selected: boolean;
@@ -29,12 +30,15 @@ export const Tile: React.FC<TileProps> = ({
   )
 }
 
+export function NewTileLoading() {
+  return <Skeleton className="h-10 w-24 rounded-xl" />
+}
 export const TileLoading = () => {
   return (
     <HStack space={4}>
-      <Skeleton borderRadius={"md"} w={"100px"} />
-      <Skeleton borderRadius={"md"} w={"100px"} />
-      <Skeleton borderRadius={"md"} w={"100px"} />
+      <Skeleton className="h-10 w-24 rounded-xl" />
+      <Skeleton className="h-10 w-24 rounded-xl" />
+      <Skeleton className="h-10 w-24 rounded-xl" />
     </HStack>
   )
 }

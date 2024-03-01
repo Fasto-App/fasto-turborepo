@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Heading } from 'native-base';
 import { ProductTile, SkeletonProductTile } from '../../components/Product/Product';
-import { Tile } from '../../components/Tile';
+import { Tile, NewTileLoading } from '../../components/Tile';
 import { useTranslation } from 'next-i18next';
 import { GetMenuByIdQuery, Product } from '../../gen/generated';
 import { NewOrder } from './types';
@@ -23,7 +23,7 @@ const searchProductsByName = (
   const filteredProducts = products.filter((product) => {
     const productsName = product.name.toLocaleLowerCase()
     const match = productsName.match(pattern)
-    return match
+    return !!match
   });
 
   return filteredProducts
@@ -72,14 +72,22 @@ export const AddToOrderBottomSection = ({
   return (
     <>
       <div className='row-span-1'>
-        <div className={"grid grid-cols-8 row-span-2 gap-4 p-2 content-center items-center"}>
+        <div className={"grid grid-cols-8 row-span-2 gap-6 p-2 content-center items-center"}>
           <Heading>{t("menu")}</Heading>
           <div className="col-span-5">
-            <MemoizedCategoriesList
-              menuData={menuData}
-              setSelectedCategory={setSelectedCategory}
-              selectedCategory={selectedCategory}
-            />
+            <ScrollArea className="w-full whitespace-nowrap rounded-md">
+              {!menuData?.getMenuByID.sections?.length ? <div className="flex w-max space-x-4 p-4">
+                {Array(10).fill(null).map(i => <NewTileLoading key={i} />)}
+              </div>
+                :
+                <MemoizedCategoriesList
+                  menuData={menuData}
+                  setSelectedCategory={setSelectedCategory}
+                  selectedCategory={selectedCategory}
+                />
+              }
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
           </div>
           <div className="col-span-2">
             <Input type="text" placeholder={t("search")} onChange={debouncedSetText} />
@@ -137,7 +145,6 @@ const MemoizedProducts = React.memo(function ProductsList({
           }}
         />
       ))}
-
     </div>
     <ScrollBar orientation="vertical" />
   </ScrollArea>
@@ -149,25 +156,22 @@ const MemoizedCategoriesList = React.memo(function CategoriesList({
   selectedCategory
 }: any) {
   return (
-    <ScrollArea className="w-full whitespace-nowrap rounded-md">
-      <div className="flex w-max space-x-4 p-4">
+    <div className="flex w-max space-x-4 p-4">
+      <Tile
+        selected={!selectedCategory}
+        onPress={() => setSelectedCategory(undefined)}
+      >
+        {"All"}
+      </Tile>
+      {menuData?.getMenuByID?.sections?.map((section: any) => (
         <Tile
-          selected={!selectedCategory}
-          onPress={() => setSelectedCategory(undefined)}
+          key={section.category._id}
+          selected={section.category._id === selectedCategory}
+          onPress={() => setSelectedCategory(section.category._id)}
         >
-          {"All"}
+          {section.category.name}
         </Tile>
-        {menuData?.getMenuByID?.sections?.map((section: any) => (
-          <Tile
-            key={section.category._id}
-            selected={section.category._id === selectedCategory}
-            onPress={() => setSelectedCategory(section.category._id)}
-          >
-            {section.category.name}
-          </Tile>
-        ))}
-      </div>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+      ))}
+    </div>
   )
 })
