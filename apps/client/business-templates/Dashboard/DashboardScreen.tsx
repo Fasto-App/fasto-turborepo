@@ -73,21 +73,10 @@ export const DashboardScreen = () => {
               </TabsContent>
 
               <TabsContent value="pagamentos" className="grid grid-cols-6 gap-4">
-
-                <Card className="col-span-6 xl:col-span-4">
-                  <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
-                    <CardDescription>
-                      You made 265 sales this month.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <AreaChart
-                      selectedCheckoutFilter={selectedCheckoutFilter}
-                      setSelectedCheckoutFilter={setSelectedCheckoutFilter}
-                    />
-                  </CardContent>
-                </Card>
+                <AreaChart
+                  selectedCheckoutFilter={selectedCheckoutFilter}
+                  setSelectedCheckoutFilter={setSelectedCheckoutFilter}
+                />
                 <Card className="col-span-6 xl:col-span-2">
                   <CardHeader>
                     <CardTitle>Overview</CardTitle>
@@ -96,7 +85,6 @@ export const DashboardScreen = () => {
                     <RecentSales />
                   </CardContent>
                 </Card>
-
               </TabsContent>
             </Tabs>
           </Card>
