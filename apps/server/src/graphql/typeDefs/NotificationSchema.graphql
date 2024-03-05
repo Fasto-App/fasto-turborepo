@@ -1,0 +1,14 @@
+extend type Query {
+	getNotificationByBusiness: [Notification!]
+  getNotificationByCustomer: [Notification!]
+}
+
+type Notification {
+	_id: ID!
+	message: String!
+	path: String
+	isRead: Boolean!
+	business_receiver_id: ID
+  customer_receiver_id: ID
+  sender_id: ID
+}
