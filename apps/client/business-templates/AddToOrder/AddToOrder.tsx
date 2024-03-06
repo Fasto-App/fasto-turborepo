@@ -266,7 +266,7 @@ export const AddToOrder = () => {
   }, [onDecrease, onRemoveOrderItem])
 
   return (
-    <div className={"flex flex-1 flex-row"}>
+    <div className={"flex w-full"}>
       <SummaryPanel
         tabData={tabData}
         orderItems={orderItems}
@@ -276,7 +276,7 @@ export const AddToOrder = () => {
         onMinusPress={onDecreaseQnt}
         onSendToKitchen={onSendToKitchen}
       />
-      <div className="grid grid-rows-6 grid-flow-col">
+      <div className="flex flex-col w-full">
         <div className={"bg-orange-500 w-full h-24 absolute box-border"}
         />
         {tabData ? <AddToOrderUpperSection
