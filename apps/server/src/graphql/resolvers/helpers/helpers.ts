@@ -3,6 +3,8 @@ import { AddressModel, BusinessModel, OrderDetailModel, ProductModel } from "../
 import { Checkout } from "../../../models/checkout";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Bugsnag } from '../../../bugsnag/bugsnag';
+import { NotificationModel } from "../../../models/notification";
+import { db } from "../../../dbConnection";
 
 export const updateProductQuantity = async (foundCheckout: Checkout, db: Connection) => {
   const ordersDetails = await OrderDetailModel(db).find({ _id: { $in: foundCheckout.orders } });
@@ -38,3 +40,38 @@ export const getCountry = async ({
 
   return foundBusiness.country
 }
+
+export const createBusinessNotification = async (
+  message: string,
+  businessId: string,
+  customerSenderId: string,
+  path?: string
+) => {
+  const Notification = NotificationModel(db);
+  const newNotification = await Notification.create({
+    business_sender_id: businessId,
+    message,
+    sender_id: customerSenderId,
+    path
+  });
+
+  return newNotification;
+};
+
+
+export const createCustomerNotification = async (
+  customerId: string,
+  businessUserId: string,
+  message: string,
+  path?: string
+) => {
+  const Notification = NotificationModel(db);
+  const newNotification = await Notification.create({
+    customer_sender_id: customerId,
+    message,
+    sender_id: businessUserId,
+    path
+  });
+
+  return newNotification;
+};
