@@ -3,6 +3,7 @@ extend type Query {
 	getCheckoutsByBusiness(page: Int!, pageSize: Int!): [Checkout!]!
 	getOrdersByCheckout(input: GetById!): Checkout!
 	getPaidCheckoutByDate(input: GetPaidCheckout!): PaidCheckoutRes
+	getPaidCheckoutToAndFromDate(input: GetPaidCheckoutToAndFrom!): PaidCheckoutRes
 }
 
 extend type Mutation {
@@ -73,6 +74,11 @@ input GetPaidCheckout {
 	type: DateType!
 }
 
+input GetPaidCheckoutToAndFrom {
+	toDate: String!
+	fromDate: String!
+}
+
 enum DateType {
 	SevenDays
 	ThirtyDays
@@ -86,7 +92,7 @@ type AveragePerDay {
 }
 
 type PaidCheckoutRes {
-	sortBy: DateType!
+	sortBy: String!
 	data: [AveragePerDay]!
 	total: Float!
 }

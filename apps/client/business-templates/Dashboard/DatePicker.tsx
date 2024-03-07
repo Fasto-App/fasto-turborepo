@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { addDays, format, subDays } from "date-fns"
@@ -9,16 +7,13 @@ import { cn } from "@/shadcn/lib/utils"
 import { Button } from "@/shadcn/components/ui/button"
 import { DateRange } from "react-day-picker"
 
-export function DatePickerWithRange({
-  className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: subDays(new Date(), 7),
-    to: new Date(),
-  })
+export function DatePickerWithRange({ setDate, date }: {
+  setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  date: DateRange | undefined;
+}) {
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid gap-2")}>
       <Popover>
         <PopoverTrigger asChild>
           <Button

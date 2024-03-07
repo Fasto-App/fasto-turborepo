@@ -388,6 +388,11 @@ export type GetPaidCheckout = {
   type: DateType;
 };
 
+export type GetPaidCheckoutToAndFrom = {
+  fromDate: Scalars['String'];
+  toDate: Scalars['String'];
+};
+
 export type GetPayment = {
   payment: Scalars['ID'];
 };
@@ -483,6 +488,7 @@ export type Menu = {
   __typename?: 'Menu';
   _id: Scalars['ID'];
   isFavorite?: Maybe<Scalars['Boolean']>;
+  items?: Maybe<Array<Product>>;
   name: Scalars['String'];
   sections?: Maybe<Array<Section>>;
 };
@@ -942,7 +948,7 @@ export type OrdersGroup = {
 export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
-  sortBy: DateType;
+  sortBy: Scalars['String'];
   total: Scalars['Float'];
 };
 
@@ -1028,6 +1034,7 @@ export type Query = {
   getOrdersBySession: Array<OrderDetail>;
   getOrdersGroup?: Maybe<Array<OrdersGroup>>;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
+  getPaidCheckoutToAndFromDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
   getProductByID: Product;
@@ -1112,6 +1119,11 @@ export type QueryGetOrdersGroupArgs = {
 
 export type QueryGetPaidCheckoutByDateArgs = {
   input: GetPaidCheckout;
+};
+
+
+export type QueryGetPaidCheckoutToAndFromDateArgs = {
+  input: GetPaidCheckoutToAndFrom;
 };
 
 
@@ -1577,6 +1589,7 @@ export type ResolversTypes = {
   GetMenuById: GetMenuById;
   GetOrdersGroup: GetOrdersGroup;
   GetPaidCheckout: GetPaidCheckout;
+  GetPaidCheckoutToAndFrom: GetPaidCheckoutToAndFrom;
   GetPayment: GetPayment;
   GetSubsInput: GetSubsInput;
   GetTabRequestInput: GetTabRequestInput;
@@ -1707,6 +1720,7 @@ export type ResolversParentTypes = {
   GetMenuById: GetMenuById;
   GetOrdersGroup: GetOrdersGroup;
   GetPaidCheckout: GetPaidCheckout;
+  GetPaidCheckoutToAndFrom: GetPaidCheckoutToAndFrom;
   GetPayment: GetPayment;
   GetSubsInput: GetSubsInput;
   GetTabRequestInput: GetTabRequestInput;
@@ -1970,6 +1984,7 @@ export type HoursOfOperationResolvers<ContextType = Context, ParentType extends 
 export type MenuResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Menu'] = ResolversParentTypes['Menu']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   isFavorite?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  items?: Resolver<Maybe<Array<ResolversTypes['Product']>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   sections?: Resolver<Maybe<Array<ResolversTypes['Section']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2077,7 +2092,7 @@ export type OrdersGroupResolvers<ContextType = Context, ParentType extends Resol
 
 export type PaidCheckoutResResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaidCheckoutRes'] = ResolversParentTypes['PaidCheckoutRes']> = {
   data?: Resolver<Array<Maybe<ResolversTypes['AveragePerDay']>>, ParentType, ContextType>;
-  sortBy?: Resolver<ResolversTypes['DateType'], ParentType, ContextType>;
+  sortBy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -2163,6 +2178,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getOrdersBySession?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType>;
   getOrdersGroup?: Resolver<Maybe<Array<ResolversTypes['OrdersGroup']>>, ParentType, ContextType, RequireFields<QueryGetOrdersGroupArgs, 'input'>>;
   getPaidCheckoutByDate?: Resolver<Maybe<ResolversTypes['PaidCheckoutRes']>, ParentType, ContextType, RequireFields<QueryGetPaidCheckoutByDateArgs, 'input'>>;
+  getPaidCheckoutToAndFromDate?: Resolver<Maybe<ResolversTypes['PaidCheckoutRes']>, ParentType, ContextType, RequireFields<QueryGetPaidCheckoutToAndFromDateArgs, 'input'>>;
   getPaymentInformation?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<QueryGetPaymentInformationArgs, 'input'>>;
   getPendingInvitations?: Resolver<Array<ResolversTypes['Request']>, ParentType, ContextType>;
   getProductByID?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<QueryGetProductByIdArgs, 'productID'>>;
