@@ -276,7 +276,7 @@ export const AddToOrder = () => {
         onMinusPress={onDecreaseQnt}
         onSendToKitchen={onSendToKitchen}
       />
-      <div className="flex flex-col w-full">
+      <div className="grid grid-rows-6">
         <div className={"bg-orange-500 w-full h-24 absolute box-border"}
         />
         {tabData ? <AddToOrderUpperSection

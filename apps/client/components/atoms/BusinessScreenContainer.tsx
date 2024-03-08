@@ -29,7 +29,7 @@ const BusinessScreenContainer = ({ children }: { children: React.ReactNode }) =>
     className="flex flex-row h-screen w-screen bg-white"
   >
     {children}
-    <NotForPhonesComponent />
+    {/* <NotForPhonesComponent /> */}
   </div>;
 };
 
