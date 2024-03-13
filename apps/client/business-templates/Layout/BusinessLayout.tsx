@@ -38,8 +38,9 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<BusinessScreenContainer>
-			{shouldShowSideBar ? <BusinessNavigationTab /> : null}
-			{children}
+			{/* {shouldShowSideBar ? <BusinessNavigationTab /> : null} */}
+			{<BusinessNavigationTab />}		
+				{children}
 		</BusinessScreenContainer>
 	);
 };

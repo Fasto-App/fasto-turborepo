@@ -7,7 +7,7 @@ const NotForPhonesComponent = () => {
   const { t } = useTranslation("common");
 
   return (
-    <div className='fixed md:hidden lg:hidden xl:hidden 2xl:hidden inset-0 flex items-center justify-center bg-black bg-opacity-50 bg-blur z-50 backdrop-blur-sm p-4'>
+    <div className='fixed sm:hidden lg:hidden xl:hidden 2xl:hidden inset-0 flex items-center justify-center bg-black bg-opacity-50 bg-blur z-50 backdrop-blur-sm p-4'>
       <Alert>
         <RocketIcon className="h-4 w-4" />
         <AlertTitle>{t("headsUp")}</AlertTitle>

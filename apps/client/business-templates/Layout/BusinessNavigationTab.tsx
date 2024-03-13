@@ -10,6 +10,7 @@ import { Button } from "@/shadcn/components/ui/button";
 import { DropdownMenuSideBar } from "./DropDownMenu";
 import { cn } from "@/shadcn/lib/utils";
 import { useSideBarOpen } from "@/localStorage/businessStorage";
+import { SheetSideBar } from "./sheetSideBar";
 
 const BusinessNavigationTab = () => {
   const router = useRouter();
@@ -62,8 +63,9 @@ const BusinessNavigationTab = () => {
   ];
 
   return (
+    <>
     <aside
-      className={`flex flex-col justify-between bg-gray-50 text-white shadow-lg shadow-gray-900/20 duration-200 ease-out ${open ? "w-[18.5rem]" : "w-[5rem]"} `}
+      className={`hidden sm:flex flex-col justify-between bg-gray-50 text-white shadow-lg shadow-gray-900/20 duration-200 ease-out ${open ? "w-[18.5rem]" : "w-[5rem]"} `}
     >
       <div className="flex relative justify-center items-center mx-1 py-2 px-1 transform duration-50">
         {open ?
@@ -113,7 +115,18 @@ const BusinessNavigationTab = () => {
         />
       </div>
     </aside>
+    <div className="sm:hidden bg-[#f55135] top-0 w-full fixed h-[36px] z-20">
+        <div className="flex flex-row justify-between mx-1 items-center">
+
+          <h3 className={`pl-2 font-bold text-lg text-white`}>
+            Easy Gabinete
+          </h3>
+          <SheetSideBar />
+        </div>
+      </div>
+    </>
+    
   );
-}; ``
+}; 
 
 export { BusinessNavigationTab };
