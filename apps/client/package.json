@@ -56,7 +56,6 @@
 		"react-chartjs-2": "^5.0.0",
 		"react-day-picker": "^8.10.0",
 		"react-dom": "17.0.2",
-		"react-helmet": "^6.1.0",
 		"react-hook-form": "^7.31.1",
 		"react-html5-qrcode-reader": "^1.1.1",
 		"react-i18next": "^12.2.2",
