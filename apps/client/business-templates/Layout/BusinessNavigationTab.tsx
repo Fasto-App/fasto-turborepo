@@ -119,7 +119,7 @@ const BusinessNavigationTab = () => {
         <div className="flex flex-row justify-between mx-1 items-center">
 
           <h3 className={`pl-2 font-bold text-lg text-white`}>
-            Easy Gabinete
+            Fasto App
           </h3>
           <SheetSideBar />
         </div>
