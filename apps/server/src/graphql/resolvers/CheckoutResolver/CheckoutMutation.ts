@@ -10,7 +10,7 @@ import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { MutationResolvers } from "../../../generated/graphql";
-import { updateProductQuantity } from "../helpers/helpers";
+import { createBusinessNotification, updateProductQuantity } from "../helpers/helpers";
 import { ObjectId } from "mongodb";
 import {
   getTableTotalPerPerson,
@@ -22,7 +22,7 @@ import {
 const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (
   parent,
   { input },
-  { db }
+  { db, business }
 ) => {
   // make the payment, set the payment to true and update the checkout
   const Checkout = CheckoutModel(db);
@@ -79,13 +79,25 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (
 
   await Promise.all([foundPayment.save(), foundCheckout.save()]);
 
+  
+  if (!business) throw new Error("");
+  
+  console.log({business})
+
+  await createBusinessNotification({
+    message: "You just made a payment",
+    businessId: business,
+    sender_id: business,
+    path: "business/123"
+  })
+
   return foundCheckout;
 };
 
 // TODO I will probably going to have to re-do this
 // @ts-ignore
 const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] =
-  async (parent, { input }, { db }) => {
+  async (parent, { input }, { db, business }) => {
     console.log("makeCheckoutFullPayment", input);
 
     const Checkout = CheckoutModel(db);
@@ -190,6 +202,18 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] =
         await updateProductQuantity(foundCheckout, db);
 
         await updateTabTableAndRequests();
+
+        if (!business) throw new Error("NO Business");
+        
+        
+        console.log({business})
+  
+        await createBusinessNotification({
+          message: "You just made a payment",
+          businessId: business,
+          sender_id: business,
+          path: "business/123"
+        })
 
         return await foundCheckout.save();
       case "Paid":
