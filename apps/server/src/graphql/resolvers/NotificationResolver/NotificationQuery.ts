@@ -1,3 +1,4 @@
+import { db } from "../../../dbConnection";
 import { QueryResolvers } from "../../../generated/graphql";
 import { NotificationModel } from "../../../models/notification";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
@@ -18,3 +19,12 @@ export const getNotificationByBusiness: QueryResolvers['getNotificationByBusines
 export const NotificationQuery = {
   getNotificationByBusiness,
 };
+
+export const testMongoDBQuery = async (businessId: string) => {
+  if (!businessId) throw ApolloError(new Error("No business id"), 'Unauthorized')
+
+  const foundNotifications = await NotificationModel(db)
+    .find({ business_receiver_id: businessId })
+
+  return foundNotifications
+}
