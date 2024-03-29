@@ -3,16 +3,14 @@ import { NotificationModel } from "../../../models/notification";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 
 // @ts-ignore
-const getNotificationByBusiness: QueryResolvers['getNotificationByBusiness'] = async (
+export const getNotificationByBusiness: QueryResolvers['getNotificationByBusiness'] = async (
   _parent,
   _args,
   { db, business }
 ) => {
   if (!business) throw ApolloError(new Error("No business id"), 'Unauthorized')
 
-
-  const Notification = NotificationModel(db);
-  const foundNotifications = await Notification.find({ business_receiver_id: business });
+  const foundNotifications = await NotificationModel(db).find({ business_receiver_id: business });
 
   return foundNotifications;
 };

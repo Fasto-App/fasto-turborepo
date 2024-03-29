@@ -41,17 +41,27 @@ export const getCountry = async ({
   return foundBusiness.country
 }
 
-export const createBusinessNotification = async (
-  message: string,
+export const createBusinessNotification = async ({
+businessId, 
+sender_id,
+path, 
+message
+}:
+{  message: string,
   businessId: string,
-  customerSenderId: string,
-  path?: string
+  sender_id: string,
+  path?: string}
 ) => {
   const Notification = NotificationModel(db);
+
+  console.log("createBusinessNotification")
+  console.log({businessId})
+
+  // the problem here is that the business is null
   const newNotification = await Notification.create({
-    business_sender_id: businessId,
+    business_receiver_id: businessId,
     message,
-    sender_id: customerSenderId,
+    sender_id,
     path
   });
 
@@ -59,19 +69,19 @@ export const createBusinessNotification = async (
 };
 
 
-export const createCustomerNotification = async (
-  customerId: string,
-  businessUserId: string,
-  message: string,
-  path?: string
-) => {
-  const Notification = NotificationModel(db);
-  const newNotification = await Notification.create({
-    customer_sender_id: customerId,
-    message,
-    sender_id: businessUserId,
-    path
-  });
+// export const createCustomerNotification = async (
+//   customerId: string,
+//   businessUserId: string,
+//   message: string,
+//   path?: string
+// ) => {
+//   const Notification = NotificationModel(db);
+//   const newNotification = await Notification.create({
+//     customer_sender_id: customerId,
+//     message,
+//     sender_id: businessUserId,
+//     path
+//   });
 
-  return newNotification;
-};
+//   return newNotification;
+// };
