@@ -8,7 +8,7 @@
 		"dev": "doppler run -- nodemon --ext ts,graphql src/index.ts",
 		"build": "rm -rf dist && tsc",
 		"generate": "doppler run -- graphql-codegen --config src/codegen.ts",
-		"test": "jest"
+		"test": "doppler run -- jest"
 	},
 	"dependencies": {
 		"@apollo/server": "^4.5.0",
