@@ -7,5 +7,5 @@ coverageDirectory: './coverage',
 collectCoverageFrom: [
     './src/**/*.ts',
 ],
-collectCoverage: true,
+collectCoverage: false,
 }
