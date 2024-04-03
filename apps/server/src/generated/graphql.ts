@@ -483,6 +483,7 @@ export type Menu = {
   __typename?: 'Menu';
   _id: Scalars['ID'];
   isFavorite?: Maybe<Scalars['Boolean']>;
+  items?: Maybe<Array<Product>>;
   name: Scalars['String'];
   sections?: Maybe<Array<Section>>;
 };
@@ -890,6 +891,17 @@ export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  _id: Scalars['ID'];
+  business_receiver_id?: Maybe<Scalars['ID']>;
+  customer_receiver_id?: Maybe<Scalars['ID']>;
+  isRead: Scalars['Boolean'];
+  message: Scalars['String'];
+  path?: Maybe<Scalars['String']>;
+  sender_id?: Maybe<Scalars['ID']>;
+};
+
 export type OpenTabRequestInput = {
   business: Scalars['ID'];
   name: Scalars['String'];
@@ -1022,6 +1034,8 @@ export type Query = {
   getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
   getMostSellingProducts?: Maybe<Array<Maybe<Product>>>;
+  getNotificationByBusiness?: Maybe<Array<Notification>>;
+  getNotificationByCustomer?: Maybe<Array<Notification>>;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrderGroupById: OrdersGroup;
   getOrdersByCheckout: Checkout;
@@ -1595,6 +1609,7 @@ export type ResolversTypes = {
   ManageBusinessEmployeesInput: ManageBusinessEmployeesInput;
   Menu: ResolverTypeWrapper<Menu>;
   Mutation: ResolverTypeWrapper<{}>;
+  Notification: ResolverTypeWrapper<Notification>;
   OpenTabRequestInput: OpenTabRequestInput;
   OrderDetail: ResolverTypeWrapper<OrderDetail>;
   OrderDetailInput: OrderDetailInput;
@@ -1724,6 +1739,7 @@ export type ResolversParentTypes = {
   ManageBusinessEmployeesInput: ManageBusinessEmployeesInput;
   Menu: Menu;
   Mutation: {};
+  Notification: Notification;
   OpenTabRequestInput: OpenTabRequestInput;
   OrderDetail: OrderDetail;
   OrderDetailInput: OrderDetailInput;
@@ -1970,6 +1986,7 @@ export type HoursOfOperationResolvers<ContextType = Context, ParentType extends 
 export type MenuResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Menu'] = ResolversParentTypes['Menu']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   isFavorite?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  items?: Resolver<Maybe<Array<ResolversTypes['Product']>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   sections?: Resolver<Maybe<Array<ResolversTypes['Section']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2045,6 +2062,17 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   updateTab?: Resolver<ResolversTypes['Tab'], ParentType, ContextType, RequireFields<MutationUpdateTabArgs, 'input'>>;
   updateUserInformation?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserInformationArgs, 'input'>>;
   uploadFile?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUploadFileArgs, 'file'>>;
+};
+
+export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  business_receiver_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  customer_receiver_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  isRead?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  sender_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type OrderDetailResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OrderDetail'] = ResolversParentTypes['OrderDetail']> = {
@@ -2157,6 +2185,8 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getIsConnected?: Resolver<Maybe<ResolversTypes['Balance']>, ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getMostSellingProducts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Product']>>>, ParentType, ContextType>;
+  getNotificationByBusiness?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType>;
+  getNotificationByCustomer?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
   getOrderGroupById?: Resolver<ResolversTypes['OrdersGroup'], ParentType, ContextType, RequireFields<QueryGetOrderGroupByIdArgs, 'id'>>;
   getOrdersByCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;
@@ -2313,6 +2343,7 @@ export type Resolvers<ContextType = Context> = {
   HoursOfOperation?: HoursOfOperationResolvers<ContextType>;
   Menu?: MenuResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Notification?: NotificationResolvers<ContextType>;
   OrderDetail?: OrderDetailResolvers<ContextType>;
   OrderDetailsByDate?: OrderDetailsByDateResolvers<ContextType>;
   OrdersGroup?: OrdersGroupResolvers<ContextType>;

@@ -3,6 +3,8 @@ import { BusinessModel, OrderDetailModel, ProductModel } from "../../../models";
 import { Checkout } from "../../../models/checkout";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { Bugsnag } from '../../../bugsnag/bugsnag';
+import { NotificationModel } from "../../../models/notification";
+import { db } from "../../../dbConnection";
 
 export const updateProductQuantity = async (foundCheckout: Checkout, db: Connection) => {
   const ordersDetails = await OrderDetailModel(db).find({ _id: { $in: foundCheckout.orders } });
@@ -47,3 +49,48 @@ export const getCountry = async ({
 
   return foundBusiness.country
 }
+
+export const createBusinessNotification = async ({
+businessId, 
+sender_id,
+path, 
+message
+}:
+{  message: string,
+  businessId: string,
+  sender_id: string,
+  path?: string}
+) => {
+  const Notification = NotificationModel(db);
+
+  console.log("createBusinessNotification")
+  console.log({businessId})
+
+  // the problem here is that the business is null
+  const newNotification = await Notification.create({
+    business_receiver_id: businessId,
+    message,
+    sender_id,
+    path
+  });
+
+  return newNotification;
+};
+
+
+// export const createCustomerNotification = async (
+//   customerId: string,
+//   businessUserId: string,
+//   message: string,
+//   path?: string
+// ) => {
+//   const Notification = NotificationModel(db);
+//   const newNotification = await Notification.create({
+//     customer_sender_id: customerId,
+//     message,
+//     sender_id: businessUserId,
+//     path
+//   });
+
+//   return newNotification;
+// };

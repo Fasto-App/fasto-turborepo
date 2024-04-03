@@ -14,13 +14,13 @@ type HomeRoute = typeof HOME;
 
 type Client = typeof customerRoute
 type ClientKeys = keyof Client;
-type customerRoutes = Client[ClientKeys];
+type CustomerRoutes = Client[ClientKeys];
 
 
 type Business = typeof businessRoute;
 type BusinessKeys = keyof Business;
 type BusinessRoutes = Business[BusinessKeys];
-export type AppNavigation = HomeRoute | BusinessRoutes | customerRoutes;
+export type AppNavigation = HomeRoute | BusinessRoutes | CustomerRoutes;
 
 type BusinessExperience = typeof BUSINESS
 type ClientExperience = typeof CUSTOMER;
