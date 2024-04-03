@@ -76,15 +76,7 @@ const CategoryList = ({ resetAll, categories }:
 	}
 
 	return (<>
-		<VStack
-			space={4}
-			p={"4"}
-			shadow={"4"}
-			borderWidth={1}
-			borderRadius={"md"}
-			borderColor={"trueGray.400"}
-			backgroundColor={"white"}
-		>
+		<div className="space-y-4 p-4 shadow-md border border-gray-400 rounded-md bg-white mt-[36px] sm:mt-0">
 			<Box flexDirection={"row"}>
 				<Heading flex={1}>
 					{t("categories")}
@@ -128,7 +120,7 @@ const CategoryList = ({ resetAll, categories }:
 					/>
 				</HStack>
 			</HStack>
-		</VStack>
+		</div>
 		<CategoryModal
 			// @ts-ignore
 			categoryControl={categoryControl}

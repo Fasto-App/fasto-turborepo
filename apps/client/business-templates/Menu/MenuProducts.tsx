@@ -348,25 +348,26 @@ function MenuProducts() {
       borderColor={"trueGray.400"}
       backgroundColor={"white"}
     >
-      <HStack flexDirection={isLargerThan768 ? "column" : "row"} mb={"2"} space={4}>
-        <HStack space={3} mb={isLargerThan768 ? "5" : "0"}>
-          {isEditingMenu ? (
-            <Input
-              size={"2xl"}
-              width={"auto"}
-              value={inputValue}
-              variant="underlined"
-              InputRightElement={<BsPencilSquare />}
-              placeholder={selectedMenu?.name as string}
-              onChangeText={setInputValue}              
-            />
-          ) : (
-            <Heading w={"auto"} isTruncated>
-              {selectedMenu?.name}
-            </Heading>
-          )}
-
-          <HStack space={2}>
+      <div className=" flex flex-col mb-2">
+        <div className="flex flex-row gap-2 justify-start align-middle items-center mb-4">
+          <div>
+            {isEditingMenu ? (
+              <Input
+                size={"2xl"}
+                width={"auto"}
+                value={inputValue}
+                variant="underlined"
+                InputRightElement={<BsPencilSquare />}
+                placeholder={selectedMenu?.name as string}
+                onChangeText={setInputValue}
+              />
+            ) : (
+              <Heading w={"auto"} isTruncated>
+                {selectedMenu?.name}
+              </Heading>
+            )}
+          </div>
+          <div>
             <Pressable
               disabled={!isEditingMenu}
               onPress={() =>
@@ -379,16 +380,28 @@ function MenuProducts() {
             >
               <Icon type={icontype} color={theme.colors.yellow[500]} />
             </Pressable>
-
+          </div>
+          <div>
             <Pressable
               variant={"ghost"}
               disabled={!menuId}
               onPress={shareMenuLink}>
               <Icon type='Share' color={theme.colors.primary[500]} />
             </Pressable>
-          </HStack>
-        </HStack>
-
+          </div>
+        </div>
+        <div className=" relative">
+          <input
+            type="text"
+            placeholder={t("search")}
+            className="rounded-lg w-full sm:w-[400px] h-10 pl-10 text-xl mb-4 px-4 border border-gray-300 focus:outline-none focus:border-indigo-500"
+            value={searchString}
+            onChange={(e) => setSearchString(e.target.value)}
+          />
+          <div className="absolute top-1 left-0 pl-2 flex items-center pointer-events-none">
+            <Icon type="Search" />
+          </div>
+        </div>
         {/* Categories */}
         <ScrollView flex={1} horizontal>
           {!isEditingMenu
@@ -429,25 +442,7 @@ function MenuProducts() {
               </Button>
             ))}
         </ScrollView>
-        <HStack flexDir={"row"} flexWrap={"wrap"} mt={isLargerThan768 ? "5" : "0"}>
-          <Input
-            placeholder={t("search")}
-            variant="rounded"
-            borderRadius="10"
-            size={isLargerThan768 ? "xl" : "md"}
-            h={"10"}
-            value={searchString}
-            onChangeText={(text) => {
-              setSearchString(text);
-            }}
-            InputLeftElement={
-              <Box p="1">
-                <Icon type="Search" />
-              </Box>
-            }
-          />
-        </HStack>
-      </HStack>
+      </div>
       <Box flex={1} p={"4"}>
         {isEditingMenu ? (
           <FlatList

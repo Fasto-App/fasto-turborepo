@@ -123,11 +123,7 @@ const ProductList = (
 					</Link> :
 					null}
 			</HStack>
-			<HStack
-				flex={1}
-				space={4}
-				flexWrap={"wrap"}
-				overflowY={"scroll"}
+			<div className="flex justify-center sm:justify-start flex-wrap overflow-y-scroll"
 			>
 				{!products.length ?
 					<Box pt={4}>
@@ -160,7 +156,7 @@ const ProductList = (
 								paused={item?.paused}
 							/>
 					))}
-			</HStack>
+			</div>
 		</Box>
 	</>
 

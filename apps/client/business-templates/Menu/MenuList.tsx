@@ -20,14 +20,7 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
 
 
   return (
-    <Box
-      p={"4"}
-      shadow={"4"}
-      borderWidth={1}
-      borderRadius={"md"}
-      borderColor={"trueGray.400"}
-      backgroundColor={"white"}
-      flexDirection={"row"}
+    <div className="p-4 shadow-md border-2 rounded-md border-trueGray-400 bg-white flex-row mt-[36px] sm:mt-0"      
     >
       <Box flex={1}>
         <HStack
@@ -69,7 +62,7 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
         setShowModal={setShowModal}
         showModal={showModal}
       />
-    </Box>
+    </div>
   );
 }
 
