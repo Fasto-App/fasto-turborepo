@@ -21,19 +21,19 @@ export const updateProductQuantity = async (foundCheckout: Checkout, db: Connect
 
     product.totalOrdered += quantity;
 
-    if (product?.quantity && product.quantity >= quantity) {
+    if (product?.quantity && product.quantity < quantity) {
+      product.quantity = 0; // Set quantity to zero since it's insufficient   
+    } else if (product?.quantity && product.quantity >= quantity) {
       product.quantity -= quantity;
-      return await product.save();
-    } else if (product?.quantity && product.quantity < quantity) {
-      product.quantity = 0; // Set quantity to zero since it's insufficient    
-      return await product.save();
-    } else if (product?.blockOnZeroQuantity) {
-      // The product has no quantity, but it's set to block on zero quantity
+    } else {
       // this should not even have to be reached
-      Bugsnag.notify(`Insufficient quantity for product ${product?._id}`)
+      // The product has no quantity, but it's set to block on zero quantity
+      if (product?.blockOnZeroQuantity) {
+        Bugsnag.notify(`Insufficient quantity for product ${product?._id}`)
+      }
     }
 
-    return await product.save();
+    await product.save();
   }
 }
 
