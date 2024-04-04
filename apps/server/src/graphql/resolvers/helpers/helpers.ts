@@ -51,21 +51,18 @@ export const getCountry = async ({
 }
 
 export const createBusinessNotification = async ({
-businessId, 
-sender_id,
-path, 
-message
-}:
-{  message: string,
+  businessId,
+  sender_id,
+  path,
+  message
+}: {
+  message: string,
   businessId: string,
   sender_id: string,
-  path?: string}
+  path?: string
+}
 ) => {
   const Notification = NotificationModel(db);
-
-  console.log("createBusinessNotification")
-  console.log({businessId})
-
   // the problem here is that the business is null
   const newNotification = await Notification.create({
     business_receiver_id: businessId,
@@ -78,19 +75,59 @@ message
 };
 
 
-// export const createCustomerNotification = async (
-//   customerId: string,
-//   businessUserId: string,
-//   message: string,
-//   path?: string
-// ) => {
-//   const Notification = NotificationModel(db);
-//   const newNotification = await Notification.create({
-//     customer_sender_id: customerId,
-//     message,
-//     sender_id: businessUserId,
-//     path
-//   });
+type CustomerNotification = {
+  customerId: string,
+  businessUserId: string,
+  message: string,
+  path?: string
+}
 
-//   return newNotification;
-// };
+export const createCustomerNotification = async ({
+  businessUserId,
+  customerId,
+  message,
+  path
+}: CustomerNotification
+) => {
+  const Notification = NotificationModel(db);
+  const newNotification = await Notification.create({
+    customer_sender_id: customerId,
+    message,
+    sender_id: businessUserId,
+    business_receiver_id: businessUserId,
+    path
+  });
+
+  return newNotification;
+};
+
+// when a order is made by a customer
+export const createOrderNotification = async (sender: string, businessId: string, orderId: string) => {
+  // business/admin/orders
+  return await createCustomerNotification({
+    customerId: sender,
+    businessUserId: businessId,
+    path: `business/admin/orders?orderId${orderId}`,
+    message: "Order Created!",
+  });
+}
+// when a payment is made by a customer
+const createPaymentNotification = async (sender: string, businessId: string, paymentId: string) => {
+  // business/admin/orders
+  return await createCustomerNotification({
+    customerId: sender,
+    businessUserId: businessId,
+    path: `business/admin/payments?paymentId=${paymentId}`,
+    message: "",
+  });
+}
+// when a customer requests a table
+const createRequestNotification = async (sender: string, businessId: string) => {
+  // business/admin/orders
+  return await createCustomerNotification({
+    customerId: sender,
+    businessUserId: businessId,
+    path: 'business/admin/orders',
+    message: "",
+  });
+}
