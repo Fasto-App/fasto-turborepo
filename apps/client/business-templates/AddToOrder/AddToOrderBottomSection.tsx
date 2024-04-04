@@ -96,7 +96,7 @@ export const AddToOrderBottomSection = ({
       </div>
       <div className="row-span-7">
         {!products?.length ?
-          <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 p-4 gap-4'>
+          <div className='grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4'>
             {Array(12).fill(null).map(i => <SkeletonProductTile key={i} />)}
           </div> :
           <MemoizedProducts
@@ -117,7 +117,7 @@ const MemoizedProducts = React.memo(function ProductsList({
   const { t } = useTranslation("businessAddToOrder");
 
   return <ScrollArea className="h-full w-full  whitespace-nowrap rounded-md border">
-    <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 p-4 gap-4'>
+    <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 p-4 gap-4'>
       {products?.map((product: any) => (
         <ProductTile
           ctaTitle={t("add")}

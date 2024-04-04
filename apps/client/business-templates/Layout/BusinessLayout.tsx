@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useBreakpointValue } from 'native-base';
-import { BusinessScreenContainer } from '../../components/atoms/BusinessScreenContainer';
 import { BusinessNavigationTab } from './BusinessNavigationTab';
 import { useRouter } from 'next/router';
 import { BUSINESS_ADMIN, BusinessRouteKeys, businessPathName } from 'fasto-route';
@@ -18,7 +17,7 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 	});
 
 	const isAdminRoute = router.pathname.includes(BUSINESS_ADMIN)
-	const shouldShowSideBar = display && isAdminRoute &&
+	const shouldShowSideBar = isAdminRoute &&
 		!router.pathname.includes("add-to-order") &&
 		!router.pathname.includes("checkout")
 
@@ -37,10 +36,11 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	return (
-		<BusinessScreenContainer>
+		<div className="flex flex-row h-screen w-screen bg-white">
+
 			{shouldShowSideBar ? <BusinessNavigationTab /> : null}
 			{children}
-		</BusinessScreenContainer>
+		</div>
 	);
 };
 

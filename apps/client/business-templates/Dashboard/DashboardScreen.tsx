@@ -12,7 +12,7 @@ import {
   useGetUserInformationQuery,
 } from "../../gen/generated";
 import { parseToCurrency } from "app-helpers";
-import { ScrollArea } from "@/shadcn/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/shadcn/components/ui/scroll-area";
 import { CardHeader, CardTitle, CardDescription, CardContent, Card } from "@/shadcn/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/components/ui/tabs";
 import { RecentSales } from "./Graphs/RecentSales";
@@ -44,7 +44,7 @@ export const DashboardScreen = () => {
           mostSellingItem={data?.getMostSellingProducts?.[0]?.name}
           revenue={parseToCurrency(checkoutData?.getPaidCheckoutByDate?.total)}
         />
-        <ScrollArea className="h-full flex flex-1 ">
+        <ScrollArea className="h-full">
           <Card className="h-full p-2">
             <Tabs defaultValue="pagamentos" className="flex flex-1 flex-col p-2 gap-4 h-full">
               <TabsList className="flex justify-end w-full">
@@ -97,71 +97,44 @@ const Panel = ({ loading, revenue, mostSellingItem }: any) => {
   const userData = useGetUserInformationQuery();
   const { t } = useTranslation("businessDashboard");
 
-  return (
-    <VStack
-      p={4}
-      space={2}
-      borderWidth={1}
-      borderColor={"gray.50"}
-      shadow={"2"}
-      borderRadius={"md"}
-      bgColor={"white"}
-    >
-      <Heading size="md">
-        {`${t("hello")} ${userData
-          ?.data?.getUserInformation
-          ?.name}`}
-      </Heading>
-      <Heading size="xs">{t("welcomeDashBoard")}</Heading>
-
-      <HStack space={"3"}>
-        <Box
-          p={"3"}
-          borderRadius={"md"}
-          borderColor={"coolGray.200"}
-          borderWidth={1}
-          w={"48"}
-        >
-          <Text fontSize={"md"}>{t("totalRevenue")}</Text>
-          <Text fontSize={"md"} bold>
-            {loading
-              ? <>
-                <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
-                </Heading>
+  return (   
+    <div className="p-4 space-y-2 border border-gray-50 shadow-md rounded-md mt-[20px] sm:mt-0 bg-white z-10">
+      <h1 className="text-lg">
+        {`${t("hello")} ${userData?.data?.getUserInformation?.name}`}
+      </h1>
+      <h1 className="text-xs">{t("welcomeDashBoard")}</h1>
+      <div className="flex gap-3">
+        <div className="p-3 border border-cool-gray-200 rounded-md min-w-min">
+          <p className="text-md">{t("totalRevenue")}</p>
+          <p className="text-md font-bold">
+            {loading ? (
+              <>
+                <span className="animate-spin mr-1">⏳</span>
+                <span className="text-primary-500">Loading...</span>
               </>
-              : revenue}
-          </Text>
-        </Box>
-
-        <Box
-          p={"3"}
-          borderRadius={"md"}
-          borderWidth={1}
-          borderColor={"coolGray.200"}
-          w={"48"}
-        >
-          <Text fontSize={"md"}>{t("mostSellingItem")}</Text>
-          <Text fontSize={"md"} bold>
-            {loading ? <>
-              {/* TODO: accessibility should be translated as well */}
-              <Spinner accessibilityLabel="Loading posts" />  <Heading color="primary.500" fontSize="md">
-              </Heading>
-            </> : mostSellingItem}
-          </Text>
-        </Box>
-        <Box
-          p={"3"}
-          borderRadius={"md"}
-          borderWidth={1}
-          borderColor={"coolGray.200"}
-          w={"48"}
-        >
-          <Text fontSize={"md"}>{t("numberOfOrders")}</Text>
-          <Text fontSize={"md"} bold>
-            +132
-          </Text>
-        </Box>
-      </HStack>
-    </VStack>
+            ) : (
+              revenue
+            )}
+          </p>
+        </div>
+        <div className="p-3 border border-cool-gray-200 rounded-md min-w-min">
+          <p className="text-md">{t("mostSellingItem")}</p>
+          <p className="text-md font-bold">
+            {loading ? (
+              <>
+                <span className="animate-spin mr-1">⏳</span>
+                <span className="text-primary-500">Loading...</span>
+              </>
+            ) : (
+              mostSellingItem
+            )}
+          </p>
+        </div>
+        <div className="p-3 border border-cool-gray-200 rounded-md min-w-min">
+          <p className="text-md">{t("numberOfOrders")}</p>
+          <p className="text-md font-bold">+132</p>
+        </div>
+      </div>
+    </div>
   );
 };
