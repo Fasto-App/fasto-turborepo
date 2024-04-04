@@ -17,7 +17,7 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 	});
 
 	const isAdminRoute = router.pathname.includes(BUSINESS_ADMIN)
-	const shouldShowSideBar = display && isAdminRoute &&
+	const shouldShowSideBar = isAdminRoute &&
 		!router.pathname.includes("add-to-order") &&
 		!router.pathname.includes("checkout")
 
