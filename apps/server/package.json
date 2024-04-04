@@ -7,7 +7,8 @@
 		"start": "ts-node --transpile-only src/index.ts",
 		"dev": "doppler run -- nodemon --ext ts,graphql src/index.ts",
 		"build": "rm -rf dist && tsc",
-		"generate": "doppler run -- graphql-codegen --config src/codegen.ts"
+		"generate": "doppler run -- graphql-codegen --config src/codegen.ts",
+		"test": "doppler run -- jest"
 	},
 	"dependencies": {
 		"@apollo/server": "^4.5.0",
@@ -43,9 +44,13 @@
 		"@graphql-codegen/cli": "3.3.0",
 		"@graphql-codegen/typescript": "3.0.3",
 		"@graphql-codegen/typescript-resolvers": "3.2.0",
+		"@shelf/jest-mongodb": "^4.2.0",
 		"@types/bcryptjs": "^2.4.2",
 		"@types/graphql-upload": "8.0.12",
+		"@types/jest": "^29.5.12",
 		"@types/nodemailer": "^6.4.7",
-		"nodemon": "^2.0.16"
+		"jest": "^29.7.0",
+		"nodemon": "^2.0.16",
+		"ts-jest": "^29.1.2"
 	}
 }

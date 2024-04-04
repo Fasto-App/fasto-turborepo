@@ -2,7 +2,6 @@ import React, { useEffect } from "react"
 import Link from 'next/link';
 import { Image, HStack, Text, Center, VStack, useBreakpointValue, Skeleton, Box, Pressable, AspectRatio, FlatList, Heading } from "native-base"
 import { useRouter } from "next/router";
-import { Helmet } from "react-helmet";
 import { useGetAllBusinessQuery } from "../../gen/generated";
 import { NavigationButton } from "../../components/atoms/NavigationButton";
 import { businessRoute, customerRoute } from "fasto-route";
@@ -83,14 +82,14 @@ export const BusinessesScreen = () => {
           }}
         />
       </Box >
-      <Helmet>
+      {/* <Helmet>
         <title>Fasto</title>
         <script type="application/javascript" async>
           {`
 						console.log("Hello World")
 					`}
         </script>
-      </Helmet>
+      </Helmet> */}
     </Box>
   );
 }

@@ -16,7 +16,7 @@ import {
   stripeOnboard,
 } from "../../../stripe";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
-import { getCountry, updateProductQuantity } from "../helpers/helpers";
+import { createBusinessNotification, getCountry, updateProductQuantity } from "../helpers/helpers";
 
 const generatePaymentIntent: MutationResolvers["generatePaymentIntent"] =
   async (parent, { input }, { db, client }) => {
