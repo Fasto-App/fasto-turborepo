@@ -9,6 +9,9 @@ import { CategoryModal } from './CategoryModal';
 import { GetAllCategoriesByBusinessQuery } from '../../gen/generated';
 import { useTranslation } from 'react-i18next';
 import { Tile } from '../../components/Tile';
+import { Card } from '@/shadcn/components/ui/card';
+import { ScrollArea, ScrollBar } from '@/shadcn/components/ui/scroll-area';
+import { PlusIcon } from '@radix-ui/react-icons';
 
 type Categories = NonNullable<GetAllCategoriesByBusinessQuery["getAllCategoriesByBusiness"]>
 
@@ -76,20 +79,12 @@ const CategoryList = ({ resetAll, categories }:
 	}
 
 	return (<>
-		<VStack
-			space={4}
-			p={"4"}
-			shadow={"4"}
-			borderWidth={1}
-			borderRadius={"md"}
-			borderColor={"trueGray.400"}
-			backgroundColor={"white"}
-		>
-			<Box flexDirection={"row"}>
-				<Heading flex={1}>
+		<div className="space-y-4 p-4 shadow-md border border-gray-400 rounded-md bg-white mt-[36px] sm:mt-0">
+			<div className='flex flex-row justify-between items-center'>
+				<p className='text-xl font-bold'>
 					{t("categories")}
-				</Heading>
-				<HStack>
+				</p>
+				<div>
 					<Button
 						disabled={!categoryId}
 						isDisabled={!categoryId}
@@ -99,16 +94,15 @@ const CategoryList = ({ resetAll, categories }:
 						onPress={() => setShowCategoryModal(true)}>
 						{t("edit")}
 					</Button>
-				</HStack>
-			</Box>
-
-			<HStack space={2}>
-				{categories.length ?
+				</div>
+			</div>
+			<div className="flex space-x-2">
+				{categories.length ? (
 					<>
-						<SmallAddMoreButton onPress={() => {
+						<Button variant="outline" onPress={() => {
 							removeQueryParams()
 							setShowCategoryModal(true)
-						}} />
+						}}><PlusIcon/></Button>						
 						<Tile
 							selected={!categoryId}
 							onPress={clearQueryParams}
@@ -116,19 +110,19 @@ const CategoryList = ({ resetAll, categories }:
 							{t("all")}
 						</Tile>
 					</>
-					: null}
-				<HStack flex={1} space={1}>
-					<FlatList
-						horizontal
-						data={categories.length ? categories : []}
-						renderItem={renderCategory}
-						ListEmptyComponent={EmptyState}
-						ItemSeparatorComponent={() => <Box w={"2"} />}
-						keyExtractor={(item) => `${item?._id}_category`}
-					/>
-				</HStack>
-			</HStack>
-		</VStack>
+				) : null}
+				<div className="flex flex-1 space-x-1 overflow-x-auto">
+						<FlatList
+							horizontal
+							data={categories.length ? categories : []}
+							renderItem={renderCategory}
+							ListEmptyComponent={EmptyState}
+							ItemSeparatorComponent={() => <Box w={"2"} />}
+							keyExtractor={(item) => `${item?._id}_category`}
+						/>
+				</div>
+			</div>
+		</div>
 		<CategoryModal
 			// @ts-ignore
 			categoryControl={categoryControl}

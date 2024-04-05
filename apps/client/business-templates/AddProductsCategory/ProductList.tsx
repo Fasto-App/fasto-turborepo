@@ -13,6 +13,9 @@ import { useTranslation } from 'next-i18next';
 import { MoreButton } from '../../components/MoreButton';
 import { PlusButton } from '../Tables/SquareTable';
 import { parseToCurrency } from 'app-helpers';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { Button } from '@/shadcn/components/ui/button';
+import { PlusIcon } from '@radix-ui/react-icons';
 
 type Products = GetAllProductsByBusinessIdQuery["getAllProductsByBusinessID"];
 
@@ -95,56 +98,60 @@ const ProductList = (
 			setProductValue={setProductValue}
 			getProductValues={getProductValues}
 		/>
-		<Box
-			flex={"1 1 1px"}
-			p={"4"}
-			w={"100%"}
-			shadow={"4"}
-			borderWidth={1}
-			borderRadius={"md"}
-			borderColor={"trueGray.400"}
-			backgroundColor={"white"}
-			flexDirection={"column"}
+		<div
+			className="flex flex-1 p-4 w-full shadow-md border-1 rounded-md border-trueGray-400 bg-white flex-col overflow-y-auto"
 		>
-			<HStack justifyContent={"space-between"}>
-				<HStack space={2}>
-					<Heading flex={1}>
+			<div className="flex justify-between items-center">
+				<div className="flex space-x-2 items-center text-xl font-bold">
+					<p className="flex-1">
 						{selectedCategory?.name ?? t("all")}
-					</Heading>
-					{products?.length ? <MoreButton onPress={addProduct} /> : null}
-				</HStack>
+					</p>
+					{products?.length ? <Button className='bg-white text-black' size="icon" onClick={addProduct}><PlusIcon/></Button> : null}
+				</div>
 
 				{products?.length ?
-					<Link isUnderlined={false} alignSelf={"self-end"} p={4}
-						onPress={() => setShowTileList(!showTilesList)}
-						_text={{ color: "blue.400" }}
-					>
-						{showTilesList ? t("showCards") : t("showList")}
-					</Link> :
+					<div className="self-end p-4 text-xl">
+						<Link
+							onPress={() => setShowTileList(!showTilesList)}
+							_text={{ color: "blue.400" }}
+						>
+							{showTilesList ? t("showCards") : t("showList")}
+						</Link>
+					</div>
+					:
 					null}
-			</HStack>
-			<HStack
-				flex={1}
-				space={4}
-				flexWrap={"wrap"}
-				overflowY={"scroll"}
-			>
+			</div>
+			<div className='overflow-y-auto mt-4 sm:mt-0'>
+			<div className="flex flex-row flex-wrap justify-center sm:justify-start">
 				{!products.length ?
-					<Box pt={4}>
-						<PlusButton
-							onPress={() => setShowProductModal(true)}
-						/>
-					</Box> : null}
+					<div className='pt-4'>
+						<PlusButton onPress={() => setShowProductModal(true)} />
+					</div> : null}
 				{showTilesList ?
-					<FlatList
+				<>
+					{products.map(item => (
+						!item ? null :
+							<ProductTile
+								quantity={item?.quantity || undefined}
+								name={item.name}
+								description={item.description ?? ""}
+								imageUrl={item.imageUrl ?? ""}
+								onPress={() => setProductValues(item)}
+								key={item._id}
+								ctaTitle={t("editItem")}
+								paused={item?.paused}
+							/>
+					))}
+					{/* <FlatList
 						key={numColumns}
 						data={products}
 						numColumns={numColumns}
 						renderItem={renderProductTile}
 						keyExtractor={(item) => `${item?._id}_product`}
-						ItemSeparatorComponent={() => <Box height={"4"} />}
-						overflowX={"hidden"}
-					/>
+						ItemSeparatorComponent={() => <div className='h-4' />}
+						overflowX="hidden"
+					/> */}
+				</>
 					:
 					products.map(item => (
 						!item ? null :
@@ -160,8 +167,9 @@ const ProductList = (
 								paused={item?.paused}
 							/>
 					))}
-			</HStack>
-		</Box>
+			</div>
+			</div>
+		</div>
 	</>
 
 	);
