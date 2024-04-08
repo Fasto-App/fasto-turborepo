@@ -91,9 +91,8 @@ export const createCustomerNotification = async ({
 ) => {
   const Notification = NotificationModel(db);
   const newNotification = await Notification.create({
-    customer_sender_id: customerId,
     message,
-    sender_id: businessUserId,
+    sender_id: customerId,
     business_receiver_id: businessUserId,
     path
   });
@@ -112,22 +111,23 @@ export const createOrderNotification = async (sender: string, businessId: string
   });
 }
 // when a payment is made by a customer
-const createPaymentNotification = async (sender: string, businessId: string, paymentId: string) => {
+export const createPaymentNotification = async (sender: string, businessId: string, paymentId: string) => {
   // business/admin/orders
   return await createCustomerNotification({
     customerId: sender,
     businessUserId: businessId,
     path: `business/admin/payments?paymentId=${paymentId}`,
-    message: "",
+    message: "You just made a payment!",
   });
 }
 // when a customer requests a table
-const createRequestNotification = async (sender: string, businessId: string) => {
+// notification is working properly
+export const createRequestNotification = async (sender: string, businessId: string) => {
   // business/admin/orders
   return await createCustomerNotification({
     customerId: sender,
     businessUserId: businessId,
     path: 'business/admin/orders',
-    message: "",
+    message: "Request for Table!",
   });
 }

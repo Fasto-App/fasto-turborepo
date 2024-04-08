@@ -85,7 +85,7 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (
   console.log({business})
 
   await createBusinessNotification({
-    message: "You just made a payment",
+    message: "You just received a payment!",
     businessId: business,
     sender_id: business,
     path: "business/123"
@@ -209,7 +209,7 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] =
         console.log({business})
   
         await createBusinessNotification({
-          message: "You just made a payment",
+          message: "You just received a payment!",
           businessId: business,
           sender_id: business,
           path: "business/123"
@@ -271,6 +271,8 @@ const customerRequestPayFull: MutationResolvers["customerRequestPayFull"] =
 
     foundCheckout.payments = [payment._id];
     foundCheckout.updated_at = new Date(Date.now());
+
+    
 
     return await foundCheckout.save();
   };
