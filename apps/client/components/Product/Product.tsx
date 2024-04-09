@@ -66,8 +66,8 @@ const ProductCard = ({
       : description;
 
   return (
-    <Card className="w-36 max-h-60 sm:w-64 sm:max-h-80 rounded-lg overflow-hidden border-0.5 border-coolGray-300 bg-white shadow-md mr-4 mb-4" onClick={onPress}>
-      <div className="bg-orange-600 py-2 relative h-24">
+    <Card className="cursor-pointer w-36 max-h-60 sm:w-64 sm:max-h-80 rounded-lg overflow-hidden border-0.5 border-coolGray-300 bg-white shadow-md mr-4 mb-4" onClick={onPress}>
+      <div className=" sm:bg-secondary-400 py-2 relative h-24">
         <div className={`flex items-center justify-center bg-${paused ? "secondary-200" : "secondary-400"}`}>
           {paused && (
             <div className="absolute top-0 right-0">

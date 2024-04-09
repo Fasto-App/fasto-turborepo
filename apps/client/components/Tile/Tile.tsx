@@ -1,29 +1,28 @@
 import React from "react"
-import { Button, HStack } from "native-base"
+import { HStack } from "native-base"
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
+import { Button } from "@/shadcn/components/ui/button";
+import { cn } from "@/shadcn/lib/utils";
 
 type TileProps = {
   selected: boolean;
   onPress?: () => void;
   children: React.ReactNode;
+  variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
 }
 
 export const Tile: React.FC<TileProps> = ({
   children,
   selected,
   onPress,
+  variant
 }) => {
   return (
     <Button
-      px={4}
-      m={0}
-      minW={"100px"}
-      maxH={"40px"}
-      borderColor={selected ? 'primary.500' : "gray.300"}
+      className={cn("px-2 m-0 w-md text-md max-h-7 hover:bg-transparent hover:text-none hover:border-primary-500 ", selected ? 'bg-primary-100 border-primary-500  text-primary-600 font-semibold' : "border-gray-300 text-black")}
+      variant={variant}
       disabled={selected}
-      variant={selected ? 'outline' : 'outline'}
-      colorScheme={selected ? "primary" : "black"}
-      onPress={onPress}
+      onClick={onPress}
     >
       {children}
     </Button>

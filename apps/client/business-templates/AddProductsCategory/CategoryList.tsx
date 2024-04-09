@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import {
-	Box, Heading, Text, FlatList, HStack, VStack, Button
+	Box, Heading, Text, FlatList, HStack, VStack
 } from 'native-base';
 import { SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { useAppStore } from '../UseAppStore';
@@ -12,6 +12,8 @@ import { Tile } from '../../components/Tile';
 import { Card } from '@/shadcn/components/ui/card';
 import { ScrollArea, ScrollBar } from '@/shadcn/components/ui/scroll-area';
 import { PlusIcon } from '@radix-ui/react-icons';
+import { Button } from '@/shadcn/components/ui/button';
+import { cn } from '@/shadcn/lib/utils';
 
 type Categories = NonNullable<GetAllCategoriesByBusinessQuery["getAllCategoriesByBusiness"]>
 
@@ -58,6 +60,7 @@ const CategoryList = ({ resetAll, categories }:
 			<Tile
 				key={item._id}
 				selected={categoryId === item._id}
+				variant={"outline"}
 				onPress={() => {
 					addQueryParams(item._id, item.name, item.description)
 				}}
@@ -81,17 +84,21 @@ const CategoryList = ({ resetAll, categories }:
 	return (<>
 		<div className="space-y-4 p-4 shadow-md border border-gray-400 rounded-md bg-white mt-[36px] sm:mt-0">
 			<div className='flex flex-row justify-between items-center'>
-				<p className='text-xl font-bold'>
-					{t("categories")}
-				</p>
+				<div className='flex gap-2 items-center'>
+					<p className='text-xl font-bold'>
+						{t("categories")}
+					</p>
+					<Button variant="outline" className='border shadow-md' onClick={() => {
+						removeQueryParams()
+						setShowCategoryModal(true)
+					}}><PlusIcon /></Button>
+				</div>
 				<div>
 					<Button
 						disabled={!categoryId}
-						isDisabled={!categoryId}
-						variant={"solid"}
-						width={"100px"}
-						colorScheme="success"
-						onPress={() => setShowCategoryModal(true)}>
+						variant="outline"
+						className='w-[100px] bg-success-300 hover:bg-success-400'
+						onClick={() => setShowCategoryModal(true)}>
 						{t("edit")}
 					</Button>
 				</div>
@@ -99,12 +106,9 @@ const CategoryList = ({ resetAll, categories }:
 			<div className="flex space-x-2">
 				{categories.length ? (
 					<>
-						<Button variant="outline" onPress={() => {
-							removeQueryParams()
-							setShowCategoryModal(true)
-						}}><PlusIcon/></Button>						
 						<Tile
 							selected={!categoryId}
+							variant={"outline"}
 							onPress={clearQueryParams}
 						>
 							{t("all")}
@@ -112,14 +116,14 @@ const CategoryList = ({ resetAll, categories }:
 					</>
 				) : null}
 				<div className="flex flex-1 space-x-1 overflow-x-auto">
-						<FlatList
-							horizontal
-							data={categories.length ? categories : []}
-							renderItem={renderCategory}
-							ListEmptyComponent={EmptyState}
-							ItemSeparatorComponent={() => <Box w={"2"} />}
-							keyExtractor={(item) => `${item?._id}_category`}
-						/>
+					<FlatList
+						horizontal
+						data={categories.length ? categories : []}
+						renderItem={renderCategory}
+						ListEmptyComponent={EmptyState}
+						ItemSeparatorComponent={() => <Box w={"2"} />}
+						keyExtractor={(item) => `${item?._id}_category`}
+					/>
 				</div>
 			</div>
 		</div>

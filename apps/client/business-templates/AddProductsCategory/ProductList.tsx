@@ -27,7 +27,7 @@ const ProductList = (
 		resetAll: () => void,
 	}) => {
 	const [showProductModal, setShowProductModal] = useState(false);
-	const [showTilesList, setShowTileList] = useState(false);
+	const [showTilesList, setShowTileList] = useState(true);
 
 	const setProduct = useAppStore(state => state.setProduct)
 	const category = useAppStore(state => state.category)
@@ -106,7 +106,7 @@ const ProductList = (
 					<p className="flex-1">
 						{selectedCategory?.name ?? t("all")}
 					</p>
-					{products?.length ? <Button className='bg-white text-black' size="icon" onClick={addProduct}><PlusIcon/></Button> : null}
+					{products?.length ? <Button className='hover:bg-gray-100 bg-white text-black' size="icon" onClick={addProduct}><PlusIcon/></Button> : null}
 				</div>
 
 				{products?.length ?
@@ -126,7 +126,8 @@ const ProductList = (
 				{!products.length ?
 					<div className='pt-4'>
 						<PlusButton onPress={() => setShowProductModal(true)} />
-					</div> : null}
+					</div> 
+					: null}
 				{showTilesList ?
 				<>
 					{products.map(item => (
