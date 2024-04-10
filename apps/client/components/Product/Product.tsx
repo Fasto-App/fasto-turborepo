@@ -130,22 +130,16 @@ const ProductTile = ({
   name,
   imageUrl,
   onPress,
-  ctaTitle,
-  description,
   quantity,
   hideButton,
-  paused
+  paused,
+  _id
 }: ProductTileProps) => {
   const { t } = useTranslation("common");
 
-  console.log("product changed")
-
-  const formattedDescriptions =
-    description && description.length > maxLength
-      ? description.substring(0, maxLength) + "..."
-      : description;
   return (
     <div
+      key={_id}
       className="xl:max-w-full xl:min-w-96 md:max-w-full md:min-w-64 sm:max-w-full sm:min-w-72 max-w-full min-w-64 max-h-72 min-h-20 mb-4 mx-2 flex flex-1 rounded-lg border bg-white shadow-md p-2 gap-2 hover:cursor-pointer"
       onClick={!hideButton ? onPress : undefined}
     >
@@ -183,11 +177,6 @@ const ProductTile = ({
             )}`}</Badge>
           )}
         </p>
-        {formattedDescriptions ? (
-          <p className="hidden sm:flex text-gray-600 text-xs">
-            {formattedDescriptions}
-          </p>
-        ) : null}
       </div>
     </div>
   );

@@ -65,26 +65,10 @@ const ProductList = (
 
 	}, [setProduct, setProductValue])
 
-	const numColumns = useNumOfColumns(showTilesList)
-
 	const addProduct = useCallback(() => {
 		setProductValue("category", category ?? "")
 		setShowProductModal(true)
 	}, [category, setProductValue])
-
-	const renderProductTile = useCallback(({ item, index }: { item: Products[number], index: number }) => {
-		if (!item) return null
-
-		return <ProductTile
-			name={item.name}
-			imageUrl={item.imageUrl ?? ""}
-			onPress={() => setProductValues(item)}
-			description={item.description}
-			ctaTitle={t("editItem")}
-			quantity={item?.quantity || undefined}
-			paused={item?.paused}
-		/>
-	}, [setProductValues, t])
 
 	return (<>
 		<ProductModal
@@ -106,7 +90,7 @@ const ProductList = (
 					<p className="flex-1">
 						{selectedCategory?.name ?? t("all")}
 					</p>
-					{products?.length ? <Button className='hover:bg-gray-100 bg-white text-black' size="icon" onClick={addProduct}><PlusIcon/></Button> : null}
+					{products?.length ? <Button className='hover:bg-gray-100 bg-white text-black' size="icon" onClick={addProduct}><PlusIcon /></Button> : null}
 				</div>
 
 				{products?.length ?
@@ -121,61 +105,50 @@ const ProductList = (
 					:
 					null}
 			</div>
-			<div className='overflow-y-auto mt-4 sm:mt-0'>
-			<div className="flex flex-row flex-wrap justify-center sm:justify-start">
-				{!products.length ?
-					<div className='pt-4'>
-						<PlusButton onPress={() => setShowProductModal(true)} />
-					</div> 
-					: null}
-				{showTilesList ?
-				<>
-					{products.map(item => (
-						!item ? null :
-							<ProductTile
-								quantity={item?.quantity || undefined}
-								name={item.name}
-								description={item.description ?? ""}
-								imageUrl={item.imageUrl ?? ""}
-								onPress={() => setProductValues(item)}
-								key={item._id}
-								ctaTitle={t("editItem")}
-								paused={item?.paused}
-							/>
-					))}
-					{/* <FlatList
-						key={numColumns}
-						data={products}
-						numColumns={numColumns}
-						renderItem={renderProductTile}
-						keyExtractor={(item) => `${item?._id}_product`}
-						ItemSeparatorComponent={() => <div className='h-4' />}
-						overflowX="hidden"
-					/> */}
-				</>
-					:
-					products.map(item => (
-						!item ? null :
-							<ProductCard
-								quantity={item?.quantity || undefined}
-								name={item.name}
-								description={item.description ?? ""}
-								price={parseToCurrency(item.price, item.currency)}
-								imageUrl={item.imageUrl ?? ""}
-								onPress={() => setProductValues(item)}
-								key={item._id}
-								ctaTitle={t("editItem")}
-								paused={item?.paused}
-							/>
-					))}
-			</div>
+			<div className='overflow-y-auto mt-4 sm:mt-0 border border-primary-500'>
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+					{!products.length ?
+						<div className='pt-4'>
+							<PlusButton onPress={() => setShowProductModal(true)} />
+						</div>
+						: null}
+					{showTilesList ?
+						<>
+							{products.map(item => (
+								<ProductTile
+									_id={item._id}
+									quantity={item?.quantity || undefined}
+									name={item.name}
+									description={item.description ?? ""}
+									imageUrl={item.imageUrl ?? ""}
+									onPress={() => setProductValues(item)}
+									key={item._id}
+									ctaTitle={t("editItem")}
+									paused={item?.paused}
+								/>
+							))}
+						</>
+						:
+						products.map(item => (
+							!item ? null :
+								<ProductCard
+									_id={item._id}
+									quantity={item?.quantity || undefined}
+									name={item.name}
+									description={item.description ?? ""}
+									price={parseToCurrency(item.price, item.currency)}
+									imageUrl={item.imageUrl ?? ""}
+									onPress={() => setProductValues(item)}
+									key={item._id}
+									ctaTitle={t("editItem")}
+									paused={item?.paused}
+								/>
+						))}
+				</div>
 			</div>
 		</div>
 	</>
-
 	);
 };
-
-
 
 export { ProductList };

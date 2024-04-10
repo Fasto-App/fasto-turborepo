@@ -123,6 +123,7 @@ export const TablesScreen = () => {
   const renderSpaces = useCallback(({ item }) => {
     return (
       <Tile
+        variant={"outline"}
         selected={selectedSpaceId === item._id}
         onPress={() => setSelectedSpace(item._id)}
       >
