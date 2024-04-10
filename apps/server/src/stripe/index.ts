@@ -7,7 +7,7 @@ import { PaymentModel } from '../models/payment';
 import { CheckoutModel } from '../models/checkout';
 import { RequestModel, TabModel, TableModel } from '../models';
 import { Connection } from 'mongoose';
-import { updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
+import { createPaymentNotification, updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
 
 if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
   throw ApolloError(new Error('Missing Stripe secret key env var'), 'InternalServerError');
@@ -169,7 +169,7 @@ export type Metada = {
 
 export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) => {
   const { payment_id } = metadata;
-
+console.log("**************")
   const foundPayment = await PaymentModel(db).findById(payment_id);
   if (!foundPayment) throw ApolloError(new Error('Payment not found.'), 'BadRequest');
 
@@ -188,12 +188,12 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
     if (foundTab?.table) {
       const foundTable = await TableModel(db).findByIdAndUpdate(foundTab.table);
       if (!foundTable) throw ApolloError(new Error('Table not found'), 'BadRequest');
-
+    
       foundTable.status = 'Available';
       foundTable.tab = undefined;
       await foundTable.save();
     }
-
+    
     foundTab.status = 'Closed';
     await foundTab.save();
 
@@ -208,13 +208,19 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
     const foundRequests = await RequestModel(db).find({ tab: foundTab?._id });
     if (foundRequests.length > 0) {
       const savePromises = foundRequests.map((request) => {
+        console.log('************')
         request.status = 'Completed';
         return request.save();
       });
 
       await Promise.all(savePromises);
     }
+    
   }
+  
+//   export const createPaymentNotification = async (sender: string, businessId: string, paymentId: string) admin user, check businessId: string
+  // @ts-ignore
+  await createPaymentNotification(foundTab.admin, foundCheckout.business, foundPayment._id)
 
   await foundCheckout.save();
 };
