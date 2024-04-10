@@ -105,46 +105,47 @@ const ProductList = (
 					:
 					null}
 			</div>
-			<div className='overflow-y-auto mt-4 sm:mt-0 border border-primary-500'>
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-					{!products.length ?
-						<div className='pt-4'>
-							<PlusButton onPress={() => setShowProductModal(true)} />
-						</div>
-						: null}
-					{showTilesList ?
-						<>
-							{products.map(item => (
-								<ProductTile
-									_id={item._id}
-									quantity={item?.quantity || undefined}
-									name={item.name}
-									description={item.description ?? ""}
-									imageUrl={item.imageUrl ?? ""}
-									onPress={() => setProductValues(item)}
-									key={item._id}
-									ctaTitle={t("editItem")}
-									paused={item?.paused}
-								/>
-							))}
-						</>
-						:
-						products.map(item => (
-							!item ? null :
-								<ProductCard
-									_id={item._id}
-									quantity={item?.quantity || undefined}
-									name={item.name}
-									description={item.description ?? ""}
-									price={parseToCurrency(item.price, item.currency)}
-									imageUrl={item.imageUrl ?? ""}
-									onPress={() => setProductValues(item)}
-									key={item._id}
-									ctaTitle={t("editItem")}
-									paused={item?.paused}
-								/>
+			<div className='h-full overflow-y-auto mt-4 sm:mt-0'>
+
+				{!products.length ?
+					<div className='pt-4'>
+						<PlusButton onPress={() => setShowProductModal(true)} />
+					</div>
+					: null}
+				{showTilesList ?
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+						{products.map(item => (
+							<ProductTile
+								_id={item._id}
+								quantity={item?.quantity || undefined}
+								name={item.name}
+								description={item.description ?? ""}
+								imageUrl={item.imageUrl ?? ""}
+								onPress={() => setProductValues(item)}
+								key={item._id}
+								ctaTitle={t("editItem")}
+								paused={item?.paused}
+							/>
 						))}
-				</div>
+					</div>
+					:
+					<div className="flex flex-row flex-wrap justify-center sm:justify-start">
+						{products.map(item => (
+							<ProductCard
+								_id={item._id}
+								quantity={item?.quantity || undefined}
+								name={item.name}
+								description={item.description ?? ""}
+								price={parseToCurrency(item.price, item.currency)}
+								imageUrl={item.imageUrl ?? ""}
+								onPress={() => setProductValues(item)}
+								key={item._id}
+								ctaTitle={t("editItem")}
+								paused={item?.paused}
+							/>
+						))}
+					</div>
+				}
 			</div>
 		</div>
 	</>
