@@ -8,6 +8,7 @@ import { ControlledForm } from "../../components/ControlledForm/ControlledForm";
 import { CategoryFields } from "./useCategoryFormHook";
 import { ModalAddButtons } from "../../components/ModalButtons";
 import { useTranslation } from "next-i18next";
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shadcn/components/ui/dialog";
 
 type CategoriesModalProps = {
   showModal: boolean;
