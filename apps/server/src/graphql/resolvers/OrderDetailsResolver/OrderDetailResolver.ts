@@ -15,6 +15,7 @@ import { TabStatus, TabType, getPercentageOfValue } from 'app-helpers';
 import { CheckoutModel } from '../../../models/checkout';
 import { OrdersGroupModel } from '../../../models/ordersGroup';
 import { ObjectId } from 'mongodb';
+import { createOrderNotification } from '../helpers/helpers';
 
 // Quick Sale
 // @ts-ignore
@@ -202,7 +203,7 @@ const clientCreateMultipleOrderDetails:
             return orderDetails
         }));
 
-        await OrdersGroupModel(db).create({
+        const orderGroups = await OrdersGroupModel(db).create({
             orders: orderDetails.map(order => order._id),
             business: client?.business,
             tab: tab._id,
@@ -211,6 +212,14 @@ const clientCreateMultipleOrderDetails:
         })
 
         await tab.save();
+
+        if (client?._id) {
+            await createOrderNotification(
+                client?._id,
+                foundRequest.business.toString(),
+                orderGroups._id
+            )
+        }
 
         return orderDetails;
     }

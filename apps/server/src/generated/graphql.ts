@@ -495,6 +495,7 @@ export type Mutation = {
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
   cancelSubscription: StripeSubscription;
+  changeNotificationStatus: Notification;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
   confirmPayment: Scalars['Boolean'];
   connectExpressPayment: Scalars['String'];
@@ -579,6 +580,11 @@ export type MutationAddItemToCartArgs = {
 
 export type MutationCancelSubscriptionArgs = {
   input: DeleteSubInput;
+};
+
+
+export type MutationChangeNotificationStatusArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1998,6 +2004,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   acceptTabRequest?: Resolver<Maybe<ResolversTypes['Request']>, ParentType, ContextType, RequireFields<MutationAcceptTabRequestArgs, 'input'>>;
   addItemToCart?: Resolver<ResolversTypes['CartItem'], ParentType, ContextType, RequireFields<MutationAddItemToCartArgs, 'input'>>;
   cancelSubscription?: Resolver<ResolversTypes['StripeSubscription'], ParentType, ContextType, RequireFields<MutationCancelSubscriptionArgs, 'input'>>;
+  changeNotificationStatus?: Resolver<ResolversTypes['Notification'], ParentType, ContextType, RequireFields<MutationChangeNotificationStatusArgs, 'id'>>;
   clientCreateMultipleOrderDetails?: Resolver<Array<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<MutationClientCreateMultipleOrderDetailsArgs, 'input'>>;
   confirmPayment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConfirmPaymentArgs, 'input'>>;
   connectExpressPayment?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationConnectExpressPaymentArgs, 'input'>>;

@@ -6,6 +6,7 @@ import { pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from "../pubSub";
 import { Context } from "../types"
 import { tokenClient } from "../utils";
 import { MutationResolvers } from "../../../generated/graphql";
+import { createRequestNotification } from "../helpers/helpers";
 
 // client request a table
 const openTabRequest: MutationResolvers["openTabRequest"] = async (
@@ -47,6 +48,8 @@ const openTabRequest: MutationResolvers["openTabRequest"] = async (
 
     const newRequest = await createNewRequest(newClient._id)
 
+    await createRequestNotification(newClient._id, business)
+
     pubsub.publish(TAB_REQUEST, { onTabRequest: newRequest })
 
     return await tokenClient({
@@ -72,6 +75,8 @@ const openTabRequest: MutationResolvers["openTabRequest"] = async (
   }
 
   const newRequest = await createNewRequest(foundUserByPhone._id)
+  
+  await createRequestNotification(foundUserByPhone._id, business)
 
   pubsub.publish(TAB_REQUEST, { onTabRequest: newRequest })
 

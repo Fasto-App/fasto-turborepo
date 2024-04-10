@@ -3,6 +3,10 @@ extend type Query {
   getNotificationByCustomer: [Notification!]
 }
 
+extend type Mutation {
+	changeNotificationStatus(id: ID! ): Notification!
+}
+
 type Notification {
 	_id: ID!
 	message: String!
