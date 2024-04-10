@@ -83,7 +83,7 @@ const ProductList = (
 			getProductValues={getProductValues}
 		/>
 		<div
-			className="flex flex-1 p-4 w-full shadow-md border-1 rounded-md border-trueGray-400 bg-white flex-col overflow-y-auto"
+			className="flex flex-1 p-4 w-full shadow-md border border-gray-400 rounded-md bg-white flex-col overflow-y-auto"
 		>
 			<div className="flex justify-between items-center">
 				<div className="flex space-x-2 items-center text-xl font-bold">

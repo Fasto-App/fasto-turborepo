@@ -91,7 +91,9 @@ const CategoryList = ({ resetAll, categories }:
 					<Button variant="outline" className='border shadow-md' onClick={() => {
 						removeQueryParams()
 						setShowCategoryModal(true)
-					}}><PlusIcon /></Button>
+					}}>
+						<PlusIcon />
+					</Button>
 				</div>
 				<div>
 					<Button
