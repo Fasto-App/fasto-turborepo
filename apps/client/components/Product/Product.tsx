@@ -2,17 +2,11 @@ import { Skeleton } from "@/shadcn/components/ui/skeleton"
 import React from "react";
 import {
   Box,
-  AspectRatio,
-  Stack,
-  Heading,
   HStack,
-  Button,
   Text,
-  Image,
   Avatar,
   VStack,
-  Checkbox,
-  Badge,
+  Checkbox
 } from "native-base";
 import { BorderTile } from "../BorderTile";
 import { useTranslation } from "next-i18next";
@@ -20,6 +14,8 @@ import { MINIMUM_ITEMS_QUANTITY } from "app-helpers";
 import { Icon } from "../atoms/NavigationButton";
 import { cn } from "@/shadcn/lib/utils";
 import { PlusCircledIcon } from "@radix-ui/react-icons"
+import { Card } from "@/shadcn/components/ui/card";
+import { Badge } from "@/shadcn/components/ui/badge";
 
 type ProductTileProps = {
   _id?: string;
@@ -65,70 +61,54 @@ const ProductCard = ({
       : description;
 
   return (
-    <Box
-      w={"64"}
-      maxH={"80"}
-      rounded="lg"
-      overflow="hidden"
-      borderWidth={0.5}
-      borderColor="coolGray.300"
-      backgroundColor="white"
-      shadow="4"
-      mr={"4"}
-      mb={"4"}
-    >
-      <Box alignItems="center" backgroundColor={paused ? "secondary.200" : "secondary.400"}>
-        {paused ? <Box
-          position={"absolute"}
-          alignItems={"flex-end"} w={"100%"}>
-          <Icon type="Paused" color="red" size={"3em"} />
-        </Box> : null}
-        <AspectRatio w="60%" ratio={16 / 9} top={5} opacity={paused ? 0.6 : 1}>
-          <Image
-            source={{
-              uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER,
-            }}
-            alt="image"
-            borderRadius={"sm"}
-          />
-        </AspectRatio>
-      </Box>
-      <Stack pt={8} p={2} space={2} flex={1}>
-        <Heading size="md" textAlign={"center"} opacity={paused ? 0.6 : 1}>
-          {name}
-        </Heading>
-        <Text fontSize={"xs"} fontWeight={"500"} textAlign={"center"} opacity={paused ? 0.6 : 1}>
+    <Card className="cursor-pointer w-36 max-h-60 sm:w-64 sm:max-h-80 rounded-lg overflow-hidden border-0.5 border-coolGray-300 bg-white shadow-md mr-4 mb-4" onClick={onPress}>
+      <div className=" sm:bg-secondary-400 py-2 relative h-24">
+        <div className={`flex items-center justify-center bg-${paused ? "secondary-200" : "secondary-400"}`}>
+          {paused && (
+            <div className="absolute top-0 right-0">
+              <Icon type="Paused" color="red" size="3em" />
+            </div>
+          )}
+          <div className="absolute top-2 sm:top-5 flex justify-center items-center" style={{ opacity: paused ? 0.6 : 1 }}>
+            <div>
+              {/* TODO use Next Image */}
+              <img
+                src={imageUrl ? imageUrl : IMAGE_PLACEHOLDER}
+                alt="image"
+                className="rounded-sm w-32 sm:w-40  h-20 sm:h-24 object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="pt-2 sm:pt-8 p-2 space-y-2 flex-1">
+        <h3 className={`text-md text-center ${paused ? "opacity-60" : ""}`}>{name}</h3>
+        <p className={`text-xs font-semibold text-center ${paused ? "opacity-60" : ""}`}>
           {quantity ? (
             quantity <= MINIMUM_ITEMS_QUANTITY ? (
-              <Badge colorScheme={"error"} variant={"solid"}>{`${t(
+              <Badge className=" bg-orange-400 text-white p-1 sm:p-2">{`${t(
                 "lowStock"
               )}: ${quantity}`}</Badge>
             ) : (
-              <Badge colorScheme={"success"} variant={"outline"}>{`${t(
+              <Badge className=" border-green-800 text-green-800 p-1 sm:p-2" variant="outline">{`${t(
                 "inStock"
               )}: ${quantity}`}</Badge>
             )
           ) : (
-            <Badge colorScheme={"orange"} variant={"solid"}>{`${t(
+            <Badge className="bg-red-700 text-white p-1 sm:p-2" >{`${t(
               "noStock"
             )}`}</Badge>
           )}
-        </Text>
-        <Text fontWeight="400" textAlign={"center"} flex={1} opacity={paused ? 0.6 : 1}>
+        </p>
+        <p className={`hidden sm:flex font-normal text-center flex-1 ${paused ? "opacity-60" : ""}`}>
           {formattedDescriptions}
-        </Text>
-        <HStack alignItems="center" space={2} justifyContent="center">
-          <Text fontWeight="400" fontSize={"lg"} mx={"4"} opacity={paused ? 0.6 : 1}>
-            {price}
-          </Text>
-          {onPress ? (
-            <Button _text={{ bold: true }} w={"100"} colorScheme={"tertiary"} onPress={onPress}>
-              {t("edit")}
-            </Button>
-          ) : null}
-        </HStack>
-      </Stack>
-    </Box>
+        </p>
+        <div className="flex items-center space-x-2 justify-center">
+          <p className={`font-normal text-lg mx-4 ${paused ? "opacity-60" : ""}`}>{price}</p>
+        </div>
+      </div>
+    </Card>
+
   );
 };
 
@@ -146,23 +126,17 @@ const ProductTile = ({
   name,
   imageUrl,
   onPress,
-  ctaTitle,
-  description,
   quantity,
   hideButton,
-  paused
+  paused,
+  _id
 }: ProductTileProps) => {
   const { t } = useTranslation("common");
 
-  console.log("product changed")
-
-  const formattedDescriptions =
-    description && description.length > maxLength
-      ? description.substring(0, maxLength) + "..."
-      : description;
   return (
     <div
-      className="w-full max-h-72 min-h-20 mb-4 flex flex-1 rounded-lg border bg-white shadow-md p-2 gap-2 hover:cursor-pointer"
+      key={_id}
+      className="max-h-72 min-h-20 mb-4 mx-2 flex flex-1 shadow-md border border-gray-400 rounded-lg bg-white p-2 gap-2 hover:cursor-pointer"
       onClick={!hideButton ? onPress : undefined}
     >
       <Avatar
@@ -173,39 +147,34 @@ const ProductTile = ({
           uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER,
         }}
       />
-      <div className={cn("flex flex-1  flex-col gap-1", paused ? "opacity-60" : "opacity-100")}>
-        {paused ? <Icon type="Paused" color="red" size={"1.5em"} /> : null}
-
-        <div className="flex justify-between">
-          <Text color="coolGray.800" bold>
+      <div className={cn("flex flex-1 justify-start items-start flex-col gap-1",
+        `${paused ? "opacity-60" : "opacity-100"}`)}>
+        <div className="flex justify-between gap-2">
+          <p className="text-gray-800 font-bold pb-1">
             {name}
-          </Text>
-          <PlusCircledIcon />
+          </p>
+          {paused ? <Icon type="Paused" color="red" size={"1.5em"} /> : null}
         </div>
 
-        <Text fontSize={"xs"} fontWeight={"500"} textAlign={"left"}>
+        <p className={`text-xs pb-1 text-center ${paused ? "opacity-60" : ""}`}>
           {quantity ? (
             quantity <= MINIMUM_ITEMS_QUANTITY ? (
-              <Badge colorScheme={"orange"} variant={"solid"}>{`${t(
+              <Badge className=" bg-orange-400 text-white">{`${t(
                 "lowStock"
               )}: ${quantity}`}</Badge>
             ) : (
-              <Badge colorScheme={"success"} variant={"solid"}>{`${t(
+              <Badge className=" border-green-800 text-green-800" variant="outline">{`${t(
                 "inStock"
               )}: ${quantity}`}</Badge>
             )
           ) : (
-            <Badge colorScheme={"error"} variant={"solid"}>{`${t(
+            <Badge className="bg-red-700 text-white" >{`${t(
               "noStock"
             )}`}</Badge>
           )}
-        </Text>
-        {formattedDescriptions ? (
-          <Text color="coolGray.600" fontSize={"xs"}>
-            {formattedDescriptions}
-          </Text>
-        ) : null}
+        </p>
       </div>
+      <PlusCircledIcon />
     </div>
   );
 };

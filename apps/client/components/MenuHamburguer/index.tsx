@@ -63,14 +63,6 @@ export function AccountMenu() {
         </Pressable>
       );
     }}>
-    {/* <Menu.Group title="Accounts">
-      <Menu.Item>
-        <AccountTile isActive employeeName="Alex" businessName="Mendes" uri="https://bit.ly/dan-abramov" />
-      </Menu.Item>
-      <Menu.Item>
-        <AccountTile isActive employeeName="Alex" businessName="Mendes" uri="https://bit.ly/dan-abramov" />
-      </Menu.Item>
-    </Menu.Group> */}
     < Divider mt="3" w="100%" />
     <Menu.Item backgroundColor={"white"}>
       <BusinessNavigationButton
@@ -82,6 +74,5 @@ export function AccountMenu() {
         }}
       />
     </Menu.Item>
-  </Menu >
-
+  </Menu>
 }
