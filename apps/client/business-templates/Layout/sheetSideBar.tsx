@@ -76,28 +76,28 @@ export function SheetSideBar() {
                 <ScrollArea className="h-screen">
                     <SheetHeader>
                         <div className="flex relative items-center mx-3.5 py-4 px-3.5">
-                        <Image src="/images/fasto-logo.svg" alt="Logo" height={36} width={180} />    
+                            <Image src="/images/fasto-logo.svg" alt="Logo" height={36} width={180} />
                         </div>
-                    </SheetHeader>                    
+                    </SheetHeader>
                     <nav className="flex flex-col gap-2 items-start mx-2">
                         {buttonsData.map((item, index) => (
-                            <SheetClose>
-                            <Button
-                                key={index}
-                                variant="ghost"
-                                asChild
-                                className={cn("flex items-start justify-start gap-2 text-md font-light text-black w-full cursor-pointer hover:bg-[#e0d0c8]",
-                                    item.route === router.pathname && "border border-[#f55135] text-[#f55135]"
-                                )}
-                                onClick={() => { router.push(item.route); }}
-                            >
-                                <div className="flex items-center gap-0">
-                                    <div className="flex items-center justify-center gap-5 text-[18px]">
-                                        {item.type}
-                                        {item.text}
+                            <SheetClose key={item.route}>
+                                <Button
+                                    key={index}
+                                    variant="ghost"
+                                    asChild
+                                    className={cn("flex items-start justify-start gap-2 text-md font-light text-black w-full cursor-pointer hover:bg-[#e0d0c8]",
+                                        item.route === router.pathname && "border border-[#f55135] text-[#f55135]"
+                                    )}
+                                    onClick={() => { router.push(item.route); }}
+                                >
+                                    <div className="flex items-center gap-0">
+                                        <div className="flex items-center justify-center gap-5 text-[18px]">
+                                            {item.type}
+                                            {item.text}
+                                        </div>
                                     </div>
-                                </div>
-                            </Button>
+                                </Button>
                             </SheetClose>
                         ))}
                     </nav>

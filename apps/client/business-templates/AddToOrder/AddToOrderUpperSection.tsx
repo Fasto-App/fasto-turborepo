@@ -26,7 +26,6 @@ export const AddToOrderUpperSection = ({
         <ScrollView horizontal={true} pb={2}>
           <HStack space={2}>
             <Tile
-              variant={"outline"}
               selected={!selectedUser}
               onPress={() => setSelectedUser(undefined)}
             >
@@ -34,7 +33,6 @@ export const AddToOrderUpperSection = ({
             </Tile>
             {tabData?.getTabByID?.users?.map((user, index) => (
               <Tile
-                variant={"outline"}
                 key={user._id}
                 selected={user._id === selectedUser}
                 onPress={() => setSelectedUser(user._id)}

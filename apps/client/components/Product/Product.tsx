@@ -2,13 +2,8 @@ import { Skeleton } from "@/shadcn/components/ui/skeleton"
 import React from "react";
 import {
   Box,
-  AspectRatio,
-  Stack,
-  Heading,
   HStack,
-  Button,
   Text,
-  Image,
   Avatar,
   VStack,
   Checkbox
@@ -76,6 +71,7 @@ const ProductCard = ({
           )}
           <div className="absolute top-2 sm:top-5 flex justify-center items-center" style={{ opacity: paused ? 0.6 : 1 }}>
             <div>
+              {/* TODO use Next Image */}
               <img
                 src={imageUrl ? imageUrl : IMAGE_PLACEHOLDER}
                 alt="image"
@@ -140,7 +136,7 @@ const ProductTile = ({
   return (
     <div
       key={_id}
-      className="xl:max-w-full xl:min-w-96 md:max-w-full md:min-w-64 sm:max-w-full sm:min-w-72 max-w-full min-w-64 max-h-72 min-h-20 mb-4 mx-2 flex flex-1 rounded-lg border bg-white shadow-md p-2 gap-2 hover:cursor-pointer"
+      className="max-h-72 min-h-20 mb-4 mx-2 flex flex-1 shadow-md border border-gray-400 rounded-lg bg-white p-2 gap-2 hover:cursor-pointer"
       onClick={!hideButton ? onPress : undefined}
     >
       <Avatar
@@ -151,13 +147,13 @@ const ProductTile = ({
           uri: imageUrl ? imageUrl : IMAGE_PLACEHOLDER,
         }}
       />
-      <div className={`flex justify-start items-start flex-col gap-1", ${paused ? "opacity-60" : "opacity-100"}`}>
-        {paused ? <Icon type="Paused" color="red" size={"1.5em"} /> : null}
-
-        <div className="flex justify-between">
+      <div className={cn("flex flex-1 justify-start items-start flex-col gap-1",
+        `${paused ? "opacity-60" : "opacity-100"}`)}>
+        <div className="flex justify-between gap-2">
           <p className="text-gray-800 font-bold pb-1">
             {name}
           </p>
+          {paused ? <Icon type="Paused" color="red" size={"1.5em"} /> : null}
         </div>
 
         <p className={`text-xs pb-1 text-center ${paused ? "opacity-60" : ""}`}>
@@ -178,6 +174,7 @@ const ProductTile = ({
           )}
         </p>
       </div>
+      <PlusCircledIcon />
     </div>
   );
 };

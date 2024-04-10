@@ -70,7 +70,6 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
             <HStack space={2}>
               {users?.map((patron, index) => (
                 <Tile
-                  variant={"outline"}
                   key={patron._id} selected={false} onPress={undefined} >
                   {`${t("person")} ${index + 1}`}
                 </Tile>

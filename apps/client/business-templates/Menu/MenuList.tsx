@@ -47,7 +47,6 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
                       <Icon type={"StarFill"} size={"1em"} />
                     </Box> : null}
                     <Tile
-                      variant={"outline"}
                       key={item?._id}
                       selected={item?._id === menu}
                       onPress={() => {

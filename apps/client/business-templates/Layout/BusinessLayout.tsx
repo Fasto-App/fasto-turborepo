@@ -11,10 +11,6 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
 
 	const [hasMounted, setHasMounted] = useState(false);
-	const display = useBreakpointValue({
-		base: false,
-		md: true,
-	});
 
 	const isAdminRoute = router.pathname.includes(BUSINESS_ADMIN)
 	const shouldShowSideBar = isAdminRoute &&
@@ -37,7 +33,6 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<div className="flex flex-row h-screen w-screen bg-white">
-
 			{shouldShowSideBar ? <BusinessNavigationTab /> : null}
 			{children}
 		</div>

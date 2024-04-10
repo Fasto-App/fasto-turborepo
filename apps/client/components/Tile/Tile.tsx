@@ -8,24 +8,20 @@ type TileProps = {
   selected: boolean;
   onPress?: () => void;
   children: React.ReactNode;
-  variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null
 }
 
 export const Tile: React.FC<TileProps> = ({
   children,
   selected,
   onPress,
-  variant
 }) => {
   return (
-    <Button
-      className={cn("px-2 m-0 w-md text-md max-h-7 hover:bg-transparent hover:text-none hover:border-primary-500 ", selected ? 'bg-primary-100 border-primary-500  text-primary-600 font-semibold' : "border-gray-300 text-black")}
-      variant={variant}
-      disabled={selected}
+    <div
+      className={cn("px-2 m-0 w-md text-md max-h-7 shadow-md text-black border border-gray-400 rounded-md content-center hover:text-primary-600 hover:border-primary-500 hover:cursor-pointer", selected ? 'bg-primary-100 border border-primary-600 text-primary-600 font-semibold' : null)}
       onClick={onPress}
     >
       {children}
-    </Button>
+    </div>
   )
 }
 

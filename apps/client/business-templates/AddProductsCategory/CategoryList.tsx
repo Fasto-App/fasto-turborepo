@@ -60,7 +60,6 @@ const CategoryList = ({ resetAll, categories }:
 			<Tile
 				key={item._id}
 				selected={categoryId === item._id}
-				variant={"outline"}
 				onPress={() => {
 					addQueryParams(item._id, item.name, item.description)
 				}}
@@ -82,13 +81,13 @@ const CategoryList = ({ resetAll, categories }:
 	}
 
 	return (<>
-		<div className="space-y-4 p-4 shadow-md border border-gray-400 rounded-md bg-white mt-[36px] sm:mt-0">
+		<div className="space-y-4 p-4 shadow-md border border-gray-400 rounded-md bg-white mt-[20px] sm:mt-0">
 			<div className='flex flex-row justify-between items-center'>
 				<div className='flex gap-2 items-center'>
 					<p className='text-xl font-bold'>
 						{t("categories")}
 					</p>
-					<Button variant="outline" className='border shadow-md' onClick={() => {
+					<Button variant="outline" className='border border-primary-700 shadow-md' onClick={() => {
 						removeQueryParams()
 						setShowCategoryModal(true)
 					}}>
@@ -110,23 +109,21 @@ const CategoryList = ({ resetAll, categories }:
 					<>
 						<Tile
 							selected={!categoryId}
-							variant={"outline"}
 							onPress={clearQueryParams}
 						>
 							{t("all")}
 						</Tile>
 					</>
 				) : null}
-				<div className="flex flex-1 space-x-1 overflow-x-auto">
-					<FlatList
-						horizontal
-						data={categories.length ? categories : []}
-						renderItem={renderCategory}
-						ListEmptyComponent={EmptyState}
-						ItemSeparatorComponent={() => <Box w={"2"} />}
-						keyExtractor={(item) => `${item?._id}_category`}
-					/>
-				</div>
+				<FlatList
+					horizontal
+					data={categories.length ? categories : []}
+					contentContainerStyle={{ paddingVertical: 2 }}
+					renderItem={renderCategory}
+					ListEmptyComponent={EmptyState}
+					ItemSeparatorComponent={() => <Box w={"2"} />}
+					keyExtractor={(item) => `${item?._id}_category`}
+				/>
 			</div>
 		</div>
 		<CategoryModal

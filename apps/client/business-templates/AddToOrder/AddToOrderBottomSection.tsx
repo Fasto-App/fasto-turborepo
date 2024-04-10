@@ -158,7 +158,6 @@ const MemoizedCategoriesList = React.memo(function CategoriesList({
   return (
     <div className="flex w-max space-x-4 p-4">
       <Tile
-        variant={"outline"}
         selected={!selectedCategory}
         onPress={() => setSelectedCategory(undefined)}
       >
@@ -166,7 +165,6 @@ const MemoizedCategoriesList = React.memo(function CategoriesList({
       </Tile>
       {menuData?.getMenuByID?.sections?.map((section: any) => (
         <Tile
-          variant={"outline"}
           key={section.category._id}
           selected={section.category._id === selectedCategory}
           onPress={() => setSelectedCategory(section.category._id)}
