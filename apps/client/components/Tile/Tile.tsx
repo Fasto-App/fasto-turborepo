@@ -1,6 +1,8 @@
 import React from "react"
-import { Button, HStack } from "native-base"
+import { HStack } from "native-base"
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
+import { Button } from "@/shadcn/components/ui/button";
+import { cn } from "@/shadcn/lib/utils";
 
 type TileProps = {
   selected: boolean;
@@ -14,19 +16,12 @@ export const Tile: React.FC<TileProps> = ({
   onPress,
 }) => {
   return (
-    <Button
-      px={4}
-      m={0}
-      minW={"100px"}
-      maxH={"40px"}
-      borderColor={selected ? 'primary.500' : "gray.300"}
-      disabled={selected}
-      variant={selected ? 'outline' : 'outline'}
-      colorScheme={selected ? "primary" : "black"}
-      onPress={onPress}
+    <div
+      className={cn("px-2 m-0 w-md text-md max-h-7 shadow-md text-black border border-gray-400 rounded-md content-center hover:text-primary-600 hover:border-primary-500 hover:cursor-pointer", selected ? 'bg-primary-100 border border-primary-600 text-primary-600 font-semibold' : null)}
+      onClick={onPress}
     >
       {children}
-    </Button>
+    </div>
   )
 }
 

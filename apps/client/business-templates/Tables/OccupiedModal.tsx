@@ -69,7 +69,8 @@ export const OccupiedModal = ({ orders, users }: OccupiedModalProps) => {
           <ScrollView horizontal={true} pb={2}>
             <HStack space={2}>
               {users?.map((patron, index) => (
-                <Tile key={patron._id} selected={false} onPress={undefined} >
+                <Tile
+                  key={patron._id} selected={false} onPress={undefined} >
                   {`${t("person")} ${index + 1}`}
                 </Tile>
               ))}

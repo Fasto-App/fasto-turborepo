@@ -9,7 +9,8 @@ import {
   ScrollView,
   Text,
   useTheme,
-  Pressable
+  Pressable,
+  useMediaQuery
 } from "native-base";
 import {
   ProductCard,
@@ -337,7 +338,7 @@ function MenuProducts() {
     showToast({ message: t("shareLink") })
   }, [businessData?.getBusinessInformation._id, menuId, router.locale, t],)
 
-
+  const isLargerThan768 = useMediaQuery({ minWidth: 768 });
   return (
     <Box
       p={"4"}
@@ -347,8 +348,8 @@ function MenuProducts() {
       borderColor={"trueGray.400"}
       backgroundColor={"white"}
     >
-      <HStack flexDirection={"row"} mb={"2"} space={4}>
-        <HStack space={3}>
+      <HStack flexDirection={isLargerThan768 ? "column" : "row"} mb={"2"} space={4}>
+        <HStack space={3} mb={isLargerThan768 ? "5" : "0"}>
           {isEditingMenu ? (
             <Input
               size={"2xl"}
@@ -357,7 +358,7 @@ function MenuProducts() {
               variant="underlined"
               InputRightElement={<BsPencilSquare />}
               placeholder={selectedMenu?.name as string}
-              onChangeText={setInputValue}
+              onChangeText={setInputValue}              
             />
           ) : (
             <Heading w={"auto"} isTruncated>
@@ -428,12 +429,12 @@ function MenuProducts() {
               </Button>
             ))}
         </ScrollView>
-        <HStack flexDir={"row"} flexWrap={"wrap"}>
+        <HStack flexDir={"row"} flexWrap={"wrap"} mt={isLargerThan768 ? "5" : "0"}>
           <Input
             placeholder={t("search")}
             variant="rounded"
             borderRadius="10"
-            size="md"
+            size={isLargerThan768 ? "xl" : "md"}
             h={"10"}
             value={searchString}
             onChangeText={(text) => {

@@ -13,6 +13,9 @@ import { useTranslation } from 'next-i18next';
 import { MoreButton } from '../../components/MoreButton';
 import { PlusButton } from '../Tables/SquareTable';
 import { parseToCurrency } from 'app-helpers';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { Button } from '@/shadcn/components/ui/button';
+import { PlusIcon } from '@radix-ui/react-icons';
 
 type Products = GetAllProductsByBusinessIdQuery["getAllProductsByBusinessID"];
 
@@ -24,7 +27,7 @@ const ProductList = (
 		resetAll: () => void,
 	}) => {
 	const [showProductModal, setShowProductModal] = useState(false);
-	const [showTilesList, setShowTileList] = useState(false);
+	const [showTilesList, setShowTileList] = useState(true);
 
 	const setProduct = useAppStore(state => state.setProduct)
 	const category = useAppStore(state => state.category)
@@ -62,26 +65,10 @@ const ProductList = (
 
 	}, [setProduct, setProductValue])
 
-	const numColumns = useNumOfColumns(showTilesList)
-
 	const addProduct = useCallback(() => {
 		setProductValue("category", category ?? "")
 		setShowProductModal(true)
 	}, [category, setProductValue])
-
-	const renderProductTile = useCallback(({ item, index }: { item: Products[number], index: number }) => {
-		if (!item) return null
-
-		return <ProductTile
-			name={item.name}
-			imageUrl={item.imageUrl ?? ""}
-			onPress={() => setProductValues(item)}
-			description={item.description}
-			ctaTitle={t("editItem")}
-			quantity={item?.quantity || undefined}
-			paused={item?.paused}
-		/>
-	}, [setProductValues, t])
 
 	return (<>
 		<ProductModal
@@ -95,60 +82,57 @@ const ProductList = (
 			setProductValue={setProductValue}
 			getProductValues={getProductValues}
 		/>
-		<Box
-			flex={"1 1 1px"}
-			p={"4"}
-			w={"100%"}
-			shadow={"4"}
-			borderWidth={1}
-			borderRadius={"md"}
-			borderColor={"trueGray.400"}
-			backgroundColor={"white"}
-			flexDirection={"column"}
+		<div
+			className="flex flex-1 p-4 w-full shadow-md border border-gray-400 rounded-md bg-white flex-col overflow-y-auto"
 		>
-			<HStack justifyContent={"space-between"}>
-				<HStack space={2}>
-					<Heading flex={1}>
+			<div className="flex justify-between items-center">
+				<div className="flex space-x-2 items-center text-xl font-bold">
+					<p className="flex-1">
 						{selectedCategory?.name ?? t("all")}
-					</Heading>
-					{products?.length ? <MoreButton onPress={addProduct} /> : null}
-				</HStack>
+					</p>
+					{products?.length ? <Button className='hover:bg-gray-100 bg-white text-black' size="icon" onClick={addProduct}><PlusIcon /></Button> : null}
+				</div>
 
 				{products?.length ?
-					<Link isUnderlined={false} alignSelf={"self-end"} p={4}
-						onPress={() => setShowTileList(!showTilesList)}
-						_text={{ color: "blue.400" }}
-					>
-						{showTilesList ? t("showCards") : t("showList")}
-					</Link> :
-					null}
-			</HStack>
-			<HStack
-				flex={1}
-				space={4}
-				flexWrap={"wrap"}
-				overflowY={"scroll"}
-			>
-				{!products.length ?
-					<Box pt={4}>
-						<PlusButton
-							onPress={() => setShowProductModal(true)}
-						/>
-					</Box> : null}
-				{showTilesList ?
-					<FlatList
-						key={numColumns}
-						data={products}
-						numColumns={numColumns}
-						renderItem={renderProductTile}
-						keyExtractor={(item) => `${item?._id}_product`}
-						ItemSeparatorComponent={() => <Box height={"4"} />}
-						overflowX={"hidden"}
-					/>
+					<div className="self-end p-4 text-xl">
+						<Link
+							onPress={() => setShowTileList(!showTilesList)}
+							_text={{ color: "blue.400" }}
+						>
+							{showTilesList ? t("showCards") : t("showList")}
+						</Link>
+					</div>
 					:
-					products.map(item => (
-						!item ? null :
+					null}
+			</div>
+			<div className='h-full overflow-y-auto mt-4 sm:mt-0'>
+
+				{!products.length ?
+					<div className='pt-4'>
+						<PlusButton onPress={() => setShowProductModal(true)} />
+					</div>
+					: null}
+				{showTilesList ?
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+						{products.map(item => (
+							<ProductTile
+								_id={item._id}
+								quantity={item?.quantity || undefined}
+								name={item.name}
+								description={item.description ?? ""}
+								imageUrl={item.imageUrl ?? ""}
+								onPress={() => setProductValues(item)}
+								key={item._id}
+								ctaTitle={t("editItem")}
+								paused={item?.paused}
+							/>
+						))}
+					</div>
+					:
+					<div className="flex flex-row flex-wrap justify-center sm:justify-start">
+						{products.map(item => (
 							<ProductCard
+								_id={item._id}
 								quantity={item?.quantity || undefined}
 								name={item.name}
 								description={item.description ?? ""}
@@ -159,14 +143,13 @@ const ProductList = (
 								ctaTitle={t("editItem")}
 								paused={item?.paused}
 							/>
-					))}
-			</HStack>
-		</Box>
+						))}
+					</div>
+				}
+			</div>
+		</div>
 	</>
-
 	);
 };
-
-
 
 export { ProductList };
