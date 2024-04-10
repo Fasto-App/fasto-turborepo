@@ -8,7 +8,7 @@ type TileProps = {
   selected: boolean;
   onPress?: () => void;
   children: React.ReactNode;
-  variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
+  variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null
 }
 
 export const Tile: React.FC<TileProps> = ({
