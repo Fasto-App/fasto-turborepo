@@ -5,7 +5,7 @@ import { businessRoute } from "fasto-route";
 import type { AppNavigation } from "fasto-route";
 import { useTranslation } from "next-i18next";
 import { useGetBusinessInformationQuery, useGetSignUpSubscriptionsQuery } from "../../gen/generated";
-import { ActivityLogIcon, CalendarIcon, ClipboardIcon, DashboardIcon, GearIcon, IdCardIcon, Pencil1Icon, TableIcon, ChevronLeftIcon, CardStackPlusIcon } from "@radix-ui/react-icons";
+import { ActivityLogIcon, CalendarIcon, ClipboardIcon, DashboardIcon, GearIcon, IdCardIcon, Pencil1Icon, TableIcon, ChevronLeftIcon, CardStackPlusIcon, BellIcon } from "@radix-ui/react-icons";
 import { Button } from "@/shadcn/components/ui/button";
 import { DropdownMenuSideBar } from "./DropDownMenu";
 import { cn } from "@/shadcn/lib/utils";
@@ -64,6 +64,7 @@ const BusinessNavigationTab = () => {
 
   return (
     <>
+      <NotificationBadge />
       <aside
         className={`hidden sm:flex flex-col justify-between bg-gray-50 text-white shadow-lg shadow-gray-900/20 duration-200 ease-out ${open ? "w-[16.5rem]" : "w-[5rem]"} `}
       >
@@ -117,7 +118,6 @@ const BusinessNavigationTab = () => {
       </aside>
       <div className="sm:hidden bg-[#f55135] top-0 w-full fixed h-[36px] z-20">
         <div className="flex flex-row justify-between mx-1 items-center">
-
           <h3 className={`pl-2 font-bold text-lg text-white`}>
             Fasto App
           </h3>
@@ -127,5 +127,16 @@ const BusinessNavigationTab = () => {
     </>
   );
 };
+
+const NotificationBadge = () => (
+  <div className="absolute z-40 top-4 right-40 pt-4 px-2">
+    <div className="py-[1px] px-2 bg-error-600 rounded-full text-white absolute -top-[0.1px] -right-1 p-0">
+      <p className='text-sm font-medium'>
+        1
+      </p>
+    </div>
+    <BellIcon className='h-6 w-6 text-white bg-error-600 rounded-sm' />
+  </div>
+)
 
 export { BusinessNavigationTab };
