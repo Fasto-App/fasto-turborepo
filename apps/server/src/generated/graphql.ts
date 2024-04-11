@@ -908,6 +908,10 @@ export type Notification = {
   sender_id?: Maybe<Scalars['ID']>;
 };
 
+export type NotificationInput = {
+  isRead?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type OpenTabRequestInput = {
   business: Scalars['ID'];
   name: Scalars['String'];
@@ -1107,6 +1111,11 @@ export type QueryGetGoogleAutoCompleteArgs = {
 
 export type QueryGetMenuByIdArgs = {
   input?: InputMaybe<GetMenuById>;
+};
+
+
+export type QueryGetNotificationByBusinessArgs = {
+  input?: InputMaybe<NotificationInput>;
 };
 
 
@@ -1616,6 +1625,7 @@ export type ResolversTypes = {
   Menu: ResolverTypeWrapper<Menu>;
   Mutation: ResolverTypeWrapper<{}>;
   Notification: ResolverTypeWrapper<Notification>;
+  NotificationInput: NotificationInput;
   OpenTabRequestInput: OpenTabRequestInput;
   OrderDetail: ResolverTypeWrapper<OrderDetail>;
   OrderDetailInput: OrderDetailInput;
@@ -1746,6 +1756,7 @@ export type ResolversParentTypes = {
   Menu: Menu;
   Mutation: {};
   Notification: Notification;
+  NotificationInput: NotificationInput;
   OpenTabRequestInput: OpenTabRequestInput;
   OrderDetail: OrderDetail;
   OrderDetailInput: OrderDetailInput;
@@ -2192,7 +2203,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getIsConnected?: Resolver<Maybe<ResolversTypes['Balance']>, ParentType, ContextType>;
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getMostSellingProducts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Product']>>>, ParentType, ContextType>;
-  getNotificationByBusiness?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType>;
+  getNotificationByBusiness?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType, Partial<QueryGetNotificationByBusinessArgs>>;
   getNotificationByCustomer?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
   getOrderGroupById?: Resolver<ResolversTypes['OrdersGroup'], ParentType, ContextType, RequireFields<QueryGetOrderGroupByIdArgs, 'id'>>;

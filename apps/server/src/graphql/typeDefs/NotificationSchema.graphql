@@ -1,10 +1,14 @@
 extend type Query {
-	getNotificationByBusiness: [Notification!]
+	getNotificationByBusiness(input: NotificationInput): [Notification!]
   getNotificationByCustomer: [Notification!]
 }
 
 extend type Mutation {
 	changeNotificationStatus(id: ID! ): Notification!
+}
+
+input NotificationInput {
+    isRead: Boolean
 }
 
 type Notification {

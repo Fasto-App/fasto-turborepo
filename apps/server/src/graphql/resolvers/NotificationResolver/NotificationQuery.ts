@@ -11,9 +11,16 @@ export const getNotificationByBusiness: QueryResolvers['getNotificationByBusines
 ) => {
   if (!business) throw ApolloError(new Error("No business id"), 'Unauthorized')
 
-  const foundNotifications = await NotificationModel(db).find({ business_receiver_id: business });
+    let query: any = { business_receiver_id: business };
 
-  return foundNotifications;
+    if (_args.input && _args.input.isRead !== null) { 
+        query.isRead = _args.input.isRead;   
+    }    
+    
+    const foundNotifications = await NotificationModel(db).find(query);    
+    
+    return foundNotifications; 
+
 };
 
 export const NotificationQuery = {
