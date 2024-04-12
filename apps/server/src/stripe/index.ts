@@ -7,7 +7,7 @@ import { PaymentModel } from '../models/payment';
 import { CheckoutModel } from '../models/checkout';
 import { RequestModel, TabModel, TableModel } from '../models';
 import { Connection } from 'mongoose';
-import { createPaymentNotification, updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
+import { createBusinessPaymentNotification, updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
 
 if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
   throw ApolloError(new Error('Missing Stripe secret key env var'), 'InternalServerError');
@@ -220,7 +220,7 @@ console.log("**************")
   
 //   export const createPaymentNotification = async (sender: string, businessId: string, paymentId: string) admin user, check businessId: string
   // @ts-ignore
-  await createPaymentNotification(foundTab.admin, foundCheckout.business, foundPayment._id)
+  await createBusinessPaymentNotification(foundTab.admin, foundCheckout.business, foundPayment._id)
 
   await foundCheckout.save();
 };

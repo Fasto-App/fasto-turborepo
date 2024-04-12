@@ -1119,6 +1119,11 @@ export type QueryGetNotificationByBusinessArgs = {
 };
 
 
+export type QueryGetNotificationByCustomerArgs = {
+  input?: InputMaybe<NotificationInput>;
+};
+
+
 export type QueryGetOrderDetailByIdArgs = {
   orderDetailID: Scalars['ID'];
 };
@@ -2204,7 +2209,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   getMenuByID?: Resolver<ResolversTypes['Menu'], ParentType, ContextType, Partial<QueryGetMenuByIdArgs>>;
   getMostSellingProducts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Product']>>>, ParentType, ContextType>;
   getNotificationByBusiness?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType, Partial<QueryGetNotificationByBusinessArgs>>;
-  getNotificationByCustomer?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType>;
+  getNotificationByCustomer?: Resolver<Maybe<Array<ResolversTypes['Notification']>>, ParentType, ContextType, Partial<QueryGetNotificationByCustomerArgs>>;
   getOrderDetailByID?: Resolver<Maybe<ResolversTypes['OrderDetail']>, ParentType, ContextType, RequireFields<QueryGetOrderDetailByIdArgs, 'orderDetailID'>>;
   getOrderGroupById?: Resolver<ResolversTypes['OrdersGroup'], ParentType, ContextType, RequireFields<QueryGetOrderGroupByIdArgs, 'id'>>;
   getOrdersByCheckout?: Resolver<ResolversTypes['Checkout'], ParentType, ContextType, RequireFields<QueryGetOrdersByCheckoutArgs, 'input'>>;

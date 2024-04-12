@@ -23,9 +23,33 @@ export const getNotificationByBusiness: QueryResolvers['getNotificationByBusines
 
 };
 
+
+
+// @ts-ignore
+export const getNotificationByCustomer: QueryResolvers['getNotificationByCustomer'] = async (
+    _parent,
+    _args,
+    { db, client }
+  ) => {
+    if (!client) throw ApolloError(new Error("No client id"), 'Unauthorized')
+        
+      let query: any = { customer_receiver_id: client._id, sender_id: client.business };
+  
+      if (_args.input && _args.input.isRead !== null) { 
+          query.isRead = _args.input.isRead;   
+      }    
+      console.log(client.business)
+      const foundNotifications = await NotificationModel(db).find(query); 
+      console.log(query)   
+      
+      return foundNotifications; 
+  
+  };
 export const NotificationQuery = {
   getNotificationByBusiness,
+  getNotificationByCustomer
 };
+  
 
 export const testMongoDBQuery = async (businessId: string) => {
   if (!businessId) throw ApolloError(new Error("No business id"), 'Unauthorized')

@@ -15,7 +15,7 @@ export class Notification {
   @prop({ required: true, default: false })
   public isRead!: boolean;
 
-  @prop({ ref: () => Business, required: true })
+  @prop({ ref: () => Business })
   public business_receiver_id!: Ref<Business>;
 
   @prop({ ref: () => User })
