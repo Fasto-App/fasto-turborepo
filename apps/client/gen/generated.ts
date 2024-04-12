@@ -495,6 +495,7 @@ export type Mutation = {
   acceptTabRequest?: Maybe<Request>;
   addItemToCart: CartItem;
   cancelSubscription: StripeSubscription;
+  changeNotificationStatus: Notification;
   clientCreateMultipleOrderDetails: Array<OrderDetail>;
   confirmPayment: Scalars['Boolean'];
   connectExpressPayment: Scalars['String'];
@@ -579,6 +580,11 @@ export type MutationAddItemToCartArgs = {
 
 export type MutationCancelSubscriptionArgs = {
   input: DeleteSubInput;
+};
+
+
+export type MutationChangeNotificationStatusArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -891,6 +897,21 @@ export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  _id: Scalars['ID'];
+  business_receiver_id?: Maybe<Scalars['ID']>;
+  customer_receiver_id?: Maybe<Scalars['ID']>;
+  isRead: Scalars['Boolean'];
+  message: Scalars['String'];
+  path?: Maybe<Scalars['String']>;
+  sender_id?: Maybe<Scalars['ID']>;
+};
+
+export type NotificationInput = {
+  isRead?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type OpenTabRequestInput = {
   business: Scalars['ID'];
   name: Scalars['String'];
@@ -1023,6 +1044,8 @@ export type Query = {
   getIsConnected?: Maybe<Balance>;
   getMenuByID: Menu;
   getMostSellingProducts?: Maybe<Array<Maybe<Product>>>;
+  getNotificationByBusiness?: Maybe<Array<Notification>>;
+  getNotificationByCustomer?: Maybe<Array<Notification>>;
   getOrderDetailByID?: Maybe<OrderDetail>;
   getOrderGroupById: OrdersGroup;
   getOrdersByCheckout: Checkout;
@@ -1088,6 +1111,11 @@ export type QueryGetGoogleAutoCompleteArgs = {
 
 export type QueryGetMenuByIdArgs = {
   input?: InputMaybe<GetMenuById>;
+};
+
+
+export type QueryGetNotificationByBusinessArgs = {
+  input?: InputMaybe<NotificationInput>;
 };
 
 
@@ -1688,6 +1716,13 @@ export type GetMenuByIdQueryVariables = Exact<{
 
 
 export type GetMenuByIdQuery = { __typename?: 'Query', getMenuByID: { __typename?: 'Menu', _id: string, name: string, items?: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null, category?: { __typename?: 'Category', _id: string } | null }> | null, sections?: Array<{ __typename?: 'Section', category: { __typename?: 'Category', _id: string, name: string }, products: Array<{ __typename?: 'Product', _id: string, name: string, imageUrl?: string | null, price: number, description?: string | null, quantity?: number | null, currency?: Currency | null, blockOnZeroQuantity?: boolean | null, category?: { __typename?: 'Category', _id: string } | null }> }> | null } };
+
+export type GetNotificationByBusinessQueryVariables = Exact<{
+  input?: InputMaybe<NotificationInput>;
+}>;
+
+
+export type GetNotificationByBusinessQuery = { __typename?: 'Query', getNotificationByBusiness?: Array<{ __typename?: 'Notification', _id: string, message: string, path?: string | null, isRead: boolean, business_receiver_id?: string | null, customer_receiver_id?: string | null, sender_id?: string | null }> | null };
 
 export type ClientCreateMultipleOrderDetailsMutationVariables = Exact<{
   input: Array<ClientCreateOrderInput> | ClientCreateOrderInput;
@@ -3588,6 +3623,47 @@ export function useGetMenuByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMenuByIdQueryHookResult = ReturnType<typeof useGetMenuByIdQuery>;
 export type GetMenuByIdLazyQueryHookResult = ReturnType<typeof useGetMenuByIdLazyQuery>;
 export type GetMenuByIdQueryResult = Apollo.QueryResult<GetMenuByIdQuery, GetMenuByIdQueryVariables>;
+export const GetNotificationByBusinessDocument = gql`
+    query GetNotificationByBusiness($input: NotificationInput) {
+  getNotificationByBusiness(input: $input) {
+    _id
+    message
+    path
+    isRead
+    business_receiver_id
+    customer_receiver_id
+    sender_id
+  }
+}
+    `;
+
+/**
+ * __useGetNotificationByBusinessQuery__
+ *
+ * To run a query within a React component, call `useGetNotificationByBusinessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetNotificationByBusinessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetNotificationByBusinessQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetNotificationByBusinessQuery(baseOptions?: Apollo.QueryHookOptions<GetNotificationByBusinessQuery, GetNotificationByBusinessQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetNotificationByBusinessQuery, GetNotificationByBusinessQueryVariables>(GetNotificationByBusinessDocument, options);
+      }
+export function useGetNotificationByBusinessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNotificationByBusinessQuery, GetNotificationByBusinessQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetNotificationByBusinessQuery, GetNotificationByBusinessQueryVariables>(GetNotificationByBusinessDocument, options);
+        }
+export type GetNotificationByBusinessQueryHookResult = ReturnType<typeof useGetNotificationByBusinessQuery>;
+export type GetNotificationByBusinessLazyQueryHookResult = ReturnType<typeof useGetNotificationByBusinessLazyQuery>;
+export type GetNotificationByBusinessQueryResult = Apollo.QueryResult<GetNotificationByBusinessQuery, GetNotificationByBusinessQueryVariables>;
 export const ClientCreateMultipleOrderDetailsDocument = gql`
     mutation ClientCreateMultipleOrderDetails($input: [ClientCreateOrderInput!]!) {
   clientCreateMultipleOrderDetails(input: $input) {

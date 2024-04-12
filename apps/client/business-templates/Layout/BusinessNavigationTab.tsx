@@ -1,16 +1,16 @@
 import { useRouter } from "next/router";
-import React, { useMemo, useState } from "react";
+import React, { } from "react";
 import Image from "next/image";
 import { businessRoute } from "fasto-route";
-import type { AppNavigation } from "fasto-route";
 import { useTranslation } from "next-i18next";
-import { useGetBusinessInformationQuery, useGetSignUpSubscriptionsQuery } from "../../gen/generated";
+import { useGetBusinessInformationQuery } from "../../gen/generated";
 import { ActivityLogIcon, CalendarIcon, ClipboardIcon, DashboardIcon, GearIcon, IdCardIcon, Pencil1Icon, TableIcon, ChevronLeftIcon, CardStackPlusIcon } from "@radix-ui/react-icons";
 import { Button } from "@/shadcn/components/ui/button";
 import { DropdownMenuSideBar } from "./DropDownMenu";
 import { cn } from "@/shadcn/lib/utils";
 import { useSideBarOpen } from "@/localStorage/businessStorage";
 import { SheetSideBar } from "./sheetSideBar";
+import { NotificationBadge } from "./NotificationBadge";
 
 const BusinessNavigationTab = () => {
   const router = useRouter();
@@ -64,6 +64,7 @@ const BusinessNavigationTab = () => {
 
   return (
     <>
+      <NotificationBadge />
       <aside
         className={`hidden sm:flex flex-col justify-between bg-gray-50 text-white shadow-lg shadow-gray-900/20 duration-200 ease-out ${open ? "w-[16.5rem]" : "w-[5rem]"} `}
       >
@@ -117,7 +118,6 @@ const BusinessNavigationTab = () => {
       </aside>
       <div className="sm:hidden bg-[#f55135] top-0 w-full fixed h-[36px] z-20">
         <div className="flex flex-row justify-between mx-1 items-center">
-
           <h3 className={`pl-2 font-bold text-lg text-white`}>
             Fasto App
           </h3>
@@ -127,5 +127,7 @@ const BusinessNavigationTab = () => {
     </>
   );
 };
+
+
 
 export { BusinessNavigationTab };

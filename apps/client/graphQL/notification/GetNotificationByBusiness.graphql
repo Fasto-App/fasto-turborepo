@@ -1,0 +1,11 @@
+query GetNotificationByBusiness($input: NotificationInput) {
+  getNotificationByBusiness(input: $input) {
+    _id
+    message
+    path
+    isRead
+    business_receiver_id
+    customer_receiver_id
+    sender_id
+  }
+}
