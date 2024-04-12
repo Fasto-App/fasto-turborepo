@@ -1,16 +1,16 @@
 import { useRouter } from "next/router";
-import React, { useMemo, useState } from "react";
+import React, { } from "react";
 import Image from "next/image";
 import { businessRoute } from "fasto-route";
-import type { AppNavigation } from "fasto-route";
 import { useTranslation } from "next-i18next";
-import { useGetBusinessInformationQuery, useGetSignUpSubscriptionsQuery } from "../../gen/generated";
-import { ActivityLogIcon, CalendarIcon, ClipboardIcon, DashboardIcon, GearIcon, IdCardIcon, Pencil1Icon, TableIcon, ChevronLeftIcon, CardStackPlusIcon, BellIcon } from "@radix-ui/react-icons";
+import { useGetBusinessInformationQuery } from "../../gen/generated";
+import { ActivityLogIcon, CalendarIcon, ClipboardIcon, DashboardIcon, GearIcon, IdCardIcon, Pencil1Icon, TableIcon, ChevronLeftIcon, CardStackPlusIcon } from "@radix-ui/react-icons";
 import { Button } from "@/shadcn/components/ui/button";
 import { DropdownMenuSideBar } from "./DropDownMenu";
 import { cn } from "@/shadcn/lib/utils";
 import { useSideBarOpen } from "@/localStorage/businessStorage";
 import { SheetSideBar } from "./sheetSideBar";
+import { NotificationBadge } from "./NotificationBadge";
 
 const BusinessNavigationTab = () => {
   const router = useRouter();
@@ -128,15 +128,6 @@ const BusinessNavigationTab = () => {
   );
 };
 
-const NotificationBadge = () => (
-  <div className="absolute z-40 top-4 right-40 pt-4 px-2">
-    <div className="py-[1px] px-2 bg-error-600 rounded-full text-white absolute -top-[0.1px] -right-1 p-0">
-      <p className='text-sm font-medium'>
-        1
-      </p>
-    </div>
-    <BellIcon className='h-6 w-6 text-white bg-error-600 rounded-sm' />
-  </div>
-)
+
 
 export { BusinessNavigationTab };
