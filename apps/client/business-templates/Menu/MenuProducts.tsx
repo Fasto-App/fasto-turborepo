@@ -442,15 +442,11 @@ function MenuProducts() {
       <div className="h-full overflow-y-auto mt-4 sm:mt-2">
         {isEditingMenu ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {filteredProductsByCategory.length > 0 ?
-              filteredProductsByCategory.map((item: any) => (
+              {filteredProductsByCategory.map((item: any) => (
                 <div key={item._id} className="mb-4 w-full">
                   {renderProductTile({ item: item, index: 0 })}
                 </div>
-              ))
-              :
-              <div><h1>teste</h1></div>
-            }
+              ))}
           </div>
         ) : (
           <div className="flex flex-row flex-wrap justify-center sm:justify-start">
