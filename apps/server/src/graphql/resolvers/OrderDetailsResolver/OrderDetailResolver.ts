@@ -15,7 +15,8 @@ import { TabStatus, TabType, getPercentageOfValue } from 'app-helpers';
 import { CheckoutModel } from '../../../models/checkout';
 import { OrdersGroupModel } from '../../../models/ordersGroup';
 import { ObjectId } from 'mongodb';
-import { createBusinessOrderNotification, createCustomerOrderNotification } from '../helpers/helpers';
+import { createBusinessOrderNotification, createCustomerOrderNotification } from '../NotificationResolver/notificationHelpers';
+
 
 // Quick Sale
 // @ts-ignore

@@ -6,7 +6,8 @@ import { pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from "../pubSub";
 import { Context } from "../types"
 import { tokenClient } from "../utils";
 import { MutationResolvers } from "../../../generated/graphql";
-import { createBusinessRequestNotification, createCustomerRequestNotification } from "../helpers/helpers";
+import { createBusinessRequestNotification, createCustomerRequestNotification } from "../NotificationResolver/notificationHelpers";
+
 
 // client request a table
 const openTabRequest: MutationResolvers["openTabRequest"] = async (

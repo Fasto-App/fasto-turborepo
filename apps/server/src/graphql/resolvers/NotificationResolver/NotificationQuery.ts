@@ -17,7 +17,7 @@ export const getNotificationByBusiness: QueryResolvers['getNotificationByBusines
         query.isRead = _args.input.isRead;   
     }    
     
-    const foundNotifications = await NotificationModel(db).find(query);    
+    const foundNotifications = await NotificationModel(db).find(query).sort({createdAt: -1}).limit(10);    
     
     return foundNotifications; 
 
@@ -38,9 +38,8 @@ export const getNotificationByCustomer: QueryResolvers['getNotificationByCustome
       if (_args.input && _args.input.isRead !== null) { 
           query.isRead = _args.input.isRead;   
       }    
-      console.log(client.business)
-      const foundNotifications = await NotificationModel(db).find(query); 
-      console.log(query)   
+      
+      const foundNotifications = await NotificationModel(db).find(query).sort({ createAt: -1}); 
       
       return foundNotifications; 
   

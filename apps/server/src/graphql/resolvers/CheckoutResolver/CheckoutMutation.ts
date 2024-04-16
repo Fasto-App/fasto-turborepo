@@ -10,7 +10,7 @@ import { CheckoutModel } from "../../../models/checkout";
 import { PaymentModel } from "../../../models/payment";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { MutationResolvers } from "../../../generated/graphql";
-import { createBusinessNotification, updateProductQuantity } from "../helpers/helpers";
+import { updateProductQuantity } from "../helpers/helpers";
 import { ObjectId } from "mongodb";
 import {
   getTableTotalPerPerson,
@@ -79,17 +79,6 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (
 
   await Promise.all([foundPayment.save(), foundCheckout.save()]);
 
-  
-  if (!business) throw new Error("");
-  
-  console.log({business})
-
-  await createBusinessNotification({
-    message: "You just received a payment!",
-    businessId: business,
-    sender_id: business,
-    path: "business/123"
-  })
 
   return foundCheckout;
 };
@@ -98,7 +87,6 @@ const makeCheckoutPayment: MutationResolvers["makeCheckoutPayment"] = async (
 // @ts-ignore
 const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] =
   async (parent, { input }, { db, business }) => {
-    console.log("makeCheckoutFullPayment", input);
 
     const Checkout = CheckoutModel(db);
     const Payment = PaymentModel(db);
@@ -205,15 +193,6 @@ const makeCheckoutFullPayment: MutationResolvers["makeCheckoutFullPayment"] =
 
         if (!business) throw new Error("NO Business");
         
-        
-        console.log({business})
-  
-        await createBusinessNotification({
-          message: "You just received a payment!",
-          businessId: business,
-          sender_id: business,
-          path: "business/123"
-        })
 
         return await foundCheckout.save();
       case "Paid":

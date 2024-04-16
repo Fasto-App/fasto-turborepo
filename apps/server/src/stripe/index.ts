@@ -7,7 +7,9 @@ import { PaymentModel } from '../models/payment';
 import { CheckoutModel } from '../models/checkout';
 import { RequestModel, TabModel, TableModel } from '../models';
 import { Connection } from 'mongoose';
-import { createBusinessPaymentNotification, updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
+import { updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
+import { createBusinessPaymentNotification } from '../graphql/resolvers/NotificationResolver/notificationHelpers';
+
 
 if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
   throw ApolloError(new Error('Missing Stripe secret key env var'), 'InternalServerError');
@@ -214,7 +216,7 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
       await Promise.all(savePromises);
     }
   }
-
+  console.log('********** payment made');
   // @ts-ignore
   await createBusinessPaymentNotification(foundTab.admin, foundCheckout.business, foundPayment._id)
 
