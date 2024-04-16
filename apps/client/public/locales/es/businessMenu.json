@@ -15,5 +15,7 @@
 	"deleteMenu": "Borrar menú",
 	"deleteMenuBody": "Esto eliminará todos los datos relacionados con este menú. Esta acción no se puede deshacer.",
 	"search": "Buscar",
-	"all" : "Todo"
+	"all" : "Todo",
+	"addItem": "Añadir",
+	"emptyList": "Lista vazia"
 }

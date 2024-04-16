@@ -17,5 +17,7 @@
 	"search": "Search",
 	"all": "All",
 	"shareLink": "Share Link",
-	"share": "Share"
+	"share": "Share",
+	"addItem": "Add item",
+	"emptyList": "Empty list"
 }

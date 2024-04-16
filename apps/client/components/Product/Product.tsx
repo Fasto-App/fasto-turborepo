@@ -197,7 +197,7 @@ const ProductTileWithCheckbox = ({
       : description;
 
   return (
-    <BorderTile width={"96"}>
+    <BorderTile width={"auto"}>
       <HStack alignItems="center" space={3} flex={1} opacity={paused ? 0.6 : 1}>
         <Avatar
           size="48px"
