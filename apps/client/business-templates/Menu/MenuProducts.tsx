@@ -8,11 +8,13 @@ import {
   Text,
   useTheme,
   Pressable,
-  useMediaQuery
+  useMediaQuery,
+  Link
 } from "native-base";
 import {
   ProductCard,
   ProductTileWithCheckbox,
+  ProductTile
 } from "../../components/Product/Product";
 import { useNumOfColumns } from "../../hooks";
 import { useProductMutationHook } from "../../graphQL/ProductQL";
@@ -284,6 +286,31 @@ function MenuProducts() {
     },
     [categoryId, isEditingMenu, sectionMap, setProductCheckbox]
   );
+  const renderProductTileWhithoutCheckBox = useCallback(
+    ({ item }: { item?: Product | null; index: number }) => {
+      if (!item || (categoryId === "all" && isEditingMenu)) {
+        return null;
+      }
+
+      let isSelected = false;
+      if (sectionMap.get(categoryId)) {
+        if (sectionMap.get(categoryId).get(item._id)) {
+          isSelected = true;
+        }
+      }
+
+      return (
+        <ProductTile
+          name={item.name}
+          ctaTitle={"Edit Item"}
+          imageUrl={item.imageUrl ?? ""}
+          description={item.description}
+          paused={item.paused}
+        />
+      );
+    },
+    [categoryId, isEditingMenu, sectionMap, setProductCheckbox]
+  );
 
   const onEditMEnu = useCallback(() => {
     const nextCategory =
@@ -354,6 +381,8 @@ function MenuProducts() {
     showToast({ message: t("shareLink") })
   }, [businessData?.getBusinessInformation._id, menuId, router.locale, t],)
 
+  const [showTilesList, setShowTileList] = useState(true);
+
   const isLargerThan768 = useMediaQuery({ minWidth: 768 });
   return (
     <Box
@@ -399,6 +428,14 @@ function MenuProducts() {
               onPress={shareMenuLink}>
               <Icon type='Share' color={theme.colors.primary[500]} />
             </Pressable>
+            <div className="self-end pl-2 text-xl">
+              <Link
+                onPress={() => setShowTileList(!showTilesList)}
+                _text={{ color: "blue.400" }}
+              >
+                {showTilesList ? t("showCards") : t("showList")}
+              </Link>
+            </div>
           </HStack>
         </HStack>
         <div className="flex flex-row">
@@ -442,33 +479,36 @@ function MenuProducts() {
       <div className="h-full overflow-y-auto mt-4 sm:mt-2">
         {isEditingMenu ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {filteredProductsByCategory.map((item: any) => (
-                <div key={item._id} className="mb-4 w-full">
-                  {renderProductTile({ item: item, index: 0 })}
-                </div>
-              ))}
+            {filteredProductsByCategory.map((item: any) => (
+              <div key={item._id} className="mb-4 w-full">
+                {renderProductTile({ item: item, index: 0 })}
+              </div>
+            ))}
           </div>
         ) : (
-          <div className="flex flex-row flex-wrap justify-center sm:justify-start">
+          <div className={showTilesList ? `${"mb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}` : `${"flex flex-row flex-wrap justify-center sm:justify-start"}`}>
             {filteredProducts.length > 0 ?
               filteredProducts.map((item: any) => (
-                <div key={item._id} className="mb-4">
-                  {renderProductCard({ item: item, index: 0 })}
+                <div key={item._id} >
+                  {showTilesList ? renderProductTileWhithoutCheckBox({ item: item, index: 0 }) : renderProductCard({ item: item, index: 0 })}
                 </div>
+
               ))
               :
-              <Card className="shadow-md">
-                <CardTitle className="text-primary-400 pt-2 text-lg">{t("emptyList")}</CardTitle>
-                <CardContent className="p-4">
-                  <Button
-                    disabled={!categoryId}
-                    variant="outline"
-                    className='w-[100px] shadow-md  bg-primary-200 hover:bg-primary-400 text-primary-500 border border-primary-600 items-end mt-2'
-                    onClick={onEditMEnu}>
-                    {t("addItem")}
-                  </Button>
-                </CardContent>
-              </Card>
+              <div className="flex flex-row flex-wrap justify-center sm:justify-start">
+                <Card className="shadow-md ">
+                  <CardTitle className="text-primary-400 pt-2 text-lg">{t("emptyList")}</CardTitle>
+                  <CardContent className="p-4">
+                    <Button
+                      disabled={!categoryId}
+                      variant="outline"
+                      className='w-[100px] shadow-md  bg-primary-200 hover:bg-primary-400 text-primary-500 border border-primary-600 items-end mt-2'
+                      onClick={onEditMEnu}>
+                      {t("addItem")}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             }
           </div>
         )}

@@ -17,5 +17,7 @@
 	"search": "Buscar",
 	"all" : "Todos",
 	"addItem": "Adicionar",
-	"emptyList": "Lista vazia"
+	"emptyList": "Lista vazia",
+	"showCards": "Mostrar Cartões",
+	"showList": "Mostrar lista"
 }
