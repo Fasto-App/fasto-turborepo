@@ -17,7 +17,7 @@ export const Tile: React.FC<TileProps> = ({
 }) => {
   return (
     <div
-      className={cn("px-2 m-0 w-md text-md max-h-7 shadow-md text-black border border-gray-400 rounded-md content-center hover:text-primary-600 hover:border-primary-500 hover:cursor-pointer", selected ? 'bg-primary-100 border border-primary-600 text-primary-600 font-semibold' : null)}
+      className={cn("p-1 sm:p-4 m-0 w-md text-md max-h-7 shadow-md text-black border border-gray-400 rounded-md content-center hover:text-primary-600 hover:border-primary-500 hover:cursor-pointer", selected ? 'bg-primary-100 border border-primary-600 text-primary-600 font-semibold' : null)}
       onClick={onPress}
     >
       {children}

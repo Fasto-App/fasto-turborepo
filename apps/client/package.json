@@ -19,6 +19,7 @@
 		"@expo/next-adapter": "4.0.6",
 		"@hookform/devtools": "^4.2.2",
 		"@hookform/resolvers": "^2.9.6",
+		"@radix-ui/react-alert-dialog": "^1.0.5",
 		"@radix-ui/react-avatar": "^1.0.4",
 		"@radix-ui/react-dialog": "^1.0.5",
 		"@radix-ui/react-dropdown-menu": "^2.0.6",

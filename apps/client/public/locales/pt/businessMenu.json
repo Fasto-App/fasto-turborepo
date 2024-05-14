@@ -15,5 +15,9 @@
 	"deleteMenu": "Deletar Menu",
 	"deleteMenuBody": "Isso removerá todos os dados relacionados a este menu. Esta ação não pode ser revertida.",
 	"search": "Buscar",
-	"all" : "Todos"
+	"all" : "Todos",
+	"addItem": "Adicionar",
+	"emptyList": "Lista vazia",
+	"showCards": "Mostrar Cartões",
+	"showList": "Mostrar lista"
 }

@@ -1,20 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
 import {
   Box,
-  Button,
   FlatList,
   Heading,
   HStack,
-  Input,
   ScrollView,
   Text,
   useTheme,
   Pressable,
-  useMediaQuery
+  useMediaQuery,
+  Link
 } from "native-base";
 import {
   ProductCard,
   ProductTileWithCheckbox,
+  ProductTile
 } from "../../components/Product/Product";
 import { useNumOfColumns } from "../../hooks";
 import { useProductMutationHook } from "../../graphQL/ProductQL";
@@ -36,6 +36,24 @@ import { showToast } from "../../components/showToast";
 import { parseToCurrency } from "app-helpers";
 import { useRouter } from "next/router";
 import { copyMenuLinkToClipboard } from "./hooks";
+import { Input } from "@/shadcn/components/ui/input";
+import { BiSearch } from "react-icons/bi";
+import { cn } from "@/shadcn/lib/utils";
+import { Button } from "@/shadcn/components/ui/button";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+
+} from "@/shadcn/components/ui/alert-dialog";
+import { Card, CardContent, CardTitle } from "@/shadcn/components/ui/card";
 
 // Todo: [repeated code] AddToToOrder has the same function
 const searchProductsByName = (
@@ -268,6 +286,31 @@ function MenuProducts() {
     },
     [categoryId, isEditingMenu, sectionMap, setProductCheckbox]
   );
+  const renderProductTileWhithoutCheckBox = useCallback(
+    ({ item }: { item?: Product | null; index: number }) => {
+      if (!item || (categoryId === "all" && isEditingMenu)) {
+        return null;
+      }
+
+      let isSelected = false;
+      if (sectionMap.get(categoryId)) {
+        if (sectionMap.get(categoryId).get(item._id)) {
+          isSelected = true;
+        }
+      }
+
+      return (
+        <ProductTile
+          name={item.name}
+          ctaTitle={"Edit Item"}
+          imageUrl={item.imageUrl ?? ""}
+          description={item.description}
+          paused={item.paused}
+        />
+      );
+    },
+    [categoryId, isEditingMenu, sectionMap, setProductCheckbox]
+  );
 
   const onEditMEnu = useCallback(() => {
     const nextCategory =
@@ -338,6 +381,8 @@ function MenuProducts() {
     showToast({ message: t("shareLink") })
   }, [businessData?.getBusinessInformation._id, menuId, router.locale, t],)
 
+  const [showTilesList, setShowTileList] = useState(true);
+
   const isLargerThan768 = useMediaQuery({ minWidth: 768 });
   return (
     <Box
@@ -351,14 +396,11 @@ function MenuProducts() {
       <HStack flexDirection={isLargerThan768 ? "column" : "row"} mb={"2"} space={4}>
         <HStack space={3} mb={isLargerThan768 ? "5" : "0"}>
           {isEditingMenu ? (
-            <Input
-              size={"2xl"}
-              width={"auto"}
+            <input
+              className="w-2xl border-b-2 border-gray-300 focus:border-primary-500 text-lg p-2 outline-none"
               value={inputValue}
-              variant="underlined"
-              InputRightElement={<BsPencilSquare />}
               placeholder={selectedMenu?.name as string}
-              onChangeText={setInputValue}              
+              onChange={(e) => setInputValue(e.target.value)}
             />
           ) : (
             <Heading w={"auto"} isTruncated>
@@ -386,121 +428,138 @@ function MenuProducts() {
               onPress={shareMenuLink}>
               <Icon type='Share' color={theme.colors.primary[500]} />
             </Pressable>
+            <div className="self-end pl-2 text-xl">
+              <Link
+                onPress={() => setShowTileList(!showTilesList)}
+                _text={{ color: "blue.400" }}
+              >
+                {showTilesList ? t("showCards") : t("showList")}
+              </Link>
+            </div>
           </HStack>
         </HStack>
+        <div className="flex flex-row">
+          <Input
+            placeholder={t("search")}
+            className="rounded-md w-full sm:max-w-xs mb-4 focus:border-primary-600"
+            value={searchString}
+            onChange={(e) => {
+              setSearchString(e.target.value);
+            }}
+          >
 
+          </Input>
+        </div>
         {/* Categories */}
         <ScrollView flex={1} horizontal>
           {!isEditingMenu
             ? sectionsWithAll.map((category) => (
-              <Button
+              <div
+                className={cn("p-1 sm:p-4 m-1 w-md text-md max-h-7 shadow-md text-black border border-gray-400 rounded-md content-center bg-white hover:text-success-600 hover:border-success-400 hover:cursor-pointer", categoryId === category._id ? 'bg-success-100 border border-success-700 text-suborder-success-700 font-semibold' : null)}
                 key={category._id}
-                px={4}
-                mr={2}
-                m={0}
-                minW={"100px"}
-                disabled={categoryId === category._id}
-                textDecorationColor={"black"}
-                variant={categoryId === category._id ? "subtle" : "outline"}
-                colorScheme={
-                  categoryId === category._id ? "success" : "black"
-                }
-                onPress={() => setCategory(category._id)}
+                // disabled={categoryId === category._id}
+                onClick={() => setCategory(category._id)}
               >
                 {category.name}
-              </Button>
+              </div>
             ))
             : allCategories.map((category) => (
-              <Button
+              <div
+                className={cn("p-1 sm:p-4 m-1 w-md text-md max-h-7 shadow-md text-black border border-gray-400 rounded-md content-center bg-white hover:text-success-600 hover:border-success-400 hover:cursor-pointer", categoryId === category._id ? 'bg-success-100 border border-success-700 text-suborder-success-700 font-semibold' : null)}
                 key={category._id}
-                px={4}
-                mr={2}
-                m={0}
-                minW={"100px"}
-                disabled={categoryId === category._id}
-                textDecorationColor={"black"}
-                variant={categoryId === category._id ? "subtle" : "outline"}
-                colorScheme={
-                  categoryId === category._id ? "success" : "black"
-                }
-                onPress={() => setCategory(category._id)}
+                // disabled={categoryId === category._id}
+                onClick={() => setCategory(category._id)}
               >
                 {category.name}
-              </Button>
+              </div>
             ))}
         </ScrollView>
-        <HStack flexDir={"row"} flexWrap={"wrap"} mt={isLargerThan768 ? "5" : "0"}>
-          <Input
-            placeholder={t("search")}
-            variant="rounded"
-            borderRadius="10"
-            size={isLargerThan768 ? "xl" : "md"}
-            h={"10"}
-            value={searchString}
-            onChangeText={(text) => {
-              setSearchString(text);
-            }}
-            InputLeftElement={
-              <Box p="1">
-                <Icon type="Search" />
-              </Box>
-            }
-          />
-        </HStack>
-      </HStack>
-      <Box flex={1} p={"4"}>
-        {isEditingMenu ? (
-          <FlatList
-            key={numColumns}
-            data={filteredProductsByCategory}
-            numColumns={numColumns}
-            renderItem={renderProductTile}
-            keyExtractor={(item) => `${item?._id}`}
-            ItemSeparatorComponent={() => <Box height={"4"} />}
-          />
-        ) : (
-          <FlatList
-            key={numColumns}
-            data={filteredProducts}
-            numColumns={numColumns}
-            renderItem={renderProductCard}
-            keyExtractor={(item) => `${item?._id}`}
-            ItemSeparatorComponent={() => <Box height={"4"} />}
-            ListEmptyComponent={<Text>{t("emptyProducts")}</Text>}
-          />
-        )}
-      </Box>
-      {isEditingMenu ? (
-        <HStack justifyContent="space-between">
-          <HStack alignItems="center" space={2} py={4}>
-            <DeleteAlert
-              title={t("deleteMenu")}
-              body={t("deleteMenuBody")}
-              cancel={t("cancel")}
-              deleteItem={async () => {
-                if (!menuId) throw new Error("Menu not found");
 
-                await deleteMenu({
-                  variables: {
-                    id: menuId,
-                  },
-                });
-              }}
-            />
-          </HStack>
-          <HStack alignItems="center" space={2} justifyContent="end">
+      </HStack>
+      <div className="h-full overflow-y-auto mt-4 sm:mt-2">
+        {isEditingMenu ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProductsByCategory.map((item: any) => (
+              <div key={item._id} className="mb-4 w-full">
+                {renderProductTile({ item: item, index: 0 })}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={showTilesList ? `${"mb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}` : `${"flex flex-row flex-wrap justify-center sm:justify-start"}`}>
+            {filteredProducts.length > 0 ?
+              filteredProducts.map((item: any) => (
+                <div key={item._id} >
+                  {showTilesList ? renderProductTileWhithoutCheckBox({ item: item, index: 0 }) : renderProductCard({ item: item, index: 0 })}
+                </div>
+
+              ))
+              :
+              <div className="flex flex-row flex-wrap justify-center sm:justify-start">
+                <Card className="shadow-md ">
+                  <CardTitle className="text-primary-400 pt-2 text-lg">{t("emptyList")}</CardTitle>
+                  <CardContent className="p-4">
+                    <Button
+                      disabled={!categoryId}
+                      variant="outline"
+                      className='w-[100px] shadow-md  bg-primary-200 hover:bg-primary-400 text-primary-500 border border-primary-600 items-end mt-2'
+                      onClick={onEditMEnu}>
+                      {t("addItem")}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            }
+          </div>
+        )}
+
+      </div>
+      {isEditingMenu ? (
+        <div className="flex justify-between items-center">
+          <div className="space-x-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant={"destructive"}>{t("deleteMenu")}</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[300px] bg-white rounded-md border border-gray-400 text-black text-xl">
+                <AlertDialogHeader>
+                  <p className="text-black">{t("deleteMenu")}</p>
+                  <AlertDialogDescription className="">
+                    {t("deleteMenuBody")}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex flex-row justify-center space-x-6">
+                  <AlertDialogCancel asChild>
+                    <Button variant={"outline"}>{t("cancel")}</Button>
+                  </AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button onClick={async () => {
+                      if (!menuId) throw new Error("Menu not found");
+
+                      await deleteMenu({
+                        variables: {
+                          id: menuId,
+                        },
+                      });
+                    }} variant={"destructive"}>{t("deleteMenu")}</Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          <div className=" space-x-2 justify-end">
             <Button
-              w={"100"}
-              variant={"subtle"}
-              onPress={resetEditingAndSectionMap}
+              className="w-[100px] border-primary-600"
+              variant={"outline"}
+              onClick={resetEditingAndSectionMap}
             >
               {t("cancel")}
             </Button>
             <Button
-              w={"100"}
-              colorScheme="tertiary"
-              isLoading={loadingDelete || loadingUpdate || loadingQuery}
-              onPress={async () => {
+              variant="outline"
+              className='w-[100px] bg-success-300 hover:bg-success-400 items-end'
+              // isLoading={loadingDelete || loadingUpdate || loadingQuery}
+              onClick={async () => {
                 const newSections: { category: string; products: string[] }[] =
                   [];
 
@@ -542,18 +601,18 @@ function MenuProducts() {
                 resetEditingAndSectionMap();
               }}
             >
+              {/* <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> */}
               {t("save")}
             </Button>
-          </HStack>
-        </HStack>
+          </div>
+        </div>
       ) : (
         <Button
-          alignSelf={"end"}
-          colorScheme={"tertiary"}
-          w={"100"}
-          onPress={onEditMEnu}
-        >
-          {t("editMenu")}
+          disabled={!categoryId}
+          variant="outline"
+          className='w-[100px] bg-success-300 hover:bg-success-400 items-end mt-2'
+          onClick={onEditMEnu}>
+          {t("edit")}
         </Button>
       )}
     </Box>

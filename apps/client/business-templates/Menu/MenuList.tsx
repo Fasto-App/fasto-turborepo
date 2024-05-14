@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, Heading, HStack, Modal, ScrollView, VStack } from 'native-base'
+import { Box, Heading, HStack, Modal, ScrollView, VStack } from 'native-base'
 import { SmallAddMoreButton } from '../../components/atoms/AddMoreButton';
 import { useAppStore } from '../UseAppStore';
 import { Tile } from '../../components/Tile';
@@ -10,6 +10,8 @@ import { menuSchemaInput } from 'app-helpers';
 import { AllMenusbyBusiness } from './types';
 import { useTranslation } from 'next-i18next';
 import { Icon } from '../../components/atoms/NavigationButton';
+import { PlusIcon } from '@radix-ui/react-icons';
+import { Button } from '@/shadcn/components/ui/button';
 
 export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
   const { t } = useTranslation("businessMenu")
@@ -20,56 +22,50 @@ export function MenuList({ menusData }: { menusData: AllMenusbyBusiness }) {
 
 
   return (
-    <Box
-      p={"4"}
-      shadow={"4"}
-      borderWidth={1}
-      borderRadius={"md"}
-      borderColor={"trueGray.400"}
-      backgroundColor={"white"}
-      flexDirection={"row"}
+    <div className='p-4 shadow-md border rounded-md border-gray-400 bg-white flex flex-row mt-[20px] sm:mt-0'
     >
-      <Box flex={1}>
-        <HStack
-          flexDirection={"row"} mb={"2"} space={2}>
-          <Heading>
+      <div className='flex-1'>
+        <div className='flex flex-row mb-2 space-x-2'>
+          <a className='text-xl font-bold'>
             {t("title")}
-          </Heading>
-        </HStack>
-        <VStack space={4}>
-          <HStack space={2}>
-            <SmallAddMoreButton onPress={() => setShowModal(true)} />
-            <ScrollView horizontal={true} pb={2} >
-              <HStack space={2}>
-                {menusData?.map((item) => (
-                  <Box key={item?._id} >
-                    {item.isFavorite ? <Box position={"absolute"} >
-                      <Icon type={"StarFill"} size={"1em"} />
-                    </Box> : null}
-                    <Tile
-                      key={item?._id}
-                      selected={item?._id === menu}
-                      onPress={() => {
-                        setMenu(item?._id)
-                        resetEditingAndSectionMap()
-                      }}
-                    >
-                      {item?.name}
-                    </Tile>
-                  </Box>
-                ))}
-              </HStack>
-            </ScrollView>
-          </HStack>
-        </VStack>
+          </a>
+        </div>
 
-      </Box>
+        <div className="flex space-x-2">
+          <Button variant="outline" className=' border border-primary-700 shadow-md' onClick={() => {
+            setShowModal(true)
+          }}>
+            <PlusIcon className='m-0 p-0' />
+          </Button>
+          <ScrollView horizontal={true} p={1} >
+            <div className="flex space-x-2">
+              {menusData?.map((item) => (
+                <Box key={item?._id} >
+                  {item.isFavorite ? <Box position={"absolute"} >
+                    <Icon type={"StarFill"} size={"1em"} />
+                  </Box> : null}
+                  <Tile
+                    key={item?._id}
+                    selected={item?._id === menu}
+                    onPress={() => {
+                      setMenu(item?._id)
+                      resetEditingAndSectionMap()
+                    }}
+                  >
+                    {item?.name}
+                  </Tile>
+                </Box>
+              ))}
+            </div>
+          </ScrollView>
+        </div>
+      </div>
 
       <MenuModal
         setShowModal={setShowModal}
         showModal={showModal}
       />
-    </Box>
+    </div>
   );
 }
 
@@ -127,19 +123,20 @@ const MenuModal = ({ showModal, setShowModal }: {
           />
         </Modal.Body>
         <Modal.Footer borderColor={"white"}>
-          <Button.Group space={2} flex={1} >
+          <div className="flex flex-1 space-x-2">
             <Button
-              w={"100px"}
-              variant="outline"
-              colorScheme="tertiary"
-              onPress={() => setShowModal(false)}
-              flex={1}>
+              className="w-24 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md py-2 px-4 flex-1"
+              onClick={() => setShowModal(false)}
+            >
               {t("cancel")}
             </Button>
-            <Button w={"100px"} onPress={handleSubmit(onMenuSubmit)} flex={1}>
+            <Button
+              className="w-24 bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 px-4 flex-1"
+              onClick={handleSubmit(onMenuSubmit)}
+            >
               {isEditing ? t("edit") : t("add")}
             </Button>
-          </Button.Group>
+          </div>
         </Modal.Footer>
       </Modal.Content>
     </Modal >
