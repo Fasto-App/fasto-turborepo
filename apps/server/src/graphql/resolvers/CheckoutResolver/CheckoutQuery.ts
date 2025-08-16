@@ -100,14 +100,84 @@ export const getPaidCheckoutByDate: QueryResolvers["getPaidCheckoutByDate"] = as
   return { sortBy: input.type, data: resultArray.reverse(), total }
 }
 
+const getPaidCheckoutToAndFromDate: QueryResolvers["getPaidCheckoutToAndFromDate"] = async (
+  _par, { input }, { db, user, business }
+) => {
+  const fromDate = new Date(input.fromDate);
+  const toDate = new Date(input.toDate);
+  const days = getDaysDifference(fromDate, toDate)
+  let total = 0
 
-const CheckoutResolverQuery = {
+  const matchQuery = {
+    business: new ObjectId(business),
+    paid: true,
+    created_date: {
+      $gte: fromDate,
+      $lte: toDate,
+    }
+  };
+
+  const dataResult: AveragePerDay[] = await CheckoutModel(db).aggregate([
+    {
+      $match: matchQuery,
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$created_date' } },
+        totalAmount: { $sum: '$total' }, // Assuming "total" is the field with the amount
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  if (!dataResult.length) return { sortBy: 'customRange', data: [], total: 0 };
+  // calculate how many days
+  const resultArray = new Array(days).fill(null) as AveragePerDay[];
+
+  console.log({
+    resultArray
+  })
+  // const total = dataResult.reduce((accu, current) => accu + current.totalAmount, 0);
+
+  dataResult.forEach(group => {
+    const date = new Date(group._id);
+    const timeDifference = toDate.getTime() - date.getTime();
+    const diffInDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    console.log({
+      diffInDays,
+      toDate,
+      date
+    })
+
+    resultArray[diffInDays] = group;
+    total += group.totalAmount
+  });
+
+  return { sortBy: 'customRange', data: resultArray.reverse(), total };
+}
+
+function getDaysDifference(startDate: Date, endDate: Date) {
+  // Convert both dates to milliseconds
+  const startMs = startDate.getTime();
+  const endMs = endDate.getTime();
+
+  // Calculate the difference in milliseconds
+  const differenceMs = endMs - startMs;
+
+  // Convert milliseconds to days
+  const daysDifference = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+
+  return daysDifference;
+}
+
+
+export const CheckoutResolverQuery = {
   getCheckoutByID,
   getCheckoutsByBusiness,
   getOrdersByCheckout,
-  getPaidCheckoutByDate
-}
-
-export {
-  CheckoutResolverQuery,
+  getPaidCheckoutByDate,
+  getPaidCheckoutToAndFromDate
 }

@@ -388,6 +388,11 @@ export type GetPaidCheckout = {
   type: DateType;
 };
 
+export type GetPaidCheckoutToAndFrom = {
+  fromDate: Scalars['String'];
+  toDate: Scalars['String'];
+};
+
 export type GetPayment = {
   payment: Scalars['ID'];
 };
@@ -943,7 +948,7 @@ export type OrdersGroup = {
 export type PaidCheckoutRes = {
   __typename?: 'PaidCheckoutRes';
   data: Array<Maybe<AveragePerDay>>;
-  sortBy: DateType;
+  sortBy: Scalars['String'];
   total: Scalars['Float'];
 };
 
@@ -1029,6 +1034,7 @@ export type Query = {
   getOrdersBySession: Array<OrderDetail>;
   getOrdersGroup?: Maybe<Array<OrdersGroup>>;
   getPaidCheckoutByDate?: Maybe<PaidCheckoutRes>;
+  getPaidCheckoutToAndFromDate?: Maybe<PaidCheckoutRes>;
   getPaymentInformation: Payment;
   getPendingInvitations: Array<Request>;
   getProductByID: Product;
@@ -1113,6 +1119,11 @@ export type QueryGetOrdersGroupArgs = {
 
 export type QueryGetPaidCheckoutByDateArgs = {
   input: GetPaidCheckout;
+};
+
+
+export type QueryGetPaidCheckoutToAndFromDateArgs = {
+  input: GetPaidCheckoutToAndFrom;
 };
 
 
@@ -1618,7 +1629,7 @@ export type GetPaidCheckoutByDateQueryVariables = Exact<{
 }>;
 
 
-export type GetPaidCheckoutByDateQuery = { __typename?: 'Query', getPaidCheckoutByDate?: { __typename?: 'PaidCheckoutRes', total: number, sortBy: DateType, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } | null };
+export type GetPaidCheckoutByDateQuery = { __typename?: 'Query', getPaidCheckoutByDate?: { __typename?: 'PaidCheckoutRes', total: number, sortBy: string, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } | null };
 
 export type GetCheckoutByIdQueryVariables = Exact<{
   input: GetById;
@@ -1641,6 +1652,13 @@ export type GetOrdersByCheckoutQueryVariables = Exact<{
 
 
 export type GetOrdersByCheckoutQuery = { __typename?: 'Query', getOrdersByCheckout: { __typename?: 'Checkout', _id: string, status: CheckoutStatusKeys, paid: boolean, subTotal: number, tab: string, created_date: string, updated_at?: string | null, orders: Array<{ __typename?: 'OrderDetail', _id: string, user?: string | null, quantity: number, subTotal: number, status: OrderStatus, message?: string | null, product: { __typename?: 'Product', _id: string, name: string, price: number, imageUrl?: string | null } } | null> } };
+
+export type GetPaidCheckoutToAndFromDateQueryVariables = Exact<{
+  input: GetPaidCheckoutToAndFrom;
+}>;
+
+
+export type GetPaidCheckoutToAndFromDateQuery = { __typename?: 'Query', getPaidCheckoutToAndFromDate?: { __typename?: 'PaidCheckoutRes', sortBy: string, total: number, data: Array<{ __typename?: 'AveragePerDay', _id: string, totalAmount: number } | null> } | null };
 
 export type CreateMenuMutationVariables = Exact<{
   input: CreateMenuInput;
@@ -3262,6 +3280,46 @@ export function useGetOrdersByCheckoutLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetOrdersByCheckoutQueryHookResult = ReturnType<typeof useGetOrdersByCheckoutQuery>;
 export type GetOrdersByCheckoutLazyQueryHookResult = ReturnType<typeof useGetOrdersByCheckoutLazyQuery>;
 export type GetOrdersByCheckoutQueryResult = Apollo.QueryResult<GetOrdersByCheckoutQuery, GetOrdersByCheckoutQueryVariables>;
+export const GetPaidCheckoutToAndFromDateDocument = gql`
+    query GetPaidCheckoutToAndFromDate($input: GetPaidCheckoutToAndFrom!) {
+  getPaidCheckoutToAndFromDate(input: $input) {
+    sortBy
+    total
+    data {
+      _id
+      totalAmount
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPaidCheckoutToAndFromDateQuery__
+ *
+ * To run a query within a React component, call `useGetPaidCheckoutToAndFromDateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaidCheckoutToAndFromDateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaidCheckoutToAndFromDateQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetPaidCheckoutToAndFromDateQuery(baseOptions: Apollo.QueryHookOptions<GetPaidCheckoutToAndFromDateQuery, GetPaidCheckoutToAndFromDateQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPaidCheckoutToAndFromDateQuery, GetPaidCheckoutToAndFromDateQueryVariables>(GetPaidCheckoutToAndFromDateDocument, options);
+      }
+export function useGetPaidCheckoutToAndFromDateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaidCheckoutToAndFromDateQuery, GetPaidCheckoutToAndFromDateQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPaidCheckoutToAndFromDateQuery, GetPaidCheckoutToAndFromDateQueryVariables>(GetPaidCheckoutToAndFromDateDocument, options);
+        }
+export type GetPaidCheckoutToAndFromDateQueryHookResult = ReturnType<typeof useGetPaidCheckoutToAndFromDateQuery>;
+export type GetPaidCheckoutToAndFromDateLazyQueryHookResult = ReturnType<typeof useGetPaidCheckoutToAndFromDateLazyQuery>;
+export type GetPaidCheckoutToAndFromDateQueryResult = Apollo.QueryResult<GetPaidCheckoutToAndFromDateQuery, GetPaidCheckoutToAndFromDateQueryVariables>;
 export const CreateMenuDocument = gql`
     mutation CreateMenu($input: CreateMenuInput!) {
   createMenu(input: $input) {
