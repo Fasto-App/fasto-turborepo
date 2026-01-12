@@ -6,6 +6,8 @@ import { pubsub, TAB_REQUEST, TAB_REQUEST_RESPONSE } from "../pubSub";
 import { Context } from "../types"
 import { tokenClient } from "../utils";
 import { MutationResolvers } from "../../../generated/graphql";
+import { createBusinessRequestNotification, createCustomerRequestNotification } from "../NotificationResolver/notificationHelpers";
+
 
 // client request a table
 const openTabRequest: MutationResolvers["openTabRequest"] = async (
@@ -47,6 +49,8 @@ const openTabRequest: MutationResolvers["openTabRequest"] = async (
 
     const newRequest = await createNewRequest(newClient._id)
 
+    await createBusinessRequestNotification(newClient._id, business)
+
     pubsub.publish(TAB_REQUEST, { onTabRequest: newRequest })
 
     return await tokenClient({
@@ -72,6 +76,8 @@ const openTabRequest: MutationResolvers["openTabRequest"] = async (
   }
 
   const newRequest = await createNewRequest(foundUserByPhone._id)
+  
+  await createBusinessRequestNotification(foundUserByPhone._id, business)
 
   pubsub.publish(TAB_REQUEST, { onTabRequest: newRequest })
 
@@ -142,6 +148,9 @@ const acceptTabRequest: MutationResolvers["acceptTabRequest"] = async (
   await table.save();
 
   pubsub.publish(TAB_REQUEST_RESPONSE, { onTabRequestResponse: foundRequest })
+
+
+  await createCustomerRequestNotification(foundRequest.business.id.toString('hex'), foundAdmin._id.toString());
 
   return foundRequest
 }

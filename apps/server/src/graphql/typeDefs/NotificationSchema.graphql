@@ -1,6 +1,14 @@
 extend type Query {
-	getNotificationByBusiness: [Notification!]
-  getNotificationByCustomer: [Notification!]
+	getNotificationByBusiness(input: NotificationInput): [Notification!]
+  getNotificationByCustomer(input: NotificationInput): [Notification!]
+}
+
+extend type Mutation {
+	changeNotificationStatus(id: ID! ): Notification!
+}
+
+input NotificationInput {
+    isRead: Boolean
 }
 
 type Notification {
@@ -9,6 +17,6 @@ type Notification {
 	path: String
 	isRead: Boolean!
 	business_receiver_id: ID
-  customer_receiver_id: ID
-  sender_id: ID
+    customer_receiver_id: ID
+    sender_id: ID
 }

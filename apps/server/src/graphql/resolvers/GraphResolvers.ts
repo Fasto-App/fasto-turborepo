@@ -52,6 +52,7 @@ import { PaymentMutation } from './Payments';
 import { PaymentQuery } from './Payments/PaymentQuery';
 import { CheckoutModel } from '../../models/checkout';
 import { NotificationQuery } from './NotificationResolver/NotificationQuery';
+import { NotificationMutation } from './NotificationResolver/NotificationMutation';
 
 export const resolvers = {
   Upload: GraphQLUpload,
@@ -88,7 +89,8 @@ export const resolvers = {
     ...RequestResolverMutation,
     ...CartItemResolverMutation,
     ...PaymentMutation,
-    ...SubscriptionMutation
+    ...SubscriptionMutation,
+    ...NotificationMutation,
   },
   Subscription: {
     ...RequestSubscription,

@@ -8,6 +8,8 @@ import { CheckoutModel } from '../models/checkout';
 import { RequestModel, TabModel, TableModel } from '../models';
 import { Connection } from 'mongoose';
 import { updateProductQuantity } from '../graphql/resolvers/helpers/helpers';
+import { createBusinessPaymentNotification } from '../graphql/resolvers/NotificationResolver/notificationHelpers';
+
 
 if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY_BRAZIL) {
   throw ApolloError(new Error('Missing Stripe secret key env var'), 'InternalServerError');
@@ -116,7 +118,6 @@ type CreatePaymentIntentProps = {
   checkoutId: string;
   paymentId: string;
   description: string;
-
   country: "US" | "BR";
 }
 
@@ -215,6 +216,9 @@ export const confirmPaymentWebHook = async (metadata: Metada, db: Connection) =>
       await Promise.all(savePromises);
     }
   }
+  console.log('********** payment made');
+  // @ts-ignore
+  await createBusinessPaymentNotification(foundTab.admin, foundCheckout.business, foundPayment._id)
 
   await foundCheckout.save();
 };

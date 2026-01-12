@@ -3,38 +3,57 @@ import * as dotenv from "dotenv";
 import { dbConnection } from "../../../dbConnection";
 import { ApolloError } from "../../ApolloErrorExtended/ApolloErrorExtended";
 import { NotificationModel } from "../../../models/notification";
+import { createBusinessNotification } from "../helpers/helpers";
+import { testMongoDBQuery } from "./NotificationQuery";
+
 
 dotenv.config();
 
 describe('Notification Query', () => {
     const db = dbConnection();
 
-  beforeAll(async () => {
-  });
+    afterAll(async () => {
+        await db.close(); 
+    });
 
-  afterAll(async () => {
-    await db.close(); 
-  });
 
-  it('should return notifications for a valid business ID', async () => {
-    const businessId = '655aaa845b81650a0dc2b6f2'; // Replace with actual business ID for testing
+    it('should create, retrieve and delete a notification', async () => { 
+        
+        const businessId = '655aaa845b81650a0dc2b6f2';  
+        await createBusinessNotification({
+        message: "This is a test payment",
+        businessId: businessId,
+        sender_id: businessId,
+        path: "business/123"
+        });
 
-    const foundNotifications = await NotificationModel(db)
-      .find({ business_receiver_id: businessId });
-    console.log('********', foundNotifications)
-    expect(foundNotifications).toBeTruthy(); // Check if notifications are returned
-  });
+        const foundNotification = await NotificationModel(db)
+            .findOne({ message: "This is a test payment" });
 
-  it('should throw an error for an invalid business ID', async () => {
-    const invalidBusinessId = '655aaa845b81650a0dc2b6f9';
+        expect(foundNotification).toBeTruthy();
+        
+        expect(foundNotification?.message).toBeTruthy();
+        expect(foundNotification?.path).toBeTruthy();
+        expect(foundNotification?.isRead === false).toBeTruthy();
+        expect(foundNotification?.business_receiver_id).toBeTruthy();
+        expect(foundNotification?.sender_id).toBeTruthy();
+        expect(foundNotification?.created_date).toBeTruthy();
 
-    
-      const response = await NotificationModel(db)
-        .findOne({ business_receiver_id: invalidBusinessId });
-        console.log(response);
+        const deletedNotification = await NotificationModel(db).deleteOne({ message: "This is a test payment" });
 
-    expect(response).toBeNull()
+        // change to test the delete notification route once it is written
+        expect(deletedNotification).toStrictEqual({ acknowledged: true, deletedCount: 1 });
 
-      
-  });
-});
+    });
+
+    it('test notification test function', async () => {
+        const businessId = '655aaa845b81650a0dc2b6f2';  
+        const response = await testMongoDBQuery(businessId)
+        expect(response.length).toBe(2);
+
+        })
+
+    })
+
+
+
